@@ -1,0 +1,58 @@
+<script lang="ts">
+	import type { RaceResult } from '$lib/types/entities/race-results';
+
+	let { raceResults }: { raceResults: RaceResult[] } = $props();
+</script>
+
+<div class="overflow-x-auto bg-white shadow-md rounded-lg">
+	<table class="min-w-full divide-y divide-gray-200">
+		<thead class="bg-gray-50">
+			<tr>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+				>
+					Posición
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+				>
+					Nombre
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+				>
+					Tiempo
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+				>
+					Puntos
+				</th>
+			</tr>
+		</thead>
+		<tbody class="bg-white divide-y divide-gray-200">
+			{#each raceResults as result (result.documentId)}
+				<tr class="hover:bg-gray-50">
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+						{result.place}
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+						<a
+							href="/cyclists/{result.cyclist.documentId}"
+							class="text-blue-600 hover:text-blue-800 hover:underline"
+						>
+							{result.cyclist.lastName}
+							{result.cyclist.name}
+						</a>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+						{result.time || '-'}
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+						{result.rankingPoint?.points || '-'}
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+</div>
