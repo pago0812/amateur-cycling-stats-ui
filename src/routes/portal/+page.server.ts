@@ -1,33 +1,27 @@
 import { redirect, fail } from '@sveltejs/kit';
-import { getMyself, updateUser } from '$lib/services/users';
+import { updateUser } from '$lib/services/users';
 import { getRoles } from '$lib/services/roles';
-import { getJWT, revokeJWT } from '$lib/utils/session';
 import { Urls } from '$lib/constants/urls';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-	const jwt = getJWT(cookies);
+export const load: PageServerLoad = async ({ locals }) => {
+	// Get user from session (via hooks)
+	const { user } = await locals.safeGetSession();
 
-	if (!jwt) {
-		throw redirect(302, Urls.LOGIN);
-	}
-
-	const user = await getMyself(jwt);
-
-	if (user.error) {
+	if (!user) {
 		throw redirect(302, Urls.LOGIN);
 	}
 
 	return {
-		user: user.data
+		user
 	};
 };
 
 export const actions = {
-	updateRole: async ({ request, cookies }) => {
-		const jwt = getJWT(cookies);
+	updateRole: async ({ request, locals }) => {
+		const { user } = await locals.safeGetSession();
 
-		if (!jwt) {
+		if (!user) {
 			return fail(401, { error: 'Unauthorized' });
 		}
 
@@ -38,27 +32,21 @@ export const actions = {
 			return fail(400, { error: 'Role type is required' });
 		}
 
-		// Get current user
-		const userResponse = await getMyself(jwt);
-		if (userResponse.error) {
-			return fail(400, { error: userResponse.error.message });
-		}
-
 		// Get available roles
-		const rolesResponse = await getRoles(jwt);
+		const rolesResponse = await getRoles(locals.supabase);
 		if (rolesResponse.error) {
 			return fail(400, { error: rolesResponse.error.message });
 		}
 
 		// Find the role by type
 		const role = rolesResponse.data?.roles.find((r) => r.type === roleType);
-		if (!role || !role.documentId) {
+		if (!role) {
 			return fail(400, { error: 'Role does not exist' });
 		}
 
 		// Update user role
-		const updateRoleResponse = await updateUser(jwt, {
-			userId: userResponse.data?.id,
+		const updateRoleResponse = await updateUser(locals.supabase, {
+			userId: user.id,
 			roleId: role.id
 		});
 
@@ -70,8 +58,9 @@ export const actions = {
 		return { success: true };
 	},
 
-	logout: async ({ cookies }) => {
-		revokeJWT(cookies);
+	logout: async ({ locals }) => {
+		// Sign out using Supabase Auth (automatically clears cookies)
+		await locals.supabase.auth.signOut();
 		throw redirect(302, Urls.HOME);
 	}
 } satisfies Actions;

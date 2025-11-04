@@ -9,6 +9,7 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
 **Migration Status:**
 - ✅ **Next.js → SvelteKit**: COMPLETE with 100% feature parity
 - ✅ **Strapi → Supabase**: COMPLETE with improved schema and RLS policies
+- ✅ **Authentication**: COMPLETE - Fully migrated to Supabase Auth with SSR cookie handling
 
 ## Technology Stack
 
@@ -58,7 +59,8 @@ npm run test         # Run all tests (unit + e2e)
     - `entities/` - Domain entities (Event, Race, Cyclist, RaceResult, RankingPoint, User, Role, Organization, Organizer)
     - `collections/` - Enums and reference data (EventStatus, RaceCategory, Gender, Length, RaceRanking)
     - `services/` - Service response types (UserResponse, UserSessionResponse, etc.)
-  - `services/` - API service functions (events, races, cyclists, users, auth) - **TO BE UPDATED for Supabase SDK**
+  - `services/` - API service functions (events, races, cyclists, users, auth)
+  - `server/` - Server-side utilities (Supabase client creation)
   - `stores/` - Svelte stores for global state (alert-store)
   - `constants/` - Application constants (urls)
   - `utils/` - Utility functions (dates, session)
@@ -68,6 +70,7 @@ npm run test         # Run all tests (unit + e2e)
   - `+layout.server.ts` - Server load function for user authentication state
   - `+page.svelte` - Route page components
   - `+page.server.ts` - Server-side data loading and form actions
+- **`src/hooks.server.ts`** - SvelteKit server hooks for session management and Supabase client
 - **`supabase/`** - Supabase configuration and migrations
   - `migrations/` - Database migration files (SQL)
   - `seed.sql` - Seed data for development (admin user)
@@ -123,15 +126,15 @@ All services located in `src/lib/services/`:
    - `createCyclist(cyclist)` - Create new cyclist
 
 5. **users.ts** - User operations
-   - `getMyself(jwt)` - Get current user with role
-   - `updateUser(jwt, params)` - Update user role
+   - `getMyself(supabase)` - Get current user with role
+   - `updateUser(supabase, params)` - Update user role
 
-6. **users-management.ts** - Authentication
-   - `login(credentials)` - User login
-   - `signin(credentials)` - User registration
+6. **users-management.ts** - Authentication (Supabase Auth)
+   - `login(supabase, credentials)` - User login with Supabase
+   - `signin(supabase, credentials)` - User registration with Supabase
 
 7. **roles.ts** - Role management
-   - `getRoles(jwt)` - Get available roles
+   - `getRoles(supabase)` - Get available roles
 
 ### Key Patterns
 
@@ -165,14 +168,14 @@ All services located in `src/lib/services/`:
   ```
 
 **Authentication & Session Management:**
-- Cookie-based authentication (HTTP-only cookies)
-- JWT stored in `jwt-session` cookie (24-hour expiration)
-- Session utilities in `src/lib/utils/session.ts`:
-  - `saveJWT(cookies, jwt)` - Save JWT to cookie
-  - `getJWT(cookies)` - Retrieve JWT from cookie
-  - `revokeJWT(cookies)` - Delete JWT cookie (logout)
-- Root layout loads user state for all pages
+- Supabase Auth with automatic cookie management via `@supabase/ssr`
+- Server-side session handling in `hooks.server.ts`
+- Supabase client attached to `event.locals.supabase` for all requests
+- `event.locals.safeGetSession()` helper returns enriched user data via `get_user_with_relations()` RPC
+- HTTP-only cookies managed automatically by Supabase
+- Root layout loads user state for all pages via `safeGetSession()`
 - Protected routes redirect to `/login` if not authenticated
+- User-friendly error messages in Spanish using Supabase error codes
 
 **API Service Pattern:**
 - Services use `fetch` with `qs` library for building query strings
@@ -485,7 +488,9 @@ RaceResults (links cyclists to races)
 - Extended types (`*WithRelations`) for populated data
 - Full type safety with Supabase SDK
 
-**Migration Files (8 total):**
+**Migration Files (13 total):**
+
+**Schema & RLS (8 migrations):**
 1. `20251103204940` - Create roles & users tables with auth integration
 2. `20251103210005` - Seed admin user (admin@acs.com / #admin123)
 3. `20251103212059` - Create organizations & organizers tables
@@ -495,10 +500,31 @@ RaceResults (links cyclists to races)
 7. `20251103222059` - Refactor: organizers junction table
 8. `20251103223053` - Fix: events link to organizations (not individual organizers)
 
+**Authentication & Data Fixes (5 migrations):**
+9. `20251104154243` - Add `get_user_with_relations()` RPC function for enriched user data
+10. `20251104160611` - Fix `get_user_with_relations()` to match organization schema
+11. `20251104165625` - Fix NULL token fields in auth.users (convert to empty strings)
+12. `20251104171051` - Fix missing timestamp fields in test users
+13. `20251104171807` - Update test users with correct bcrypt password hashes
+
+**Test User Credentials:**
+- Admin: `admin@acs.com` / `#admin123`
+- Cyclist 1: `cyclist1@example.com` / `password123`
+- Cyclist 2: `cyclist2@example.com` / `password123`
+- Organizer: `organizer@example.com` / `password123`
+- Organizer Staff: `organizer_staff@example.com` / `password123`
+
+**Completed Migration Work:**
+- ✅ Updated service layer (users, users-management, roles) to use Supabase SDK
+- ✅ Replaced session utils with Supabase Auth helpers via hooks.server.ts
+- ✅ Updated authentication flows (login, signin, logout) to use Supabase Auth
+- ✅ Created server-side Supabase client utilities in `src/lib/server/supabase.ts`
+- ✅ Implemented `hooks.server.ts` for centralized session management
+- ✅ Updated all protected routes to use `locals.safeGetSession()`
+- ✅ Implemented user-friendly Spanish error messages using Supabase error codes
+
 **Remaining Work:**
-- Update service layer to use Supabase SDK instead of REST API
-- Replace session utils with Supabase Auth helpers
-- Update authentication flows to use Supabase Auth
+- Update remaining service layer (events, races, cyclists) to use Supabase SDK
 - Migrate existing data from Strapi to Supabase (if needed)
 - Update components to use new field names (camelCase → snake_case)
 
@@ -542,21 +568,21 @@ RaceResults (links cyclists to races)
 5. Use `cache: 'no-store'` for fresh data
 6. Add JWT authorization header when required
 
-**Authentication Pattern:**
+**Authentication Pattern (Supabase):**
 ```typescript
 // In +page.server.ts
-import { getJWT } from '$lib/utils/session';
-import { getMyself } from '$lib/services/users';
 import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-  const jwt = getJWT(cookies);
-  if (!jwt) throw redirect(302, '/login');
+export const load: PageServerLoad = async ({ locals }) => {
+  // Get session via Supabase helper from hooks.server.ts
+  const { user } = await locals.safeGetSession();
 
-  const user = await getMyself(jwt);
-  if (user.error) throw redirect(302, '/login');
+  // Redirect if not authenticated
+  if (!user) throw redirect(302, '/login');
 
-  return { user: user.data };
+  // User data includes: id, username, role_id, role, cyclist, organizer
+  return { user };
 };
 ```
 

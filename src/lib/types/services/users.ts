@@ -3,8 +3,8 @@ import type { ServerError } from './errors';
 
 // Requests
 export interface SetRoleRequest {
-	userId?: string;
-	roleId?: string;
+	userId: string;
+	roleId: string;
 }
 
 // Responses

@@ -1,22 +1,31 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/database.types';
 import type { RolesResponse } from '$lib/types/services/roles';
 
-export const getRoles = async (jwt: string): Promise<RolesResponse> => {
+/**
+ * Get all available roles.
+ * @param supabase - Supabase client instance
+ * @returns RolesResponse with roles array or error
+ */
+export const getRoles = async (supabase: SupabaseClient<Database>): Promise<RolesResponse> => {
 	try {
-		const rolesResponse = await fetch(
-			`${import.meta.env.VITE_SERVICE_URL}/api/users-permissions/roles`,
-			{
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				},
-				cache: 'no-store'
-			}
-		);
+		const { data: roles, error } = await supabase.from('roles').select('*').order('name');
 
-		if (rolesResponse.ok) {
-			return { data: await rolesResponse.json() };
+		if (error) {
+			return {
+				error: {
+					status: 400,
+					name: 'DatabaseError',
+					message: error.message
+				}
+			};
 		}
 
-		return await rolesResponse.json();
+		return {
+			data: {
+				roles: roles || []
+			}
+		};
 	} catch (error) {
 		return {
 			error: {

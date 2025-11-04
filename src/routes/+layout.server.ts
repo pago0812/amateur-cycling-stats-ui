@@ -1,25 +1,10 @@
-import { getJWT } from '$lib/utils/session';
-import { getMyself } from '$lib/services/users';
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ cookies }) => {
-	const jwt = getJWT(cookies);
-
-	if (!jwt) {
-		return {
-			user: null
-		};
-	}
-
-	const userResponse = await getMyself(jwt);
-
-	if (userResponse.error || !userResponse.data) {
-		return {
-			user: null
-		};
-	}
+export const load: LayoutServerLoad = async ({ locals }) => {
+	// Get user from session (via hooks)
+	const { user } = await locals.safeGetSession();
 
 	return {
-		user: userResponse.data
+		user
 	};
 };

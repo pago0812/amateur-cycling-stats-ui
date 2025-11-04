@@ -1,23 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { signin } from '$lib/services/users-management';
-import { saveJWT, getJWT } from '$lib/utils/session';
 import { Urls } from '$lib/constants/urls';
 import type { Actions, PageServerLoad } from './$types';
-import { getMyself } from '$lib/services/users';
 
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: PageServerLoad = async ({ locals }) => {
 	// Redirect if already logged in
-	const jwt = getJWT(cookies);
-	if (jwt) {
-		const user = await getMyself(jwt);
-		if (user.data) {
-			throw redirect(302, Urls.PORTAL);
-		}
+	const { user } = await locals.safeGetSession();
+	if (user) {
+		throw redirect(302, Urls.PORTAL);
 	}
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const username = formData.get('username')?.toString() || '';
 		const email = formData.get('email')?.toString() || '';
@@ -31,7 +26,8 @@ export const actions = {
 			});
 		}
 
-		const signinResponse = await signin({ username, email, password });
+		// Register using Supabase Auth (cookies are automatically managed by Supabase)
+		const signinResponse = await signin(locals.supabase, { username, email, password });
 
 		if (signinResponse.error) {
 			return fail(400, {
@@ -42,7 +38,7 @@ export const actions = {
 		}
 
 		if (signinResponse.data) {
-			saveJWT(cookies, signinResponse.data.jwt);
+			// No need to manually save JWT - Supabase handles cookies automatically
 			throw redirect(302, Urls.PORTAL);
 		}
 

@@ -651,6 +651,7 @@ export type Database = {
     Functions: {
       get_my_role: { Args: never; Returns: string }
       get_user_organization_id: { Args: never; Returns: string }
+      get_user_with_relations: { Args: { user_uuid?: string }; Returns: Json }
       has_role: { Args: { role_type: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_admin_check: { Args: never; Returns: boolean }

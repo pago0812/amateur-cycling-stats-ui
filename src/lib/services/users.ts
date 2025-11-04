@@ -1,29 +1,47 @@
-import qs from 'qs';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/database.types';
 import type { SetRoleRequest, UserResponse } from '$lib/types/services/users';
 
-export const getMyself = async (jwt: string): Promise<UserResponse> => {
-	const query = {
-		populate: 'role'
-	};
-
-	const queryString = qs.stringify(query);
-
+/**
+ * Get the current user's enriched data including role and related entities.
+ * Note: In most cases, you should use event.locals.user from hooks instead of calling this directly.
+ * @param supabase - Supabase client instance
+ * @returns UserResponse with enriched user data or error
+ */
+export const getMyself = async (supabase: SupabaseClient<Database>): Promise<UserResponse> => {
 	try {
-		const myselfResponse = await fetch(
-			`${import.meta.env.VITE_SERVICE_URL}/api/users/me?${queryString}`,
-			{
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				},
-				cache: 'no-store'
-			}
-		);
+		// Get the current authenticated user
+		const {
+			data: { user: authUser },
+			error: authError
+		} = await supabase.auth.getUser();
 
-		if (myselfResponse.ok) {
-			return { data: await myselfResponse.json() };
+		if (authError || !authUser) {
+			return {
+				error: {
+					status: 401,
+					name: 'AuthError',
+					message: 'Not authenticated'
+				}
+			};
 		}
 
-		return await myselfResponse.json();
+		// Fetch enriched user data using our PostgreSQL function
+		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
+			user_uuid: authUser.id
+		});
+
+		if (userError || !userData) {
+			return {
+				error: {
+					status: 500,
+					name: 'UserDataError',
+					message: 'Failed to fetch user data'
+				}
+			};
+		}
+
+		return { data: userData as any }; // Type assertion needed since RPC returns Json type
 	} catch (error) {
 		return {
 			error: {
@@ -35,32 +53,50 @@ export const getMyself = async (jwt: string): Promise<UserResponse> => {
 	}
 };
 
+/**
+ * Update a user's role.
+ * Only admins and organizer admins can update user roles (enforced by RLS).
+ * @param supabase - Supabase client instance
+ * @param params - User ID and new role ID
+ * @returns UserResponse with updated user data or error
+ */
 export const updateUser = async (
-	jwt: string,
+	supabase: SupabaseClient<Database>,
 	{ roleId, userId }: SetRoleRequest
 ): Promise<UserResponse> => {
-	const body = {
-		role: roleId
-	};
-
 	try {
-		const updateUserResponse = await fetch(
-			`${import.meta.env.VITE_SERVICE_URL}/api/users/${userId}`,
-			{
-				method: 'PUT',
-				headers: {
-					'Content-type': 'application/json',
-					Authorization: `Bearer ${jwt}`
-				},
-				body: JSON.stringify(body)
-			}
-		);
+		// Update the user's role in the database
+		const { error: updateError } = await supabase
+			.from('users')
+			.update({ role_id: roleId })
+			.eq('id', userId);
 
-		if (updateUserResponse.ok) {
-			return { data: await updateUserResponse.json() };
+		if (updateError) {
+			return {
+				error: {
+					status: 400,
+					name: 'UpdateError',
+					message: updateError.message
+				}
+			};
 		}
 
-		return await updateUserResponse.json();
+		// Fetch the updated user data
+		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
+			user_uuid: userId
+		});
+
+		if (userError || !userData) {
+			return {
+				error: {
+					status: 500,
+					name: 'UserDataError',
+					message: 'Failed to fetch updated user data'
+				}
+			};
+		}
+
+		return { data: userData as any }; // Type assertion needed since RPC returns Json type
 	} catch (error) {
 		return {
 			error: {
