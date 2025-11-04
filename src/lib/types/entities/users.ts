@@ -1,10 +1,10 @@
+import type { Tables } from '$lib/types/database.types';
 import type { Role } from './roles';
 
-export interface User {
-	id: string;
-	documentId: string;
-	username: string;
-	email: string;
-	password: number;
+// Base user type from Supabase
+export type User = Tables<'users'>;
+
+// Extended user type with populated relationships
+export interface UserWithRelations extends User {
 	role?: Role;
 }

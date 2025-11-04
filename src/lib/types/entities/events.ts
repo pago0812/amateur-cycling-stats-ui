@@ -1,23 +1,20 @@
+import type { Tables } from '$lib/types/database.types';
 import type { RaceCategory } from '$lib/types/collections/race-category';
 import type { RaceCategoryGender } from '$lib/types/collections/race-category-gender';
 import type { RaceCategoryLength } from '$lib/types/collections/race-category-length';
 import type { Race } from '$lib/types/entities/races';
-import type { EventStatusType } from '$lib/types/collections/events';
+import type { User } from '$lib/types/entities/users';
+import type { Organization } from '$lib/types/entities/organizations';
 
-export interface Event {
-	id: string;
-	documentId: string;
-	name: string;
-	description?: string;
-	dateTime: Date;
-	eventStatus: EventStatusType;
-	year: number;
-	country: string;
-	state: string;
-	city?: string;
-	isPublicVisible: boolean;
-	races: Race[];
-	supportedRaceCategories: RaceCategory[];
-	supportedRaceCategoryGenders: RaceCategoryGender[];
-	supportedRaceCategoryLengths: RaceCategoryLength[];
+// Base event type from Supabase
+export type Event = Tables<'events'>;
+
+// Extended event type with populated relationships
+export interface EventWithRelations extends Event {
+	createdBy?: User; // User who created the event (for audit trail)
+	organization?: Organization; // Organization that owns/manages the event
+	races?: Race[];
+	supportedRaceCategories?: RaceCategory[];
+	supportedRaceCategoryGenders?: RaceCategoryGender[];
+	supportedRaceCategoryLengths?: RaceCategoryLength[];
 }

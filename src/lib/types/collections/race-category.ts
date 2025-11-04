@@ -1,8 +1,9 @@
-export interface RaceCategory {
-	documentId: string;
-	name: RaceCategoryEnum;
-}
+import type { Tables } from '$lib/types/database.types';
 
+// Base type from Supabase
+export type RaceCategory = Tables<'race_categories'>;
+
+// Enum for race categories
 export enum RaceCategoryEnum {
 	ABS = 'ABS',
 	ELITE = 'ELITE',

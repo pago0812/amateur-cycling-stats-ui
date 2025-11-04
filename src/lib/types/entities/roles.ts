@@ -1,9 +1,4 @@
-import { RoleTypeEnum } from '../collections/roles';
+import type { Tables } from '$lib/types/database.types';
 
-export interface Role {
-	id: string;
-	documentId: string;
-	name: string;
-	description: string;
-	type: RoleTypeEnum;
-}
+// Base role type from Supabase
+export type Role = Tables<'roles'>;

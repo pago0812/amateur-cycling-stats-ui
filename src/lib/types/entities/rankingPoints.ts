@@ -1,9 +1,10 @@
+import type { Tables } from '$lib/types/database.types';
 import type { RaceRanking } from '$lib/types/collections/race-ranking';
 
-export interface RankingPoint {
-	id: string;
-	documentId: string;
-	points: number;
-	place: number;
-	raceRanking: RaceRanking;
+// Base ranking point type from Supabase
+export type RankingPoint = Tables<'ranking_points'>;
+
+// Extended ranking point type with populated relationships
+export interface RankingPointWithRelations extends RankingPoint {
+	raceRanking?: RaceRanking;
 }
