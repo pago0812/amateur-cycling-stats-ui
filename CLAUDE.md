@@ -4,18 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling statistics. This is a **frontend-only application** that consumes a REST API backend (Strapi CMS running on localhost:1337).
+Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling statistics. The application uses **Supabase** as its backend (PostgreSQL database with Row Level Security, authentication, and real-time capabilities).
 
-**Migration Status:** ✅ **COMPLETE** - This project has been fully migrated from Next.js/React to SvelteKit/Svelte with 100% feature parity.
+**Migration Status:**
+- ✅ **Next.js → SvelteKit**: COMPLETE with 100% feature parity
+- ✅ **Strapi → Supabase**: COMPLETE with improved schema and RLS policies
 
 ## Technology Stack
 
 - **Framework**: SvelteKit 2.47.1 with Svelte 5 (using latest runes syntax)
 - **Language**: TypeScript 5.9.3 (strict mode enabled)
+- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime)
 - **Styling**: Tailwind CSS 4.1.14
 - **State**: Svelte Stores (migrated from Zustand)
 - **Build**: Vite 7.1.10
 - **Testing**: Vitest (unit) + Playwright (e2e)
+- **Database Migrations**: Supabase CLI
 
 ## Development Commands
 
@@ -50,10 +54,11 @@ npm run test         # Run all tests (unit + e2e)
 - **`src/lib/`** - Reusable code (imported via `$lib` alias)
   - `components/` - Reusable Svelte components
   - `types/` - TypeScript definitions organized by domain
-    - `entities/` - Domain entities (Event, Race, Cyclist, RaceResult, RankingPoints, User, Role)
-    - `collections/` - Enums and reference data (EventStatus, RaceCategory, Gender, Length, RoleType)
+    - `database.types.ts` - **Auto-generated** Supabase types (regenerate after schema changes)
+    - `entities/` - Domain entities (Event, Race, Cyclist, RaceResult, RankingPoint, User, Role, Organization, Organizer)
+    - `collections/` - Enums and reference data (EventStatus, RaceCategory, Gender, Length, RaceRanking)
     - `services/` - Service response types (UserResponse, UserSessionResponse, etc.)
-  - `services/` - API service functions (events, races, cyclists, users, auth)
+  - `services/` - API service functions (events, races, cyclists, users, auth) - **TO BE UPDATED for Supabase SDK**
   - `stores/` - Svelte stores for global state (alert-store)
   - `constants/` - Application constants (urls)
   - `utils/` - Utility functions (dates, session)
@@ -63,6 +68,9 @@ npm run test         # Run all tests (unit + e2e)
   - `+layout.server.ts` - Server load function for user authentication state
   - `+page.svelte` - Route page components
   - `+page.server.ts` - Server-side data loading and form actions
+- **`supabase/`** - Supabase configuration and migrations
+  - `migrations/` - Database migration files (SQL)
+  - `seed.sql` - Seed data for development (admin user)
 
 ### Complete Route Structure
 
@@ -203,62 +211,207 @@ All services located in `src/lib/services/`:
 - Tailwind utility classes for styling
 - Progressive enhancement with `use:enhance` directive
 
-## API Integration
+## Supabase Integration
 
-The application connects to a backend API (likely Strapi-based) configured via `.env`:
+### Database Configuration
 
+The application uses **Supabase** for backend services (PostgreSQL, Auth, Storage). Configuration stored in `.env`:
+
+```env
+PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (server-only)
 ```
-VITE_SERVICE_URL=http://localhost:1337
+
+### Database Migrations
+
+All database schema changes are managed through Supabase migrations located in `supabase/migrations/`.
+
+**Migration Commands:**
+```bash
+# Create new migration
+supabase migration new migration_name
+
+# Push migrations to remote
+supabase db push
+
+# Pull schema from remote
+supabase db pull
+
+# List applied migrations
+supabase migration list
+
+# Reset local database
+supabase db reset
+
+# Regenerate TypeScript types
+supabase gen types typescript --linked > src/lib/types/database.types.ts
 ```
 
-**Common API Patterns:**
-- Base path: `/api/{resource}`
-- Query building with `qs` library for filters, sorting, and population
-- Example: `/api/events?populate[races][populate]=*&filters[startDate][$gte]=...`
+**IMPORTANT:** Always regenerate types after schema changes!
 
-**Data Flow:**
-1. Component calls service function from `$lib/services/`
-2. Service builds query with `qs` and fetches from API
-3. Response typed according to `$lib/types/services/`
-4. Component renders with typed data
+### Type Safety with Supabase
+
+All database types are auto-generated from the schema:
+
+```typescript
+import type { Tables, TablesInsert, TablesUpdate } from '$lib/types/database.types';
+
+// Get row type for a table
+type Event = Tables<'events'>;
+
+// Get insert type (optional fields)
+type EventInsert = TablesInsert<'events'>;
+
+// Get update type (all optional)
+type EventUpdate = TablesUpdate<'events'>;
+```
+
+**Extended Types with Relationships:**
+```typescript
+import type { EventWithRelations } from '$lib/types/entities/events';
+
+// Base type = database row
+type Event = Tables<'events'>;
+
+// Extended type = with populated relationships
+interface EventWithRelations extends Event {
+  organization?: Organization;
+  races?: Race[];
+  // ...
+}
+```
+
+### Data Access Patterns
+
+**Supabase Client:**
+```typescript
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/database.types';
+
+const supabase = createClient<Database>(
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY
+);
+
+// Query with types
+const { data, error } = await supabase
+  .from('events')
+  .select('*, organization(*), races(*)')
+  .eq('is_public_visible', true);
+```
+
+**Row Level Security (RLS):**
+- All tables have RLS enabled
+- Policies enforce permissions based on user roles
+- Public can view public content
+- Authenticated users have role-based access
+- See migration files for complete policy definitions
 
 ## Domain Model
 
-**Core Entities:**
-- **Event** - A cycling event containing multiple races with location, dates, and status
-- **Race** - Individual race within an event with category, gender, length, and ranking
-- **Cyclist** - Athlete with name, birth year, gender, and race results
-- **RaceResult** - Performance record linking cyclist to race via ranking points
-- **User** - Application user with username, email, and role
-- **Role** - User role defining permissions (Cyclist, Organizer, etc.)
+### Core Entities
+
+**Authentication & Authorization:**
+- **User** - Authenticated users linked to Supabase Auth (username, role)
+- **Role** - User roles defining permissions (5 types: PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_ADMIN, ADMIN)
+- **Organization** - Companies/clubs that organize cycling events
+- **Organizer** - Junction table linking users to organizations (separates auth from business logic)
+
+**Events & Races:**
+- **Event** - Cycling event owned by an organization (location, dates, status, visibility)
+- **Race** - Individual race within an event (category, gender, length, ranking, own visibility)
+- **RaceResult** - Performance record linking cyclist to race with ranking points
+
+**Athletes:**
+- **Cyclist** - Athlete profile (name, birth year, gender, optional user link)
+  - Can be created by organizers without user accounts (for unregistered athletes)
+  - Can be linked to user accounts later via reconciliation
+
+**Reference Data (Lookup Tables):**
+- **RaceCategory** - Age/experience categories (26 types: ABS, ELITE, age ranges, etc.)
+- **RaceCategoryGender** - Gender categories (FEMALE, MALE, OPEN)
+- **RaceCategoryLength** - Distance types (LONG, SHORT, SPRINT, UNIQUE)
+- **RaceRanking** - Ranking systems (UCI, NATIONAL, REGIONAL, CUSTOM)
+- **CyclistGender** - Cyclist genders (M, F)
+- **RankingPoint** - Points awarded per place in ranking systems
+
+### Relationships
+
+**User → Organizer → Organization → Event Flow:**
+```
+User (authenticated via Supabase Auth)
+  ↓ (if role = ORGANIZER_ADMIN/ORGANIZER_STAFF)
+Organizer (links user to organization)
+  ↓
+Organization (owns events)
+  ↓
+Events (managed by organization)
+  ↓
+Races (within events)
+  ↓
+RaceResults (links cyclists to races)
+```
+
+**Event Ownership:**
+- `created_by` → tracks which user created the event (audit trail)
+- `organization_id` → tracks which organization owns/manages the event
+
+**1:n Relationships:**
+- Organization → Organizers
+- Organization → Events
+- Event → Races
+- Race → RaceResults
+- Cyclist → RaceResults
+
+**n:n Relationships:**
+- Event ↔ RaceCategories (supported categories for event)
+- Event ↔ RaceCategoryGenders (supported genders for event)
+- Event ↔ RaceCategoryLengths (supported lengths for event)
+
+### Business Rules
 
 **Event Status Flow:**
 - DRAFT → AVAILABLE → SOLD_OUT → ON_GOING → FINISHED
 
-**User Roles:**
-- `PUBLIC` - Anonymous visitors
-- `NEW_USER` (authenticated) - Newly registered users (must complete onboarding)
-- `CYCLIST` - Registered cyclists
-- `ORGANIZER_ADMIN` - Event organizers with admin access
-- `ORGANIZER_STAFF` - Event organizers with staff access
+**User Roles & Permissions:**
+- `PUBLIC` - Anonymous visitors (read-only for public content)
+- `CYCLIST` - Default role for new signups (edit own profile, register for events)
+- `ORGANIZER_STAFF` - Limited admin access (create/edit race results for org's events)
+- `ORGANIZER_ADMIN` - Full org access (manage events, races, results for org)
+- `ADMIN` - System administrator (full access to everything)
 
 **Authentication Flow:**
-1. User registers → Receives `NEW_USER` role → Redirected to portal
-2. Portal shows onboarding → User selects role (Cyclist/Organizer)
-3. Role updated → User gains access to role-specific features
+1. User signs up via Supabase Auth → Auto-creates user profile with CYCLIST role
+2. Auto-creates minimal cyclist profile (empty name/last_name, to be filled later)
+3. Organizers: Admin manually creates organizer profile linking user to organization
+
+**Organizer Workflow:**
+1. Organizer creates event for their organization
+2. Organizer creates races within event
+3. Organizer creates race results → can create cyclist profiles if athlete not registered
+4. Later: Athlete signs up → reconciliation process links user to existing cyclist profile
+
+**Visibility Rules:**
+- Events/Races have independent `is_public_visible` flags
+- Public users only see content where both event AND race are public
+- Organization members see all their org's content
+- Admins see everything
 
 ## Migration Context
 
-**Status:** ✅ Migration from Next.js to SvelteKit is **COMPLETE** with 100% feature parity.
+### Frontend Migration: Next.js → SvelteKit
 
-**Key Conversions Made:**
+**Status:** ✅ **COMPLETE** with 100% feature parity
+
+**Key Conversions:**
 - React components → Svelte 5 components with runes
 - Zustand stores → Svelte stores
 - Material-UI → Tailwind CSS v4
 - Next.js App Router → SvelteKit file-based routing
 - Server Components → SvelteKit SSR with `+page.server.ts`
 - Server Actions → SvelteKit form actions
-- `next-auth` cookies → Custom cookie-based JWT session
+- `next-auth` cookies → Cookie-based session (to be updated for Supabase Auth)
 - `useFormState` hooks → SvelteKit `use:enhance` directive
 - `next-intl` → Hardcoded Spanish text (i18n planned for future)
 
@@ -270,11 +423,84 @@ VITE_SERVICE_URL=http://localhost:1337
 - Better performance with Svelte's compile-time optimizations
 - Smaller bundle sizes (no React runtime)
 
-**API Compatibility:**
-- All API contracts maintained exactly
-- Same Strapi backend endpoints
-- Identical data structures and types
-- No backend changes required
+### Backend Migration: Strapi → Supabase
+
+**Status:** ✅ **COMPLETE** with improved schema and security
+
+**Database Changes:**
+- Strapi headless CMS → Supabase PostgreSQL
+- REST API → Supabase SDK with auto-generated types
+- Custom auth → Supabase Auth (built-in email/password, OAuth)
+- No RLS → Comprehensive Row Level Security policies
+- Manual type definitions → Auto-generated from schema
+
+**Schema Improvements:**
+1. **Removed Strapi Artifacts:**
+   - Removed `documentId` from all entities
+   - Cleaner UUID-based primary keys
+   - Standard PostgreSQL constraints
+
+2. **New Entity: Organizations**
+   - Proper separation of organizations from users
+   - Events owned by organizations (not individual users)
+
+3. **New Junction Table: Organizers**
+   - Links users to organizations
+   - Separates authentication from business logic
+   - Enables multi-user organizations
+
+4. **Improved Cyclist Model:**
+   - `user_id` is nullable (organizers can create cyclists for unregistered athletes)
+   - Reconciliation workflow for linking later
+
+5. **Enhanced Visibility Control:**
+   - Events AND races have independent `is_public_visible` flags
+   - More granular access control
+
+6. **Audit Trail:**
+   - `created_by` tracks who created each event
+   - `created_at` and `updated_at` timestamps on all tables
+
+**Security Improvements:**
+1. **Row Level Security (RLS):**
+   - All tables have RLS enabled
+   - Role-based policies (PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_ADMIN, ADMIN)
+   - Organization-based access control
+
+2. **Helper Functions:**
+   - `is_admin()` - Check if user is admin
+   - `is_organizer()` - Check if user is organizer
+   - `is_organizer_admin()` - Check if user is organizer admin (not staff)
+   - `is_in_event_organization()` - Check if user belongs to event's organization
+   - `get_user_organization_id()` - Get user's organization ID
+
+3. **Automatic Triggers:**
+   - Auto-create user profile on signup (via Supabase Auth)
+   - Auto-create cyclist profile for CYCLIST role users
+   - Auto-update timestamps on changes
+
+**Type System:**
+- `database.types.ts` - Auto-generated from schema (regenerate after migrations)
+- Base types (`Tables<'table_name'>`) for database operations
+- Extended types (`*WithRelations`) for populated data
+- Full type safety with Supabase SDK
+
+**Migration Files (8 total):**
+1. `20251103204940` - Create roles & users tables with auth integration
+2. `20251103210005` - Seed admin user (admin@acs.com / #admin123)
+3. `20251103212059` - Create organizations & organizers tables
+4. `20251103212210` - Create lookup tables (categories, genders, lengths, rankings)
+5. `20251103212355` - Create main entities (cyclists, events, races, results, ranking_points)
+6. `20251103212634` - Create comprehensive RLS policies
+7. `20251103222059` - Refactor: organizers junction table
+8. `20251103223053` - Fix: events link to organizations (not individual organizers)
+
+**Remaining Work:**
+- Update service layer to use Supabase SDK instead of REST API
+- Replace session utils with Supabase Auth helpers
+- Update authentication flows to use Supabase Auth
+- Migrate existing data from Strapi to Supabase (if needed)
+- Update components to use new field names (camelCase → snake_case)
 
 ## Testing
 
