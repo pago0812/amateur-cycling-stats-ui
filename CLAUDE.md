@@ -46,6 +46,9 @@ npm run format       # Auto-format with Prettier
 npm run test:unit    # Run Vitest unit tests
 npm run test:e2e     # Run Playwright e2e tests
 npm run test         # Run all tests (unit + e2e)
+
+# Database seeding
+npm run seed:users   # Seed test users (run after supabase db reset)
 ```
 
 ## Architecture
@@ -73,7 +76,8 @@ npm run test         # Run all tests (unit + e2e)
 - **`src/hooks.server.ts`** - SvelteKit server hooks for session management and Supabase client
 - **`supabase/`** - Supabase configuration and migrations
   - `migrations/` - Database migration files (SQL)
-  - `seed.sql` - Seed data for development (admin user)
+  - `seed.sql` - User-independent seed data (organizations, unlinked cyclists, ranking points)
+  - `seed-users.ts` - User-dependent seed data (users, events, races, results via Supabase Admin API)
 
 ### Complete Route Structure
 
@@ -244,7 +248,7 @@ supabase db pull
 # List applied migrations
 supabase migration list
 
-# Reset local database
+# Reset local database (runs migrations + seed.sql)
 supabase db reset
 
 # Regenerate TypeScript types
@@ -252,6 +256,50 @@ supabase gen types typescript --linked > src/lib/types/database.types.ts
 ```
 
 **IMPORTANT:** Always regenerate types after schema changes!
+
+### Seeding Test Data
+
+The project uses a **two-stage seeding approach** that separates user-independent data from user-dependent data:
+
+**Stage 1: User-Independent Data (SQL)**
+- Run automatically during `supabase db reset`
+- Creates foundational data that doesn't require users to exist
+- Defined in `supabase/seed.sql`
+
+**Stage 2: User-Dependent Data (TypeScript)**
+- Run manually after database reset via `npm run seed:users`
+- Uses Supabase Admin API to create users with proper auth fields
+- Creates all data that requires user foreign keys (events, races, results)
+- Defined in `supabase/seed-users.ts`
+
+**Why this approach?**
+- **Avoids foreign key constraint errors**: Events require `created_by` user IDs, so users must exist first
+- **Proper auth field initialization**: Supabase Admin API automatically handles all required `auth.users` fields (token fields, timestamps)
+- **Prevents NULL token errors**: Manual user insertion can cause authentication failures
+- **Type-safe and maintainable**: TypeScript provides better error handling and IDE support
+- **Clear separation of concerns**: User-independent vs user-dependent data
+
+**Seeding Workflow:**
+```bash
+# 1. Reset database (runs migrations + seed.sql automatically)
+supabase db reset --linked --yes
+
+# 2. Seed users and user-dependent data
+npm run seed:users
+```
+
+**What Each Script Creates:**
+
+`seed.sql` (User-Independent):
+- 2 Organizations (Pro Cycling League Spain, Valencia Cycling Federation)
+- 5 Unlinked cyclists (athletes without user accounts)
+- 4 Ranking systems with ~38 ranking points (UCI, NATIONAL, REGIONAL, CUSTOM)
+
+`seed-users.ts` (User-Dependent):
+- 6 Test users with full authentication (admin, organizer, staff, 3 cyclists)
+- 4 Events (past, future, draft, ongoing) - requires `created_by` user field
+- 12 Races (3 per event) - requires events to exist
+- ~54 Race results - requires races and cyclists to exist
 
 ### Type Safety with Supabase
 
@@ -488,31 +536,49 @@ RaceResults (links cyclists to races)
 - Extended types (`*WithRelations`) for populated data
 - Full type safety with Supabase SDK
 
-**Migration Files (13 total):**
+**Migration Files (6 total):**
 
-**Schema & RLS (8 migrations):**
-1. `20251103204940` - Create roles & users tables with auth integration
-2. `20251103210005` - Seed admin user (admin@acs.com / #admin123)
-3. `20251103212059` - Create organizations & organizers tables
-4. `20251103212210` - Create lookup tables (categories, genders, lengths, rankings)
-5. `20251103212355` - Create main entities (cyclists, events, races, results, ranking_points)
-6. `20251103212634` - Create comprehensive RLS policies
-7. `20251103222059` - Refactor: organizers junction table
-8. `20251103223053` - Fix: events link to organizations (not individual organizers)
+1. `20250101000001_create_auth_foundation.sql`
+   - Creates roles table with 5 role types
+   - Creates users table linked to Supabase Auth
+   - Sets up auth triggers for automatic user profile creation
+   - Establishes foundation for role-based access control
 
-**Authentication & Data Fixes (5 migrations):**
-9. `20251104154243` - Add `get_user_with_relations()` RPC function for enriched user data
-10. `20251104160611` - Fix `get_user_with_relations()` to match organization schema
-11. `20251104165625` - Fix NULL token fields in auth.users (convert to empty strings)
-12. `20251104171051` - Fix missing timestamp fields in test users
-13. `20251104171807` - Update test users with correct bcrypt password hashes
+2. `20250101000002_create_organizations_and_organizers.sql`
+   - Creates organizations table for event management companies
+   - Creates organizers junction table linking users to organizations
+   - Enables multi-user organization support
+   - Adds triggers for automatic organizer profile creation
 
-**Test User Credentials:**
+3. `20250101000003_create_lookup_tables.sql`
+   - Creates reference data tables: cyclist_genders, race_categories, race_category_genders, race_category_lengths, race_rankings
+   - Seeds 26 race categories, 3 genders, 4 length types, 4 ranking systems
+   - Provides standardized enums for race configuration
+
+4. `20250101000004_create_main_entities.sql`
+   - Creates core domain tables: cyclists, events, races, race_results, ranking_points
+   - Creates event junction tables for supported categories/genders/lengths
+   - Adds trigger for automatic cyclist profile creation for CYCLIST role users
+   - Establishes complete data model for cycling events
+
+5. `20250101000005_create_rls_policies.sql`
+   - Enables Row Level Security on all tables
+   - Creates role-based policies (PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_ADMIN, ADMIN)
+   - Implements organization-based access control for events/races/results
+   - Defines helper functions: is_admin(), is_organizer(), is_organizer_admin(), is_in_event_organization()
+
+6. `20250101000006_create_utility_functions.sql`
+   - Creates `get_user_with_relations()` RPC function for enriched user data
+   - Returns user with role, cyclist profile, and organizer relationships
+   - Used by `safeGetSession()` in hooks.server.ts for SSR
+
+**Test User Credentials (created by seed-users.ts):**
 - Admin: `admin@acs.com` / `#admin123`
-- Cyclist 1: `cyclist1@example.com` / `password123`
-- Cyclist 2: `cyclist2@example.com` / `password123`
-- Organizer: `organizer@example.com` / `password123`
-- Organizer Staff: `organizer_staff@example.com` / `password123`
+- Organizer Admin: `organizer@example.com` / `password123` (Pro Cycling League Spain)
+- Organizer Staff: `staff@example.com` / `password123` (Valencia Cycling Federation)
+- Cyclist 1: `cyclist1@example.com` / `password123` (Carlos Rodríguez)
+- Cyclist 2: `cyclist2@example.com` / `password123` (María García)
+- Cyclist 3: `cyclist3@example.com` / `password123` (Javier Martínez)
 
 **Completed Migration Work:**
 - ✅ Updated service layer (users, users-management, roles) to use Supabase SDK
@@ -522,6 +588,9 @@ RaceResults (links cyclists to races)
 - ✅ Implemented `hooks.server.ts` for centralized session management
 - ✅ Updated all protected routes to use `locals.safeGetSession()`
 - ✅ Implemented user-friendly Spanish error messages using Supabase error codes
+- ✅ Refactored database seeding into two-stage approach (user-independent → user-dependent)
+- ✅ Moved events, races, and race results creation from seed.sql to seed-users.ts
+- ✅ Fixed foreign key constraint errors in seeding workflow
 
 **Remaining Work:**
 - Update remaining service layer (events, races, cyclists) to use Supabase SDK
@@ -646,3 +715,4 @@ export const load: PageServerLoad = async ({ url }) => {
 - Rate limiting for form submissions
 - Email verification flow
 - Password reset functionality
+- Afer complete a task after the summary, ask me if I want to update the claude.md file
