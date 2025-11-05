@@ -34,12 +34,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 			}
 		);
 
-		if (error) {
-			console.error('Error fetching user with relations:', error);
-			return { session, user: null };
-		}
-
-		if (!rpcResponse) {
+		if (error || !rpcResponse) {
+			if (error) {
+				console.error('Error fetching user with relations:', error);
+			}
 			return { session, user: null };
 		}
 

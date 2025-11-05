@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, TablesInsert } from '$lib/types/database.types';
 import type { Cyclist, CyclistWithRelations } from '$lib/types/domain';
-import type { CyclistWithResultsResponse } from '$lib/types/db';
-import { adaptCyclistWithResultsFromDb, adaptCyclistFromDb } from '$lib/adapters';
+import type { CyclistWithResultsRpcResponse } from '$lib/types/db';
+import { adaptCyclistWithResultsFromRpc, adaptCyclistFromDb } from '$lib/adapters';
 
 type TypedSupabaseClient = SupabaseClient<Database>;
 
@@ -14,40 +14,20 @@ interface GetCyclistWithResultsByIdParams {
  * Get cyclist by ID with race results and full race details.
  * Returns domain CyclistWithRelations type with camelCase fields.
  *
- * Single PostgreSQL query with nested JOINs - much faster than Strapi's multiple requests.
+ * Uses optimized RPC function get_cyclist_with_results() for better performance.
+ * Single PostgreSQL query with nested JOINs - much faster than multiple requests.
  * Includes race results with full race info, event details, categories, and ranking points.
+ * Results are sorted by event date (most recent first).
  */
 export async function getCyclistWithResultsById(
 	supabase: TypedSupabaseClient,
 	params: GetCyclistWithResultsByIdParams
 ): Promise<CyclistWithRelations> {
-	const { data, error } = await supabase
-		.from('cyclists')
-		.select(
-			`
-			*,
-			gender:cyclist_genders(*),
-			race_results(
-				*,
-				race:races(
-					*,
-					event:events(*),
-					race_category:race_categories(*),
-					race_category_gender:race_category_genders(*),
-					race_category_length:race_category_lengths(*),
-					race_ranking:race_rankings(*)
-				),
-				ranking_point:ranking_points(*)
-			)
-		`
-		)
-		.eq('id', params.id)
-		.single();
+	const { data, error } = await supabase.rpc('get_cyclist_with_results', {
+		cyclist_uuid: params.id
+	});
 
 	if (error) {
-		if (error.code === 'PGRST116') {
-			throw new Error('Cyclist not found');
-		}
 		throw new Error(`Error fetching cyclist: ${error.message}`);
 	}
 
@@ -55,8 +35,8 @@ export async function getCyclistWithResultsById(
 		throw new Error('Cyclist not found');
 	}
 
-	// Use adapter to transform complex nested response → Domain type
-	return adaptCyclistWithResultsFromDb(data as CyclistWithResultsResponse);
+	// Use adapter to transform RPC JSONB response → Domain type
+	return adaptCyclistWithResultsFromRpc(data as unknown as CyclistWithResultsRpcResponse);
 }
 
 /**

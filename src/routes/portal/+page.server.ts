@@ -38,8 +38,8 @@ export const actions = {
 			return fail(400, { error: rolesResponse.error.message });
 		}
 
-		// Find the role by type
-		const role = rolesResponse.data?.roles.find((r) => r.type === roleType);
+		// Find the role by name
+		const role = rolesResponse.data?.roles.find((r) => r.name === roleType);
 		if (!role) {
 			return fail(400, { error: 'Role does not exist' });
 		}

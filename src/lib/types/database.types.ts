@@ -41,54 +41,54 @@ export type Database = {
     Tables: {
       cyclist_genders: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           name: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       cyclists: {
         Row: {
           born_year: number | null
-          created_at: string
+          created_at: string | null
           gender_id: string | null
           id: string
           last_name: string
           name: string
-          updated_at: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
           born_year?: number | null
-          created_at?: string
+          created_at?: string | null
           gender_id?: string | null
           id?: string
           last_name?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
           born_year?: number | null
-          created_at?: string
+          created_at?: string | null
           gender_id?: string | null
           id?: string
           last_name?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -202,7 +202,7 @@ export type Database = {
         Row: {
           city: string | null
           country: string
-          created_at: string
+          created_at: string | null
           created_by: string
           date_time: string
           description: string | null
@@ -212,13 +212,13 @@ export type Database = {
           name: string
           organization_id: string | null
           state: string
-          updated_at: string
+          updated_at: string | null
           year: number
         }
         Insert: {
           city?: string | null
           country: string
-          created_at?: string
+          created_at?: string | null
           created_by: string
           date_time: string
           description?: string | null
@@ -228,13 +228,13 @@ export type Database = {
           name: string
           organization_id?: string | null
           state: string
-          updated_at?: string
+          updated_at?: string | null
           year: number
         }
         Update: {
           city?: string | null
           country?: string
-          created_at?: string
+          created_at?: string | null
           created_by?: string
           date_time?: string
           description?: string | null
@@ -244,7 +244,7 @@ export type Database = {
           name?: string
           organization_id?: string | null
           state?: string
-          updated_at?: string
+          updated_at?: string | null
           year?: number
         }
         Relationships: [
@@ -266,48 +266,48 @@ export type Database = {
       }
       organizations: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string | null
           id: string
           name: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           name: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       organizers: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           organization_id: string
-          updated_at: string
+          updated_at: string | null
           user_id: string
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           organization_id: string
-          updated_at?: string
+          updated_at?: string | null
           user_id: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           organization_id?: string
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -321,7 +321,7 @@ export type Database = {
           {
             foreignKeyName: "organizers_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -329,121 +329,121 @@ export type Database = {
       }
       race_categories: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           name: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       race_category_genders: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           name: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       race_category_lengths: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           name: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       race_rankings: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string | null
           id: string
           name: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           name: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           name?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       race_results: {
         Row: {
-          created_at: string
+          created_at: string | null
           cyclist_id: string
           id: string
           place: number
           race_id: string
           ranking_point_id: string | null
           time: string | null
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           cyclist_id: string
           id?: string
           place: number
           race_id: string
           ranking_point_id?: string | null
           time?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           cyclist_id?: string
           id?: string
           place?: number
           race_id?: string
           ranking_point_id?: string | null
           time?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -471,7 +471,7 @@ export type Database = {
       }
       races: {
         Row: {
-          created_at: string
+          created_at: string | null
           date_time: string
           description: string | null
           event_id: string
@@ -482,10 +482,10 @@ export type Database = {
           race_category_id: string
           race_category_length_id: string
           race_ranking_id: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           date_time: string
           description?: string | null
           event_id: string
@@ -496,10 +496,10 @@ export type Database = {
           race_category_id: string
           race_category_length_id: string
           race_ranking_id: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           date_time?: string
           description?: string | null
           event_id?: string
@@ -510,7 +510,7 @@ export type Database = {
           race_category_id?: string
           race_category_length_id?: string
           race_ranking_id?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -552,28 +552,28 @@ export type Database = {
       }
       ranking_points: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           place: number
           points: number
           race_ranking_id: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           place: number
           points: number
           race_ranking_id: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           place?: number
           points?: number
           race_ranking_id?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -587,51 +587,45 @@ export type Database = {
       }
       roles: {
         Row: {
-          created_at: string
-          description: string | null
+          created_at: string | null
           id: string
           name: string
-          type: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
-          description?: string | null
+          created_at?: string | null
           id?: string
           name: string
-          type: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
-          description?: string | null
+          created_at?: string | null
           id?: string
           name?: string
-          type?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       users: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
-          role_id: string
-          updated_at: string
+          role_id: string | null
+          updated_at: string | null
           username: string
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id: string
-          role_id: string
-          updated_at?: string
+          role_id?: string | null
+          updated_at?: string | null
           username: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
-          role_id?: string
-          updated_at?: string
+          role_id?: string | null
+          updated_at?: string | null
           username?: string
         }
         Relationships: [
@@ -649,12 +643,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_cyclist_with_results: {
+        Args: { cyclist_uuid: string }
+        Returns: Json
+      }
       get_my_role: { Args: never; Returns: string }
       get_user_organization_id: { Args: never; Returns: string }
       get_user_with_relations: { Args: { user_uuid?: string }; Returns: Json }
-      has_role: { Args: { role_type: string }; Returns: boolean }
+      has_role: { Args: { role_name: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
-      is_admin_check: { Args: never; Returns: boolean }
       is_in_event_organization: { Args: { event_id: string }; Returns: boolean }
       is_organizer: { Args: never; Returns: boolean }
       is_organizer_admin: { Args: never; Returns: boolean }

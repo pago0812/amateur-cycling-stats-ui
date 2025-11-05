@@ -8,13 +8,14 @@
 /**
  * Maps timestamp fields from snake_case to camelCase.
  * Used by all entity adapters.
+ * Handles nullable timestamps (though they should always have values with defaults).
  */
-export function mapTimestamps<T extends { created_at: string; updated_at: string }>(
+export function mapTimestamps<T extends { created_at: string | null; updated_at: string | null }>(
 	dbData: T
 ): { createdAt: string; updatedAt: string } {
 	return {
-		createdAt: dbData.created_at,
-		updatedAt: dbData.updated_at
+		createdAt: dbData.created_at ?? new Date().toISOString(),
+		updatedAt: dbData.updated_at ?? new Date().toISOString()
 	};
 }
 

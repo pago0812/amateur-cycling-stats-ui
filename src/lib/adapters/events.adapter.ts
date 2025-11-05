@@ -32,15 +32,14 @@ function adaptRaceCategoryFromJunction(junctionData: {
 	race_categories: {
 		id: string;
 		name: string;
-		created_at: string;
-		updated_at: string;
+		created_at: string | null;
+		updated_at: string | null;
 	};
 }): RaceCategory {
 	return {
 		id: junctionData.race_categories.id,
 		name: junctionData.race_categories.name,
-		createdAt: junctionData.race_categories.created_at,
-		updatedAt: junctionData.race_categories.updated_at
+		...mapTimestamps(junctionData.race_categories)
 	};
 }
 
@@ -51,15 +50,14 @@ function adaptRaceCategoryGenderFromJunction(junctionData: {
 	race_category_genders: {
 		id: string;
 		name: string;
-		created_at: string;
-		updated_at: string;
+		created_at: string | null;
+		updated_at: string | null;
 	};
 }): RaceCategoryGender {
 	return {
 		id: junctionData.race_category_genders.id,
 		name: junctionData.race_category_genders.name,
-		createdAt: junctionData.race_category_genders.created_at,
-		updatedAt: junctionData.race_category_genders.updated_at
+		...mapTimestamps(junctionData.race_category_genders)
 	};
 }
 
@@ -70,15 +68,14 @@ function adaptRaceCategoryLengthFromJunction(junctionData: {
 	race_category_lengths: {
 		id: string;
 		name: string;
-		created_at: string;
-		updated_at: string;
+		created_at: string | null;
+		updated_at: string | null;
 	};
 }): RaceCategoryLength {
 	return {
 		id: junctionData.race_category_lengths.id,
 		name: junctionData.race_category_lengths.name,
-		createdAt: junctionData.race_category_lengths.created_at,
-		updatedAt: junctionData.race_category_lengths.updated_at
+		...mapTimestamps(junctionData.race_category_lengths)
 	};
 }
 

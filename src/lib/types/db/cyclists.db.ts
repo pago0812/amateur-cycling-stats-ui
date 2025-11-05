@@ -31,3 +31,50 @@ export interface CyclistWithResultsResponse extends CyclistDB {
 		}
 	>;
 }
+
+/**
+ * RPC response type for get_cyclist_with_results() function.
+ * Returns JSONB with cyclist + nested race_results array.
+ * Each result includes full race details and ranking points.
+ */
+export interface CyclistWithResultsRpcResponse {
+	id: string;
+	name: string;
+	last_name: string;
+	born_year: number | null;
+	gender_id: string | null;
+	user_id: string | null;
+	created_at: string;
+	updated_at: string;
+	gender: CyclistGenderDB | null;
+	race_results: Array<{
+		id: string;
+		place: number;
+		time: string | null;
+		cyclist_id: string;
+		race_id: string;
+		ranking_point_id: string | null;
+		created_at: string;
+		updated_at: string;
+		race: {
+			id: string;
+			name: string | null;
+			description: string | null;
+			date_time: string;
+			is_public_visible: boolean;
+			event_id: string;
+			race_category_id: string;
+			race_category_gender_id: string;
+			race_category_length_id: string;
+			race_ranking_id: string;
+			created_at: string;
+			updated_at: string;
+			event: EventDB;
+			race_category: RaceCategoryDB;
+			race_category_gender: RaceCategoryGenderDB;
+			race_category_length: RaceCategoryLengthDB;
+			race_ranking: RaceRankingDB;
+		};
+		ranking_point: RankingPointDB | null;
+	}>;
+}

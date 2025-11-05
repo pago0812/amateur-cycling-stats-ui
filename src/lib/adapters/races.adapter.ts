@@ -39,8 +39,7 @@ function adaptRaceResultFromNested(
 		raceId: dbResult.race_id,
 		cyclistId: dbResult.cyclist_id,
 		rankingPointId: dbResult.ranking_point_id,
-		createdAt: dbResult.created_at,
-		updatedAt: dbResult.updated_at
+		...mapTimestamps(dbResult)
 	};
 
 	return {

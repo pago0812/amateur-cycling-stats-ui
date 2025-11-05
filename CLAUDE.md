@@ -155,7 +155,7 @@ All services located in `src/lib/services/`:
    - `getRaceResultsByRaceId(params)` - Results for specific race
 
 4. **cyclists.ts** - Cyclist operations
-   - `getCyclistWithResultsById(params)` - Cyclist with race history
+   - `getCyclistWithResultsById(params)` - Cyclist with race history (uses `get_cyclist_with_results()` RPC)
    - `createCyclist(cyclist)` - Create new cyclist
 
 5. **users.ts** - User operations
@@ -764,7 +764,7 @@ RaceResults (links cyclists to races)
 - Extended types (`*WithRelations`) for populated data
 - Full type safety with Supabase SDK
 
-**Migration Files (6 total):**
+**Migration Files (7 total):**
 
 1. `20250101000001_create_auth_foundation.sql`
    - Creates roles table with 5 role types
@@ -800,6 +800,13 @@ RaceResults (links cyclists to races)
    - Returns user with role, cyclist profile, and organizer relationships
    - Used by `safeGetSession()` in hooks.server.ts for SSR
 
+7. `20250105000001_create_cyclist_functions.sql`
+   - Creates `get_cyclist_with_results()` RPC function for optimized cyclist data retrieval
+   - Returns cyclist with nested race results, full race details, events, categories, and ranking points
+   - Single PostgreSQL query with 11 JOINs - replaces complex nested Supabase select
+   - Results automatically sorted by event date (most recent first)
+   - Improves performance for cyclist profile pages
+
 **Test User Credentials (created by seed-users.ts):**
 - Admin: `admin@acs.com` / `#admin123`
 - Organizer Admin: `organizer@example.com` / `password123` (Pro Cycling League Spain)
@@ -819,9 +826,10 @@ RaceResults (links cyclists to races)
 - ✅ Refactored database seeding into two-stage approach (user-independent → user-dependent)
 - ✅ Moved events, races, and race results creation from seed.sql to seed-users.ts
 - ✅ Fixed foreign key constraint errors in seeding workflow
+- ✅ Migrated cyclist query to RPC function for better performance (11 JOINs → single optimized query)
 
 **Remaining Work:**
-- Update remaining service layer (events, races, cyclists) to use Supabase SDK
+- Update remaining service layer (events, races) to use Supabase SDK
 - Migrate existing data from Strapi to Supabase (if needed)
 - Update components to use new field names (camelCase → snake_case)
 
