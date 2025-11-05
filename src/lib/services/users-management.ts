@@ -5,16 +5,19 @@ import type {
 	SigninRequest,
 	UserSessionResponse
 } from '$lib/types/services/users-management';
+import { getAuthErrorMessage, t } from '$lib/i18n/server';
 
 /**
  * Login with email and password using Supabase Auth.
  * @param supabase - Supabase client instance
  * @param credentials - Email and password
+ * @param locale - User's locale for error messages (default: 'es')
  * @returns UserSessionResponse with session data or error
  */
 export const login = async (
 	supabase: SupabaseClient<Database>,
-	{ email, password }: LoginRequest
+	{ email, password }: LoginRequest,
+	locale: string = 'es'
 ): Promise<UserSessionResponse> => {
 	const { data, error } = await supabase.auth.signInWithPassword({
 		email,
@@ -31,30 +34,10 @@ export const login = async (
 			fullError: error
 		});
 
-		// Map Supabase error codes to user-friendly Spanish messages
-		let userMessage = error.message;
-
-		// Use error.code for reliable error identification
-		switch (error.code) {
-			case 'invalid_credentials':
-				userMessage = 'Email o contraseña incorrectos';
-				break;
-			case 'email_not_confirmed':
-				userMessage = 'Por favor confirma tu email antes de iniciar sesión';
-				break;
-			case 'user_not_found':
-				userMessage = 'Usuario no encontrado';
-				break;
-			case 'user_banned':
-				userMessage = 'Esta cuenta ha sido suspendida';
-				break;
-			case 'over_request_rate_limit':
-				userMessage = 'Demasiados intentos. Por favor intenta más tarde';
-				break;
-			default:
-				// Keep original message for unknown errors
-				userMessage = error.message;
-		}
+		// Get translated error message
+		const userMessage = error.code
+			? getAuthErrorMessage(locale, error.code)
+			: error.message;
 
 		return {
 			error: {
@@ -70,7 +53,7 @@ export const login = async (
 			error: {
 				status: 500,
 				name: 'SessionError',
-				message: 'No session created after login'
+				message: t(locale, 'auth.errors.noSessionCreated')
 			}
 		};
 	}
@@ -85,7 +68,7 @@ export const login = async (
 			error: {
 				status: 500,
 				name: 'UserDataError',
-				message: 'Failed to fetch user data after login'
+				message: t(locale, 'auth.errors.userDataError')
 			}
 		};
 	}
@@ -103,11 +86,13 @@ export const login = async (
  * The username is stored in user metadata and will be used to create the profile.
  * @param supabase - Supabase client instance
  * @param credentials - Username, email, and password
+ * @param locale - User's locale for error messages (default: 'es')
  * @returns UserSessionResponse with session data or error
  */
 export const signin = async (
 	supabase: SupabaseClient<Database>,
-	{ username, email, password }: SigninRequest
+	{ username, email, password }: SigninRequest,
+	locale: string = 'es'
 ): Promise<UserSessionResponse> => {
 	const { data, error } = await supabase.auth.signUp({
 		email,
@@ -120,30 +105,10 @@ export const signin = async (
 	});
 
 	if (error) {
-		// Map Supabase error codes to user-friendly Spanish messages
-		let userMessage = error.message;
-
-		// Use error.code for reliable error identification
-		switch (error.code) {
-			case 'email_exists':
-				userMessage = 'Este email ya está registrado';
-				break;
-			case 'phone_exists':
-				userMessage = 'Este teléfono ya está registrado';
-				break;
-			case 'weak_password':
-				userMessage = 'La contraseña es muy débil. Usa al menos 6 caracteres';
-				break;
-			case 'signup_disabled':
-				userMessage = 'El registro de nuevos usuarios está deshabilitado';
-				break;
-			case 'over_request_rate_limit':
-				userMessage = 'Demasiados intentos. Por favor intenta más tarde';
-				break;
-			default:
-				// Keep original message for unknown errors
-				userMessage = error.message;
-		}
+		// Get translated error message
+		const userMessage = error.code
+			? getAuthErrorMessage(locale, error.code)
+			: error.message;
 
 		return {
 			error: {
@@ -159,7 +124,7 @@ export const signin = async (
 			error: {
 				status: 500,
 				name: 'SessionError',
-				message: 'No session created after registration'
+				message: t(locale, 'auth.errors.noSessionCreated')
 			}
 		};
 	}
@@ -174,7 +139,7 @@ export const signin = async (
 			error: {
 				status: 500,
 				name: 'UserDataError',
-				message: 'Failed to fetch user data after registration'
+				message: t(locale, 'auth.errors.userDataError')
 			}
 		};
 	}

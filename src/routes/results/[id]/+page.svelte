@@ -1,6 +1,12 @@
 <script lang="ts">
 	import ResultsTable from '$lib/components/ResultsTable.svelte';
 	import SelectQueryParam from '$lib/components/SelectQueryParam.svelte';
+	import { t } from '$lib/i18n';
+	import {
+		translateCategory,
+		translateGender,
+		translateLength
+	} from '$lib/i18n/category-translations';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -9,27 +15,27 @@
 	const raceCategoryAgeOptions = $derived(
 		data.event.supportedRaceCategories?.map((category) => ({
 			value: category.id,
-			t: category.name // TODO: Add i18n translations
+			t: translateCategory(category.name)
 		})) || []
 	);
 
 	const raceCategoryLengthOptions = $derived(
 		data.event.supportedRaceCategoryLengths?.map((category) => ({
 			value: category.id,
-			t: category.name // TODO: Add i18n translations
+			t: translateLength(category.name)
 		})) || []
 	);
 
 	const raceCategoryGenderOptions = $derived(
 		data.event.supportedRaceCategoryGenders?.map((category) => ({
 			value: category.id,
-			t: category.name // TODO: Add i18n translations
+			t: translateGender(category.name)
 		})) || []
 	);
 </script>
 
 <svelte:head>
-	<title>{data.event.name} - Resultados - ACS</title>
+	<title>{data.event.name} - {$t('events.results.title')} - ACS</title>
 </svelte:head>
 
 <section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
@@ -38,17 +44,17 @@
 	<div class="mb-4 flex gap-3 flex-wrap">
 		<SelectQueryParam
 			name="category"
-			title="Categoría"
+			title={$t('races.filters.category')}
 			options={raceCategoryAgeOptions}
 		/>
 		<SelectQueryParam
 			name="gender"
-			title="Género"
+			title={$t('races.filters.gender')}
 			options={raceCategoryGenderOptions}
 		/>
 		<SelectQueryParam
 			name="length"
-			title="Distancia"
+			title={$t('races.filters.distance')}
 			options={raceCategoryLengthOptions}
 		/>
 	</div>
@@ -58,10 +64,10 @@
 	{:else}
 		<div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
 			<p class="text-gray-600 text-lg mb-2">
-				No hay resultados disponibles para esta combinación de filtros
+				{$t('races.noResults.title')}
 			</p>
 			<p class="text-gray-500 text-sm">
-				Intenta seleccionar otra categoría, género o distancia
+				{$t('races.noResults.suggestion')}
 			</p>
 		</div>
 	{/if}

@@ -46,6 +46,15 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - Domain types are used throughout the application (components, pages, stores)
    - Database types (snake_case) are ONLY used in services and adapters
 
+4. **Keep hooks.server.ts Lightweight**
+   - `hooks.server.ts` should be easy to read and maintain as it runs on every request
+   - Extract utility functions to appropriate modules (`$lib/i18n/`, `$lib/utils/`, etc.)
+   - Keep only the core logic: Supabase client setup, session management, locale detection
+   - All helper functions should be moved to dedicated utility files:
+     - Locale detection → `$lib/i18n/locale.ts`
+     - Cookie management → `$lib/utils/cookies.ts`
+     - Other utilities → appropriate `$lib/utils/` files
+
 ## Development Commands
 
 ```bash
@@ -95,8 +104,12 @@ npm run seed:users   # Seed test users (run after supabase db reset)
   - `server/` - Server-side utilities (Supabase client creation)
   - `stores/` - Svelte stores for global state (alert-store)
   - `constants/` - Application constants (urls)
-  - `utils/` - Utility functions (dates, session)
-  - `i18n/` - Internationalization (planned for future)
+  - `utils/` - Utility functions (dates, session, cookies)
+  - `i18n/` - Internationalization
+    - `locale.ts` - Locale detection and validation utilities (parseAcceptLanguage, isSupportedLocale)
+    - `server.ts` - Server-side translation helpers (t, getAuthErrorMessage)
+    - `index.ts` - Client-side i18n configuration (sveltekit-i18n)
+    - `locales/` - Translation JSON files (es, en)
 - **`src/routes/`** - SvelteKit file-based routing
   - `+layout.svelte` - Root layout wrapper with Header and GlobalAlert
   - `+layout.server.ts` - Server load function for user authentication state
@@ -952,3 +965,4 @@ export const load: PageServerLoad = async ({ url }) => {
 - Email verification flow
 - Password reset functionality
 - Afer complete a task after the summary, ask me if I want to update the claude.md file
+- After every task please use playwright to test the modified screens to check that everyting is implemented correctly. If you find any issue please iterate until fix it

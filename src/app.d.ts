@@ -13,6 +13,7 @@ declare global {
 				session: Session | null;
 				user: UserWithRelations | null;
 			}>;
+			locale: string;
 		}
 		// interface PageData {}
 		// interface PageState {}

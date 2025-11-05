@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { login } from '$lib/services/users-management';
 import { Urls } from '$lib/constants/urls';
+import { t } from '$lib/i18n/server';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -19,13 +20,13 @@ export const actions = {
 
 		if (!email || !password) {
 			return fail(400, {
-				error: 'Email and password are required',
+				error: t(locals.locale, 'auth.errors.emailPasswordRequired'),
 				email
 			});
 		}
 
 		// Login using Supabase Auth (cookies are automatically managed by Supabase)
-		const loginResponse = await login(locals.supabase, { email, password });
+		const loginResponse = await login(locals.supabase, { email, password }, locals.locale);
 
 		if (loginResponse.error) {
 			console.error('[LOGIN ERROR]', {

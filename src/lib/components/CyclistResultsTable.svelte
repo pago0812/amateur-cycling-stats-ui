@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { RaceResultWithRelations } from '$lib/types/domain';
 	import { formatDateToMMDD } from '$lib/utils/dates';
+	import { t } from '$lib/i18n';
+	import { translateCategory, translateLength } from '$lib/i18n/category-translations';
 
 	let { raceResults }: { raceResults: RaceResultWithRelations[] } = $props();
 
@@ -16,37 +18,37 @@
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Fecha
+					{$t('cyclists.table.date')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Posición
+					{$t('cyclists.table.position')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Carrera
+					{$t('cyclists.table.race')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Distancia
+					{$t('cyclists.table.distance')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Ranking
+					{$t('cyclists.table.ranking')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Categoría
+					{$t('cyclists.table.category')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Puntos
+					{$t('cyclists.table.points')}
 				</th>
 			</tr>
 		</thead>
@@ -68,13 +70,15 @@
 						</a>
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-						{result.race?.raceCategoryLength?.name || '-'}
+						{result.race?.raceCategoryLength?.name
+							? translateLength(result.race.raceCategoryLength.name)
+							: '-'}
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						{result.race?.raceRanking?.name || '-'}
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-						{result.race?.raceCategory?.name || '-'}
+						{result.race?.raceCategory?.name ? translateCategory(result.race.raceCategory.name) : '-'}
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						{result.rankingPoint?.points || '-'}

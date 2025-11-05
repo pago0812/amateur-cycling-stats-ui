@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Urls } from '$lib/constants/urls';
 	import type { UserWithRelations } from '$lib/types/domain';
+	import { t } from '$lib/i18n';
 
 	let { user = null }: { user?: UserWithRelations | null } = $props();
 	let mobileMenuOpen = $state(false);
@@ -25,13 +26,13 @@
 			<!-- Desktop Navigation -->
 			<div class="hidden sm:flex sm:gap-4">
 				<a href={Urls.HOME} class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
-					Inicio
+					{$t('common.navigation.home')}
 				</a>
 				<a
 					href={Urls.RESULTS}
 					class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
 				>
-					Resultados
+					{$t('common.navigation.results')}
 				</a>
 
 				{#if user}
@@ -39,11 +40,11 @@
 						href={Urls.PORTAL}
 						class="px-3 py-2 rounded-md text-sm font-bold hover:bg-blue-700"
 					>
-						Cuenta
+						{$t('common.navigation.account')}
 					</a>
 				{:else}
 					<a href={Urls.LOGIN} class="px-3 py-2 rounded-md text-sm font-bold hover:bg-blue-700">
-						Iniciar sesión
+						{$t('common.navigation.login')}
 					</a>
 				{/if}
 			</div>
@@ -55,7 +56,7 @@
 					class="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-700 focus:outline-none"
 					aria-expanded={mobileMenuOpen}
 				>
-					<span class="sr-only">Abrir menú</span>
+					<span class="sr-only">{$t('common.navigation.openMenu')}</span>
 					<!-- Hamburger icon -->
 					<svg
 						class="h-6 w-6"
@@ -95,21 +96,21 @@
 					class="text-white hover:text-blue-200"
 					onclick={closeMobileMenu}
 				>
-					Inicio
+					{$t('common.navigation.home')}
 				</a>
 				<a
 					href={Urls.RESULTS}
 					class="text-white hover:text-blue-200"
 					onclick={closeMobileMenu}
 				>
-					Resultados
+					{$t('common.navigation.results')}
 				</a>
 				<a
 					href={Urls.TEAMS}
 					class="text-white hover:text-blue-200"
 					onclick={closeMobileMenu}
 				>
-					Equipos
+					{$t('common.navigation.teams')}
 				</a>
 
 				{#if user}
@@ -118,7 +119,7 @@
 						class="text-white font-bold hover:text-blue-200"
 						onclick={closeMobileMenu}
 					>
-						Cuenta
+						{$t('common.navigation.account')}
 					</a>
 				{:else}
 					<a
@@ -126,7 +127,7 @@
 						class="text-white font-bold hover:text-blue-200"
 						onclick={closeMobileMenu}
 					>
-						Iniciar sesión
+						{$t('common.navigation.login')}
 					</a>
 				{/if}
 			</nav>

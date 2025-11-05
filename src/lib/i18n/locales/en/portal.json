@@ -1,0 +1,12 @@
+{
+	"onboarding": {
+		"title": "Choose your profile",
+		"cyclist": "Cyclist",
+		"organizer": "Organizer",
+		"submit": "Choose"
+	},
+	"dashboard": {
+		"title": "My account",
+		"welcome": "Welcome"
+	}
+}

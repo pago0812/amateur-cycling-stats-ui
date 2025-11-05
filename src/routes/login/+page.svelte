@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { Urls } from '$lib/constants/urls';
 	import { alertStore } from '$lib/stores/alert-store';
+	import { t } from '$lib/i18n';
 	import type { ActionData } from './$types';
 
 	let { form }: { form: ActionData } = $props();
@@ -15,12 +16,12 @@
 </script>
 
 <svelte:head>
-	<title>Iniciar sesión - ACS</title>
+	<title>{$t('common.pageTitle.login')}</title>
 </svelte:head>
 
 <section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
 	<div class="flex flex-col items-center">
-		<h2 class="text-3xl font-bold mb-8">Iniciar sesión</h2>
+		<h2 class="text-3xl font-bold mb-8">{$t('auth.login.title')}</h2>
 
 		<form
 			method="POST"
@@ -29,7 +30,7 @@
 		>
 			<div class="flex flex-col gap-2">
 				<label for="email" class="text-sm font-medium text-gray-700">
-					Correo electrónico
+					{$t('auth.login.email')}
 				</label>
 				<input
 					type="email"
@@ -43,7 +44,7 @@
 
 			<div class="flex flex-col gap-2">
 				<label for="password" class="text-sm font-medium text-gray-700">
-					Contraseña
+					{$t('auth.login.password')}
 				</label>
 				<input
 					type="password"
@@ -59,14 +60,14 @@
 					type="submit"
 					class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium"
 				>
-					Entrar
+					{$t('auth.login.submit')}
 				</button>
 
 				<a
 					href={Urls.SIGNIN}
 					class="text-blue-600 hover:text-blue-800 hover:underline"
 				>
-					¿No tienes cuenta? Regístrate
+					{$t('auth.login.noAccount')}
 				</a>
 			</div>
 		</form>

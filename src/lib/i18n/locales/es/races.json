@@ -1,0 +1,56 @@
+{
+	"filters": {
+		"category": "Categoría",
+		"gender": "Género",
+		"distance": "Distancia"
+	},
+	"table": {
+		"position": "Posición",
+		"name": "Nombre",
+		"time": "Tiempo",
+		"points": "Puntos"
+	},
+	"noResults": {
+		"title": "No hay resultados disponibles para esta combinación de filtros",
+		"suggestion": "Intenta seleccionar otra categoría, género o distancia"
+	},
+	"categories": {
+		"ABS": "Absoluta",
+		"ELITE": "Élite",
+		"ES_19_23": "Sub 23",
+		"JA_13_14": "Juvenil A 13-14",
+		"JA_15_16": "Juvenil A 15-16",
+		"JA_17_18": "Juvenil A 17-18",
+		"MA": "Máster A",
+		"MB": "Máster B",
+		"MC": "Máster C",
+		"MD": "Máster D",
+		"ME": "Máster E",
+		"R_18_29": "18-29",
+		"R_18_34": "18-34",
+		"R_18_39": "18-39",
+		"R_30_34": "30-34",
+		"R_30_39": "30-39",
+		"R_35_39": "35-39",
+		"R_40_44": "40-44",
+		"R_40_49": "40-49",
+		"R_45_49": "45-49",
+		"R_50_54": "50-54",
+		"R_50_59": "50-59",
+		"R_55_59": "55-59",
+		"R_60_64": "60-64",
+		"R_60_69": "60-69",
+		"R_65_69": "65-69"
+	},
+	"genders": {
+		"FEMALE": "Femenino",
+		"MALE": "Masculino",
+		"OPEN": "Abierto"
+	},
+	"lengths": {
+		"LONG": "Larga",
+		"SHORT": "Corta",
+		"SPRINT": "Sprint",
+		"UNIQUE": "Única"
+	}
+}

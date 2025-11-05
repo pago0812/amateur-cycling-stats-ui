@@ -2,15 +2,43 @@ import { createSupabaseServerClient } from '$lib/server/supabase';
 import type { Handle } from '@sveltejs/kit';
 import type { UserWithRelationsRpcResponse } from '$lib/types/db';
 import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
+import { setLocaleCookie } from '$lib/utils/cookies';
+import {
+	parseAcceptLanguage,
+	isSupportedLocale,
+	LOCALE_COOKIE_NAME,
+	DEFAULT_LOCALE
+} from '$lib/i18n/locale';
 
 /**
- * SvelteKit hooks for handling authentication and session management.
+ * SvelteKit hooks for handling authentication, session management, and i18n.
  * This runs on every request and validates the session, refreshing cookies automatically.
- * The authenticated user data is attached to event.locals for use in load functions.
+ * The authenticated user data and locale are attached to event.locals for use in load functions.
  */
 export const handle: Handle = async ({ event, resolve }) => {
 	// Create Supabase client with cookie management
 	event.locals.supabase = createSupabaseServerClient(event.cookies);
+
+	// Detect and store locale
+	let locale = event.cookies.get(LOCALE_COOKIE_NAME);
+
+	if (!locale) {
+		// No cookie set, detect from Accept-Language header
+		const acceptLanguage = event.request.headers.get('accept-language');
+		locale = parseAcceptLanguage(acceptLanguage);
+
+		// Store in cookie for future requests (1 year expiry)
+		setLocaleCookie(event.cookies, LOCALE_COOKIE_NAME, locale);
+	}
+
+	// Validate locale is supported, fallback to default
+	if (!isSupportedLocale(locale)) {
+		locale = DEFAULT_LOCALE;
+		setLocaleCookie(event.cookies, LOCALE_COOKIE_NAME, locale);
+	}
+
+	// Store locale in event.locals for use in load functions and API routes
+	event.locals.locale = locale;
 
 	/**
 	 * Get the current session and user.

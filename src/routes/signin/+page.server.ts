@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { signin } from '$lib/services/users-management';
 import { Urls } from '$lib/constants/urls';
+import { t } from '$lib/i18n/server';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -20,14 +21,18 @@ export const actions = {
 
 		if (!username || !email || !password) {
 			return fail(400, {
-				error: 'All fields are required',
+				error: t(locals.locale, 'auth.errors.allFieldsRequired'),
 				username,
 				email
 			});
 		}
 
 		// Register using Supabase Auth (cookies are automatically managed by Supabase)
-		const signinResponse = await signin(locals.supabase, { username, email, password });
+		const signinResponse = await signin(
+			locals.supabase,
+			{ username, email, password },
+			locals.locale
+		);
 
 		if (signinResponse.error) {
 			return fail(400, {

@@ -1,0 +1,56 @@
+{
+	"filters": {
+		"category": "Category",
+		"gender": "Gender",
+		"distance": "Distance"
+	},
+	"table": {
+		"position": "Position",
+		"name": "Name",
+		"time": "Time",
+		"points": "Points"
+	},
+	"noResults": {
+		"title": "No results available for this filter combination",
+		"suggestion": "Try selecting another category, gender or distance"
+	},
+	"categories": {
+		"ABS": "Absolute",
+		"ELITE": "Elite",
+		"ES_19_23": "Under 23",
+		"JA_13_14": "Junior A 13-14",
+		"JA_15_16": "Junior A 15-16",
+		"JA_17_18": "Junior A 17-18",
+		"MA": "Master A",
+		"MB": "Master B",
+		"MC": "Master C",
+		"MD": "Master D",
+		"ME": "Master E",
+		"R_18_29": "18-29",
+		"R_18_34": "18-34",
+		"R_18_39": "18-39",
+		"R_30_34": "30-34",
+		"R_30_39": "30-39",
+		"R_35_39": "35-39",
+		"R_40_44": "40-44",
+		"R_40_49": "40-49",
+		"R_45_49": "45-49",
+		"R_50_54": "50-54",
+		"R_50_59": "50-59",
+		"R_55_59": "55-59",
+		"R_60_64": "60-64",
+		"R_60_69": "60-69",
+		"R_65_69": "65-69"
+	},
+	"genders": {
+		"FEMALE": "Female",
+		"MALE": "Male",
+		"OPEN": "Open"
+	},
+	"lengths": {
+		"LONG": "Long",
+		"SHORT": "Short",
+		"SPRINT": "Sprint",
+		"UNIQUE": "Unique"
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"home": {
+		"title": "Upcoming events",
+		"noEvents": "No upcoming events available.",
+		"date": "Date",
+		"location": "Location",
+		"status": "Status"
+	},
+	"results": {
+		"title": "Results",
+		"noEvents": "No events to display"
+	}
+}

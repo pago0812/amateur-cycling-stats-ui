@@ -1,21 +1,22 @@
 <script lang="ts">
 	import EventResultsTable from '$lib/components/EventResultsTable.svelte';
 	import SelectQueryParam from '$lib/components/SelectQueryParam.svelte';
+	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
-	<title>Resultados - ACS</title>
+	<title>{$t('common.pageTitle.results')}</title>
 </svelte:head>
 
 <section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
-	<h2 class="text-3xl font-bold mb-8">Resultados</h2>
+	<h2 class="text-3xl font-bold mb-8">{$t('events.results.title')}</h2>
 
 	<div class="mb-4 flex gap-4">
 		<SelectQueryParam
-			title="Año"
+			title={$t('common.general.year')}
 			name="year"
 			options={[
 				{ value: '2025', t: '2025' },
@@ -33,7 +34,7 @@
 			{data.error}
 		</div>
 	{:else if data.events.length === 0}
-		<div class="text-center py-8 text-gray-500">No hay eventos para mostrar</div>
+		<div class="text-center py-8 text-gray-500">{$t('events.results.noEvents')}</div>
 	{:else}
 		<EventResultsTable events={data.events} />
 	{/if}

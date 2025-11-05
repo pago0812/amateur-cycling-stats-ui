@@ -1,0 +1,24 @@
+{
+	"navigation": {
+		"home": "Home",
+		"results": "Results",
+		"cyclists": "Cyclists",
+		"teams": "Teams",
+		"ranking": "Ranking",
+		"account": "Account",
+		"login": "Log in",
+		"openMenu": "Open menu"
+	},
+	"general": {
+		"year": "Year",
+		"error": "Error",
+		"loading": "Loading..."
+	},
+	"pageTitle": {
+		"home": "Home - ACS",
+		"results": "Results - ACS",
+		"login": "Log in - ACS",
+		"signin": "Sign up - ACS",
+		"portal": "Account - ACS"
+	}
+}

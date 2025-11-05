@@ -1,0 +1,18 @@
+{
+	"profile": {
+		"title": "Cyclist profile",
+		"birthYear": "Birth year",
+		"gender": "Gender",
+		"results": "Results",
+		"noResults": "No results available"
+	},
+	"table": {
+		"date": "Date",
+		"position": "Position",
+		"race": "Race",
+		"distance": "Distance",
+		"ranking": "Ranking",
+		"category": "Category",
+		"points": "Points"
+	}
+}

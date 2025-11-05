@@ -29,8 +29,7 @@ import {
 	seedEvents as eventsData,
 	seedRaces as racesData,
 	seedRaceResults as raceResultsData,
-	type TestUser,
-	type AnonymousCyclist
+	type TestUser
 } from './seed-data';
 
 // ============================================================================
@@ -207,9 +206,7 @@ async function getRaceCategoryGenderId(genderName: string): Promise<string> {
 		.single();
 
 	if (error || !data) {
-		throw new Error(
-			`Failed to find race category gender: ${genderName}. Error: ${error?.message}`
-		);
+		throw new Error(`Failed to find race category gender: ${genderName}. Error: ${error?.message}`);
 	}
 
 	return data.id;
@@ -226,9 +223,7 @@ async function getRaceCategoryLengthId(lengthName: string): Promise<string> {
 		.single();
 
 	if (error || !data) {
-		throw new Error(
-			`Failed to find race category length: ${lengthName}. Error: ${error?.message}`
-		);
+		throw new Error(`Failed to find race category length: ${lengthName}. Error: ${error?.message}`);
 	}
 
 	return data.id;
@@ -275,7 +270,11 @@ async function getRankingPointId(rankingId: string, place: number): Promise<stri
  * Get cyclist ID by user ID
  */
 async function getCyclistIdByUserId(userId: string): Promise<string> {
-	const { data, error } = await supabase.from('cyclists').select('id').eq('user_id', userId).single();
+	const { data, error } = await supabase
+		.from('cyclists')
+		.select('id')
+		.eq('user_id', userId)
+		.single();
 
 	if (error || !data) {
 		throw new Error(`Failed to find cyclist for user: ${userId}. Error: ${error?.message}`);
@@ -478,8 +477,7 @@ async function seedEvents(): Promise<void> {
 		const { error: catError } = await supabase
 			.from('event_supported_categories')
 			.insert(categoriesData);
-		if (catError)
-			throw new Error(`Failed to create supported categories: ${catError.message}`);
+		if (catError) throw new Error(`Failed to create supported categories: ${catError.message}`);
 
 		const gendersData = genderIds.map((genderId) => ({
 			event_id: event.id,
@@ -557,9 +555,7 @@ async function seedRaceResults(cyclistIdMap: Map<string, string>): Promise<void>
 		if (result.cyclistIdentifier.startsWith('anon-')) {
 			const mappedId = cyclistIdMap.get(result.cyclistIdentifier);
 			if (!mappedId) {
-				throw new Error(
-					`Failed to find anonymous cyclist ID for: ${result.cyclistIdentifier}`
-				);
+				throw new Error(`Failed to find anonymous cyclist ID for: ${result.cyclistIdentifier}`);
 			}
 			cyclistId = mappedId;
 		} else {
@@ -657,7 +653,9 @@ async function seedDatabase(): Promise<void> {
 		console.log('   - 2 Organizations (from seed.sql)');
 		console.log(`   - ${anonymousCyclistsData.length} Anonymous cyclists`);
 		console.log(`   - ${eventsData.length} Events (3 past, 1 future, 1 draft)`);
-		console.log(`   - ${racesData.length} Races (4 per event, ELITE/MA only, MALE/FEMALE, LONG/SHORT)`);
+		console.log(
+			`   - ${racesData.length} Races (4 per event, ELITE/MA only, MALE/FEMALE, LONG/SHORT)`
+		);
 		console.log(`   - ${raceResultsData.length} Race Results (5 per race)`);
 		console.log('   - All 4 Ranking Systems with points (from seed.sql)');
 		console.log('');

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { RaceResultWithRelations } from '$lib/types/domain';
+	import { t } from '$lib/i18n';
 
 	let { raceResults }: { raceResults: RaceResultWithRelations[] } = $props();
 </script>
@@ -11,22 +12,22 @@
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Posición
+					{$t('races.table.position')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Nombre
+					{$t('races.table.name')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Tiempo
+					{$t('races.table.time')}
 				</th>
 				<th
 					class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 				>
-					Puntos
+					{$t('races.table.points')}
 				</th>
 			</tr>
 		</thead>

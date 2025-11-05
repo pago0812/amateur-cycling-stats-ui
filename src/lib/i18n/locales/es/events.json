@@ -1,0 +1,13 @@
+{
+	"home": {
+		"title": "Próximos eventos",
+		"noEvents": "No hay eventos próximos disponibles.",
+		"date": "Fecha",
+		"location": "Ubicación",
+		"status": "Estado"
+	},
+	"results": {
+		"title": "Resultados",
+		"noEvents": "No hay eventos para mostrar"
+	}
+}
