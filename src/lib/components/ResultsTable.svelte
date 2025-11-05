@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { RaceResult } from '$lib/types/entities/race-results';
+	import type { RaceResultWithRelations } from '$lib/types/domain';
 
-	let { raceResults }: { raceResults: RaceResult[] } = $props();
+	let { raceResults }: { raceResults: RaceResultWithRelations[] } = $props();
 </script>
 
 <div class="overflow-x-auto bg-white shadow-md rounded-lg">
@@ -31,19 +31,23 @@
 			</tr>
 		</thead>
 		<tbody class="bg-white divide-y divide-gray-200">
-			{#each raceResults as result (result.documentId)}
+			{#each raceResults as result (result.id)}
 				<tr class="hover:bg-gray-50">
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						{result.place}
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-						<a
-							href="/cyclists/{result.cyclist.documentId}"
-							class="text-blue-600 hover:text-blue-800 hover:underline"
-						>
-							{result.cyclist.lastName}
-							{result.cyclist.name}
-						</a>
+						{#if result.cyclist}
+							<a
+								href="/cyclists/{result.cyclist.id}"
+								class="text-blue-600 hover:text-blue-800 hover:underline"
+							>
+								{result.cyclist.lastName}
+								{result.cyclist.name}
+							</a>
+						{:else}
+							-
+						{/if}
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						{result.time || '-'}

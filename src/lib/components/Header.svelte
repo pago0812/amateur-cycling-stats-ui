@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Urls } from '$lib/constants/urls';
+	import type { UserWithRelations } from '$lib/types/domain';
 
-	let { user = null }: { user?: { id: number; username: string } | null } = $props();
+	let { user = null }: { user?: UserWithRelations | null } = $props();
 	let mobileMenuOpen = $state(false);
 
 	function toggleMobileMenu() {

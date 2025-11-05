@@ -8,21 +8,21 @@
 	// Map categories to select options with translations
 	const raceCategoryAgeOptions = $derived(
 		data.event.supportedRaceCategories?.map((category) => ({
-			value: category.documentId,
+			value: category.id,
 			t: category.name // TODO: Add i18n translations
 		})) || []
 	);
 
 	const raceCategoryLengthOptions = $derived(
 		data.event.supportedRaceCategoryLengths?.map((category) => ({
-			value: category.documentId,
+			value: category.id,
 			t: category.name // TODO: Add i18n translations
 		})) || []
 	);
 
 	const raceCategoryGenderOptions = $derived(
 		data.event.supportedRaceCategoryGenders?.map((category) => ({
-			value: category.documentId,
+			value: category.id,
 			t: category.name // TODO: Add i18n translations
 		})) || []
 	);

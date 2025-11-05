@@ -1,11 +1,11 @@
 import { getPastEvents } from '$lib/services/events';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const year = url.searchParams.get('year') || undefined;
 
 	try {
-		const events = await getPastEvents({ year });
+		const events = await getPastEvents(locals.supabase, { year });
 		return {
 			events
 		};

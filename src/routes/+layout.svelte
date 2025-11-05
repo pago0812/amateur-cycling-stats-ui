@@ -3,8 +3,9 @@
 	import Header from '$lib/components/Header.svelte';
 	import GlobalAlert from '$lib/components/GlobalAlert.svelte';
 	import type { LayoutData } from './$types';
+	import type { Snippet } from 'svelte';
 
-	let { data }: { data: LayoutData } = $props();
+	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 </script>
 
 <svelte:head>
@@ -15,6 +16,6 @@
 	<Header user={data.user} />
 	<GlobalAlert />
 	<main>
-		<slot />
+		{@render children()}
 	</main>
 </div>

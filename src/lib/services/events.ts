@@ -1,93 +1,104 @@
-import qs from 'qs';
-import type { Event } from '$lib/types/entities/events';
-import { EventStatusEnum } from '$lib/types/collections/events';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/database.types';
+import type { Event, EventWithRelations } from '$lib/types/domain';
+import type { EventWithCategoriesResponse } from '$lib/types/db';
+import { adaptEventFromDb, adaptEventWithRelationsFromDb } from '$lib/adapters';
+
+type TypedSupabaseClient = SupabaseClient<Database>;
 
 interface GetPastEventsParams {
 	year?: string;
 }
 
-const getPastEvents = async (params: GetPastEventsParams) => {
-	const queryYear = !isNaN(Number(params.year)) ? Number(params.year) : new Date().getFullYear();
-
-	const query = {
-		sort: 'dateTime:desc',
-		filters: {
-			year: {
-				$eq: queryYear
-			},
-			eventStatus: {
-				$eq: EventStatusEnum.FINISHED
-			}
-		}
-	};
-	const queryString = qs.stringify(query);
-	return getEvents(queryString);
-};
-
-const getFutureEvents = async () => {
-	console.log('getFutureEvents');
-	const query = {
-		sort: 'dateTime:asc',
-		filters: {
-			$or: [
-				{
-					eventStatus: {
-						$eq: EventStatusEnum.AVAILABLE
-					}
-				},
-				{
-					eventStatus: {
-						$eq: EventStatusEnum.SOLD_OUT
-					}
-				}
-			]
-		}
-	};
-	const queryString = qs.stringify(query);
-	return getEvents(queryString);
-};
-
-const getEvents = async (query: string) => {
-	const eventResponse = await fetch(`${import.meta.env.VITE_SERVICE_URL}/api/events?${query}`, {
-		cache: 'no-store'
-	});
-
-	if (!eventResponse.ok) {
-		throw eventResponse.statusText;
-	}
-
-	const events: Event[] = (await eventResponse.json()).data;
-
-	return events;
-};
-
 interface GetEventByIdParams {
 	id: string;
 }
 
-const getEventWithCategoriesById = async (params: GetEventByIdParams) => {
-	const query = {
-		populate: [
-			'supportedRaceCategories',
-			'supportedRaceCategoryGenders',
-			'supportedRaceCategoryLengths'
-		]
-	};
+/**
+ * Get past events filtered by year.
+ * Returns domain Event types with camelCase fields.
+ * Uses Supabase SDK with automatic RLS policies for visibility.
+ */
+export async function getPastEvents(
+	supabase: TypedSupabaseClient,
+	params: GetPastEventsParams
+): Promise<Event[]> {
+	const queryYear = !isNaN(Number(params.year)) ? Number(params.year) : new Date().getFullYear();
 
-	const queryString = qs.stringify(query);
+	const { data, error } = await supabase
+		.from('events')
+		.select('*')
+		.eq('event_status', 'FINISHED')
+		.eq('year', queryYear)
+		.order('date_time', { ascending: false });
 
-	const eventResponse = await fetch(
-		`${import.meta.env.VITE_SERVICE_URL}/api/events/${params.id}?${queryString}`,
-		{
-			cache: 'no-store'
-		}
-	);
-	if (!eventResponse.ok) {
-		throw eventResponse.statusText;
+	if (error) {
+		throw new Error(`Error fetching past events: ${error.message}`);
 	}
 
-	const event: Event = (await eventResponse.json()).data;
-	return event;
-};
+	// Use adapter to transform DB types → Domain types
+	return (data || []).map(adaptEventFromDb);
+}
 
-export { getPastEvents, getFutureEvents, getEventWithCategoriesById };
+/**
+ * Get future events (AVAILABLE or SOLD_OUT status).
+ * Returns domain Event types with camelCase fields.
+ * Uses Supabase SDK with automatic RLS policies for visibility.
+ */
+export async function getFutureEvents(supabase: TypedSupabaseClient): Promise<Event[]> {
+	const { data, error } = await supabase
+		.from('events')
+		.select('*')
+		.in('event_status', ['AVAILABLE', 'SOLD_OUT'])
+		.order('date_time', { ascending: true });
+
+	if (error) {
+		throw new Error(`Error fetching future events: ${error.message}`);
+	}
+
+	// Use adapter to transform DB types → Domain types
+	return (data || []).map(adaptEventFromDb);
+}
+
+/**
+ * Get event by ID with populated junction tables (categories, genders, lengths).
+ * Returns domain EventWithRelations type with camelCase fields.
+ * Single PostgreSQL query with JOINs - much faster than Strapi's multiple requests.
+ */
+export async function getEventWithCategoriesById(
+	supabase: TypedSupabaseClient,
+	params: GetEventByIdParams
+): Promise<EventWithRelations> {
+	const { data, error } = await supabase
+		.from('events')
+		.select(
+			`
+			*,
+			supportedCategories:event_supported_categories(
+				race_categories(*)
+			),
+			supportedGenders:event_supported_genders(
+				race_category_genders(*)
+			),
+			supportedLengths:event_supported_lengths(
+				race_category_lengths(*)
+			)
+		`
+		)
+		.eq('id', params.id)
+		.single();
+
+	if (error) {
+		if (error.code === 'PGRST116') {
+			throw new Error('Event not found');
+		}
+		throw new Error(`Error fetching event: ${error.message}`);
+	}
+
+	if (!data) {
+		throw new Error('Event not found');
+	}
+
+	// Use adapter to transform complex response → Domain type
+	return adaptEventWithRelationsFromDb(data as EventWithCategoriesResponse);
+}

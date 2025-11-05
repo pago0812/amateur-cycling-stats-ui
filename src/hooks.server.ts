@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from '$lib/server/supabase';
 import type { Handle } from '@sveltejs/kit';
-import type { UserWithRelations } from './app.d';
+import type { UserWithRelationsRpcResponse } from '$lib/types/db';
+import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
 
 /**
  * SvelteKit hooks for handling authentication and session management.
@@ -26,16 +27,28 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 
 		// Fetch enriched user data using our PostgreSQL function
-		const { data: userData, error } = await event.locals.supabase.rpc('get_user_with_relations', {
-			user_uuid: session.user.id
-		});
+		const { data: rpcResponse, error } = await event.locals.supabase.rpc(
+			'get_user_with_relations',
+			{
+				user_uuid: session.user.id
+			}
+		);
 
 		if (error) {
 			console.error('Error fetching user with relations:', error);
 			return { session, user: null };
 		}
 
-		return { session, user: userData as UserWithRelations | null };
+		if (!rpcResponse) {
+			return { session, user: null };
+		}
+
+		// Transform snake_case DB response to camelCase domain type
+		const userData = adaptUserWithRelationsFromRpc(
+			rpcResponse as unknown as UserWithRelationsRpcResponse
+		);
+
+		return { session, user: userData };
 	};
 
 	// Resolve the request

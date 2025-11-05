@@ -1,36 +1,43 @@
-import qs from 'qs';
-import type { RaceResult } from '$lib/types/entities/race-results';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/database.types';
+import type { RaceResultWithRelations } from '$lib/types/domain';
+import type { RaceResultWithRelationsResponse } from '$lib/types/db';
+import { adaptRaceResultWithRelationsFromDb } from '$lib/adapters';
+
+type TypedSupabaseClient = SupabaseClient<Database>;
 
 interface GetRaceResultsByRaceIdParams {
-	id: string;
+	raceId: string;
 }
 
-export const getRaceResultsByRaceId = async ({
-	id
-}: GetRaceResultsByRaceIdParams): Promise<RaceResult[]> => {
-	const query = {
-		filters: {
-			race: {
-				documentId: id
-			}
-		},
-		sort: 'place',
-		populate: ['cyclist', 'rankingPoint']
-	};
+/**
+ * Get race results by race ID with populated cyclist and ranking point data.
+ *
+ * Single PostgreSQL query with JOINs - much faster than Strapi's N+1 queries.
+ * Results are automatically sorted by place (ascending).
+ */
+export async function getRaceResultsByRaceId(
+	supabase: TypedSupabaseClient,
+	params: GetRaceResultsByRaceIdParams
+): Promise<RaceResultWithRelations[]> {
+	const { data, error } = await supabase
+		.from('race_results')
+		.select(
+			`
+			*,
+			cyclists(*),
+			ranking_points(*)
+		`
+		)
+		.eq('race_id', params.raceId)
+		.order('place', { ascending: true });
 
-	const queryString = qs.stringify(query);
-
-	const raceResultsResponse = await fetch(
-		`${import.meta.env.VITE_SERVICE_URL}/api/race-results?${queryString}`,
-		{
-			cache: 'no-store'
-		}
-	);
-
-	if (!raceResultsResponse.ok) {
-		throw new Error(raceResultsResponse.statusText);
+	if (error) {
+		throw new Error(`Error fetching race results: ${error.message}`);
 	}
 
-	const raceResults: RaceResult[] = (await raceResultsResponse.json()).data;
-	return raceResults;
-};
+	// Use adapter to transform DB types → Domain types
+	return (data || []).map((result) =>
+		adaptRaceResultWithRelationsFromDb(result as RaceResultWithRelationsResponse)
+	);
+}

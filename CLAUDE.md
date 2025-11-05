@@ -22,6 +22,30 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
 - **Testing**: Vitest (unit) + Playwright (e2e)
 - **Database Migrations**: Supabase CLI
 
+## Critical Project Rules
+
+1. **ALWAYS use Svelte 5 syntax** - This project uses Svelte 5, NOT Svelte 4
+   - ✅ Use `$props()` for component props
+   - ✅ Use `$state()` for reactive state
+   - ✅ Use `$derived()` for computed values
+   - ✅ Use `$effect()` for side effects
+   - ✅ Use `{@render children()}` for slot content (NOT `<slot />`)
+   - ✅ Use `children: Snippet` type for layout children
+   - ❌ NEVER use `export let` for props (Svelte 4 syntax)
+   - ❌ NEVER use `<slot />` (deprecated in Svelte 5)
+   - ❌ NEVER use `$:` reactive statements (use `$derived` or `$effect` instead)
+
+2. **Zero `any` Types Policy**
+   - **NEVER** use `any` type in the codebase
+   - All types must be explicit and type-safe
+   - Use explicit Supabase response types for complex queries
+
+3. **Domain Types Architecture**
+   - All domain entities use **camelCase** properties
+   - All domain entities use **`id` field ONLY** (no `documentId`, no dual naming)
+   - Domain types are used throughout the application (components, pages, stores)
+   - Database types (snake_case) are ONLY used in services and adapters
+
 ## Development Commands
 
 ```bash
@@ -59,9 +83,14 @@ npm run seed:users   # Seed test users (run after supabase db reset)
   - `components/` - Reusable Svelte components
   - `types/` - TypeScript definitions organized by domain
     - `database.types.ts` - **Auto-generated** Supabase types (regenerate after schema changes)
-    - `entities/` - Domain entities (Event, Race, Cyclist, RaceResult, RankingPoint, User, Role, Organization, Organizer)
-    - `collections/` - Enums and reference data (EventStatus, RaceCategory, Gender, Length, RaceRanking)
+    - `db/` - **Explicit DB type aliases** - TableNameDB types + Supabase response types (ALWAYS use these)
+    - `domain/` - **Domain entities** with camelCase properties (Event, Race, Cyclist, RaceResult, etc.)
+    - `entities/` - (Legacy) Old snake_case types, kept for reference
+    - `collections/` - Enums and reference data (EventStatus, RoleTypeEnum, etc.)
     - `services/` - Service response types (UserResponse, UserSessionResponse, etc.)
+  - `adapters/` - **Transform DB types (snake_case) to domain types (camelCase)**
+    - `common.adapter.ts` - Reusable transformation utilities
+    - Entity-specific adapters (events, races, race-results, cyclists, etc.)
   - `services/` - API service functions (events, races, cyclists, users, auth)
   - `server/` - Server-side utilities (Supabase client creation)
   - `stores/` - Svelte stores for global state (alert-store)
@@ -200,7 +229,127 @@ All services located in `src/lib/services/`:
   };
   ```
 
-**Type Organization:**
+**Type System Architecture (CRITICAL RULES):**
+
+1. **Zero `any` Types Policy**
+   - **NEVER** use `any` type in the codebase
+   - All types must be explicit and type-safe
+   - Use explicit Supabase response types for complex queries
+
+2. **Domain Types (src/lib/types/domain/)**
+   - All domain entities use **camelCase** properties (e.g., `dateTime`, `eventStatus`, `lastName`)
+   - All domain entities use **`id` field ONLY** (no `documentId`, no dual naming)
+   - Domain types are used throughout the application (components, pages, stores)
+   - Example:
+     ```typescript
+     // ✅ CORRECT - Domain type with camelCase and id only
+     export interface Event {
+       id: string;  // ONLY id, no documentId
+       name: string;
+       dateTime: string;  // camelCase
+       eventStatus: EventStatus;
+       isPublicVisible: boolean;
+       // ... all camelCase fields
+     }
+     ```
+
+3. **Database Type Aliases (src/lib/types/db/) - REQUIRED**
+   - **CRITICAL**: ALWAYS use explicit DB type aliases instead of `Tables<'table_name'>`
+   - Naming convention: `TableNameDB` (e.g., `CyclistDB`, `EventDB`, `RaceDB`)
+   - All DB types are exported from `$lib/types/db` for easy imports
+   - Each file groups related types (base DB type + Supabase response types)
+   - Example:
+     ```typescript
+     // ✅ CORRECT - Use explicit DB type alias
+     import type { CyclistDB, EventDB } from '$lib/types/db';
+
+     function adaptCyclist(dbCyclist: CyclistDB): Cyclist {
+       // Transform DB → Domain
+     }
+
+     // ❌ WRONG - Never use Tables<> directly
+     import type { Tables } from '$lib/types/database.types';
+     function adaptCyclist(dbCyclist: Tables<'cyclists'>): Cyclist { }
+     ```
+
+4. **Database Types (src/lib/types/database.types.ts)**
+   - Auto-generated from Supabase schema via `supabase gen types`
+   - Use **snake_case** (e.g., `date_time`, `event_status`, `last_name`)
+   - **DO NOT use `Tables<'table_name'>` directly** - use DB type aliases instead
+   - Only import `Database` type for Supabase client typing
+   - Import via: `import type { Database, TablesInsert } from '$lib/types/database.types'`
+
+5. **Supabase Response Types (Moved to src/lib/types/db/)**
+   - Explicit types for complex nested Supabase queries
+   - **NO `any` types allowed**
+   - Grouped with related DB types in the same file
+   - Used to type Supabase query results before adapter transformation
+   - Example:
+     ```typescript
+     // src/lib/types/db/events.db.ts
+     export type EventDB = Tables<'events'>;
+
+     // ✅ CORRECT - Response type extends DB type
+     export interface EventWithCategoriesResponse extends EventDB {
+       supportedCategories: Array<{
+         race_categories: {
+           id: string;
+           name: string;
+           created_at: string;
+           updated_at: string;
+         };
+       }>;
+     }
+     ```
+
+6. **Adapter Layer (src/lib/adapters/)**
+   - **REQUIRED** for all Supabase service methods
+   - Transforms snake_case DB fields → camelCase domain fields
+   - Keeps services clean and focused on business logic
+   - Common utilities in `common.adapter.ts` (mapTimestamps, adaptArray, etc.)
+   - Entity-specific adapters in separate files
+   - Example:
+     ```typescript
+     // ✅ CORRECT - Adapter transforms DB → Domain
+     export function adaptEventFromDb(dbEvent: Tables<'events'>): Event {
+       return {
+         id: dbEvent.id,
+         name: dbEvent.name,
+         dateTime: dbEvent.date_time,  // snake_case → camelCase
+         eventStatus: dbEvent.event_status as Event['eventStatus'],
+         ...mapTimestamps(dbEvent)
+       };
+     }
+     ```
+
+7. **Service Layer Pattern**
+   - Services work with Supabase SDK using DB type aliases
+   - **ALWAYS** use adapters to transform results to domain types
+   - Import DB types and response types from `$lib/types/db`
+   - Return domain types (camelCase) to consumers
+   - Example:
+     ```typescript
+     // ✅ CORRECT - Service uses DB types and adapters
+     import type { EventDB, EventWithCategoriesResponse } from '$lib/types/db';
+     import { adaptEventFromDb } from '$lib/adapters';
+
+     export async function getEventById(
+       supabase: TypedSupabaseClient,
+       params: GetEventByIdParams
+     ): Promise<Event> {
+       const { data, error } = await supabase
+         .from('events')
+         .select('*')
+         .eq('id', params.id)
+         .single();
+
+       if (error) throw new Error(`Error fetching event: ${error.message}`);
+
+       return adaptEventFromDb(data);  // Transform EventDB → Event (domain)
+     }
+     ```
+
+**Type Organization (Legacy Info):**
 - Entities represent domain objects with properties and relationships
 - Collections define enums and reference data used across entities
 - Service types define API response structures with error handling
@@ -212,11 +361,37 @@ All services located in `src/lib/services/`:
 - `$effect` runes for side effects and reactivity
 - No `onMount` for data fetching (use SSR instead)
 
-**Component Structure:**
+**Component Structure (Svelte 5):**
 - TypeScript script blocks with explicit type annotations
-- Svelte 5 runes syntax (`$props`, `$state`, `$derived`, `$effect`)
+- **Svelte 5 runes syntax** (see Critical Project Rules above)
+  - `let { propName }: { propName: Type } = $props()` for component props
+  - `let reactiveVar = $state(initialValue)` for reactive state
+  - `let computed = $derived(expression)` for computed values
+  - `$effect(() => { /* side effects */ })` for effects
 - Tailwind utility classes for styling
 - Progressive enhancement with `use:enhance` directive
+- Example component pattern:
+  ```svelte
+  <script lang="ts">
+    import type { Event } from '$lib/types/domain';
+
+    // Props using $props()
+    let { events }: { events: Event[] } = $props();
+
+    // Reactive state using $state()
+    let selectedId = $state<string | null>(null);
+
+    // Computed values using $derived()
+    let selectedEvent = $derived(
+      events.find(e => e.id === selectedId)
+    );
+
+    // Side effects using $effect()
+    $effect(() => {
+      console.log('Selected:', selectedEvent);
+    });
+  </script>
+  ```
 
 ## Supabase Integration
 

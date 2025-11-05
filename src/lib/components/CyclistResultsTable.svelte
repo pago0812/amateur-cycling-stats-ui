@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { RaceResult } from '$lib/types/entities/race-results';
+	import type { RaceResultWithRelations } from '$lib/types/domain';
 	import { formatDateToMMDD } from '$lib/utils/dates';
 
-	let { raceResults }: { raceResults: RaceResult[] } = $props();
+	let { raceResults }: { raceResults: RaceResultWithRelations[] } = $props();
 
-	function getEventUrl(result: RaceResult): string {
-		return `/results/${result?.race?.event?.documentId}?category=${result?.race?.raceCategory?.documentId}&gender=${result?.race?.raceCategoryGender?.documentId}&length=${result?.race?.raceCategoryLength?.documentId}`;
+	function getEventUrl(result: RaceResultWithRelations): string {
+		return `/results/${result?.race?.event?.id}?category=${result?.race?.raceCategory?.id}&gender=${result?.race?.raceCategoryGender?.id}&length=${result?.race?.raceCategoryLength?.id}`;
 	}
 </script>
 
@@ -51,7 +51,7 @@
 			</tr>
 		</thead>
 		<tbody class="bg-white divide-y divide-gray-200">
-			{#each raceResults as result (result.documentId)}
+			{#each raceResults as result (result.id)}
 				<tr class="hover:bg-gray-50">
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						{formatDateToMMDD(result.race?.dateTime)}

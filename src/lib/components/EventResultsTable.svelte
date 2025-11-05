@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Event } from '$lib/types/entities/events';
+	import type { Event } from '$lib/types/domain';
 	import { formatDateToMMDD } from '$lib/utils/dates';
 
 	let { events }: { events: Event[] } = $props();
@@ -27,14 +27,14 @@
 			</tr>
 		</thead>
 		<tbody class="bg-white divide-y divide-gray-200">
-			{#each events as event (event.documentId)}
+			{#each events as event (event.id)}
 				<tr class="hover:bg-gray-50">
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						{formatDateToMMDD(event.dateTime)}
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 						<a
-							href="/results/{event.documentId}"
+							href="/results/{event.id}"
 							class="text-blue-600 hover:text-blue-800 hover:underline"
 						>
 							{event.name}
