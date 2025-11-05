@@ -19,12 +19,13 @@ interface GetRaceWithFiltersParams {
  * Single PostgreSQL query with JOINs - much faster than Strapi's N+1 queries.
  * Uses automatic RLS policies for visibility filtering.
  *
- * @throws Error if no race found or multiple races found
+ * @returns RaceWithRelations if found, null if no race matches the filters
+ * @throws Error only for unexpected database errors (not for missing races)
  */
 export async function getRaceWithResultsWithFilters(
 	supabase: TypedSupabaseClient,
 	params: GetRaceWithFiltersParams
-): Promise<RaceWithRelations> {
+): Promise<RaceWithRelations | null> {
 	const { data, error } = await supabase
 		.from('races')
 		.select(
@@ -45,16 +46,17 @@ export async function getRaceWithResultsWithFilters(
 		.single(); // Ensure exactly one result
 
 	if (error) {
+		// PGRST116 = no rows found - this is expected when race doesn't exist for this combination
 		if (error.code === 'PGRST116') {
-			throw new Error(
-				'No race found matching these filters. Please check your category, gender, and length selections.'
-			);
+			return null;
 		}
+		// Other errors are unexpected - throw them
+		console.error('Unexpected error fetching race:', error);
 		throw new Error(`Error fetching race: ${error.message}`);
 	}
 
 	if (!data) {
-		throw new Error('Race not found');
+		return null;
 	}
 
 	// Use adapter to transform complex response → Domain type

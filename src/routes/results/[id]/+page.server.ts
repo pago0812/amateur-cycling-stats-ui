@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		const genderId =
 			url.searchParams.get('gender') || event?.supportedRaceCategoryGenders?.[0]?.id || '';
 
-		// CRITICAL BUG FIX: Pass eventId to ensure race is scoped to this event
+		// Get race with selected filters - returns null if no race exists for this combination
 		const race = await getRaceWithResultsWithFilters(locals.supabase, {
 			eventId: params.id,
 			categoryId,
@@ -27,9 +27,10 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 			genderId
 		});
 
+		// Return data even if race is null - UI will handle displaying "no results" message
 		return {
 			event,
-			race,
+			race, // Can be null - UI handles this gracefully
 			selectedCategory: categoryId,
 			selectedLength: lengthId,
 			selectedGender: genderId

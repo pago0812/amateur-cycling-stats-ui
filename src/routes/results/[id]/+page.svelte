@@ -56,8 +56,13 @@
 	{#if data.race?.raceResults && data.race.raceResults.length > 0}
 		<ResultsTable raceResults={data.race.raceResults} />
 	{:else}
-		<div class="text-center py-8 text-gray-500">
-			No hay resultados disponibles para esta combinación de filtros
+		<div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+			<p class="text-gray-600 text-lg mb-2">
+				No hay resultados disponibles para esta combinación de filtros
+			</p>
+			<p class="text-gray-500 text-sm">
+				Intenta seleccionar otra categoría, género o distancia
+			</p>
 		</div>
 	{/if}
 </section>

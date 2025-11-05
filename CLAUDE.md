@@ -149,7 +149,7 @@ All services located in `src/lib/services/`:
    - `getEventWithCategoriesById(params)` - Event with categories
 
 2. **races.ts** - Race operations
-   - `getRaceWithResultsWithFilters(params)` - Race with filtered results
+   - `getRaceWithResultsWithFilters(params)` - Race with filtered results (returns null if no race matches filters)
 
 3. **race-results.ts** - Race results operations
    - `getRaceResultsByRaceId(params)` - Results for specific race
@@ -227,6 +227,59 @@ All services located in `src/lib/services/`:
     if (!response.ok) throw new Error(response.statusText);
     return (await response.json()).data;
   };
+  ```
+
+**Graceful Error Handling (Supabase Services):**
+- Services distinguish between expected "not found" scenarios vs unexpected errors
+- Return `null` for expected missing data (e.g., PGRST116 "no rows found")
+- Throw errors only for unexpected database issues
+- UI handles `null` gracefully with user-friendly messages
+- Keep user controls (filters, dropdowns) visible even when data is missing
+- Example pattern:
+  ```typescript
+  // Service layer - return null for expected missing data
+  export async function getRaceWithFilters(
+    supabase: TypedSupabaseClient,
+    params: FilterParams
+  ): Promise<Race | null> {
+    const { data, error } = await supabase
+      .from('races')
+      .select('*')
+      .eq('category_id', params.categoryId)
+      .single();
+
+    if (error) {
+      // PGRST116 = no rows found - expected when race doesn't exist
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      // Other errors are unexpected - throw them
+      throw new Error(`Error fetching race: ${error.message}`);
+    }
+
+    return data ? adaptRaceFromDb(data) : null;
+  }
+
+  // Page server - handle null gracefully
+  export const load: PageServerLoad = async ({ params, locals }) => {
+    const race = await getRaceWithFilters(locals.supabase, params);
+    // Pass null to UI - let UI display friendly message
+    return { race }; // Can be null
+  };
+
+  // UI component - show helpful message
+  {#if race?.results && race.results.length > 0}
+    <ResultsTable results={race.results} />
+  {:else}
+    <div class="text-center py-12 bg-gray-50 rounded-lg">
+      <p class="text-gray-600 text-lg mb-2">
+        No hay resultados disponibles para esta combinación de filtros
+      </p>
+      <p class="text-gray-500 text-sm">
+        Intenta seleccionar otra categoría, género o distancia
+      </p>
+    </div>
+  {/if}
   ```
 
 **Type System Architecture (CRITICAL RULES):**
