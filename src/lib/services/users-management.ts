@@ -5,6 +5,8 @@ import type {
 	SigninRequest,
 	UserSessionResponse
 } from '$lib/types/services/users-management';
+import type { UserWithRelationsRpcResponse } from '$lib/types/db';
+import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
 
 /**
@@ -76,7 +78,7 @@ export const login = async (
 	return {
 		data: {
 			jwt: data.session.access_token,
-			user: userData as any // Type assertion needed since RPC returns Json type
+			user: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
 		}
 	};
 };
@@ -147,7 +149,7 @@ export const signin = async (
 	return {
 		data: {
 			jwt: data.session.access_token,
-			user: userData as any // Type assertion needed since RPC returns Json type
+			user: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
 		}
 	};
 };

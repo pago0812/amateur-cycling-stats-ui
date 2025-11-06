@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Onboarding from '$lib/components/Onboarding.svelte';
-	import { RoleTypeEnum } from '$lib/types/collections/roles';
+	import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -35,7 +35,7 @@
 
 <!-- Portal Content -->
 <section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
-	{#if data.user?.role?.type === RoleTypeEnum.NEW_USER}
+	{#if data.user?.role?.name === RoleTypeEnum.CYCLIST}
 		<Onboarding {form} />
 	{:else}
 		<div class="max-w-4xl mx-auto">

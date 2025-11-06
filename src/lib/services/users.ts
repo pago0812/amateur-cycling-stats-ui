@@ -1,6 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
 import type { SetRoleRequest, UserResponse } from '$lib/types/services/users';
+import type { UserWithRelationsRpcResponse } from '$lib/types/db';
+import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
 
 /**
  * Get the current user's enriched data including role and related entities.
@@ -41,7 +43,7 @@ export const getMyself = async (supabase: SupabaseClient<Database>): Promise<Use
 			};
 		}
 
-		return { data: userData as any }; // Type assertion needed since RPC returns Json type
+		return { data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse) };
 	} catch (error) {
 		return {
 			error: {
@@ -96,7 +98,7 @@ export const updateUser = async (
 			};
 		}
 
-		return { data: userData as any }; // Type assertion needed since RPC returns Json type
+		return { data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse) };
 	} catch (error) {
 		return {
 			error: {

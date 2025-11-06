@@ -93,9 +93,7 @@ npm run seed:users   # Seed test users (run after supabase db reset)
   - `types/` - TypeScript definitions organized by domain
     - `database.types.ts` - **Auto-generated** Supabase types (regenerate after schema changes)
     - `db/` - **Explicit DB type aliases** - TableNameDB types + Supabase response types (ALWAYS use these)
-    - `domain/` - **Domain entities** with camelCase properties (Event, Race, Cyclist, RaceResult, etc.)
-    - `entities/` - (Legacy) Old snake_case types, kept for reference
-    - `collections/` - Enums and reference data (EventStatus, RoleTypeEnum, etc.)
+    - `domain/` - **Domain entities** with camelCase properties (Event, Race, Cyclist, RaceResult, etc.) + enums (RoleTypeEnum)
     - `services/` - Service response types (UserResponse, UserSessionResponse, etc.)
   - `adapters/` - **Transform DB types (snake_case) to domain types (camelCase)**
     - `common.adapter.ts` - Reusable transformation utilities
@@ -415,9 +413,9 @@ All services located in `src/lib/services/`:
      }
      ```
 
-**Type Organization (Legacy Info):**
-- Entities represent domain objects with properties and relationships
-- Collections define enums and reference data used across entities
+**Type Organization:**
+- Domain types represent business entities with camelCase properties
+- DB types alias auto-generated database types for explicit usage
 - Service types define API response structures with error handling
 
 **State Management:**
@@ -560,18 +558,12 @@ type EventUpdate = TablesUpdate<'events'>;
 ```
 
 **Extended Types with Relationships:**
+Extended domain types with relationships are defined in the domain folder. For example:
 ```typescript
-import type { EventWithRelations } from '$lib/types/entities/events';
+import type { Event } from '$lib/types/domain';
 
-// Base type = database row
-type Event = Tables<'events'>;
-
-// Extended type = with populated relationships
-interface EventWithRelations extends Event {
-  organization?: Organization;
-  races?: Race[];
-  // ...
-}
+// Domain type already includes relationships when needed
+// Adapters transform DB response types to domain types
 ```
 
 ### Data Access Patterns

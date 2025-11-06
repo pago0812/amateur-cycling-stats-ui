@@ -1,4 +1,4 @@
-import type { Role } from '../entities/roles';
+import type { Role } from '../domain';
 import type { ServerError } from './errors';
 
 export interface RolesResponse {

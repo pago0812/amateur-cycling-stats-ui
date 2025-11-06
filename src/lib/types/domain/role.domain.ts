@@ -1,7 +1,7 @@
 /**
- * Role name enum
+ * Role name type - user role names defining permissions.
  */
-export type RoleName = 'public' | 'cyclist' | 'organizer_staff' | 'organizer_admin' | 'admin';
+export type RoleName = 'public' | 'cyclist' | 'organizer_staff' | 'organizer' | 'admin';
 
 /**
  * Role domain type - user role defining permissions.
@@ -12,9 +12,7 @@ export interface Role {
 	id: string;
 
 	// Basic Info
-	name: RoleName;
-	type: string; // Role type identifier (e.g., 'cyclist', 'organizer', 'authenticated', 'public')
-	description: string | null;
+	name: string;
 
 	// Timestamps
 	createdAt: string;

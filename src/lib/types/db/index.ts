@@ -35,3 +35,10 @@ export type {
 	RaceCategoryLengthDB,
 	RaceRankingDB
 } from './lookup-tables.db';
+
+// Junction table types
+export type {
+	EventSupportedCategoryDB,
+	EventSupportedGenderDB,
+	EventSupportedLengthDB
+} from './event-junction-tables.db';

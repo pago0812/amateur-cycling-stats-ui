@@ -32,3 +32,18 @@ export { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 // Users
 export { adaptUserWithRelationsFromRpc } from './users.adapter';
+
+// Roles
+export { adaptRoleFromDb } from './roles.adapter';
+
+// Organizations
+export { adaptOrganizationFromDb } from './organizations.adapter';
+
+// Organizers
+export { adaptOrganizerFromDb } from './organizers.adapter';
+
+// Race Rankings
+export { adaptRaceRankingFromDb } from './race-rankings.adapter';
+
+// Cyclist Genders
+export { adaptCyclistGenderFromDb } from './cyclist-genders.adapter';

@@ -20,8 +20,8 @@ export interface UserWithRelationsRpcResponse {
 	role: {
 		id: string;
 		name: string;
-		type: string;
-		description: string | null;
+		created_at: string;
+		updated_at: string;
 	};
 	cyclist: {
 		id: string;

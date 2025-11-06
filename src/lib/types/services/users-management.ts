@@ -1,4 +1,4 @@
-import type { User } from '../entities/users';
+import type { User } from '../domain';
 import type { ServerError } from './errors';
 
 // Requests

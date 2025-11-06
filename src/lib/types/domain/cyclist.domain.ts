@@ -1,6 +1,6 @@
 import type { User } from './user.domain';
 import type { CyclistGender } from './cyclist-gender.domain';
-import type { RaceResult } from './race-result.domain';
+import type { RaceResultWithRelations } from './race-result.domain';
 
 /**
  * Cyclist domain type - athlete profile.
@@ -32,5 +32,5 @@ export interface CyclistWithRelations extends Cyclist {
 	// Populated relationships
 	gender?: CyclistGender;
 	user?: User;
-	raceResults?: RaceResult[];
+	raceResults?: RaceResultWithRelations[];
 }

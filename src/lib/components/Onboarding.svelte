@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { RoleTypeEnum } from '$lib/types/collections/roles';
+	import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 	import { alertStore } from '$lib/stores/alert-store';
 	import { t } from '$lib/i18n';
 	import type { ActionData } from '../../routes/portal/$types';

@@ -20,8 +20,6 @@ describe('Users Adapter', () => {
 				role: {
 					id: 'role-cyclist',
 					name: 'CYCLIST',
-					type: 2,
-					description: 'Cyclist role',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
@@ -60,8 +58,6 @@ describe('Users Adapter', () => {
 				role: {
 					id: 'role-organizer-admin',
 					name: 'ORGANIZER_ADMIN',
-					type: 3,
-					description: 'Organizer admin role',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
@@ -103,8 +99,6 @@ describe('Users Adapter', () => {
 				role: {
 					id: 'role-admin',
 					name: 'ADMIN',
-					type: 4,
-					description: 'System administrator',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
@@ -122,26 +116,18 @@ describe('Users Adapter', () => {
 		});
 
 		it('should transform all role types correctly', () => {
-			const roles: Array<{ name: string; type: number }> = [
-				{ name: 'PUBLIC', type: 1 },
-				{ name: 'CYCLIST', type: 2 },
-				{ name: 'ORGANIZER_STAFF', type: 3 },
-				{ name: 'ORGANIZER_ADMIN', type: 3 },
-				{ name: 'ADMIN', type: 4 }
-			];
+			const roles = ['public', 'cyclist', 'organizer_staff', 'organizer', 'admin'];
 
-			roles.forEach((roleData) => {
+			roles.forEach((roleName) => {
 				const rpcResponse: UserWithRelationsRpcResponse = {
 					id: 'user-test',
 					username: 'test@example.com',
-					role_id: `role-${roleData.name.toLowerCase()}`,
+					role_id: `role-${roleName}`,
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z',
 					role: {
-						id: `role-${roleData.name.toLowerCase()}`,
-						name: roleData.name,
-						type: roleData.type,
-						description: `${roleData.name} role`,
+						id: `role-${roleName}`,
+						name: roleName,
 						created_at: '2024-01-01T00:00:00Z',
 						updated_at: '2024-01-01T00:00:00Z'
 					},
@@ -151,8 +137,8 @@ describe('Users Adapter', () => {
 
 				const result = adaptUserWithRelationsFromRpc(rpcResponse);
 
-				expect(result.role.name).toBe(roleData.name);
-				expect(result.role.type).toBe(roleData.type);
+				expect(result.role.name).toBe(roleName);
+				expect(result.role.id).toBe(`role-${roleName}`);
 			});
 		});
 
@@ -166,8 +152,6 @@ describe('Users Adapter', () => {
 				role: {
 					id: 'role-public',
 					name: 'PUBLIC',
-					type: 1,
-					description: 'Public role',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
@@ -191,8 +175,6 @@ describe('Users Adapter', () => {
 				role: {
 					id: 'role-cyclist',
 					name: 'CYCLIST',
-					type: 2,
-					description: 'Cyclist role',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},

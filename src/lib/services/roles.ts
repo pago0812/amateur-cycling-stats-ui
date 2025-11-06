@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
 import type { RolesResponse } from '$lib/types/services/roles';
+import { adaptRoleFromDb, adaptArray } from '$lib/adapters';
 
 /**
  * Get all available roles.
@@ -9,7 +10,7 @@ import type { RolesResponse } from '$lib/types/services/roles';
  */
 export const getRoles = async (supabase: SupabaseClient<Database>): Promise<RolesResponse> => {
 	try {
-		const { data: roles, error } = await supabase.from('roles').select('*').order('name');
+		const { data: dbRoles, error } = await supabase.from('roles').select('*').order('name');
 
 		if (error) {
 			return {
@@ -23,7 +24,7 @@ export const getRoles = async (supabase: SupabaseClient<Database>): Promise<Role
 
 		return {
 			data: {
-				roles: roles || []
+				roles: adaptArray(dbRoles, adaptRoleFromDb)
 			}
 		};
 	} catch (error) {
