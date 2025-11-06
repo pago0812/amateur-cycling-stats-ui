@@ -2,6 +2,7 @@ import { page } from '@vitest/browser/context';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import Page from './+page.svelte';
+import type { Event } from '$lib/types/domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => {
@@ -30,11 +31,13 @@ describe('/+page.svelte', () => {
 
 	it('should render h2 heading', async () => {
 		const mockData = {
+			locale: 'es',
+			user: null,
 			events: [],
-			error: null
+			error: ''
 		};
 
-		render(Page, { props: { data: mockData } });
+		render(Page, { data: mockData });
 
 		const heading = page.getByRole('heading', { level: 2 });
 		await expect.element(heading).toBeInTheDocument();
@@ -42,11 +45,13 @@ describe('/+page.svelte', () => {
 
 	it('should display no events message when events array is empty', async () => {
 		const mockData = {
+			locale: 'es',
+			user: null,
 			events: [],
-			error: null
+			error: ''
 		};
 
-		render(Page, { props: { data: mockData } });
+		render(Page, { data: mockData });
 
 		const message = page.getByText('events.home.noEvents');
 		await expect.element(message).toBeInTheDocument();
@@ -54,40 +59,44 @@ describe('/+page.svelte', () => {
 
 	it('should display error message when error exists', async () => {
 		const mockData = {
+			locale: 'es',
+			user: null,
 			events: [],
 			error: 'Test error message'
 		};
 
-		render(Page, { props: { data: mockData } });
+		render(Page, { data: mockData });
 
 		const errorMessage = page.getByText(/common.general.error/);
 		await expect.element(errorMessage).toBeInTheDocument();
 	});
 
 	it('should display events when events array has items', async () => {
-		const mockData = {
-			events: [
-				{
-					id: '1',
-					name: 'Test Event',
-					description: 'Test Description',
-					dateTime: '2024-06-15T09:00:00Z',
-					year: 2024,
-					city: 'Valencia',
-					state: 'Valencia',
-					country: 'Spain',
-					eventStatus: 'AVAILABLE',
-					isPublicVisible: true,
-					organizationId: 'org-1',
-					createdBy: 'user-1',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z'
-				}
-			],
-			error: null
+		const mockEvent: Event = {
+			id: '1',
+			name: 'Test Event',
+			description: 'Test Description',
+			dateTime: '2024-06-15T09:00:00Z',
+			year: 2024,
+			city: 'Valencia',
+			state: 'Valencia',
+			country: 'Spain',
+			eventStatus: 'AVAILABLE',
+			isPublicVisible: true,
+			organizationId: 'org-1',
+			createdBy: 'user-1',
+			createdAt: '2024-01-01T00:00:00Z',
+			updatedAt: '2024-01-01T00:00:00Z'
 		};
 
-		render(Page, { props: { data: mockData } });
+		const mockData = {
+			locale: 'es',
+			user: null,
+			events: [mockEvent],
+			error: ''
+		};
+
+		render(Page, { data: mockData });
 
 		const eventName = page.getByText('Test Event');
 		await expect.element(eventName).toBeInTheDocument();

@@ -31,21 +31,21 @@ describe('EventResultsTable Component', () => {
 	];
 
 	it('should render table headers', async () => {
-		render(EventResultsTable, { props: { events: mockEvents } });
+		render(EventResultsTable, { events: mockEvents });
 
 		const dateHeader = page.getByText('Fecha');
 		await expect.element(dateHeader).toBeInTheDocument();
 	});
 
 	it('should render event links', async () => {
-		render(EventResultsTable, { props: { events: mockEvents } });
+		render(EventResultsTable, { events: mockEvents });
 
 		const link = page.getByRole('link', { name: 'Gran Fondo Valencia 2024' });
 		await expect.element(link).toHaveAttribute('href', '/results/event-1');
 	});
 
 	it('should handle empty events array', async () => {
-		render(EventResultsTable, { props: { events: [] } });
+		render(EventResultsTable, { events: [] });
 
 		const dateHeader = page.getByText('Fecha');
 		await expect.element(dateHeader).toBeInTheDocument();

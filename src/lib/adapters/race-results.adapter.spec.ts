@@ -105,8 +105,8 @@ describe('Race Results Adapter', () => {
 			expect(result.place).toBe(1);
 			expect(result.time).toBe('02:30:45');
 			expect(result.points).toBe(100);
-			expect(result.cyclist.name).toBe('Carlos');
-			expect(result.cyclist.lastName).toBe('Rodríguez');
+			expect(result.cyclist!.name).toBe('Carlos');
+			expect(result.cyclist!.lastName).toBe('Rodríguez');
 			expect(result.rankingPoint?.points).toBe(100);
 			expect(result.rankingPoint?.place).toBe(1);
 		});

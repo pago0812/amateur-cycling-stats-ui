@@ -36,6 +36,7 @@ describe('ResultsTable Component', () => {
 			id: 'result-1',
 			place: 1,
 			time: '02:30:45',
+			points: 100,
 			raceId: 'race-1',
 			cyclistId: 'cyclist-1',
 			rankingPointId: 'rp-1',
@@ -51,7 +52,7 @@ describe('ResultsTable Component', () => {
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z'
 			},
-			race: null,
+			race: undefined,
 			rankingPoint: {
 				id: 'rp-1',
 				place: 1,
@@ -64,14 +65,14 @@ describe('ResultsTable Component', () => {
 	];
 
 	it('should render table headers', async () => {
-		render(ResultsTable, { props: { raceResults: mockRaceResults } });
+		render(ResultsTable, { raceResults: mockRaceResults });
 
 		const positionHeader = page.getByText('races.table.position');
 		await expect.element(positionHeader).toBeInTheDocument();
 	});
 
 	it('should render cyclist link', async () => {
-		render(ResultsTable, { props: { raceResults: mockRaceResults } });
+		render(ResultsTable, { raceResults: mockRaceResults });
 
 		const cyclistLink = page.getByRole('link', { name: /Rodríguez.*Carlos/ });
 		await expect.element(cyclistLink).toHaveAttribute('href', '/cyclists/cyclist-1');
@@ -83,18 +84,19 @@ describe('ResultsTable Component', () => {
 				id: 'result-2',
 				place: 2,
 				time: null,
+				points: null,
 				raceId: 'race-1',
-				cyclistId: null,
+				cyclistId: 'cyclist-id',
 				rankingPointId: 'rp-2',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
-				cyclist: null,
-				race: null,
-				rankingPoint: null
+				cyclist: undefined,
+				race: undefined,
+				rankingPoint: undefined
 			}
 		];
 
-		render(ResultsTable, { props: { raceResults: resultsWithoutCyclist } });
+		render(ResultsTable, { raceResults: resultsWithoutCyclist });
 
 		const positionHeader = page.getByText('races.table.position');
 		await expect.element(positionHeader).toBeInTheDocument();

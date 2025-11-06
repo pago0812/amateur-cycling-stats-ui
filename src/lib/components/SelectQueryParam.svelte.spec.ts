@@ -41,11 +41,9 @@ describe('SelectQueryParam Component', () => {
 
 	it('should render select with label', async () => {
 		render(SelectQueryParam, {
-			props: {
-				name: 'category',
-				title: 'Select Category',
-				options: mockOptions
-			}
+			name: 'category',
+			title: 'Select Category',
+			options: mockOptions
 		});
 
 		const label = page.getByText('Select Category');
@@ -54,11 +52,9 @@ describe('SelectQueryParam Component', () => {
 
 	it('should render options', async () => {
 		render(SelectQueryParam, {
-			props: {
-				name: 'category',
-				title: 'Select Category',
-				options: mockOptions
-			}
+			name: 'category',
+			title: 'Select Category',
+			options: mockOptions
 		});
 
 		const option1 = page.getByText('Option 1');

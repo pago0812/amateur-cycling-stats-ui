@@ -169,11 +169,11 @@ describe('Cyclists Adapter', () => {
 			expect(result.lastName).toBe('Rodríguez');
 			expect(result.gender?.name).toBe('M');
 			expect(result.raceResults).toHaveLength(1);
-			expect(result.raceResults[0].place).toBe(1);
-			expect(result.raceResults[0].race.name).toBe('Gran Fondo - LONG/MALE/ABS');
-			expect(result.raceResults[0].race.event.name).toBe('Gran Fondo Valencia');
-			expect(result.raceResults[0].race.raceCategory.name).toBe('ABS');
-			expect(result.raceResults[0].rankingPoint?.points).toBe(100);
+			expect(result.raceResults![0].place).toBe(1);
+			expect(result.raceResults![0]!.race!.name).toBe('Gran Fondo - LONG/MALE/ABS');
+			expect(result.raceResults![0]!.race!.event!.name).toBe('Gran Fondo Valencia');
+			expect(result.raceResults![0]!.race!.raceCategory!.name).toBe('ABS');
+			expect(result.raceResults![0]!.rankingPoint?.points).toBe(100);
 		});
 
 		it('should handle cyclist with no gender', () => {
@@ -318,9 +318,9 @@ describe('Cyclists Adapter', () => {
 			expect(result.bornYear).toBe(1998);
 			expect(result.gender?.name).toBe('F');
 			expect(result.raceResults).toHaveLength(1);
-			expect(result.raceResults[0].place).toBe(2);
-			expect(result.raceResults[0].points).toBe(50); // From ranking_point
-			expect(result.raceResults[0].race.event.eventStatus).toBe('FINISHED');
+			expect(result.raceResults![0].place).toBe(2);
+			expect(result.raceResults![0].points).toBe(50); // From ranking_point
+			expect(result.raceResults![0]!.race!.event!.eventStatus).toBe('FINISHED');
 		});
 
 		it('should handle null ranking_point in RPC response', () => {
@@ -406,8 +406,8 @@ describe('Cyclists Adapter', () => {
 
 			const result = adaptCyclistWithResultsFromRpc(rpcData);
 
-			expect(result.raceResults[0].points).toBeNull();
-			expect(result.raceResults[0].rankingPoint).toBeUndefined();
+			expect(result.raceResults![0].points).toBeNull();
+			expect(result.raceResults![0].rankingPoint).toBeUndefined();
 		});
 
 		it('should copy points from ranking_point when available', () => {
@@ -506,8 +506,8 @@ describe('Cyclists Adapter', () => {
 			const result = adaptCyclistWithResultsFromRpc(rpcData);
 
 			// Points should be copied from ranking_point
-			expect(result.raceResults[0].points).toBe(30);
-			expect(result.raceResults[0].rankingPoint?.points).toBe(30);
+			expect(result.raceResults![0].points).toBe(30);
+			expect(result.raceResults![0].rankingPoint?.points).toBe(30);
 		});
 	});
 });

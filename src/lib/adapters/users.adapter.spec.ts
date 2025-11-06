@@ -41,7 +41,7 @@ describe('Users Adapter', () => {
 			expect(result.id).toBe('user-123');
 			expect(result.username).toBe('cyclist1@example.com');
 			expect(result.roleId).toBe('role-cyclist');
-			expect(result.role.name).toBe('CYCLIST');
+			expect(result.role!.name).toBe('CYCLIST');
 			expect(result.cyclist?.name).toBe('Carlos');
 			expect(result.cyclist?.lastName).toBe('Rodríguez');
 			expect(result.cyclist?.bornYear).toBe(1995);
@@ -82,10 +82,10 @@ describe('Users Adapter', () => {
 
 			expect(result.id).toBe('user-456');
 			expect(result.username).toBe('organizer@example.com');
-			expect(result.role.name).toBe('ORGANIZER_ADMIN');
+			expect(result.role!.name).toBe('ORGANIZER_ADMIN');
 			expect(result.organizer?.organizationId).toBe('org-1');
-			expect(result.organizer?.organization.name).toBe('Pro Cycling League Spain');
-			expect(result.organizer?.organization.description).toBe('Professional cycling organization');
+			expect(result.organizer?.organization!.name).toBe('Pro Cycling League Spain');
+			expect(result.organizer?.organization!.description).toBe('Professional cycling organization');
 			expect(result.cyclist).toBeUndefined();
 		});
 
@@ -110,7 +110,7 @@ describe('Users Adapter', () => {
 
 			expect(result.id).toBe('user-admin');
 			expect(result.username).toBe('admin@acs.com');
-			expect(result.role.name).toBe('ADMIN');
+			expect(result.role!.name).toBe('ADMIN');
 			expect(result.cyclist).toBeUndefined();
 			expect(result.organizer).toBeUndefined();
 		});
@@ -137,8 +137,8 @@ describe('Users Adapter', () => {
 
 				const result = adaptUserWithRelationsFromRpc(rpcResponse);
 
-				expect(result.role.name).toBe(roleName);
-				expect(result.role.id).toBe(`role-${roleName}`);
+				expect(result.role!.name).toBe(roleName);
+				expect(result.role!.id).toBe(`role-${roleName}`);
 			});
 		});
 

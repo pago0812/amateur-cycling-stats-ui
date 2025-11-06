@@ -146,9 +146,9 @@ describe('Races Adapter', () => {
 			expect(result.name).toBe('Gran Fondo - LONG/MALE/ABS');
 			expect(result.raceResults).toHaveLength(1);
 			expect(result.raceResults?.[0].place).toBe(1);
-			expect(result.raceResults?.[0].cyclist.name).toBe('Carlos');
-			expect(result.raceResults?.[0].cyclist.lastName).toBe('Rodríguez');
-			expect(result.raceResults?.[0].rankingPoint?.points).toBe(100);
+			expect(result.raceResults?.[0]!.cyclist!.name).toBe('Carlos');
+			expect(result.raceResults?.[0]!.cyclist!.lastName).toBe('Rodríguez');
+			expect(result.raceResults?.[0]!.rankingPoint?.points).toBe(100);
 		});
 
 		it('should handle empty results array', () => {
@@ -211,7 +211,7 @@ describe('Races Adapter', () => {
 
 			const result = adaptRaceWithResultsFromDb(dbRace);
 
-			expect(result.raceResults?.[0].rankingPoint).toBeUndefined();
+			expect(result.raceResults?.[0]!.rankingPoint).toBeUndefined();
 		});
 	});
 });

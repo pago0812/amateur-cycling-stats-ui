@@ -42,12 +42,13 @@ describe('CyclistResultsTable Component', () => {
 			id: 'result-1',
 			place: 1,
 			time: '02:30:45',
+			points: 100,
 			raceId: 'race-1',
 			cyclistId: 'cyclist-1',
 			rankingPointId: 'rp-1',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			cyclist: null,
+			cyclist: undefined,
 			race: {
 				id: 'race-1',
 				name: 'Gran Fondo - LONG/MALE/ABS',
@@ -77,24 +78,24 @@ describe('CyclistResultsTable Component', () => {
 					createdAt: '2024-01-01T00:00:00Z',
 					updatedAt: '2024-01-01T00:00:00Z'
 				},
-				raceCategory: null,
-				raceCategoryGender: null,
-				raceCategoryLength: null,
-				raceRanking: null
+				raceCategory: undefined,
+				raceCategoryGender: undefined,
+				raceCategoryLength: undefined,
+				raceRanking: undefined
 			},
-			rankingPoint: null
+			rankingPoint: undefined
 		}
 	];
 
 	it('should render table headers', async () => {
-		render(CyclistResultsTable, { props: { raceResults: mockRaceResults } });
+		render(CyclistResultsTable, { raceResults: mockRaceResults });
 
 		const dateHeader = page.getByText('cyclists.table.date');
 		await expect.element(dateHeader).toBeInTheDocument();
 	});
 
 	it('should render event link', async () => {
-		render(CyclistResultsTable, { props: { raceResults: mockRaceResults } });
+		render(CyclistResultsTable, { raceResults: mockRaceResults });
 
 		const eventLink = page.getByRole('link', { name: 'Gran Fondo Valencia' });
 		await expect.element(eventLink).toBeInTheDocument();

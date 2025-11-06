@@ -32,14 +32,14 @@ vi.mock('$lib/i18n', () => {
 
 describe('Header Component', () => {
 	it('should render logo', async () => {
-		render(Header, { props: { user: null } });
+		render(Header, { user: null });
 
 		const logo = page.getByText('ACS');
 		await expect.element(logo).toBeInTheDocument();
 	});
 
 	it('should show login link when user is not authenticated', async () => {
-		render(Header, { props: { user: null } });
+		render(Header, { user: null });
 
 		const loginLink = page.getByText('common.navigation.login');
 		await expect.element(loginLink).toBeInTheDocument();
@@ -58,18 +58,18 @@ describe('Header Component', () => {
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z'
 			},
-			cyclist: null,
-			organizer: null
+			cyclist: undefined,
+			organizer: undefined
 		};
 
-		render(Header, { props: { user: mockUser } });
+		render(Header, { user: mockUser });
 
 		const accountLink = page.getByText('common.navigation.account');
 		await expect.element(accountLink).toBeInTheDocument();
 	});
 
 	it('should render mobile menu button', async () => {
-		render(Header, { props: { user: null } });
+		render(Header, { user: null });
 
 		const mobileButton = page.getByRole('button');
 		await expect.element(mobileButton).toBeInTheDocument();

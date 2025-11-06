@@ -127,8 +127,8 @@ describe('Cyclists Service', () => {
 			expect(result.name).toBe('Carlos');
 			expect(result.lastName).toBe('Rodríguez');
 			expect(result.raceResults).toHaveLength(1);
-			expect(result.raceResults[0].place).toBe(1);
-			expect(result.raceResults[0].race.name).toBe('Gran Fondo - LONG/MALE/ABS');
+			expect(result.raceResults![0].place).toBe(1);
+			expect(result.raceResults![0]!.race!.name).toBe('Gran Fondo - LONG/MALE/ABS');
 			expect(mockSupabase.rpc).toHaveBeenCalledWith('get_cyclist_with_results', {
 				cyclist_uuid: 'cyclist-123'
 			});

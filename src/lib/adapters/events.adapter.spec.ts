@@ -156,9 +156,9 @@ describe('Events Adapter', () => {
 			expect(result.supportedRaceCategories).toHaveLength(2);
 			expect(result.supportedRaceCategoryGenders).toHaveLength(1);
 			expect(result.supportedRaceCategoryLengths).toHaveLength(1);
-			expect(result.supportedRaceCategories?.[0].name).toBe('ABS');
-			expect(result.supportedRaceCategoryGenders?.[0].name).toBe('MALE');
-			expect(result.supportedRaceCategoryLengths?.[0].name).toBe('LONG');
+			expect(result.supportedRaceCategories![0].name).toBe('ABS');
+			expect(result.supportedRaceCategoryGenders![0].name).toBe('MALE');
+			expect(result.supportedRaceCategoryLengths![0].name).toBe('LONG');
 		});
 
 		it('should handle empty category arrays', () => {
