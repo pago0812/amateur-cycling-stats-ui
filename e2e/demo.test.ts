@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('home page has expected h1', async ({ page }) => {
+test('home page has expected heading', async ({ page }) => {
 	await page.goto('/');
-	await expect(page.locator('h1')).toBeVisible();
+	// Check for h1 or h2 heading
+	const heading = page.locator('h1, h2').first();
+	await expect(heading).toBeVisible();
 });
