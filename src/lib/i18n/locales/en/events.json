@@ -9,5 +9,9 @@
 	"results": {
 		"title": "Results",
 		"noEvents": "No events to display"
+	},
+	"errors": {
+		"notFound": "Event not found",
+		"loadFailed": "Failed to load event details"
 	}
 }

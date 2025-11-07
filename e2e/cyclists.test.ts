@@ -157,23 +157,21 @@ test.describe('Cyclist Profile', () => {
 		// Navigate to non-existent cyclist UUID
 		await page.goto('/cyclists/00000000-0000-0000-0000-000000000000');
 
-		// Should show error page or redirect
-		// Since we don't have explicit 404 pages yet, check for error indicators
-		const has404 = await page
-			.getByText(/404|not found|no encontrado/i)
-			.isVisible()
-			.catch(() => false);
-		const hasError = await page
-			.getByText(/error/i)
+		// Should show 404 error page with custom error UI
+		// Check for 404 heading
+		const has404Heading = await page
+			.getByRole('heading', { name: '404' })
 			.isVisible()
 			.catch(() => false);
 
-		// Either explicit 404 or error page should be shown
-		// Or page redirects to home/results
-		const currentURL = page.url();
-		const isErrorPage =
-			has404 || hasError || (currentURL.includes('/') && !currentURL.includes('/cyclists/'));
+		// Check for error message (in English or Spanish)
+		const hasErrorMessage = await page
+			.getByText(/cyclist not found|ciclista no encontrado/i)
+			.isVisible()
+			.catch(() => false);
 
-		expect(isErrorPage).toBeTruthy();
+		// Should have both 404 heading and error message
+		expect(has404Heading).toBeTruthy();
+		expect(hasErrorMessage).toBeTruthy();
 	});
 });

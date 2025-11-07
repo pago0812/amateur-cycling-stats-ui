@@ -16,12 +16,13 @@ function getRedirectUrlForRole(roleName?: string): string {
 		return Urls.ACCOUNT;
 	}
 
-	// Organizers and admins go to /panel
-	if (
-		roleName === RoleTypeEnum.ORGANIZER_ADMIN ||
-		roleName === RoleTypeEnum.ORGANIZER_STAFF ||
-		roleName === RoleTypeEnum.ADMIN
-	) {
+	// Admins go to /admin
+	if (roleName === RoleTypeEnum.ADMIN) {
+		return Urls.ADMIN;
+	}
+
+	// Organizers go to /panel
+	if (roleName === RoleTypeEnum.ORGANIZER_ADMIN || roleName === RoleTypeEnum.ORGANIZER_STAFF) {
 		return Urls.PANEL;
 	}
 

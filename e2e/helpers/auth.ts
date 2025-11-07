@@ -62,8 +62,8 @@ export async function logout(page: Page) {
  * @param page - Playwright page object
  */
 export async function expectAuthenticated(page: Page) {
-	// Wait for header to be visible
-	await page.waitForSelector('header');
+	// Wait for navigation to be visible
+	await page.waitForSelector('nav');
 
 	// Check for authenticated user link (Cuenta/Account)
 	const accountLink = page.getByRole('link', { name: /cuenta|account/i });
@@ -76,8 +76,8 @@ export async function expectAuthenticated(page: Page) {
  * @param page - Playwright page object
  */
 export async function expectUnauthenticated(page: Page) {
-	// Wait for header to be visible
-	await page.waitForSelector('header');
+	// Wait for navigation to be visible
+	await page.waitForSelector('nav');
 
 	// Check for login link (Iniciar sesión/Log in)
 	const loginLink = page.getByRole('link', { name: /iniciar sesión|log in/i });

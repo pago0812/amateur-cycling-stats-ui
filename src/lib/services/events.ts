@@ -62,13 +62,16 @@ export async function getFutureEvents(supabase: TypedSupabaseClient): Promise<Ev
 
 /**
  * Get event by ID with populated junction tables (categories, genders, lengths).
- * Returns domain EventWithRelations type with camelCase fields.
+ * Returns domain EventWithRelations type with camelCase fields, or null if not found.
  * Single PostgreSQL query with JOINs - much faster than Strapi's multiple requests.
+ *
+ * Returns null when event doesn't exist (expected case).
+ * Throws error only for unexpected database issues.
  */
 export async function getEventWithCategoriesById(
 	supabase: TypedSupabaseClient,
 	params: GetEventByIdParams
-): Promise<EventWithRelations> {
+): Promise<EventWithRelations | null> {
 	const { data, error } = await supabase
 		.from('events')
 		.select(
@@ -89,14 +92,16 @@ export async function getEventWithCategoriesById(
 		.single();
 
 	if (error) {
+		// PGRST116 = no rows found - expected when event doesn't exist
 		if (error.code === 'PGRST116') {
-			throw new Error('Event not found');
+			return null;
 		}
 		throw new Error(`Error fetching event: ${error.message}`);
 	}
 
+	// Return null if event doesn't exist (expected case)
 	if (!data) {
-		throw new Error('Event not found');
+		return null;
 	}
 
 	// Use adapter to transform complex response → Domain type

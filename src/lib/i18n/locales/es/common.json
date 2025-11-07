@@ -15,6 +15,10 @@
 		"error": "Error",
 		"loading": "Cargando..."
 	},
+	"errors": {
+		"notFoundSuggestion": "La página que buscas no existe. Intenta volver a la página de inicio o navegar por los resultados.",
+		"serverErrorSuggestion": "Algo salió mal de nuestra parte. Por favor, inténtalo de nuevo más tarde o contacta a soporte si el problema persiste."
+	},
 	"pageTitle": {
 		"home": "Inicio - ACS",
 		"results": "Resultados - ACS",

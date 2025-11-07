@@ -15,6 +15,10 @@
 		"error": "Error",
 		"loading": "Loading..."
 	},
+	"errors": {
+		"notFoundSuggestion": "The page you're looking for doesn't exist. Try going back to the home page or browsing results.",
+		"serverErrorSuggestion": "Something went wrong on our end. Please try again later or contact support if the problem persists."
+	},
 	"pageTitle": {
 		"home": "Home - ACS",
 		"results": "Results - ACS",

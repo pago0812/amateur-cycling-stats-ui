@@ -12,17 +12,20 @@ interface GetCyclistWithResultsByIdParams {
 
 /**
  * Get cyclist by ID with race results and full race details.
- * Returns domain CyclistWithRelations type with camelCase fields.
+ * Returns domain CyclistWithRelations type with camelCase fields, or null if not found.
  *
  * Uses optimized RPC function get_cyclist_with_results() for better performance.
  * Single PostgreSQL query with nested JOINs - much faster than multiple requests.
  * Includes race results with full race info, event details, categories, and ranking points.
  * Results are sorted by event date (most recent first).
+ *
+ * Returns null when cyclist doesn't exist (expected case).
+ * Throws error only for unexpected database issues.
  */
 export async function getCyclistWithResultsById(
 	supabase: TypedSupabaseClient,
 	params: GetCyclistWithResultsByIdParams
-): Promise<CyclistWithRelations> {
+): Promise<CyclistWithRelations | null> {
 	const { data, error } = await supabase.rpc('get_cyclist_with_results', {
 		cyclist_uuid: params.id
 	});
@@ -31,8 +34,9 @@ export async function getCyclistWithResultsById(
 		throw new Error(`Error fetching cyclist: ${error.message}`);
 	}
 
+	// Return null if cyclist doesn't exist (expected case)
 	if (!data) {
-		throw new Error('Cyclist not found');
+		return null;
 	}
 
 	// Use adapter to transform RPC JSONB response → Domain type

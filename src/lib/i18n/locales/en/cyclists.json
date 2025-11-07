@@ -14,5 +14,9 @@
 		"ranking": "Ranking",
 		"category": "Category",
 		"points": "Points"
+	},
+	"errors": {
+		"notFound": "Cyclist not found",
+		"loadFailed": "Failed to load cyclist details"
 	}
 }

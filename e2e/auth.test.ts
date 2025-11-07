@@ -25,8 +25,8 @@ test.describe('Authentication', () => {
 		// Use cyclist1 test user
 		await loginAs(page, TEST_USERS.cyclist1);
 
-		// Verify we're on the portal page
-		await expect(page).toHaveURL('/portal');
+		// Verify we're on the account page (cyclists redirect to /account)
+		await expect(page).toHaveURL('/account');
 
 		// Verify authenticated state in header
 		await expectAuthenticated(page);
@@ -59,29 +59,29 @@ test.describe('Authentication', () => {
 		await expectUnauthenticated(page);
 	});
 
-	test('authenticated user can access portal', async ({ page }) => {
+	test('authenticated user can access account', async ({ page }) => {
 		// Login first
 		await loginAs(page, TEST_USERS.cyclist1);
 
-		// Navigate to portal
-		await page.goto('/portal');
+		// Navigate to account (cyclists go to /account)
+		await page.goto('/account');
 
-		// Should be able to access portal
-		await expect(page).toHaveURL('/portal');
+		// Should be able to access account
+		await expect(page).toHaveURL('/account');
 
-		// Verify portal content is visible (not redirected)
-		await expect(page.locator('h2, h3')).toBeVisible();
+		// Verify account content is visible (not redirected)
+		await expect(page.locator('h1, h2')).toBeVisible();
 
 		// Verify authenticated state
 		await expectAuthenticated(page);
 	});
 
-	test('unauthenticated user redirects to login from portal', async ({ page }) => {
+	test('unauthenticated user redirects to login from account', async ({ page }) => {
 		// Ensure we're logged out
 		await clearAuth(page);
 
-		// Try to access portal without authentication
-		await page.goto('/portal');
+		// Try to access account without authentication
+		await page.goto('/account');
 
 		// Should redirect to login page
 		await expect(page).toHaveURL('/login');
@@ -107,20 +107,20 @@ test.describe('Authentication', () => {
 		// Verify logged out state
 		await expectUnauthenticated(page);
 
-		// Try to access portal again - should redirect to login
-		await page.goto('/portal');
+		// Try to access account again - should redirect to login
+		await page.goto('/account');
 		await expect(page).toHaveURL('/login');
 	});
 
-	test('authenticated user redirects from login to portal', async ({ page }) => {
+	test('authenticated user redirects from login to account', async ({ page }) => {
 		// Login first
 		await loginAs(page, TEST_USERS.cyclist1);
 
 		// Try to access login page while authenticated
 		await page.goto('/login');
 
-		// Should redirect to portal
-		await expect(page).toHaveURL('/portal');
+		// Should redirect to account (for cyclists)
+		await expect(page).toHaveURL('/account');
 
 		// Verify still authenticated
 		await expectAuthenticated(page);

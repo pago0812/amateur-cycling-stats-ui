@@ -47,12 +47,22 @@ export async function goToCyclistProfile(page: Page, cyclistId: string) {
 }
 
 /**
- * Navigate to portal page
+ * Navigate to account page (for cyclists)
  * @param page - Playwright page object
  */
-export async function goToPortal(page: Page) {
-	await page.goto('/portal');
-	// Portal page might have different content based on user state
+export async function goToAccount(page: Page) {
+	await page.goto('/account');
+	// Account page is for cyclist settings
+	await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Navigate to panel page (for organizers/admins)
+ * @param page - Playwright page object
+ */
+export async function goToPanel(page: Page) {
+	await page.goto('/panel');
+	// Panel page is for organizers and admins
 	await page.waitForLoadState('networkidle');
 }
 

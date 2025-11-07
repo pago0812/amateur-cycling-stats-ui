@@ -58,6 +58,24 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
      - Cookie management → `$lib/utils/cookies.ts`
      - Other utilities → appropriate `$lib/utils/` files
 
+5. **Internationalization (i18n) for All User-Facing Text**
+   - **NEVER** use hardcoded strings in user-facing components or error messages
+   - All text must use translation keys via `$t()` (client) or `t(locale, key)` (server)
+   - **Error messages in SvelteKit `error()` must use i18n**: `error(404, t(locale, 'feature.errors.notFound'))`
+   - Organize translations by feature in `src/lib/i18n/locales/{locale}/{feature}.json`
+   - Each feature translation file should have an `errors` section for error messages
+   - Example structure:
+     ```json
+     {
+       "profile": { "title": "...", "field": "..." },
+       "errors": {
+         "notFound": "Resource not found",
+         "loadFailed": "Failed to load resource"
+       }
+     }
+     ```
+   - Supported locales: `es` (Spanish - default), `en` (English)
+
 ## Development Commands
 
 ```bash

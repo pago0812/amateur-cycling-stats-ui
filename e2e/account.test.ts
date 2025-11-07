@@ -64,12 +64,12 @@ test.describe('Account Page', () => {
 		await expect(page).toHaveURL(/\/panel/);
 	});
 
-	test('admin login redirects to /panel', async ({ page }) => {
+	test('admin login redirects to /admin', async ({ page }) => {
 		// Login as admin
 		await loginAs(page, TEST_USERS.admin);
 
-		// Should redirect to panel page
-		await expect(page).toHaveURL(/\/panel/);
+		// Should redirect to admin page
+		await expect(page).toHaveURL(/\/admin/);
 	});
 
 	test('unauthenticated user redirects to /login', async ({ page }) => {

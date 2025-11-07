@@ -14,5 +14,9 @@
 		"ranking": "Ranking",
 		"category": "Categoría",
 		"points": "Puntos"
+	},
+	"errors": {
+		"notFound": "Ciclista no encontrado",
+		"loadFailed": "Error al cargar detalles del ciclista"
 	}
 }

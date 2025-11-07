@@ -133,21 +133,22 @@ test.describe('Navigation', () => {
 		// Wait for page to load
 		await page.waitForLoadState('networkidle');
 
-		// Check for error indicators
-		const has404 = await page
-			.getByText(/404|not found|no encontrado/i)
-			.isVisible()
-			.catch(() => false);
-		const hasError = await page
-			.getByText(/error/i)
+		// Should show 404 error page with custom error UI
+		// Check for 404 heading
+		const has404Heading = await page
+			.getByRole('heading', { name: '404' })
 			.isVisible()
 			.catch(() => false);
 
-		// Either explicit error message or redirect to another page
-		const currentURL = page.url();
-		const isErrorState = has404 || hasError || !currentURL.includes('/results/00000000');
+		// Check for error message (in English or Spanish)
+		const hasErrorMessage = await page
+			.getByText(/event not found|evento no encontrado/i)
+			.isVisible()
+			.catch(() => false);
 
-		expect(isErrorState).toBeTruthy();
+		// Should have both 404 heading and error message
+		expect(has404Heading).toBeTruthy();
+		expect(hasErrorMessage).toBeTruthy();
 	});
 
 	test('global alert displays error messages', async ({ page }) => {
@@ -190,8 +191,8 @@ test.describe('Navigation', () => {
 		const loginLink = page.getByRole('link', { name: /iniciar sesión|log in/i });
 		await expect(loginLink).not.toBeVisible();
 
-		// Click account link should navigate to portal
+		// Click account link should navigate to account page (for cyclists)
 		await accountLink.click();
-		await expect(page).toHaveURL('/portal');
+		await expect(page).toHaveURL('/account');
 	});
 });
