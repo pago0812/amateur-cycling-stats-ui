@@ -11,7 +11,7 @@ import { mapTimestamps } from './common.adapter';
  */
 export function adaptRaceCategoryFromDb(dbCategory: RaceCategoryDB): RaceCategory {
 	return {
-		id: dbCategory.id,
+		id: dbCategory.short_id, // Translate: short_id → id
 		name: dbCategory.name,
 		...mapTimestamps(dbCategory)
 	};
@@ -22,7 +22,7 @@ export function adaptRaceCategoryFromDb(dbCategory: RaceCategoryDB): RaceCategor
  */
 export function adaptRaceCategoryGenderFromDb(dbGender: RaceCategoryGenderDB): RaceCategoryGender {
 	return {
-		id: dbGender.id,
+		id: dbGender.short_id, // Translate: short_id → id
 		name: dbGender.name,
 		...mapTimestamps(dbGender)
 	};
@@ -33,7 +33,7 @@ export function adaptRaceCategoryGenderFromDb(dbGender: RaceCategoryGenderDB): R
  */
 export function adaptRaceCategoryLengthFromDb(dbLength: RaceCategoryLengthDB): RaceCategoryLength {
 	return {
-		id: dbLength.id,
+		id: dbLength.short_id, // Translate: short_id → id
 		name: dbLength.name,
 		...mapTimestamps(dbLength)
 	};

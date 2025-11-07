@@ -15,43 +15,48 @@ import type {
 	CyclistWithResultsResponse,
 	CyclistWithResultsRpcResponse
 } from '$lib/types/db';
-import { createMockDbRow } from '$lib/test-utils/supabase-mock';
 
 describe('Cyclists Adapter', () => {
 	describe('adaptCyclistFromDb', () => {
 		it('should transform DB cyclist to domain Cyclist', () => {
-			const dbCyclist: CyclistDB = createMockDbRow({
+			const dbCyclist: CyclistDB = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Carlos',
 				last_name: 'Rodríguez',
 				born_year: 1995,
 				gender_id: 'gender-male',
-				user_id: 'user-123'
-			});
+				user_id: 'user-123',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptCyclistFromDb(dbCyclist);
 
 			expect(result).toEqual({
-				id: 'cyclist-123',
+				id: '123', // short_id extracted from 'cyclist-123'
 				name: 'Carlos',
 				lastName: 'Rodríguez',
 				bornYear: 1995,
-				genderId: 'gender-male',
-				userId: 'user-123',
+				genderId: 'gender-male', // Foreign keys are NOT transformed
+				userId: 'user-123', // Foreign keys are NOT transformed
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
 			});
 		});
 
 		it('should handle null optional fields', () => {
-			const dbCyclist: CyclistDB = createMockDbRow({
+			const dbCyclist: CyclistDB = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Test',
 				last_name: 'Cyclist',
 				born_year: null,
 				gender_id: null,
-				user_id: null
-			});
+				user_id: null,
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptCyclistFromDb(dbCyclist);
 
@@ -61,14 +66,17 @@ describe('Cyclists Adapter', () => {
 		});
 
 		it('should handle cyclist without user account', () => {
-			const dbCyclist: CyclistDB = createMockDbRow({
+			const dbCyclist: CyclistDB = {
 				id: 'cyclist-unlinked',
+				short_id: 'unlinked',
 				name: 'Unregistered',
 				last_name: 'Athlete',
 				born_year: 1990,
 				gender_id: 'gender-male',
-				user_id: null
-			});
+				user_id: null,
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptCyclistFromDb(dbCyclist);
 
@@ -79,15 +87,19 @@ describe('Cyclists Adapter', () => {
 
 	describe('adaptCyclistWithResultsFromDb', () => {
 		it('should transform cyclist with race results and nested relations', () => {
-			const dbCyclist: CyclistWithResultsResponse = createMockDbRow({
+			const dbCyclist: CyclistWithResultsResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Carlos',
 				last_name: 'Rodríguez',
 				born_year: 1995,
 				gender_id: 'gender-male',
 				user_id: 'user-123',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
 				gender: {
 					id: 'gender-male',
+					short_id: 'male',
 					name: 'M',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
@@ -95,6 +107,7 @@ describe('Cyclists Adapter', () => {
 				race_results: [
 					{
 						id: 'result-1',
+						short_id: '1',
 						place: 1,
 						time: '02:30:45',
 						points: 100,
@@ -105,6 +118,7 @@ describe('Cyclists Adapter', () => {
 						updated_at: '2024-01-01T00:00:00Z',
 						race: {
 							id: 'race-1',
+							short_id: '1',
 							name: 'Gran Fondo - LONG/MALE/ABS',
 							description: 'Long distance race',
 							date_time: '2024-06-15T09:00:00Z',
@@ -118,6 +132,7 @@ describe('Cyclists Adapter', () => {
 							updated_at: '2024-01-01T00:00:00Z',
 							event: {
 								id: 'event-1',
+								short_id: '1',
 								name: 'Gran Fondo Valencia',
 								description: 'Annual event',
 								date_time: '2024-06-15T09:00:00Z',
@@ -134,24 +149,28 @@ describe('Cyclists Adapter', () => {
 							},
 							race_category: {
 								id: 'cat-abs',
+								short_id: 'abs',
 								name: 'ABS',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_gender: {
 								id: 'gender-male',
+								short_id: 'male',
 								name: 'MALE',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_length: {
 								id: 'length-long',
+								short_id: 'long',
 								name: 'LONG',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_ranking: {
 								id: 'ranking-uci',
+								short_id: 'uci',
 								name: 'UCI',
 								description: 'UCI ranking system',
 								created_at: '2024-01-01T00:00:00Z',
@@ -160,6 +179,7 @@ describe('Cyclists Adapter', () => {
 						},
 						ranking_point: {
 							id: 'rp-1',
+							short_id: '1',
 							place: 1,
 							points: 100,
 							race_ranking_id: 'ranking-uci',
@@ -168,11 +188,11 @@ describe('Cyclists Adapter', () => {
 						}
 					}
 				]
-			});
+			};
 
 			const result = adaptCyclistWithResultsFromDb(dbCyclist);
 
-			expect(result.id).toBe('cyclist-123');
+			expect(result.id).toBe('123'); // short_id extracted from 'cyclist-123'
 			expect(result.name).toBe('Carlos');
 			expect(result.lastName).toBe('Rodríguez');
 			expect(result.gender?.name).toBe('M');
@@ -185,16 +205,19 @@ describe('Cyclists Adapter', () => {
 		});
 
 		it('should handle cyclist with no gender', () => {
-			const dbCyclist: CyclistWithResultsResponse = createMockDbRow({
+			const dbCyclist: CyclistWithResultsResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
 				gender_id: null,
 				user_id: null,
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
 				gender: null,
 				race_results: []
-			});
+			};
 
 			const result = adaptCyclistWithResultsFromDb(dbCyclist);
 
@@ -202,21 +225,25 @@ describe('Cyclists Adapter', () => {
 		});
 
 		it('should handle empty race results array', () => {
-			const dbCyclist: CyclistWithResultsResponse = createMockDbRow({
+			const dbCyclist: CyclistWithResultsResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'New',
 				last_name: 'Cyclist',
 				born_year: 2000,
 				gender_id: 'gender-female',
 				user_id: 'user-456',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
 				gender: {
 					id: 'gender-female',
+					short_id: 'female',
 					name: 'F',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
 				race_results: []
-			});
+			};
 
 			const result = adaptCyclistWithResultsFromDb(dbCyclist);
 
@@ -227,7 +254,8 @@ describe('Cyclists Adapter', () => {
 	describe('adaptCyclistWithResultsFromRpc', () => {
 		it('should transform RPC response to domain CyclistWithRelations', () => {
 			const rpcData: CyclistWithResultsRpcResponse = {
-				id: 'cyclist-123',
+				id: 'uuid-cyclist-123',
+				short_id: 'cyclist-123',
 				name: 'María',
 				last_name: 'García',
 				born_year: 1998,
@@ -236,14 +264,16 @@ describe('Cyclists Adapter', () => {
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-02T00:00:00Z',
 				gender: {
-					id: 'gender-female',
+					id: 'uuid-gender-female',
+					short_id: 'gender-female',
 					name: 'F',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
 				race_results: [
 					{
-						id: 'result-1',
+						id: 'uuid-result-1',
+						short_id: 'result-1',
 						place: 2,
 						time: '02:45:30',
 						race_id: 'race-1',
@@ -252,7 +282,8 @@ describe('Cyclists Adapter', () => {
 						created_at: '2024-01-01T00:00:00Z',
 						updated_at: '2024-01-01T00:00:00Z',
 						race: {
-							id: 'race-1',
+							id: 'uuid-race-1',
+							short_id: 'race-1',
 							name: 'Women Gran Fondo - LONG/FEMALE/ELITE',
 							description: 'Elite women race',
 							date_time: '2024-06-15T10:00:00Z',
@@ -265,7 +296,8 @@ describe('Cyclists Adapter', () => {
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z',
 							event: {
-								id: 'event-1',
+								id: 'uuid-event-1',
+								short_id: 'event-1',
 								name: 'Gran Fondo Valencia',
 								description: 'Annual event',
 								date_time: '2024-06-15T09:00:00Z',
@@ -281,25 +313,29 @@ describe('Cyclists Adapter', () => {
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category: {
-								id: 'cat-elite',
+								id: 'uuid-cat-elite',
+								short_id: 'cat-elite',
 								name: 'ELITE',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_gender: {
-								id: 'gender-female',
+								id: 'uuid-gender-female',
+								short_id: 'gender-female',
 								name: 'FEMALE',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_length: {
-								id: 'length-long',
+								id: 'uuid-length-long',
+								short_id: 'length-long',
 								name: 'LONG',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_ranking: {
-								id: 'ranking-national',
+								id: 'uuid-ranking-national',
+								short_id: 'ranking-national',
 								name: 'NATIONAL',
 								description: 'National ranking system',
 								created_at: '2024-01-01T00:00:00Z',
@@ -307,7 +343,8 @@ describe('Cyclists Adapter', () => {
 							}
 						},
 						ranking_point: {
-							id: 'rp-2',
+							id: 'uuid-rp-2',
+							short_id: 'rp-2',
 							place: 2,
 							points: 50,
 							race_ranking_id: 'ranking-national',
@@ -320,7 +357,7 @@ describe('Cyclists Adapter', () => {
 
 			const result = adaptCyclistWithResultsFromRpc(rpcData);
 
-			expect(result.id).toBe('cyclist-123');
+			expect(result.id).toBe('cyclist-123'); // Uses short_id directly from RPC
 			expect(result.name).toBe('María');
 			expect(result.lastName).toBe('García');
 			expect(result.bornYear).toBe(1998);
@@ -334,6 +371,7 @@ describe('Cyclists Adapter', () => {
 		it('should handle null ranking_point in RPC response', () => {
 			const rpcData: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
@@ -345,6 +383,7 @@ describe('Cyclists Adapter', () => {
 				race_results: [
 					{
 						id: 'result-1',
+						short_id: '1',
 						place: 10,
 						time: '03:00:00',
 						race_id: 'race-1',
@@ -354,6 +393,7 @@ describe('Cyclists Adapter', () => {
 						updated_at: '2024-01-01T00:00:00Z',
 						race: {
 							id: 'race-1',
+							short_id: '1',
 							name: 'Test Race',
 							description: null,
 							date_time: '2024-01-01T10:00:00Z',
@@ -367,6 +407,7 @@ describe('Cyclists Adapter', () => {
 							updated_at: '2024-01-01T00:00:00Z',
 							event: {
 								id: 'event-1',
+								short_id: '1',
 								name: 'Event',
 								description: null,
 								date_time: '2024-01-01T09:00:00Z',
@@ -383,24 +424,28 @@ describe('Cyclists Adapter', () => {
 							},
 							race_category: {
 								id: 'cat-1',
+								short_id: '1',
 								name: 'CAT1',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_gender: {
 								id: 'gender-1',
+								short_id: '1',
 								name: 'OPEN',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_length: {
 								id: 'length-1',
+								short_id: '1',
 								name: 'SHORT',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_ranking: {
 								id: 'ranking-1',
+								short_id: '1',
 								name: 'CUSTOM',
 								description: null,
 								created_at: '2024-01-01T00:00:00Z',
@@ -421,6 +466,7 @@ describe('Cyclists Adapter', () => {
 		it('should copy points from ranking_point when available', () => {
 			const rpcData: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
@@ -430,6 +476,7 @@ describe('Cyclists Adapter', () => {
 				updated_at: '2024-01-01T00:00:00Z',
 				gender: {
 					id: 'gender-male',
+					short_id: 'male',
 					name: 'M',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
@@ -437,6 +484,7 @@ describe('Cyclists Adapter', () => {
 				race_results: [
 					{
 						id: 'result-1',
+						short_id: '1',
 						place: 3,
 						time: '02:50:00',
 						race_id: 'race-1',
@@ -446,6 +494,7 @@ describe('Cyclists Adapter', () => {
 						updated_at: '2024-01-01T00:00:00Z',
 						race: {
 							id: 'race-1',
+							short_id: '1',
 							name: 'Race',
 							description: null,
 							date_time: '2024-01-01T10:00:00Z',
@@ -459,6 +508,7 @@ describe('Cyclists Adapter', () => {
 							updated_at: '2024-01-01T00:00:00Z',
 							event: {
 								id: 'event-1',
+								short_id: '1',
 								name: 'Event',
 								description: null,
 								date_time: '2024-01-01T09:00:00Z',
@@ -475,24 +525,28 @@ describe('Cyclists Adapter', () => {
 							},
 							race_category: {
 								id: 'cat-1',
+								short_id: '1',
 								name: 'ABS',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_gender: {
 								id: 'gender-1',
+								short_id: '1',
 								name: 'MALE',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_length: {
 								id: 'length-1',
+								short_id: '1',
 								name: 'LONG',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_ranking: {
 								id: 'ranking-1',
+								short_id: '1',
 								name: 'UCI',
 								description: 'UCI ranking',
 								created_at: '2024-01-01T00:00:00Z',
@@ -501,6 +555,7 @@ describe('Cyclists Adapter', () => {
 						},
 						ranking_point: {
 							id: 'rp-3',
+							short_id: '3',
 							place: 3,
 							points: 30,
 							race_ranking_id: 'ranking-1',

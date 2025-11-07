@@ -9,11 +9,11 @@ import { mapTimestamps } from './common.adapter';
 
 /**
  * Adapts a raw database event row to domain Event type.
- * Transforms snake_case → camelCase.
+ * Transforms snake_case → camelCase and short_id → id (domain abstraction).
  */
 export function adaptEventFromDb(dbEvent: EventDB): Event {
 	return {
-		id: dbEvent.id,
+		id: dbEvent.short_id, // Translate: short_id → id (UUID stays internal)
 		name: dbEvent.name,
 		description: dbEvent.description,
 		dateTime: dbEvent.date_time,
@@ -31,17 +31,19 @@ export function adaptEventFromDb(dbEvent: EventDB): Event {
 
 /**
  * Adapts race category from junction table response.
+ * Translates short_id → id for domain.
  */
 function adaptRaceCategoryFromJunction(junctionData: {
 	race_categories: {
 		id: string;
+		short_id: string;
 		name: string;
 		created_at: string | null;
 		updated_at: string | null;
 	};
 }): RaceCategory {
 	return {
-		id: junctionData.race_categories.id,
+		id: junctionData.race_categories.short_id, // Translate: short_id → id
 		name: junctionData.race_categories.name,
 		...mapTimestamps(junctionData.race_categories)
 	};
@@ -49,17 +51,19 @@ function adaptRaceCategoryFromJunction(junctionData: {
 
 /**
  * Adapts race category gender from junction table response.
+ * Translates short_id → id for domain.
  */
 function adaptRaceCategoryGenderFromJunction(junctionData: {
 	race_category_genders: {
 		id: string;
+		short_id: string;
 		name: string;
 		created_at: string | null;
 		updated_at: string | null;
 	};
 }): RaceCategoryGender {
 	return {
-		id: junctionData.race_category_genders.id,
+		id: junctionData.race_category_genders.short_id, // Translate: short_id → id
 		name: junctionData.race_category_genders.name,
 		...mapTimestamps(junctionData.race_category_genders)
 	};
@@ -67,17 +71,19 @@ function adaptRaceCategoryGenderFromJunction(junctionData: {
 
 /**
  * Adapts race category length from junction table response.
+ * Translates short_id → id for domain.
  */
 function adaptRaceCategoryLengthFromJunction(junctionData: {
 	race_category_lengths: {
 		id: string;
+		short_id: string;
 		name: string;
 		created_at: string | null;
 		updated_at: string | null;
 	};
 }): RaceCategoryLength {
 	return {
-		id: junctionData.race_category_lengths.id,
+		id: junctionData.race_category_lengths.short_id, // Translate: short_id → id
 		name: junctionData.race_category_lengths.name,
 		...mapTimestamps(junctionData.race_category_lengths)
 	};

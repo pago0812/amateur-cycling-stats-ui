@@ -8,8 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getPastEvents, getFutureEvents, getEventWithCategoriesById } from './events';
 import {
 	createMockSupabaseClient,
-	mockSupabaseQuery,
-	createMockDbRow
+	mockSupabaseQuery
 } from '$lib/test-utils/supabase-mock';
 import type { EventDB, EventWithCategoriesResponse } from '$lib/types/db';
 
@@ -24,8 +23,9 @@ describe('Events Service', () => {
 	describe('getPastEvents', () => {
 		it('should fetch finished events for a given year', async () => {
 			const mockEvents: EventDB[] = [
-				createMockDbRow({
+				{
 					id: 'event-1',
+					short_id: '1',
 					name: 'Gran Fondo 2024',
 					description: 'Past event',
 					date_time: '2024-06-15T09:00:00Z',
@@ -36,8 +36,10 @@ describe('Events Service', () => {
 					event_status: 'FINISHED',
 					is_public_visible: true,
 					organization_id: 'org-1',
-					created_by: 'user-1'
-				})
+					created_by: 'user-1',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				}
 			];
 
 			mockSupabaseQuery(mockSupabase, { data: mockEvents, error: null });
@@ -83,8 +85,9 @@ describe('Events Service', () => {
 
 		it('should transform DB response to domain types', async () => {
 			const mockEvents: EventDB[] = [
-				createMockDbRow({
+				{
 					id: 'event-1',
+					short_id: '1',
 					name: 'Test Event',
 					description: null,
 					date_time: '2024-01-15T10:00:00Z',
@@ -95,8 +98,10 @@ describe('Events Service', () => {
 					event_status: 'FINISHED',
 					is_public_visible: true,
 					organization_id: 'org-1',
-					created_by: 'user-1'
-				})
+					created_by: 'user-1',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				}
 			];
 
 			mockSupabaseQuery(mockSupabase, { data: mockEvents, error: null });
@@ -115,8 +120,9 @@ describe('Events Service', () => {
 	describe('getFutureEvents', () => {
 		it('should fetch AVAILABLE and SOLD_OUT events', async () => {
 			const mockEvents: EventDB[] = [
-				createMockDbRow({
+				{
 					id: 'event-1',
+					short_id: '1',
 					name: 'Future Event',
 					description: 'Upcoming event',
 					date_time: '2025-06-15T09:00:00Z',
@@ -127,8 +133,10 @@ describe('Events Service', () => {
 					event_status: 'AVAILABLE',
 					is_public_visible: true,
 					organization_id: 'org-1',
-					created_by: 'user-1'
-				})
+					created_by: 'user-1',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				}
 			];
 
 			mockSupabaseQuery(mockSupabase, { data: mockEvents, error: null });
@@ -161,8 +169,9 @@ describe('Events Service', () => {
 
 		it('should return multiple events in ascending date order', async () => {
 			const mockEvents: EventDB[] = [
-				createMockDbRow({
+				{
 					id: 'event-1',
+					short_id: '1',
 					name: 'Event 1',
 					description: null,
 					date_time: '2025-01-15T09:00:00Z',
@@ -173,10 +182,13 @@ describe('Events Service', () => {
 					event_status: 'AVAILABLE',
 					is_public_visible: true,
 					organization_id: 'org-1',
-					created_by: 'user-1'
-				}),
-				createMockDbRow({
+					created_by: 'user-1',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				},
+				{
 					id: 'event-2',
+					short_id: '2',
 					name: 'Event 2',
 					description: null,
 					date_time: '2025-02-20T09:00:00Z',
@@ -187,8 +199,10 @@ describe('Events Service', () => {
 					event_status: 'SOLD_OUT',
 					is_public_visible: true,
 					organization_id: 'org-1',
-					created_by: 'user-1'
-				})
+					created_by: 'user-1',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				}
 			];
 
 			mockSupabaseQuery(mockSupabase, { data: mockEvents, error: null });
@@ -203,8 +217,9 @@ describe('Events Service', () => {
 
 	describe('getEventWithCategoriesById', () => {
 		it('should fetch event with nested categories, genders, and lengths', async () => {
-			const mockEvent: EventWithCategoriesResponse = createMockDbRow({
+			const mockEvent: EventWithCategoriesResponse = {
 				id: 'event-123',
+				short_id: '123',
 				name: 'Gran Fondo Valencia',
 				description: 'Annual event',
 				date_time: '2024-06-15T09:00:00Z',
@@ -216,10 +231,13 @@ describe('Events Service', () => {
 				is_public_visible: true,
 				organization_id: 'org-1',
 				created_by: 'user-1',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
 				supportedCategories: [
 					{
 						race_categories: {
 							id: 'cat-abs',
+							short_id: 'abs',
 							name: 'ABS',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
@@ -230,6 +248,7 @@ describe('Events Service', () => {
 					{
 						race_category_genders: {
 							id: 'gender-male',
+							short_id: 'male',
 							name: 'MALE',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
@@ -240,27 +259,29 @@ describe('Events Service', () => {
 					{
 						race_category_lengths: {
 							id: 'length-long',
+							short_id: 'long',
 							name: 'LONG',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
 						}
 					}
 				]
-			});
+			};
 
 			const queryMock = mockSupabaseQuery(mockSupabase, { data: mockEvent, error: null });
 			queryMock.single.mockResolvedValue({ data: mockEvent, error: null });
 
 			const result = await getEventWithCategoriesById(mockSupabase, { id: 'event-123' });
 
-			expect(result.id).toBe('event-123');
-			expect(result.name).toBe('Gran Fondo Valencia');
-			expect(result.supportedRaceCategories).toHaveLength(1);
-			expect(result.supportedRaceCategoryGenders).toHaveLength(1);
-			expect(result.supportedRaceCategoryLengths).toHaveLength(1);
+			expect(result).not.toBeNull();
+			expect(result!.id).toBe('123'); // short_id extracted from 'event-123'
+			expect(result!.name).toBe('Gran Fondo Valencia');
+			expect(result!.supportedRaceCategories).toHaveLength(1);
+			expect(result!.supportedRaceCategoryGenders).toHaveLength(1);
+			expect(result!.supportedRaceCategoryLengths).toHaveLength(1);
 		});
 
-		it('should throw "Event not found" for PGRST116 error', async () => {
+		it('should return null for PGRST116 error (not found)', async () => {
 			const queryMock = mockSupabaseQuery(mockSupabase, {
 				data: null,
 				error: { message: 'No rows found', code: 'PGRST116' }
@@ -270,9 +291,8 @@ describe('Events Service', () => {
 				error: { message: 'No rows found', code: 'PGRST116' }
 			});
 
-			await expect(getEventWithCategoriesById(mockSupabase, { id: 'nonexistent' })).rejects.toThrow(
-				'Event not found'
-			);
+			const result = await getEventWithCategoriesById(mockSupabase, { id: 'nonexistent' });
+			expect(result).toBeNull();
 		});
 
 		it('should throw database error for other errors', async () => {
@@ -290,13 +310,12 @@ describe('Events Service', () => {
 			);
 		});
 
-		it('should throw error when data is null despite no error', async () => {
+		it('should return null when data is null despite no error', async () => {
 			const queryMock = mockSupabaseQuery(mockSupabase, { data: null, error: null });
 			queryMock.single.mockResolvedValue({ data: null, error: null });
 
-			await expect(getEventWithCategoriesById(mockSupabase, { id: 'event-123' })).rejects.toThrow(
-				'Event not found'
-			);
+			const result = await getEventWithCategoriesById(mockSupabase, { id: 'event-123' });
+			expect(result).toBeNull();
 		});
 	});
 });

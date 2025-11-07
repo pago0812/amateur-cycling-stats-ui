@@ -11,20 +11,22 @@ import {
 	adaptRaceCategoryLengthFromDb
 } from './race-categories.adapter';
 import type { RaceCategoryDB, RaceCategoryGenderDB, RaceCategoryLengthDB } from '$lib/types/db';
-import { createMockDbRow } from '$lib/test-utils/supabase-mock';
 
 describe('Race Categories Adapter', () => {
 	describe('adaptRaceCategoryFromDb', () => {
 		it('should transform DB race category to domain RaceCategory', () => {
-			const dbCategory: RaceCategoryDB = createMockDbRow({
+			const dbCategory: RaceCategoryDB = {
 				id: 'cat-abs',
-				name: 'ABS'
-			});
+				short_id: 'abs',
+				name: 'ABS',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptRaceCategoryFromDb(dbCategory);
 
 			expect(result).toEqual({
-				id: 'cat-abs',
+				id: 'abs', // short_id extracted from 'cat-abs'
 				name: 'ABS',
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
@@ -35,30 +37,36 @@ describe('Race Categories Adapter', () => {
 			const categories = ['ABS', 'ELITE', 'SUB23', 'MASTER30', 'MASTER40', 'MASTER50'];
 
 			categories.forEach((categoryName) => {
-				const dbCategory: RaceCategoryDB = createMockDbRow({
+				const dbCategory: RaceCategoryDB = {
 					id: `cat-${categoryName.toLowerCase()}`,
-					name: categoryName
-				});
+					short_id: categoryName.toLowerCase(),
+					name: categoryName,
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				};
 
 				const result = adaptRaceCategoryFromDb(dbCategory);
 
 				expect(result.name).toBe(categoryName);
-				expect(result.id).toBe(`cat-${categoryName.toLowerCase()}`);
+				expect(result.id).toBe(categoryName.toLowerCase()); // short_id extracted from last part
 			});
 		});
 	});
 
 	describe('adaptRaceCategoryGenderFromDb', () => {
 		it('should transform DB race category gender to domain RaceCategoryGender', () => {
-			const dbGender: RaceCategoryGenderDB = createMockDbRow({
+			const dbGender: RaceCategoryGenderDB = {
 				id: 'gender-male',
-				name: 'MALE'
-			});
+				short_id: 'male',
+				name: 'MALE',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptRaceCategoryGenderFromDb(dbGender);
 
 			expect(result).toEqual({
-				id: 'gender-male',
+				id: 'male', // short_id extracted from 'gender-male'
 				name: 'MALE',
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
@@ -69,30 +77,36 @@ describe('Race Categories Adapter', () => {
 			const genders = ['MALE', 'FEMALE', 'OPEN'];
 
 			genders.forEach((genderName) => {
-				const dbGender: RaceCategoryGenderDB = createMockDbRow({
+				const dbGender: RaceCategoryGenderDB = {
 					id: `gender-${genderName.toLowerCase()}`,
-					name: genderName
-				});
+					short_id: genderName.toLowerCase(),
+					name: genderName,
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				};
 
 				const result = adaptRaceCategoryGenderFromDb(dbGender);
 
 				expect(result.name).toBe(genderName);
-				expect(result.id).toBe(`gender-${genderName.toLowerCase()}`);
+				expect(result.id).toBe(genderName.toLowerCase()); // short_id extracted from last part
 			});
 		});
 	});
 
 	describe('adaptRaceCategoryLengthFromDb', () => {
 		it('should transform DB race category length to domain RaceCategoryLength', () => {
-			const dbLength: RaceCategoryLengthDB = createMockDbRow({
+			const dbLength: RaceCategoryLengthDB = {
 				id: 'length-long',
-				name: 'LONG'
-			});
+				short_id: 'long',
+				name: 'LONG',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptRaceCategoryLengthFromDb(dbLength);
 
 			expect(result).toEqual({
-				id: 'length-long',
+				id: 'long', // short_id extracted from 'length-long'
 				name: 'LONG',
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
@@ -103,15 +117,18 @@ describe('Race Categories Adapter', () => {
 			const lengths = ['LONG', 'SHORT', 'SPRINT', 'UNIQUE'];
 
 			lengths.forEach((lengthName) => {
-				const dbLength: RaceCategoryLengthDB = createMockDbRow({
+				const dbLength: RaceCategoryLengthDB = {
 					id: `length-${lengthName.toLowerCase()}`,
-					name: lengthName
-				});
+					short_id: lengthName.toLowerCase(),
+					name: lengthName,
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				};
 
 				const result = adaptRaceCategoryLengthFromDb(dbLength);
 
 				expect(result.name).toBe(lengthName);
-				expect(result.id).toBe(`length-${lengthName.toLowerCase()}`);
+				expect(result.id).toBe(lengthName.toLowerCase()); // short_id extracted from last part
 			});
 		});
 	});

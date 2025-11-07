@@ -9,8 +9,7 @@ import { getCyclistWithResultsById, createCyclist } from './cyclists';
 import {
 	createMockSupabaseClient,
 	mockSupabaseRPC,
-	mockSupabaseQuery,
-	createMockDbRow
+	mockSupabaseQuery
 } from '$lib/test-utils/supabase-mock';
 import type { CyclistWithResultsRpcResponse, CyclistDB } from '$lib/types/db';
 
@@ -26,6 +25,7 @@ describe('Cyclists Service', () => {
 		it('should fetch cyclist with nested race results via RPC', async () => {
 			const mockRpcResponse: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Carlos',
 				last_name: 'Rodríguez',
 				born_year: 1995,
@@ -35,6 +35,7 @@ describe('Cyclists Service', () => {
 				updated_at: '2024-01-01T00:00:00Z',
 				gender: {
 					id: 'gender-male',
+					short_id: 'male',
 					name: 'M',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
@@ -42,6 +43,7 @@ describe('Cyclists Service', () => {
 				race_results: [
 					{
 						id: 'result-1',
+						short_id: '1',
 						place: 1,
 						time: '02:30:45',
 						race_id: 'race-1',
@@ -51,6 +53,7 @@ describe('Cyclists Service', () => {
 						updated_at: '2024-01-01T00:00:00Z',
 						race: {
 							id: 'race-1',
+							short_id: '1',
 							name: 'Gran Fondo - LONG/MALE/ABS',
 							description: 'Long distance',
 							date_time: '2024-06-15T09:00:00Z',
@@ -64,6 +67,7 @@ describe('Cyclists Service', () => {
 							updated_at: '2024-01-01T00:00:00Z',
 							event: {
 								id: 'event-1',
+								short_id: '1',
 								name: 'Gran Fondo Valencia',
 								description: 'Annual event',
 								date_time: '2024-06-15T09:00:00Z',
@@ -80,24 +84,28 @@ describe('Cyclists Service', () => {
 							},
 							race_category: {
 								id: 'cat-abs',
+								short_id: 'abs',
 								name: 'ABS',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_gender: {
 								id: 'gender-male',
+								short_id: 'male',
 								name: 'MALE',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_category_length: {
 								id: 'length-long',
+								short_id: 'long',
 								name: 'LONG',
 								created_at: '2024-01-01T00:00:00Z',
 								updated_at: '2024-01-01T00:00:00Z'
 							},
 							race_ranking: {
 								id: 'ranking-uci',
+								short_id: 'uci',
 								name: 'UCI',
 								description: 'UCI ranking',
 								created_at: '2024-01-01T00:00:00Z',
@@ -106,6 +114,7 @@ describe('Cyclists Service', () => {
 						},
 						ranking_point: {
 							id: 'rp-1',
+							short_id: '1',
 							place: 1,
 							points: 100,
 							race_ranking_id: 'ranking-uci',
@@ -123,14 +132,15 @@ describe('Cyclists Service', () => {
 
 			const result = await getCyclistWithResultsById(mockSupabase, { id: 'cyclist-123' });
 
-			expect(result.id).toBe('cyclist-123');
-			expect(result.name).toBe('Carlos');
-			expect(result.lastName).toBe('Rodríguez');
-			expect(result.raceResults).toHaveLength(1);
-			expect(result.raceResults![0].place).toBe(1);
-			expect(result.raceResults![0]!.race!.name).toBe('Gran Fondo - LONG/MALE/ABS');
+			expect(result).not.toBeNull();
+			expect(result!.id).toBe('123'); // Uses short_id from RPC response
+			expect(result!.name).toBe('Carlos');
+			expect(result!.lastName).toBe('Rodríguez');
+			expect(result!.raceResults).toHaveLength(1);
+			expect(result!.raceResults![0].place).toBe(1);
+			expect(result!.raceResults![0]!.race!.name).toBe('Gran Fondo - LONG/MALE/ABS');
 			expect(mockSupabase.rpc).toHaveBeenCalledWith('get_cyclist_with_results', {
-				cyclist_uuid: 'cyclist-123'
+				cyclist_short_id: 'cyclist-123' // RPC now accepts short_id parameter
 			});
 		});
 
@@ -145,20 +155,20 @@ describe('Cyclists Service', () => {
 			);
 		});
 
-		it('should throw error when cyclist not found', async () => {
+		it('should return null when cyclist not found', async () => {
 			mockSupabaseRPC(mockSupabase, 'get_cyclist_with_results', {
 				data: null,
 				error: null
 			});
 
-			await expect(getCyclistWithResultsById(mockSupabase, { id: 'nonexistent' })).rejects.toThrow(
-				'Cyclist not found'
-			);
+			const result = await getCyclistWithResultsById(mockSupabase, { id: 'nonexistent' });
+			expect(result).toBeNull();
 		});
 
 		it('should transform RPC response to domain types with camelCase', async () => {
 			const mockRpcResponse: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
+				short_id: '123',
 				name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
@@ -199,14 +209,17 @@ describe('Cyclists Service', () => {
 				userId: 'user-456'
 			};
 
-			const mockCreatedCyclist: CyclistDB = createMockDbRow({
+			const mockCreatedCyclist: CyclistDB = {
 				id: 'cyclist-new',
+				short_id: 'new',
 				name: 'María',
 				last_name: 'García',
 				born_year: 1998,
 				gender_id: 'gender-female',
-				user_id: 'user-456'
-			});
+				user_id: 'user-456',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const queryMock = mockSupabaseQuery(mockSupabase, {
 				data: mockCreatedCyclist,
@@ -218,7 +231,7 @@ describe('Cyclists Service', () => {
 
 			const result = await createCyclist(mockSupabase, newCyclist);
 
-			expect(result.id).toBe('cyclist-new');
+			expect(result.id).toBe('new'); // short_id extracted from 'cyclist-new'
 			expect(result.name).toBe('María');
 			expect(result.lastName).toBe('García');
 			expect(result.bornYear).toBe(1998);
@@ -232,14 +245,17 @@ describe('Cyclists Service', () => {
 				lastName: 'Athlete'
 			};
 
-			const mockCreatedCyclist: CyclistDB = createMockDbRow({
+			const mockCreatedCyclist: CyclistDB = {
 				id: 'cyclist-minimal',
+				short_id: 'minimal',
 				name: 'Unregistered',
 				last_name: 'Athlete',
 				born_year: null,
 				gender_id: null,
-				user_id: null
-			});
+				user_id: null,
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const queryMock = mockSupabaseQuery(mockSupabase, {
 				data: mockCreatedCyclist,
@@ -290,14 +306,17 @@ describe('Cyclists Service', () => {
 		});
 
 		it('should transform DB response to domain type with camelCase', async () => {
-			const mockCreatedCyclist: CyclistDB = createMockDbRow({
+			const mockCreatedCyclist: CyclistDB = {
 				id: 'cyclist-test',
+				short_id: 'test',
 				name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1990,
 				gender_id: 'gender-male',
-				user_id: 'user-123'
-			});
+				user_id: 'user-123',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const queryMock = mockSupabaseQuery(mockSupabase, {
 				data: mockCreatedCyclist,

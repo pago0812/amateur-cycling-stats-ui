@@ -15,7 +15,7 @@ import { mapTimestamps } from './common.adapter';
 export function adaptRaceRankingFromDb(dbRaceRanking: RaceRankingDB): RaceRanking {
 	return {
 		// Identity
-		id: dbRaceRanking.id,
+		id: dbRaceRanking.short_id, // Translate: short_id → id
 
 		// Basic Info
 		name: dbRaceRanking.name as RaceRanking['name'],

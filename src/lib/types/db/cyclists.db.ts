@@ -42,9 +42,13 @@ export interface CyclistWithResultsResponse extends CyclistDB {
  * RPC response type for get_cyclist_with_results() function.
  * Returns JSONB with cyclist + nested race_results array.
  * Each result includes full race details and ranking points.
+ *
+ * IMPORTANT: RPC returns both id (UUID) and short_id fields.
+ * Adapters translate short_id → domain.id (UUID stays internal).
  */
 export interface CyclistWithResultsRpcResponse {
-	id: string;
+	id: string; // UUID
+	short_id: string; // NanoID (translates to domain.id)
 	name: string;
 	last_name: string;
 	born_year: number | null;
@@ -54,7 +58,8 @@ export interface CyclistWithResultsRpcResponse {
 	updated_at: string;
 	gender: CyclistGenderDB | null;
 	race_results: Array<{
-		id: string;
+		id: string; // UUID
+		short_id: string; // NanoID
 		place: number;
 		time: string | null;
 		cyclist_id: string;
@@ -63,7 +68,8 @@ export interface CyclistWithResultsRpcResponse {
 		created_at: string;
 		updated_at: string;
 		race: {
-			id: string;
+			id: string; // UUID
+			short_id: string; // NanoID
 			name: string | null;
 			description: string | null;
 			date_time: string;

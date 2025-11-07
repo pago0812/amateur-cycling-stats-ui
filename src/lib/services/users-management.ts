@@ -58,10 +58,8 @@ export const login = async (
 		};
 	}
 
-	// Fetch enriched user data
-	const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
-		user_uuid: data.user.id
-	});
+	// Fetch enriched user data (RPC uses auth.uid() when no parameter provided)
+	const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations');
 
 	if (userError || !userData) {
 		return {
@@ -127,10 +125,8 @@ export const signin = async (
 		};
 	}
 
-	// Fetch enriched user data
-	const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
-		user_uuid: data.user.id
-	});
+	// Fetch enriched user data (RPC uses auth.uid() when no parameter provided)
+	const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations');
 
 	if (userError || !userData) {
 		return {

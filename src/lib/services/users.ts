@@ -28,10 +28,8 @@ export const getMyself = async (supabase: SupabaseClient<Database>): Promise<Use
 			};
 		}
 
-		// Fetch enriched user data using our PostgreSQL function
-		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
-			user_uuid: authUser.id
-		});
+		// Fetch enriched user data (RPC uses auth.uid() when no parameter provided)
+		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations');
 
 		if (userError || !userData) {
 			return {
@@ -85,9 +83,26 @@ export const updateUser = async (
 			};
 		}
 
-		// Fetch the updated user data
+		// Fetch the user's short_id first (userId is UUID)
+		const { data: userRow, error: userRowError } = await supabase
+			.from('users')
+			.select('short_id')
+			.eq('id', userId)
+			.single();
+
+		if (userRowError || !userRow) {
+			return {
+				error: {
+					status: 500,
+					name: 'UserDataError',
+					message: 'Failed to fetch user'
+				}
+			};
+		}
+
+		// Fetch the updated enriched user data using short_id
 		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
-			user_uuid: userId
+			user_short_id: userRow.short_id
 		});
 
 		if (userError || !userData) {

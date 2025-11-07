@@ -65,6 +65,9 @@ export async function getFutureEvents(supabase: TypedSupabaseClient): Promise<Ev
  * Returns domain EventWithRelations type with camelCase fields, or null if not found.
  * Single PostgreSQL query with JOINs - much faster than Strapi's multiple requests.
  *
+ * ID parameter is the short_id (public ID), not UUID.
+ * Query uses short_id column (indexed for fast lookups).
+ *
  * Returns null when event doesn't exist (expected case).
  * Throws error only for unexpected database issues.
  */
@@ -88,7 +91,7 @@ export async function getEventWithCategoriesById(
 			)
 		`
 		)
-		.eq('id', params.id)
+		.eq('short_id', params.id) // Changed: Query by short_id instead of UUID
 		.single();
 
 	if (error) {

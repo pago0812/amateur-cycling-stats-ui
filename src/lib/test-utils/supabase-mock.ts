@@ -130,17 +130,6 @@ export function mockSupabaseAuth(
 }
 
 /**
- * Create mock database row with timestamps
- */
-export function createMockDbRow<T extends object>(data: T) {
-	return {
-		...data,
-		created_at: new Date().toISOString(),
-		updated_at: new Date().toISOString()
-	};
-}
-
-/**
  * Mock Supabase error response
  */
 export function createMockError(message: string, code?: string) {

@@ -7,13 +7,13 @@
 import { describe, it, expect } from 'vitest';
 import { adaptEventFromDb, adaptEventWithRelationsFromDb } from './events.adapter';
 import type { EventDB, EventWithCategoriesResponse } from '$lib/types/db';
-import { createMockDbRow } from '$lib/test-utils/supabase-mock';
 
 describe('Events Adapter', () => {
 	describe('adaptEventFromDb', () => {
 		it('should transform DB event to domain Event', () => {
-			const dbEvent: EventDB = createMockDbRow({
+			const dbEvent: EventDB = {
 				id: '123e4567-e89b-12d3-a456-426614174000',
+				short_id: '123e4567xe',
 				name: 'Gran Fondo Valencia',
 				description: 'Annual cycling event',
 				date_time: '2024-06-15T09:00:00Z',
@@ -24,13 +24,15 @@ describe('Events Adapter', () => {
 				event_status: 'AVAILABLE',
 				is_public_visible: true,
 				organization_id: 'org-123',
-				created_by: 'user-123'
-			});
+				created_by: 'user-123',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptEventFromDb(dbEvent);
 
 			expect(result).toEqual({
-				id: '123e4567-e89b-12d3-a456-426614174000',
+				id: '123e4567xe', // short_id: first 10 chars of UUID with '-' replaced
 				name: 'Gran Fondo Valencia',
 				description: 'Annual cycling event',
 				dateTime: '2024-06-15T09:00:00Z',
@@ -40,16 +42,17 @@ describe('Events Adapter', () => {
 				country: 'Spain',
 				eventStatus: 'AVAILABLE',
 				isPublicVisible: true,
-				organizationId: 'org-123',
-				createdBy: 'user-123',
+				organizationId: 'org-123', // Foreign keys are NOT transformed
+				createdBy: 'user-123', // Foreign keys are NOT transformed
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
 			});
 		});
 
 		it('should handle null description', () => {
-			const dbEvent: EventDB = createMockDbRow({
+			const dbEvent: EventDB = {
 				id: '123',
+				short_id: '123',
 				name: 'Test Event',
 				description: null,
 				date_time: '2024-01-01T00:00:00Z',
@@ -60,8 +63,10 @@ describe('Events Adapter', () => {
 				event_status: 'DRAFT',
 				is_public_visible: false,
 				organization_id: 'org-1',
-				created_by: 'user-1'
-			});
+				created_by: 'user-1',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptEventFromDb(dbEvent);
 
@@ -72,8 +77,9 @@ describe('Events Adapter', () => {
 			const statuses = ['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ON_GOING', 'FINISHED'] as const;
 
 			statuses.forEach((status) => {
-				const dbEvent: EventDB = createMockDbRow({
+				const dbEvent: EventDB = {
 					id: '123',
+					short_id: '123',
 					name: 'Event',
 					description: null,
 					date_time: '2024-01-01T00:00:00Z',
@@ -84,8 +90,10 @@ describe('Events Adapter', () => {
 					event_status: status,
 					is_public_visible: true,
 					organization_id: 'org-1',
-					created_by: 'user-1'
-				});
+					created_by: 'user-1',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				};
 
 				const result = adaptEventFromDb(dbEvent);
 
@@ -96,8 +104,9 @@ describe('Events Adapter', () => {
 
 	describe('adaptEventWithRelationsFromDb', () => {
 		it('should transform event with categories to domain EventWithRelations', () => {
-			const dbEvent: EventWithCategoriesResponse = createMockDbRow({
+			const dbEvent: EventWithCategoriesResponse = {
 				id: '123',
+				short_id: '123',
 				name: 'Gran Fondo',
 				description: 'Test',
 				date_time: '2024-06-15T09:00:00Z',
@@ -109,10 +118,13 @@ describe('Events Adapter', () => {
 				is_public_visible: true,
 				organization_id: 'org-123',
 				created_by: 'user-123',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
 				supportedCategories: [
 					{
 						race_categories: {
 							id: 'cat-1',
+							short_id: '1',
 							name: 'ABS',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
@@ -121,6 +133,7 @@ describe('Events Adapter', () => {
 					{
 						race_categories: {
 							id: 'cat-2',
+							short_id: '2',
 							name: 'ELITE',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
@@ -131,6 +144,7 @@ describe('Events Adapter', () => {
 					{
 						race_category_genders: {
 							id: 'gender-1',
+							short_id: '1',
 							name: 'MALE',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
@@ -141,17 +155,18 @@ describe('Events Adapter', () => {
 					{
 						race_category_lengths: {
 							id: 'length-1',
+							short_id: '1',
 							name: 'LONG',
 							created_at: '2024-01-01T00:00:00Z',
 							updated_at: '2024-01-01T00:00:00Z'
 						}
 					}
 				]
-			});
+			};
 
 			const result = adaptEventWithRelationsFromDb(dbEvent);
 
-			expect(result.id).toBe('123');
+			expect(result.id).toBe('123'); // short_id extracted from '123'
 			expect(result.name).toBe('Gran Fondo');
 			expect(result.supportedRaceCategories).toHaveLength(2);
 			expect(result.supportedRaceCategoryGenders).toHaveLength(1);
@@ -162,8 +177,9 @@ describe('Events Adapter', () => {
 		});
 
 		it('should handle empty category arrays', () => {
-			const dbEvent: EventWithCategoriesResponse = createMockDbRow({
+			const dbEvent: EventWithCategoriesResponse = {
 				id: '123',
+				short_id: '123',
 				name: 'Event',
 				description: null,
 				date_time: '2024-01-01T00:00:00Z',
@@ -175,10 +191,12 @@ describe('Events Adapter', () => {
 				is_public_visible: false,
 				organization_id: 'org-1',
 				created_by: 'user-1',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
 				supportedCategories: [],
 				supportedGenders: [],
 				supportedLengths: []
-			});
+			};
 
 			const result = adaptEventWithRelationsFromDb(dbEvent);
 

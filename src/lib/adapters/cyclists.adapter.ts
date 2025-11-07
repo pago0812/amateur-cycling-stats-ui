@@ -18,13 +18,13 @@ import { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 /**
  * Adapts a raw database cyclist row to domain Cyclist type.
- * Transforms snake_case → camelCase.
+ * Transforms snake_case → camelCase and short_id → id (domain abstraction).
  */
 export function adaptCyclistFromDb(
 	dbCyclist: CyclistDB | CyclistWithResultsResponse['race_results'][0]['race']['event']
 ): Cyclist {
 	return {
-		id: dbCyclist.id,
+		id: dbCyclist.short_id, // Translate: short_id → id (UUID stays internal)
 		name: dbCyclist.name,
 		lastName: 'last_name' in dbCyclist ? dbCyclist.last_name : '',
 		bornYear: 'born_year' in dbCyclist ? dbCyclist.born_year : null,
@@ -74,12 +74,13 @@ export function adaptCyclistWithResultsFromDb(
 /**
  * Adapts RPC response from get_cyclist_with_results() to domain type.
  * Transforms snake_case → camelCase for nested race results.
+ * Translates short_id → id for domain abstraction.
  */
 export function adaptCyclistWithResultsFromRpc(
 	rpcData: CyclistWithResultsRpcResponse
 ): CyclistWithRelations {
 	return {
-		id: rpcData.id,
+		id: rpcData.short_id, // Translate: short_id → id (UUID stays internal)
 		name: rpcData.name,
 		lastName: rpcData.last_name,
 		bornYear: rpcData.born_year,
@@ -89,7 +90,7 @@ export function adaptCyclistWithResultsFromRpc(
 		updatedAt: rpcData.updated_at,
 		gender: rpcData.gender ? adaptCyclistGenderFromDb(rpcData.gender) : undefined,
 		raceResults: rpcData.race_results.map((result) => ({
-			id: result.id,
+			id: result.short_id, // Translate: short_id → id
 			place: result.place,
 			time: result.time,
 			points: result.ranking_point?.points ?? null, // Copy from ranking_point if available

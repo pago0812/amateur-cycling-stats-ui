@@ -56,11 +56,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 
 		// Fetch enriched user data using our PostgreSQL function
+		// RPC function uses auth.uid() when no parameter provided
 		const { data: rpcResponse, error } = await event.locals.supabase.rpc(
-			'get_user_with_relations',
-			{
-				user_uuid: user.id
-			}
+			'get_user_with_relations'
+			// No parameter - RPC will use auth.uid() internally
 		);
 
 		if (error || !rpcResponse) {

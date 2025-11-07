@@ -154,8 +154,8 @@ test.describe('Cyclist Profile', () => {
 	});
 
 	test('non-existent cyclist shows 404 page', async ({ page }) => {
-		// Navigate to non-existent cyclist UUID
-		await page.goto('/cyclists/00000000-0000-0000-0000-000000000000');
+		// Navigate to non-existent cyclist (short_id format, ~10 chars)
+		await page.goto('/cyclists/nonexist99');
 
 		// Should show 404 error page with custom error UI
 		// Check for 404 heading

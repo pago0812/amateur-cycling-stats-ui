@@ -7,25 +7,27 @@
 import { describe, it, expect } from 'vitest';
 import { adaptRankingPointFromDb } from './ranking-points.adapter';
 import type { RankingPointDB } from '$lib/types/db';
-import { createMockDbRow } from '$lib/test-utils/supabase-mock';
 
 describe('Ranking Points Adapter', () => {
 	describe('adaptRankingPointFromDb', () => {
 		it('should transform DB ranking point to domain RankingPoint', () => {
-			const dbRankingPoint: RankingPointDB = createMockDbRow({
+			const dbRankingPoint: RankingPointDB = {
 				id: 'rp-123',
+				short_id: '123',
 				place: 1,
 				points: 100,
-				race_ranking_id: 'ranking-uci'
-			});
+				race_ranking_id: 'ranking-uci',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptRankingPointFromDb(dbRankingPoint);
 
 			expect(result).toEqual({
-				id: 'rp-123',
+				id: '123', // short_id extracted from 'rp-123'
 				place: 1,
 				points: 100,
-				raceRankingId: 'ranking-uci',
+				raceRankingId: 'ranking-uci', // Foreign keys are NOT transformed
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
 			});
@@ -41,12 +43,15 @@ describe('Ranking Points Adapter', () => {
 			];
 
 			testCases.forEach(({ place, points }) => {
-				const dbRankingPoint: RankingPointDB = createMockDbRow({
+				const dbRankingPoint: RankingPointDB = {
 					id: `rp-${place}`,
+					short_id: `${place}`,
 					place,
 					points,
-					race_ranking_id: 'ranking-test'
-				});
+					race_ranking_id: 'ranking-test',
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				};
 
 				const result = adaptRankingPointFromDb(dbRankingPoint);
 
@@ -64,12 +69,15 @@ describe('Ranking Points Adapter', () => {
 			];
 
 			rankingSystems.forEach((rankingId) => {
-				const dbRankingPoint: RankingPointDB = createMockDbRow({
+				const dbRankingPoint: RankingPointDB = {
 					id: `rp-${rankingId}`,
+					short_id: rankingId.split('-')[1],
 					place: 1,
 					points: 100,
-					race_ranking_id: rankingId
-				});
+					race_ranking_id: rankingId,
+					created_at: '2024-01-01T00:00:00Z',
+					updated_at: '2024-01-01T00:00:00Z'
+				};
 
 				const result = adaptRankingPointFromDb(dbRankingPoint);
 
@@ -80,6 +88,7 @@ describe('Ranking Points Adapter', () => {
 		it('should handle inline object format (from nested queries)', () => {
 			const inlineRankingPoint = {
 				id: 'rp-inline',
+				short_id: 'inline',
 				place: 3,
 				points: 30,
 				race_ranking_id: 'ranking-uci',
@@ -90,22 +99,25 @@ describe('Ranking Points Adapter', () => {
 			const result = adaptRankingPointFromDb(inlineRankingPoint);
 
 			expect(result).toEqual({
-				id: 'rp-inline',
+				id: 'inline', // Uses short_id directly from inline object
 				place: 3,
 				points: 30,
-				raceRankingId: 'ranking-uci',
+				raceRankingId: 'ranking-uci', // Foreign keys are NOT transformed
 				createdAt: '2024-02-15T14:30:00Z',
 				updatedAt: '2024-02-15T14:30:00Z'
 			});
 		});
 
 		it('should transform snake_case to camelCase correctly', () => {
-			const dbRankingPoint: RankingPointDB = createMockDbRow({
+			const dbRankingPoint: RankingPointDB = {
 				id: 'rp-test-case',
+				short_id: 'testxcase',
 				place: 7,
 				points: 10,
-				race_ranking_id: 'ranking-test-system'
-			});
+				race_ranking_id: 'ranking-test-system',
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z'
+			};
 
 			const result = adaptRankingPointFromDb(dbRankingPoint);
 

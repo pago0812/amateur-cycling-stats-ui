@@ -13,6 +13,7 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
 - ✅ **Authentication**: COMPLETE - Fully migrated to Supabase Auth with SSR cookie handling
 - ✅ **Internationalization (i18n)**: COMPLETE - Full i18n support with automatic language detection
 - ✅ **Portal Refactoring**: COMPLETE - Split into `/panel` (public) and `/account` (settings)
+- ✅ **Public IDs (short_id)**: COMPLETE - All public URLs use NanoID (10-char) instead of UUID
 
 ## Technology Stack
 
@@ -49,7 +50,45 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - Domain types are used throughout the application (components, pages, stores)
    - Database types (snake_case) are ONLY used in services and adapters
 
-4. **Keep hooks.server.ts Lightweight**
+4. **Public ID Architecture (short_id with NanoID)**
+   - **All public URLs use short_id** (10-character NanoID format: lowercase + numbers)
+   - **Database uses dual-field system**: `id` (UUID - internal) + `short_id` (NanoID - public)
+   - **Domain layer only knows `id: string`** (which receives the short_id value from adapters)
+   - **Adapters translate at DB boundary**: `db.short_id` → `domain.id`
+   - **Benefits**: Security (no UUID enumeration), URL-friendly, shorter links
+   - **Pattern**:
+     ```typescript
+     // Database table has BOTH fields
+     // id (UUID): b0a1c2d3-... (internal, never exposed)
+     // short_id (NanoID): sm98nfmsd9 (public, in URLs)
+
+     // Domain type (clean)
+     interface Event {
+       id: string; // This is the short_id, not UUID
+       name: string;
+       // ...
+     }
+
+     // Adapter translates
+     export function adaptEventFromDb(db: EventDB): Event {
+       return {
+         id: db.short_id, // Translate: short_id → id
+         name: db.name,
+         // ...
+       };
+     }
+
+     // URLs use short_id
+     // /results/sm98nfmsd9
+     // /cyclists/abc123xyz0
+     ```
+   - **Service Layer Patterns**:
+     - **Direct short_id queries**: Most services query directly by short_id (events, cyclists)
+     - **UUID conversion for FKs**: When filtering by foreign keys, convert short_id → UUID first
+     - **RPC functions**: Accept short_id parameters, auto-convert internally
+   - **Migration**: All tables have short_id column with auto-generation triggers
+
+5. **Keep hooks.server.ts Lightweight**
    - `hooks.server.ts` should be easy to read and maintain as it runs on every request
    - Extract utility functions to appropriate modules (`$lib/i18n/`, `$lib/utils/`, etc.)
    - Keep only the core logic: Supabase client setup, session management, locale detection
@@ -58,7 +97,7 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
      - Cookie management → `$lib/utils/cookies.ts`
      - Other utilities → appropriate `$lib/utils/` files
 
-5. **Internationalization (i18n) for All User-Facing Text**
+6. **Internationalization (i18n) for All User-Facing Text**
    - **NEVER** use hardcoded strings in user-facing components or error messages
    - All text must use translation keys via `$t()` (client) or `t(locale, key)` (server)
    - **Error messages in SvelteKit `error()` must use i18n**: `error(404, t(locale, 'feature.errors.notFound'))`

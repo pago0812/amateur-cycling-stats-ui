@@ -15,7 +15,7 @@ import { mapTimestamps } from './common.adapter';
 export function adaptOrganizerFromDb(dbOrganizer: OrganizerDB): Organizer {
 	return {
 		// Identity
-		id: dbOrganizer.id,
+		id: dbOrganizer.short_id, // Translate: short_id → id
 
 		// Relationships (Foreign Keys)
 		userId: dbOrganizer.user_id,

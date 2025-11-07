@@ -11,7 +11,7 @@ import { adaptRankingPointFromDb } from './ranking-points.adapter';
  */
 export function adaptRaceFromDb(dbRace: RaceDB): Race {
 	return {
-		id: dbRace.id,
+		id: dbRace.short_id, // Translate: short_id → id
 		name: dbRace.name,
 		description: dbRace.description,
 		dateTime: dbRace.date_time,
@@ -32,7 +32,7 @@ function adaptRaceResultFromNested(
 	dbResult: RaceWithResultsResponse['race_results'][0]
 ): RaceResultWithRelations {
 	const baseResult: RaceResult = {
-		id: dbResult.id,
+		id: dbResult.short_id, // Translate: short_id → id
 		place: dbResult.place,
 		time: dbResult.time,
 		points: dbResult.points,

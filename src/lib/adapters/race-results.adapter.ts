@@ -10,7 +10,7 @@ import { adaptRankingPointFromDb } from './ranking-points.adapter';
  */
 export function adaptRaceResultFromDb(dbResult: RaceResultDB): RaceResult {
 	return {
-		id: dbResult.id,
+		id: dbResult.short_id, // Translate: short_id → id
 		place: dbResult.place,
 		time: dbResult.time,
 		points: null, // Not in base table
@@ -29,7 +29,7 @@ export function adaptRaceResultWithRelationsFromDb(
 	dbData: RaceResultWithRelationsResponse
 ): RaceResultWithRelations {
 	return {
-		id: dbData.id,
+		id: dbData.short_id, // Translate: short_id → id
 		place: dbData.place,
 		time: dbData.time,
 		points: dbData.points,

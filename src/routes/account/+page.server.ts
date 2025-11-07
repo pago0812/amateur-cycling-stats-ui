@@ -17,6 +17,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 			id: user.cyclist.id
 		});
 
+		// Cyclist should always exist if user has cyclist.id, but handle null gracefully
+		if (!cyclist) {
+			throw error(404, 'Cyclist profile not found');
+		}
+
 		return {
 			cyclist
 		};

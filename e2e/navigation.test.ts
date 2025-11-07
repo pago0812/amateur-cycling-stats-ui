@@ -127,8 +127,8 @@ test.describe('Navigation', () => {
 	});
 
 	test('non-existent event shows error or 404', async ({ page }) => {
-		// Navigate to non-existent event UUID
-		await page.goto('/results/00000000-0000-0000-0000-000000000000');
+		// Navigate to non-existent event (short_id format, ~10 chars)
+		await page.goto('/results/nonexist99');
 
 		// Wait for page to load
 		await page.waitForLoadState('networkidle');
