@@ -34,6 +34,16 @@ const config: Config = {
 			key: 'portal',
 			loader: async () => (await import('./locales/es/portal.json')).default
 		},
+		{
+			locale: 'es',
+			key: 'account',
+			loader: async () => (await import('./locales/es/account.json')).default
+		},
+		{
+			locale: 'es',
+			key: 'panel',
+			loader: async () => (await import('./locales/es/panel.json')).default
+		},
 		// English translations
 		{
 			locale: 'en',
@@ -64,6 +74,16 @@ const config: Config = {
 			locale: 'en',
 			key: 'portal',
 			loader: async () => (await import('./locales/en/portal.json')).default
+		},
+		{
+			locale: 'en',
+			key: 'account',
+			loader: async () => (await import('./locales/en/account.json')).default
+		},
+		{
+			locale: 'en',
+			key: 'panel',
+			loader: async () => (await import('./locales/en/panel.json')).default
 		}
 	],
 	fallbackLocale: 'es'

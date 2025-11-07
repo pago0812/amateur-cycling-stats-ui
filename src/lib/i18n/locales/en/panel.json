@@ -1,0 +1,31 @@
+{
+	"title": "Control Panel",
+	"subtitle": "Manage your organization, events and organizers",
+	"tabs": {
+		"manageOrganization": "My Organization",
+		"manageEvents": "Events",
+		"manageOrganizers": "Organizers",
+		"manageOrganizations": "Organizations"
+	},
+	"organization": {
+		"title": "My Organization",
+		"comingSoon": "Coming Soon",
+		"description": "Here you will be able to manage your organization's information"
+	},
+	"events": {
+		"title": "Event Management",
+		"comingSoon": "Coming Soon",
+		"description": "Here you will be able to create and manage events, races and results"
+	},
+	"organizers": {
+		"title": "Organizer Management",
+		"comingSoon": "Coming Soon",
+		"description": "Here you will be able to manage your organization's organizers"
+	},
+	"organizations": {
+		"title": "Organization Management",
+		"comingSoon": "Coming Soon",
+		"description": "Here you will be able to manage all system organizations",
+		"adminOnly": "Admin-only section"
+	}
+}

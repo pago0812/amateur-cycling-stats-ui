@@ -1,0 +1,12 @@
+{
+	"title": "Mi Cuenta",
+	"subtitle": "Gestiona tu perfil y tu información personal",
+	"tabs": {
+		"profile": "Perfil",
+		"upcomingEvents": "Eventos Próximos"
+	},
+	"upcomingEvents": {
+		"comingSoon": "Próximamente",
+		"description": "Aquí podrás ver los eventos en los que estás registrado y gestionar tus inscripciones"
+	}
+}

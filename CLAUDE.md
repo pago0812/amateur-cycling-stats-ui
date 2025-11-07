@@ -10,6 +10,8 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
 - ✅ **Next.js → SvelteKit**: COMPLETE with 100% feature parity
 - ✅ **Strapi → Supabase**: COMPLETE with improved schema and RLS policies
 - ✅ **Authentication**: COMPLETE - Fully migrated to Supabase Auth with SSR cookie handling
+- ✅ **Internationalization (i18n)**: COMPLETE - Full i18n support with automatic language detection
+- ✅ **Portal Refactoring**: COMPLETE - Split into `/panel` (public) and `/account` (settings)
 
 ## Technology Stack
 
@@ -103,11 +105,13 @@ npm run seed:users   # Seed test users (run after supabase db reset)
   - `stores/` - Svelte stores for global state (alert-store)
   - `constants/` - Application constants (urls)
   - `utils/` - Utility functions (dates, session, cookies)
-  - `i18n/` - Internationalization
+  - `i18n/` - Internationalization (sveltekit-i18n)
     - `locale.ts` - Locale detection and validation utilities (parseAcceptLanguage, isSupportedLocale)
     - `server.ts` - Server-side translation helpers (t, getAuthErrorMessage)
-    - `index.ts` - Client-side i18n configuration (sveltekit-i18n)
-    - `locales/` - Translation JSON files (es, en)
+    - `index.ts` - Client-side i18n configuration with route-based loaders
+    - `locales/` - Translation JSON files organized by feature
+      - `en/` - English translations (common, auth, cyclists, events, account, panel)
+      - `es/` - Spanish translations (common, auth, cyclists, events, account, panel)
 - **`src/routes/`** - SvelteKit file-based routing
   - `+layout.svelte` - Root layout wrapper with Header and GlobalAlert
   - `+layout.server.ts` - Server load function for user authentication state
@@ -131,9 +135,10 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 - `/ranking` - Ranking page (stub)
 
 **Authentication Routes:**
-- `/login` - Login page with form actions
-- `/signin` - Registration page with form actions
-- `/portal` - Protected user dashboard with onboarding (requires authentication)
+- `/login` - Login page with form actions and i18n support
+- `/signin` - Registration page with form actions and i18n support
+- `/panel` - Public cyclist panel (profile display, requires authentication)
+- `/account` - User account settings (email, username, role management, requires authentication)
 
 ### Component Library
 
@@ -146,9 +151,11 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 - `ResultsTable.svelte` - Display race results with cyclist links
 - `CyclistResultsTable.svelte` - Display cyclist's race history
 
+**Profile Components:**
+- `CyclistProfile.svelte` - Display cyclist profile information with i18n support
+
 **Form Components:**
 - `SelectQueryParam.svelte` - URL-based filter dropdowns
-- `Onboarding.svelte` - Role selection for new users
 
 ### Service Layer (Complete)
 
@@ -695,9 +702,9 @@ RaceResults (links cyclists to races)
 - Next.js App Router → SvelteKit file-based routing
 - Server Components → SvelteKit SSR with `+page.server.ts`
 - Server Actions → SvelteKit form actions
-- `next-auth` cookies → Cookie-based session (to be updated for Supabase Auth)
+- `next-auth` → Supabase Auth with automatic cookie management
 - `useFormState` hooks → SvelteKit `use:enhance` directive
-- `next-intl` → Hardcoded Spanish text (i18n planned for future)
+- `next-intl` → `sveltekit-i18n` with automatic language detection
 
 **Architecture Improvements:**
 - 100% server-side rendering (no client-side data fetching)
@@ -827,11 +834,23 @@ RaceResults (links cyclists to races)
 - ✅ Created server-side Supabase client utilities in `src/lib/server/supabase.ts`
 - ✅ Implemented `hooks.server.ts` for centralized session management
 - ✅ Updated all protected routes to use `locals.safeGetSession()`
-- ✅ Implemented user-friendly Spanish error messages using Supabase error codes
+- ✅ Implemented user-friendly error messages using Supabase error codes
 - ✅ Refactored database seeding into two-stage approach (user-independent → user-dependent)
 - ✅ Moved events, races, and race results creation from seed.sql to seed-users.ts
 - ✅ Fixed foreign key constraint errors in seeding workflow
 - ✅ Migrated cyclist query to RPC function for better performance (11 JOINs → single optimized query)
+- ✅ Implemented comprehensive i18n support with sveltekit-i18n
+  - Automatic language detection from browser/cookies
+  - Server-side and client-side translation support
+  - Translation files organized by feature (common, auth, cyclists, events, account, panel)
+  - Support for English and Spanish
+- ✅ Refactored portal page into dedicated routes
+  - `/panel` - Public cyclist profile display
+  - `/account` - User account settings
+  - Created reusable `CyclistProfile.svelte` component
+- ✅ Added comprehensive test coverage
+  - Unit tests for components (CyclistProfile.svelte)
+  - E2E tests for account and panel pages
 
 **Remaining Work:**
 - Update remaining service layer (events, races) to use Supabase SDK
@@ -941,12 +960,14 @@ export const load: PageServerLoad = async ({ url }) => {
 ## Future Enhancements
 
 **Planned Features:**
-- Internationalization (i18n) system to replace hardcoded Spanish text
 - Advanced search functionality for cyclists and events
 - Admin dashboard for event/race management
 - Real-time updates with WebSockets
 - Image optimization and lazy loading
 - Enhanced SEO with dynamic meta tags
+- Email verification flow
+- Password reset functionality
+- More language support (Catalan, French, etc.)
 
 **Potential Improvements:**
 - Loading states with `+loading.svelte`
@@ -954,7 +975,3 @@ export const load: PageServerLoad = async ({ url }) => {
 - API route handlers with `+server.ts`
 - Middleware for common logic
 - Rate limiting for form submissions
-- Email verification flow
-- Password reset functionality
-- Afer complete a task after the summary, ask me if I want to update the claude.md file
-- After every task please use playwright to test the modified screens to check that everyting is implemented correctly. If you find any issue please iterate until fix it

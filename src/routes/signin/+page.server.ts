@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// Redirect if already logged in
 	const { user } = await locals.safeGetSession();
 	if (user) {
-		throw redirect(302, Urls.PORTAL);
+		throw redirect(302, Urls.ACCOUNT);
 	}
 };
 
@@ -44,7 +44,8 @@ export const actions = {
 
 		if (signinResponse.data) {
 			// No need to manually save JWT - Supabase handles cookies automatically
-			throw redirect(302, Urls.PORTAL);
+			// Redirect cyclists to /account (all new users are cyclists by default)
+			throw redirect(302, Urls.ACCOUNT);
 		}
 
 		return fail(500, {

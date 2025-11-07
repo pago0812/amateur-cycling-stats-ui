@@ -1,0 +1,31 @@
+{
+	"title": "Panel de Control",
+	"subtitle": "Gestiona tu organización, eventos y organizadores",
+	"tabs": {
+		"manageOrganization": "Mi Organización",
+		"manageEvents": "Eventos",
+		"manageOrganizers": "Organizadores",
+		"manageOrganizations": "Organizaciones"
+	},
+	"organization": {
+		"title": "Mi Organización",
+		"comingSoon": "Próximamente",
+		"description": "Aquí podrás gestionar la información de tu organización"
+	},
+	"events": {
+		"title": "Gestión de Eventos",
+		"comingSoon": "Próximamente",
+		"description": "Aquí podrás crear y gestionar eventos, carreras y resultados"
+	},
+	"organizers": {
+		"title": "Gestión de Organizadores",
+		"comingSoon": "Próximamente",
+		"description": "Aquí podrás gestionar los organizadores de tu organización"
+	},
+	"organizations": {
+		"title": "Gestión de Organizaciones",
+		"comingSoon": "Próximamente",
+		"description": "Aquí podrás gestionar todas las organizaciones del sistema",
+		"adminOnly": "Sección exclusiva para administradores"
+	}
+}

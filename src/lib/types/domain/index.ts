@@ -14,6 +14,7 @@ export type { Cyclist, CyclistWithRelations } from './cyclist.domain';
 export type { User, UserWithRelations } from './user.domain';
 export type { Organization, OrganizationWithRelations } from './organization.domain';
 export type { Role, RoleName } from './role.domain';
+export { RoleTypeEnum } from './role-type.domain';
 export type { Organizer, OrganizerWithRelations } from './organizer.domain';
 
 // Lookup tables

@@ -1,9 +1,9 @@
 {
 	"profile": {
 		"title": "Perfil del ciclista",
-		"birthYear": "Año de nacimiento",
+		"bornYear": "Año de nacimiento",
 		"gender": "Género",
-		"results": "Resultados",
+		"raceHistory": "Historial de carreras",
 		"noResults": "No hay resultados disponibles"
 	},
 	"table": {

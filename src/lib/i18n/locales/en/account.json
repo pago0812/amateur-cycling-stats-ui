@@ -1,0 +1,12 @@
+{
+	"title": "My Account",
+	"subtitle": "Manage your profile and personal information",
+	"tabs": {
+		"profile": "Profile",
+		"upcomingEvents": "Upcoming Events"
+	},
+	"upcomingEvents": {
+		"comingSoon": "Coming Soon",
+		"description": "Here you will be able to see the events you are registered for and manage your registrations"
+	}
+}
