@@ -43,6 +43,7 @@ vi.mock('$app/stores', () => ({
 
 describe('Account Layout Component', () => {
 	const mockData = {
+		locale: 'es',
 		user: {
 			id: 'user-1',
 			username: 'cyclist1',
@@ -53,21 +54,21 @@ describe('Account Layout Component', () => {
 	};
 
 	it('should render page title', async () => {
-		render(AccountLayout, { data: mockData, children: () => {} });
+		render(AccountLayout, { data: mockData, children: (() => {}) as any });
 
 		const heading = page.getByRole('heading', { name: /Mi Cuenta/i });
 		await expect.element(heading).toBeInTheDocument();
 	});
 
 	it('should render page subtitle', async () => {
-		render(AccountLayout, { data: mockData, children: () => {} });
+		render(AccountLayout, { data: mockData, children: (() => {}) as any });
 
 		const subtitle = page.getByText(/Gestiona tu perfil/i);
 		await expect.element(subtitle).toBeInTheDocument();
 	});
 
 	it('should render Profile tab', async () => {
-		render(AccountLayout, { data: mockData, children: () => {} });
+		render(AccountLayout, { data: mockData, children: (() => {}) as any });
 
 		const profileTab = page.getByRole('link', { name: /Perfil/i });
 		await expect.element(profileTab).toBeInTheDocument();
@@ -75,7 +76,7 @@ describe('Account Layout Component', () => {
 	});
 
 	it('should render Upcoming Events tab', async () => {
-		render(AccountLayout, { data: mockData, children: () => {} });
+		render(AccountLayout, { data: mockData, children: (() => {}) as any });
 
 		const eventsTab = page.getByRole('link', { name: /Eventos Próximos/i });
 		await expect.element(eventsTab).toBeInTheDocument();

@@ -88,7 +88,8 @@ describe('Account Layout Server', () => {
 
 		const result = await load({ locals: mockLocals } as any);
 
-		expect(result.user).toBeDefined();
-		expect(result.user.role.name).toBe(RoleTypeEnum.CYCLIST);
+		expect(result).toBeDefined();
+		expect(result?.user).toBeDefined();
+		expect(result?.user?.role?.name).toBe(RoleTypeEnum.CYCLIST);
 	});
 });

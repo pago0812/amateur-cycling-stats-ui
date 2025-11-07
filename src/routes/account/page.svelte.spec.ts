@@ -42,7 +42,19 @@ describe('Account Page Component', () => {
 	};
 
 	it('should render the page', async () => {
-		render(AccountPage, { data: { cyclist: mockCyclist } });
+		render(AccountPage, {
+			data: {
+				locale: 'es',
+				user: {
+					id: 'user-1',
+					username: 'cyclist1',
+					roleId: 'role-1',
+					createdAt: '2024-01-01T00:00:00Z',
+					updatedAt: '2024-01-01T00:00:00Z'
+				} as any,
+				cyclist: mockCyclist
+			}
+		});
 
 		// The component should render without errors
 		expect(true).toBe(true);

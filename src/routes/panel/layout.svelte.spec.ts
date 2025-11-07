@@ -45,6 +45,7 @@ vi.mock('$app/stores', () => ({
 
 describe('Panel Layout Component', () => {
 	const mockOrganizerData = {
+		locale: 'es',
 		user: {
 			id: 'user-1',
 			username: 'organizer',
@@ -61,14 +62,14 @@ describe('Panel Layout Component', () => {
 	};
 
 	it('should render page title', async () => {
-		render(PanelLayout, { data: mockOrganizerData, children: () => {} });
+		render(PanelLayout, { data: mockOrganizerData, children: (() => {}) as any });
 
 		const heading = page.getByRole('heading', { name: /Panel de Control/i });
 		await expect.element(heading).toBeInTheDocument();
 	});
 
 	it('should render 3 tabs for organizers', async () => {
-		render(PanelLayout, { data: mockOrganizerData, children: () => {} });
+		render(PanelLayout, { data: mockOrganizerData, children: (() => {}) as any });
 
 		const overviewTab = page.getByRole('link', { name: /Resumen/i });
 		const eventsTab = page.getByRole('link', { name: /Eventos/i });
@@ -80,7 +81,7 @@ describe('Panel Layout Component', () => {
 	});
 
 	it('should have correct href attributes', async () => {
-		render(PanelLayout, { data: mockOrganizerData, children: () => {} });
+		render(PanelLayout, { data: mockOrganizerData, children: (() => {}) as any });
 
 		const overviewTab = page.getByRole('link', { name: /Resumen/i });
 		await expect.element(overviewTab).toHaveAttribute('href', '/panel');

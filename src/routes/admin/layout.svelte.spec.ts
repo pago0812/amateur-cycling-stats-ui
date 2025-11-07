@@ -43,6 +43,7 @@ vi.mock('$app/stores', () => ({
 
 describe('Admin Layout Component', () => {
 	const mockAdminData = {
+		locale: 'es',
 		user: {
 			id: 'user-admin',
 			username: 'admin',
@@ -59,14 +60,14 @@ describe('Admin Layout Component', () => {
 	};
 
 	it('should render page title', async () => {
-		render(AdminLayout, { data: mockAdminData, children: () => {} });
+		render(AdminLayout, { data: mockAdminData, children: (() => {}) as any });
 
 		const heading = page.getByRole('heading', { name: /Panel de Administración/i });
 		await expect.element(heading).toBeInTheDocument();
 	});
 
 	it('should render General Config tab', async () => {
-		render(AdminLayout, { data: mockAdminData, children: () => {} });
+		render(AdminLayout, { data: mockAdminData, children: (() => {}) as any });
 
 		const configTab = page.getByRole('link', { name: /Configuración General/i });
 
@@ -74,7 +75,7 @@ describe('Admin Layout Component', () => {
 	});
 
 	it('should have correct href attribute for General Config tab', async () => {
-		render(AdminLayout, { data: mockAdminData, children: () => {} });
+		render(AdminLayout, { data: mockAdminData, children: (() => {}) as any });
 
 		const configTab = page.getByRole('link', { name: /Configuración General/i });
 		await expect.element(configTab).toHaveAttribute('href', '/admin');

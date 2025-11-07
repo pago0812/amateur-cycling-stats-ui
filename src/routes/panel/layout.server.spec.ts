@@ -68,8 +68,9 @@ describe('Panel Layout Server', () => {
 
 		const result = await load({ locals: mockLocals } as any);
 
-		expect(result.user).toBeDefined();
-		expect(result.user.role.name).toBe(RoleTypeEnum.ORGANIZER_STAFF);
+		expect(result).toBeDefined();
+		expect(result?.user).toBeDefined();
+		expect(result?.user?.role?.name).toBe(RoleTypeEnum.ORGANIZER_STAFF);
 	});
 
 	it('should allow organizer admins to access', async () => {
@@ -85,8 +86,9 @@ describe('Panel Layout Server', () => {
 
 		const result = await load({ locals: mockLocals } as any);
 
-		expect(result.user).toBeDefined();
-		expect(result.user.role.name).toBe(RoleTypeEnum.ORGANIZER_ADMIN);
+		expect(result).toBeDefined();
+		expect(result?.user).toBeDefined();
+		expect(result?.user?.role?.name).toBe(RoleTypeEnum.ORGANIZER_ADMIN);
 	});
 
 	it('should redirect admins to /admin', async () => {
