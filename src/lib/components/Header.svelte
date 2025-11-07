@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Urls } from '$lib/constants/urls';
 	import type { UserWithRelations } from '$lib/types/domain';
+	import { RoleTypeEnum } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
 
 	let { user = null }: { user?: UserWithRelations | null } = $props();
@@ -13,6 +14,18 @@
 	function closeMobileMenu() {
 		mobileMenuOpen = false;
 	}
+
+	// Get the appropriate portal URL based on user role
+	const portalUrl = $derived(
+		!user
+			? Urls.LOGIN
+			: user.role?.name === RoleTypeEnum.ADMIN
+				? Urls.ADMIN
+				: user.role?.name === RoleTypeEnum.ORGANIZER_ADMIN ||
+					  user.role?.name === RoleTypeEnum.ORGANIZER_STAFF
+					? Urls.PANEL
+					: Urls.ACCOUNT
+	);
 </script>
 
 <nav class="bg-blue-600 text-white">
@@ -37,7 +50,7 @@
 
 				{#if user}
 					<a
-						href={Urls.PORTAL}
+						href={portalUrl}
 						class="px-3 py-2 rounded-md text-sm font-bold hover:bg-blue-700"
 					>
 						{$t('common.navigation.account')}
@@ -115,7 +128,7 @@
 
 				{#if user}
 					<a
-						href={Urls.PORTAL}
+						href={portalUrl}
 						class="text-white font-bold hover:text-blue-200"
 						onclick={closeMobileMenu}
 					>

@@ -3,6 +3,7 @@ export enum Urls {
 	PORTAL = '/portal',
 	ACCOUNT = '/account',
 	PANEL = '/panel',
+	ADMIN = '/admin',
 	RESULTS = '/results',
 	TEAMS = '/teams',
 	LOGIN = '/login',

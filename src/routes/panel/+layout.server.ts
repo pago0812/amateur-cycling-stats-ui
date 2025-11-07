@@ -11,17 +11,20 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		throw redirect(302, Urls.LOGIN);
 	}
 
-	// Only organizers and admins can access /panel
 	// Redirect cyclists to /account
 	if (user.role?.name === RoleTypeEnum.CYCLIST || user.role?.name === RoleTypeEnum.PUBLIC) {
 		throw redirect(302, Urls.ACCOUNT);
 	}
 
-	// Ensure user has appropriate role
+	// Redirect admins to /admin
+	if (user.role?.name === RoleTypeEnum.ADMIN) {
+		throw redirect(302, Urls.ADMIN);
+	}
+
+	// Ensure user is organizer
 	if (
 		user.role?.name !== RoleTypeEnum.ORGANIZER_ADMIN &&
-		user.role?.name !== RoleTypeEnum.ORGANIZER_STAFF &&
-		user.role?.name !== RoleTypeEnum.ADMIN
+		user.role?.name !== RoleTypeEnum.ORGANIZER_STAFF
 	) {
 		throw redirect(302, Urls.LOGIN);
 	}

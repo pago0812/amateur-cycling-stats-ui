@@ -3,7 +3,6 @@ import type { PageServerLoad, Actions } from './$types';
 import { Urls } from '$lib/constants/urls';
 
 export const load: PageServerLoad = async () => {
-	// TODO: Fetch organization details
 	return {};
 };
 

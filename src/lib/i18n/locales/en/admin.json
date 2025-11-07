@@ -1,0 +1,12 @@
+{
+	"title": "Admin Panel",
+	"subtitle": "Manage system-wide settings and configurations",
+	"tabs": {
+		"generalConfig": "General Config"
+	},
+	"generalConfig": {
+		"title": "General Configuration",
+		"comingSoon": "Coming Soon",
+		"description": "Here you will be able to manage system-wide settings and configurations"
+	}
+}

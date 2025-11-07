@@ -4,17 +4,8 @@
 	import GlobalAlert from '$lib/components/GlobalAlert.svelte';
 	import type { LayoutData } from './$types';
 	import type { Snippet } from 'svelte';
-	import { locale, loadTranslations } from '$lib/i18n';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
-
-	// Initialize locale on client side to match server
-	$effect(() => {
-		if (data.locale && $locale !== data.locale) {
-			locale.set(data.locale);
-			loadTranslations(data.locale);
-		}
-	});
 </script>
 
 <svelte:head>

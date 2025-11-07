@@ -31,8 +31,8 @@ export async function loginAs(page: Page, user: TestUser) {
 	// Submit form
 	await page.getByRole('button', { name: /iniciar sesión|log in/i }).click();
 
-	// Wait for redirect to portal
-	await page.waitForURL('/portal', { timeout: 10000 });
+	// Wait for redirect away from login page (could be /panel, /account, or /)
+	await page.waitForURL((url) => url.pathname !== '/login', { timeout: 10000 });
 
 	// Verify we're authenticated
 	await expectAuthenticated(page);
@@ -43,8 +43,8 @@ export async function loginAs(page: Page, user: TestUser) {
  * @param page - Playwright page object
  */
 export async function logout(page: Page) {
-	// Navigate to portal (where logout button is)
-	await page.goto('/portal');
+	// Navigate to account page (where logout button is)
+	await page.goto('/account');
 
 	// Click logout button
 	await page.getByRole('button', { name: /cerrar sesión|log out/i }).click();

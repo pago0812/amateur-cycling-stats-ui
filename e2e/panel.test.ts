@@ -21,38 +21,26 @@ test.describe('Panel Page', () => {
 		await expect(page).toHaveURL(/\/panel/);
 	});
 
-	test('organizer sees 3 tabs (no admin tab)', async ({ page }) => {
+	test('organizer sees 3 tabs', async ({ page }) => {
 		// Login as organizer
 		await loginAs(page, TEST_USERS.organizer);
 
 		// Check for tabs
-		const orgTab = page.getByRole('link', { name: /organización|organization/i });
+		const overviewTab = page.getByRole('link', { name: /resumen|overview/i });
 		const eventsTab = page.getByRole('link', { name: /eventos|events/i });
 		const organizersTab = page.getByRole('link', { name: /organizadores|organizers/i });
 
-		await expect(orgTab).toBeVisible();
+		await expect(overviewTab).toBeVisible();
 		await expect(eventsTab).toBeVisible();
 		await expect(organizersTab).toBeVisible();
-
-		// Should NOT see admin-only tab
-		const organizationsTab = page.getByRole('link', { name: /organizaciones|organizations/i });
-		await expect(organizationsTab).not.toBeVisible();
 	});
 
-	test('admin sees 4 tabs (including admin tab)', async ({ page }) => {
+	test('admin login redirects to /admin (not /panel)', async ({ page }) => {
 		// Login as admin
 		await loginAs(page, TEST_USERS.admin);
 
-		// Check for all tabs including admin-only
-		const orgTab = page.getByRole('link', { name: /mi organización|my organization/i });
-		const eventsTab = page.getByRole('link', { name: /eventos|events/i });
-		const organizersTab = page.getByRole('link', { name: /organizadores|organizers/i });
-		const organizationsTab = page.getByRole('link', { name: /organizaciones|organizations/i });
-
-		await expect(orgTab).toBeVisible();
-		await expect(eventsTab).toBeVisible();
-		await expect(organizersTab).toBeVisible();
-		await expect(organizationsTab).toBeVisible();
+		// Should redirect to admin page, not panel
+		await expect(page).toHaveURL(/\/admin/);
 	});
 
 	test('can navigate between panel sections', async ({ page }) => {
@@ -69,10 +57,10 @@ test.describe('Panel Page', () => {
 		await organizersTab.click();
 		await expect(page).toHaveURL('/panel/organizers');
 
-		// Click organization tab
-		const orgTab = page.getByRole('link', { name: /organización|organization/i });
-		await orgTab.click();
-		await expect(page).toHaveURL('/panel/organization');
+		// Click overview tab
+		const overviewTab = page.getByRole('link', { name: /resumen|overview/i });
+		await overviewTab.click();
+		await expect(page).toHaveURL('/panel');
 	});
 
 	test('panel sections show placeholder content', async ({ page }) => {
@@ -82,22 +70,6 @@ test.describe('Panel Page', () => {
 		// Should show coming soon message
 		const comingSoon = page.getByText(/próximamente|coming soon/i);
 		await expect(comingSoon).toBeVisible();
-	});
-
-	test('admin can access organizations section', async ({ page }) => {
-		// Login as admin
-		await loginAs(page, TEST_USERS.admin);
-
-		// Click organizations tab
-		const organizationsTab = page.getByRole('link', { name: /organizaciones|organizations/i });
-		await organizationsTab.click();
-
-		// Should navigate to organizations page
-		await expect(page).toHaveURL('/panel/organizations');
-
-		// Should show admin-only indicator
-		const adminOnly = page.locator('main');
-		await expect(adminOnly).toBeVisible();
 	});
 
 	test('cyclist login redirects to /account', async ({ page }) => {
@@ -116,14 +88,14 @@ test.describe('Panel Page', () => {
 		await expect(page).toHaveURL('/login');
 	});
 
-	test('non-admin accessing /panel/organizations redirects', async ({ page }) => {
-		// Login as organizer (not admin)
-		await loginAs(page, TEST_USERS.organizer);
+	test('admin trying to access /panel redirects to /admin', async ({ page }) => {
+		// Login as admin
+		await loginAs(page, TEST_USERS.admin);
 
-		// Try to access admin-only page directly
-		await page.goto('/panel/organizations');
+		// Try to access panel page directly
+		await page.goto('/panel');
 
-		// Should redirect back to panel
-		await expect(page).toHaveURL('/panel');
+		// Should redirect to admin page
+		await expect(page).toHaveURL('/admin');
 	});
 });

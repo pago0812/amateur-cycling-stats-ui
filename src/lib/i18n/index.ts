@@ -44,6 +44,11 @@ const config: Config = {
 			key: 'panel',
 			loader: async () => (await import('./locales/es/panel.json')).default
 		},
+		{
+			locale: 'es',
+			key: 'admin',
+			loader: async () => (await import('./locales/es/admin.json')).default
+		},
 		// English translations
 		{
 			locale: 'en',
@@ -84,6 +89,11 @@ const config: Config = {
 			locale: 'en',
 			key: 'panel',
 			loader: async () => (await import('./locales/en/panel.json')).default
+		},
+		{
+			locale: 'en',
+			key: 'admin',
+			loader: async () => (await import('./locales/en/admin.json')).default
 		}
 	],
 	fallbackLocale: 'es'

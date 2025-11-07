@@ -2,15 +2,14 @@
 	"title": "Control Panel",
 	"subtitle": "Manage your organization, events and organizers",
 	"tabs": {
-		"manageOrganization": "My Organization",
+		"overview": "Overview",
 		"manageEvents": "Events",
-		"manageOrganizers": "Organizers",
-		"manageOrganizations": "Organizations"
+		"manageOrganizers": "Organizers"
 	},
-	"organization": {
-		"title": "My Organization",
+	"overview": {
+		"title": "Overview",
 		"comingSoon": "Coming Soon",
-		"description": "Here you will be able to manage your organization's information"
+		"description": "Here you will be able to view your organization's overview and statistics"
 	},
 	"events": {
 		"title": "Event Management",
@@ -21,11 +20,5 @@
 		"title": "Organizer Management",
 		"comingSoon": "Coming Soon",
 		"description": "Here you will be able to manage your organization's organizers"
-	},
-	"organizations": {
-		"title": "Organization Management",
-		"comingSoon": "Coming Soon",
-		"description": "Here you will be able to manage all system organizations",
-		"adminOnly": "Admin-only section"
 	}
 }

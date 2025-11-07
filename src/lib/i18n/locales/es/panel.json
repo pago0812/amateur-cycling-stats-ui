@@ -2,15 +2,14 @@
 	"title": "Panel de Control",
 	"subtitle": "Gestiona tu organización, eventos y organizadores",
 	"tabs": {
-		"manageOrganization": "Mi Organización",
+		"overview": "Resumen",
 		"manageEvents": "Eventos",
-		"manageOrganizers": "Organizadores",
-		"manageOrganizations": "Organizaciones"
+		"manageOrganizers": "Organizadores"
 	},
-	"organization": {
-		"title": "Mi Organización",
+	"overview": {
+		"title": "Resumen",
 		"comingSoon": "Próximamente",
-		"description": "Aquí podrás gestionar la información de tu organización"
+		"description": "Aquí podrás ver el resumen y estadísticas de tu organización"
 	},
 	"events": {
 		"title": "Gestión de Eventos",
@@ -21,11 +20,5 @@
 		"title": "Gestión de Organizadores",
 		"comingSoon": "Próximamente",
 		"description": "Aquí podrás gestionar los organizadores de tu organización"
-	},
-	"organizations": {
-		"title": "Gestión de Organizaciones",
-		"comingSoon": "Próximamente",
-		"description": "Aquí podrás gestionar todas las organizaciones del sistema",
-		"adminOnly": "Sección exclusiva para administradores"
 	}
 }

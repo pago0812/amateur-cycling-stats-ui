@@ -1,7 +1,7 @@
 /**
- * Unit Tests: Panel Layout Server
+ * Unit Tests: Admin Layout Server
  *
- * Tests server-side logic for panel layout (authentication and role checks).
+ * Tests server-side logic for admin layout (authentication and role checks).
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -16,7 +16,7 @@ vi.mock('@sveltejs/kit', () => ({
 	})
 }));
 
-describe('Panel Layout Server', () => {
+describe('Admin Layout Server', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -55,7 +55,7 @@ describe('Panel Layout Server', () => {
 		}
 	});
 
-	it('should allow organizer staff to access', async () => {
+	it('should redirect organizer staff to /panel', async () => {
 		const mockLocals = {
 			safeGetSession: vi.fn().mockResolvedValue({
 				user: {
@@ -66,13 +66,16 @@ describe('Panel Layout Server', () => {
 			})
 		};
 
-		const result = await load({ locals: mockLocals } as any);
-
-		expect(result.user).toBeDefined();
-		expect(result.user.role.name).toBe(RoleTypeEnum.ORGANIZER_STAFF);
+		try {
+			await load({ locals: mockLocals } as any);
+			expect.fail('Should have thrown redirect');
+		} catch (error: any) {
+			expect(error.status).toBe(302);
+			expect(error.location).toBe('/panel');
+		}
 	});
 
-	it('should allow organizer admins to access', async () => {
+	it('should redirect organizer admins to /panel', async () => {
 		const mockLocals = {
 			safeGetSession: vi.fn().mockResolvedValue({
 				user: {
@@ -83,13 +86,16 @@ describe('Panel Layout Server', () => {
 			})
 		};
 
-		const result = await load({ locals: mockLocals } as any);
-
-		expect(result.user).toBeDefined();
-		expect(result.user.role.name).toBe(RoleTypeEnum.ORGANIZER_ADMIN);
+		try {
+			await load({ locals: mockLocals } as any);
+			expect.fail('Should have thrown redirect');
+		} catch (error: any) {
+			expect(error.status).toBe(302);
+			expect(error.location).toBe('/panel');
+		}
 	});
 
-	it('should redirect admins to /admin', async () => {
+	it('should allow admins to access', async () => {
 		const mockLocals = {
 			safeGetSession: vi.fn().mockResolvedValue({
 				user: {
@@ -100,12 +106,9 @@ describe('Panel Layout Server', () => {
 			})
 		};
 
-		try {
-			await load({ locals: mockLocals } as any);
-			expect.fail('Should have thrown redirect');
-		} catch (error: any) {
-			expect(error.status).toBe(302);
-			expect(error.location).toBe('/admin');
-		}
+		const result = await load({ locals: mockLocals } as any);
+
+		expect(result.user).toBeDefined();
+		expect(result.user.role.name).toBe(RoleTypeEnum.ADMIN);
 	});
 });
