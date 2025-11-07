@@ -6,7 +6,11 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getPastEvents, getFutureEvents, getEventWithCategoriesById } from './events';
-import { createMockSupabaseClient, mockSupabaseQuery, createMockDbRow } from '$lib/test-utils/supabase-mock';
+import {
+	createMockSupabaseClient,
+	mockSupabaseQuery,
+	createMockDbRow
+} from '$lib/test-utils/supabase-mock';
 import type { EventDB, EventWithCategoriesResponse } from '$lib/types/db';
 
 describe('Events Service', () => {
@@ -266,9 +270,9 @@ describe('Events Service', () => {
 				error: { message: 'No rows found', code: 'PGRST116' }
 			});
 
-			await expect(
-				getEventWithCategoriesById(mockSupabase, { id: 'nonexistent' })
-			).rejects.toThrow('Event not found');
+			await expect(getEventWithCategoriesById(mockSupabase, { id: 'nonexistent' })).rejects.toThrow(
+				'Event not found'
+			);
 		});
 
 		it('should throw database error for other errors', async () => {
@@ -281,18 +285,18 @@ describe('Events Service', () => {
 				error: { message: 'Connection timeout' }
 			});
 
-			await expect(
-				getEventWithCategoriesById(mockSupabase, { id: 'event-123' })
-			).rejects.toThrow('Error fetching event: Connection timeout');
+			await expect(getEventWithCategoriesById(mockSupabase, { id: 'event-123' })).rejects.toThrow(
+				'Error fetching event: Connection timeout'
+			);
 		});
 
 		it('should throw error when data is null despite no error', async () => {
 			const queryMock = mockSupabaseQuery(mockSupabase, { data: null, error: null });
 			queryMock.single.mockResolvedValue({ data: null, error: null });
 
-			await expect(
-				getEventWithCategoriesById(mockSupabase, { id: 'event-123' })
-			).rejects.toThrow('Event not found');
+			await expect(getEventWithCategoriesById(mockSupabase, { id: 'event-123' })).rejects.toThrow(
+				'Event not found'
+			);
 		});
 	});
 });

@@ -37,8 +37,14 @@ test.describe('Navigation', () => {
 		await goToResults(page);
 
 		// Find first event link
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const eventsCount = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const eventsCount = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (eventsCount === 0) {
 			test.skip(); // No events available
@@ -69,8 +75,14 @@ test.describe('Navigation', () => {
 		await goToResults(page);
 
 		// Find and click first event
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const eventsCount = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const eventsCount = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (eventsCount === 0) {
 			test.skip();
@@ -82,7 +94,10 @@ test.describe('Navigation', () => {
 		await page.waitForLoadState('networkidle');
 
 		// Check if results table exists
-		const hasTable = await page.locator('table').isVisible().catch(() => false);
+		const hasTable = await page
+			.locator('table')
+			.isVisible()
+			.catch(() => false);
 
 		if (!hasTable) {
 			test.skip(); // No results available
@@ -119,12 +134,18 @@ test.describe('Navigation', () => {
 		await page.waitForLoadState('networkidle');
 
 		// Check for error indicators
-		const has404 = await page.getByText(/404|not found|no encontrado/i).isVisible().catch(() => false);
-		const hasError = await page.getByText(/error/i).isVisible().catch(() => false);
+		const has404 = await page
+			.getByText(/404|not found|no encontrado/i)
+			.isVisible()
+			.catch(() => false);
+		const hasError = await page
+			.getByText(/error/i)
+			.isVisible()
+			.catch(() => false);
 
 		// Either explicit error message or redirect to another page
 		const currentURL = page.url();
-		const isErrorState = has404 || hasError || (!currentURL.includes('/results/00000000'));
+		const isErrorState = has404 || hasError || !currentURL.includes('/results/00000000');
 
 		expect(isErrorState).toBeTruthy();
 	});
@@ -145,7 +166,9 @@ test.describe('Navigation', () => {
 		await page.waitForTimeout(1000);
 
 		// Verify error message is displayed
-		const errorMessage = page.getByText(/email o contraseña incorrectos|invalid.*credentials|credenciales.*inválidas/i);
+		const errorMessage = page.getByText(
+			/email o contraseña incorrectos|invalid.*credentials|credenciales.*inválidas/i
+		);
 		await expect(errorMessage).toBeVisible({ timeout: 5000 });
 
 		// This demonstrates that error messages are shown to users

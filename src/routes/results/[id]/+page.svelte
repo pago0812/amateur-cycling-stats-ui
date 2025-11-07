@@ -38,10 +38,10 @@
 	<title>{data.event.name} - {$t('events.results.title')} - ACS</title>
 </svelte:head>
 
-<section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
-	<h2 class="text-3xl font-bold mb-8">{data.event.name}</h2>
+<section class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
+	<h2 class="mb-8 text-3xl font-bold">{data.event.name}</h2>
 
-	<div class="mb-4 flex gap-3 flex-wrap">
+	<div class="mb-4 flex flex-wrap gap-3">
 		<SelectQueryParam
 			name="category"
 			title={$t('races.filters.category')}
@@ -62,11 +62,11 @@
 	{#if data.race?.raceResults && data.race.raceResults.length > 0}
 		<ResultsTable raceResults={data.race.raceResults} />
 	{:else}
-		<div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-			<p class="text-gray-600 text-lg mb-2">
+		<div class="rounded-lg border border-gray-200 bg-gray-50 py-12 text-center">
+			<p class="mb-2 text-lg text-gray-600">
 				{$t('races.noResults.title')}
 			</p>
-			<p class="text-gray-500 text-sm">
+			<p class="text-sm text-gray-500">
 				{$t('races.noResults.suggestion')}
 			</p>
 		</div>

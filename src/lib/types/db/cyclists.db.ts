@@ -1,5 +1,11 @@
 import type { Tables } from '../database.types';
-import type { CyclistGenderDB, RaceCategoryDB, RaceCategoryGenderDB, RaceCategoryLengthDB, RaceRankingDB } from './lookup-tables.db';
+import type {
+	CyclistGenderDB,
+	RaceCategoryDB,
+	RaceCategoryGenderDB,
+	RaceCategoryLengthDB,
+	RaceRankingDB
+} from './lookup-tables.db';
 import type { RaceResultDB } from './race-results.db';
 import type { RaceDB } from './races.db';
 import type { EventDB } from './events.db';

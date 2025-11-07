@@ -17,7 +17,11 @@
  */
 
 // Main entity types
-export type { CyclistDB, CyclistWithResultsResponse, CyclistWithResultsRpcResponse } from './cyclists.db';
+export type {
+	CyclistDB,
+	CyclistWithResultsResponse,
+	CyclistWithResultsRpcResponse
+} from './cyclists.db';
 export type { EventDB, EventWithCategoriesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse } from './races.db';
 export type { RaceResultDB, RaceResultWithRelationsResponse } from './race-results.db';

@@ -27,7 +27,9 @@ test.describe('Event Browsing', () => {
 		await goToHome(page);
 
 		// Verify page title
-		await expect(page.getByRole('heading', { name: /próximos eventos|upcoming events/i })).toBeVisible();
+		await expect(
+			page.getByRole('heading', { name: /próximos eventos|upcoming events/i })
+		).toBeVisible();
 
 		// Check if events table/list exists
 		const eventsContainer = page.locator('table, .grid, .flex').first();
@@ -35,7 +37,9 @@ test.describe('Event Browsing', () => {
 
 		// Verify at least one event is displayed (if future events exist in seed data)
 		// Note: This might fail if no future events exist - that's expected
-		const eventLinks = page.getByRole('link').filter({ hasText: /challenge|fondo|criterium|climb/i });
+		const eventLinks = page
+			.getByRole('link')
+			.filter({ hasText: /challenge|fondo|criterium|climb/i });
 		const count = await eventLinks.count();
 
 		if (count > 0) {
@@ -52,7 +56,9 @@ test.describe('Event Browsing', () => {
 		await goToHome(page);
 
 		// Check if any events are displayed
-		const eventLinks = page.getByRole('link').filter({ hasText: /challenge|fondo|criterium|climb/i });
+		const eventLinks = page
+			.getByRole('link')
+			.filter({ hasText: /challenge|fondo|criterium|climb/i });
 		const count = await eventLinks.count();
 
 		if (count === 0) {
@@ -60,7 +66,9 @@ test.describe('Event Browsing', () => {
 			await expectNoResultsMessage(page);
 
 			// Verify page doesn't break (heading still visible)
-			await expect(page.getByRole('heading', { name: /próximos eventos|upcoming events/i })).toBeVisible();
+			await expect(
+				page.getByRole('heading', { name: /próximos eventos|upcoming events/i })
+			).toBeVisible();
 		}
 	});
 
@@ -110,10 +118,16 @@ test.describe('Event Browsing', () => {
 		await goToResults(page);
 
 		// Find and click on first available event (past event from seed data)
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
 
 		// Check if event exists
-		const count = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const count = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (count === 0) {
 			// Skip test if no events available
@@ -132,8 +146,14 @@ test.describe('Event Browsing', () => {
 		await expect(categorySelect).toBeVisible();
 
 		// Verify either results table or no results message is shown
-		const hasTable = await page.locator('table').isVisible().catch(() => false);
-		const hasNoResults = await page.getByText(/no hay resultados|no results/i).isVisible().catch(() => false);
+		const hasTable = await page
+			.locator('table')
+			.isVisible()
+			.catch(() => false);
+		const hasNoResults = await page
+			.getByText(/no hay resultados|no results/i)
+			.isVisible()
+			.catch(() => false);
 
 		expect(hasTable || hasNoResults).toBeTruthy();
 	});
@@ -142,8 +162,14 @@ test.describe('Event Browsing', () => {
 		// Go to results and find an event
 		await goToResults(page);
 
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const count = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const count = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (count === 0) {
 			test.skip();
@@ -154,7 +180,10 @@ test.describe('Event Browsing', () => {
 		await page.waitForURL(/\/results\/.+/);
 
 		// Get available category options
-		const categorySelect = page.locator('select').filter({ hasText: /categoría|category/i }).or(page.locator('select').first());
+		const categorySelect = page
+			.locator('select')
+			.filter({ hasText: /categoría|category/i })
+			.or(page.locator('select').first());
 		await expect(categorySelect).toBeVisible();
 
 		// Get first and second options
@@ -173,8 +202,14 @@ test.describe('Event Browsing', () => {
 				await page.waitForLoadState('networkidle');
 
 				// Verify either table or no results message
-				const hasTable = await page.locator('table').isVisible().catch(() => false);
-				const hasNoResults = await page.getByText(/no hay resultados|no results/i).isVisible().catch(() => false);
+				const hasTable = await page
+					.locator('table')
+					.isVisible()
+					.catch(() => false);
+				const hasNoResults = await page
+					.getByText(/no hay resultados|no results/i)
+					.isVisible()
+					.catch(() => false);
 				expect(hasTable || hasNoResults).toBeTruthy();
 			}
 		}
@@ -184,8 +219,14 @@ test.describe('Event Browsing', () => {
 		// Go to results and find an event
 		await goToResults(page);
 
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const count = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const count = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (count === 0) {
 			test.skip();
@@ -220,12 +261,20 @@ test.describe('Event Browsing', () => {
 		}
 	});
 
-	test('no results message shown for non-existent race combination with filters visible', async ({ page }) => {
+	test('no results message shown for non-existent race combination with filters visible', async ({
+		page
+	}) => {
 		// Go to results and find an event
 		await goToResults(page);
 
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const count = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const count = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (count === 0) {
 			test.skip();
@@ -256,7 +305,10 @@ test.describe('Event Browsing', () => {
 			await page.waitForLoadState('networkidle');
 
 			// Check if no results message appears
-			const hasNoResults = await page.getByText(/no hay resultados|no results|no.+disponibles/i).isVisible().catch(() => false);
+			const hasNoResults = await page
+				.getByText(/no hay resultados|no results|no.+disponibles/i)
+				.isVisible()
+				.catch(() => false);
 
 			if (hasNoResults) {
 				// Verify filters are still visible (graceful UX)

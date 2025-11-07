@@ -1,11 +1,19 @@
 import type { Cyclist, CyclistWithRelations } from '$lib/types/domain/cyclist.domain';
-import type { CyclistDB, CyclistWithResultsResponse, CyclistWithResultsRpcResponse } from '$lib/types/db';
+import type {
+	CyclistDB,
+	CyclistWithResultsResponse,
+	CyclistWithResultsRpcResponse
+} from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptCyclistGenderFromDb } from './cyclist-genders.adapter';
 import { adaptRaceRankingFromDb } from './race-rankings.adapter';
 import { adaptEventFromDb } from './events.adapter';
 import { adaptRaceFromDb } from './races.adapter';
-import { adaptRaceCategoryFromDb, adaptRaceCategoryGenderFromDb, adaptRaceCategoryLengthFromDb } from './race-categories.adapter';
+import {
+	adaptRaceCategoryFromDb,
+	adaptRaceCategoryGenderFromDb,
+	adaptRaceCategoryLengthFromDb
+} from './race-categories.adapter';
 import { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 /**
@@ -38,25 +46,28 @@ export function adaptCyclistWithResultsFromDb(
 	return {
 		...baseCyclist,
 		gender: dbData.gender ? adaptCyclistGenderFromDb(dbData.gender) : undefined,
-		raceResults: dbData.race_results?.map((result) => ({
-			id: result.id,
-			place: result.place,
-			time: result.time,
-			points: result.points,
-			raceId: result.race_id,
-			cyclistId: result.cyclist_id,
-			rankingPointId: result.ranking_point_id,
-			...mapTimestamps(result),
-			race: {
-				...adaptRaceFromDb(result.race),
-				event: adaptEventFromDb(result.race.event),
-				raceCategory: adaptRaceCategoryFromDb(result.race.race_category),
-				raceCategoryGender: adaptRaceCategoryGenderFromDb(result.race.race_category_gender),
-				raceCategoryLength: adaptRaceCategoryLengthFromDb(result.race.race_category_length),
-				raceRanking: adaptRaceRankingFromDb(result.race.race_ranking)
-			},
-			rankingPoint: result.ranking_point ? adaptRankingPointFromDb(result.ranking_point) : undefined
-		})) || []
+		raceResults:
+			dbData.race_results?.map((result) => ({
+				id: result.id,
+				place: result.place,
+				time: result.time,
+				points: result.points,
+				raceId: result.race_id,
+				cyclistId: result.cyclist_id,
+				rankingPointId: result.ranking_point_id,
+				...mapTimestamps(result),
+				race: {
+					...adaptRaceFromDb(result.race),
+					event: adaptEventFromDb(result.race.event),
+					raceCategory: adaptRaceCategoryFromDb(result.race.race_category),
+					raceCategoryGender: adaptRaceCategoryGenderFromDb(result.race.race_category_gender),
+					raceCategoryLength: adaptRaceCategoryLengthFromDb(result.race.race_category_length),
+					raceRanking: adaptRaceRankingFromDb(result.race.race_ranking)
+				},
+				rankingPoint: result.ranking_point
+					? adaptRankingPointFromDb(result.ranking_point)
+					: undefined
+			})) || []
 	};
 }
 

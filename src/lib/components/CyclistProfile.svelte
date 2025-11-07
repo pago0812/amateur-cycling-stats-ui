@@ -8,21 +8,23 @@
 
 <div class="space-y-8">
 	<!-- Profile Header -->
-	<div class="bg-white rounded-lg shadow p-6">
+	<div class="rounded-lg bg-white p-6 shadow">
 		<div class="flex items-center gap-6">
 			<!-- Profile Photo Placeholder -->
-			<div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-600">
+			<div
+				class="flex h-24 w-24 items-center justify-center rounded-full bg-gray-200 text-3xl font-bold text-gray-600"
+			>
 				{cyclist.name.charAt(0)}{cyclist.lastName.charAt(0)}
 			</div>
 
 			<!-- Personal Information -->
 			<div class="flex-1">
-				<h2 class="text-3xl font-bold mb-2">
+				<h2 class="mb-2 text-3xl font-bold">
 					{cyclist.name}
 					{cyclist.lastName}
 				</h2>
 
-				<div class="text-gray-600 space-y-1">
+				<div class="space-y-1 text-gray-600">
 					{#if cyclist.bornYear}
 						<p>{$t('cyclists.profile.bornYear')}: {cyclist.bornYear}</p>
 					{/if}
@@ -36,12 +38,12 @@
 
 	<!-- Race Results Section -->
 	<div>
-		<h3 class="text-2xl font-bold mb-4">{$t('cyclists.profile.raceHistory')}</h3>
+		<h3 class="mb-4 text-2xl font-bold">{$t('cyclists.profile.raceHistory')}</h3>
 
 		{#if cyclist.raceResults && cyclist.raceResults.length > 0}
 			<CyclistResultsTable raceResults={cyclist.raceResults} />
 		{:else}
-			<div class="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+			<div class="rounded-lg bg-gray-50 py-8 text-center text-gray-500">
 				{$t('cyclists.profile.noResults')}
 			</div>
 		{/if}

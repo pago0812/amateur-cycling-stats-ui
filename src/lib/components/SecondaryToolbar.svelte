@@ -17,18 +17,18 @@
 
 <!-- Secondary Navigation Toolbar -->
 <nav class="mb-8 border-b border-gray-200">
-	<div class="flex justify-between items-center">
+	<div class="flex items-center justify-between">
 		<!-- Navigation tabs -->
 		<ul class="flex gap-8 overflow-x-auto">
 			{#each tabs as tab}
 				<li class="shrink-0">
 					<a
 						href={tab.path}
-						class="inline-block pb-4 px-2 border-b-2 transition-colors whitespace-nowrap {isActive(
+						class="inline-block border-b-2 px-2 pb-4 whitespace-nowrap transition-colors {isActive(
 							tab.path
 						)
-							? 'border-blue-600 text-blue-600 font-semibold'
-							: 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'}"
+							? 'border-blue-600 font-semibold text-blue-600'
+							: 'border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900'}"
 					>
 						{tab.label}
 					</a>
@@ -41,7 +41,7 @@
 			<form method="POST" action="?/logout" class="shrink-0">
 				<button
 					type="submit"
-					class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
+					class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:text-red-600"
 				>
 					{$t('common.navigation.logout')}
 				</button>

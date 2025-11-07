@@ -54,7 +54,10 @@ describe('Alert Store', () => {
 		});
 
 		it('should handle long messages', () => {
-			const longMessage = 'This is a very long error message that contains lots of details about what went wrong in the application. '.repeat(5);
+			const longMessage =
+				'This is a very long error message that contains lots of details about what went wrong in the application. '.repeat(
+					5
+				);
 
 			alertStore.openAlert(longMessage);
 

@@ -27,11 +27,7 @@ describe('Session Utility', () => {
 
 			saveJWT(mockCookies, jwt);
 
-			expect(mockCookies.set).toHaveBeenCalledWith(
-				'jwt-session',
-				jwt,
-				expect.any(Object)
-			);
+			expect(mockCookies.set).toHaveBeenCalledWith('jwt-session', jwt, expect.any(Object));
 		});
 
 		it('should set httpOnly to true for security', () => {
@@ -169,7 +165,8 @@ describe('Session Utility', () => {
 		});
 
 		it('should handle valid JWT tokens', () => {
-			const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+			const validToken =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 			(mockCookies.get as ReturnType<typeof vi.fn>).mockReturnValue(validToken);
 
 			const result = getJWT(mockCookies);

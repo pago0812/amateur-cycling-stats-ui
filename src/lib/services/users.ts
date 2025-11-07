@@ -43,7 +43,9 @@ export const getMyself = async (supabase: SupabaseClient<Database>): Promise<Use
 			};
 		}
 
-		return { data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse) };
+		return {
+			data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
+		};
 	} catch (error) {
 		return {
 			error: {
@@ -98,7 +100,9 @@ export const updateUser = async (
 			};
 		}
 
-		return { data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse) };
+		return {
+			data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
+		};
 	} catch (error) {
 		return {
 			error: {

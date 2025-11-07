@@ -7,14 +7,16 @@ import { mapTimestamps } from './common.adapter';
  * Transforms snake_case → camelCase.
  */
 export function adaptRankingPointFromDb(
-	dbRankingPoint: RankingPointDB | {
-		id: string;
-		place: number;
-		points: number;
-		race_ranking_id: string;
-		created_at: string;
-		updated_at: string;
-	}
+	dbRankingPoint:
+		| RankingPointDB
+		| {
+				id: string;
+				place: number;
+				points: number;
+				race_ranking_id: string;
+				created_at: string;
+				updated_at: string;
+		  }
 ): RankingPoint {
 	return {
 		id: dbRankingPoint.id,

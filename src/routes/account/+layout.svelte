@@ -13,10 +13,10 @@
 	];
 </script>
 
-<div class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
+<div class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
 	<!-- Page Header -->
 	<div class="mb-8">
-		<h1 class="text-4xl font-bold mb-2">{$t('account.title')}</h1>
+		<h1 class="mb-2 text-4xl font-bold">{$t('account.title')}</h1>
 		<p class="text-gray-600">{$t('account.subtitle')}</p>
 	</div>
 

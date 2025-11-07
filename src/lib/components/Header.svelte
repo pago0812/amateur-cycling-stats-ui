@@ -29,8 +29,8 @@
 </script>
 
 <nav class="bg-blue-600 text-white">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="flex justify-between items-center h-16">
+	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+		<div class="flex h-16 items-center justify-between">
 			<!-- Logo -->
 			<div class="flex-shrink-0">
 				<a href={Urls.HOME} class="text-2xl font-bold">ACS</a>
@@ -38,25 +38,19 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden sm:flex sm:gap-4">
-				<a href={Urls.HOME} class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+				<a href={Urls.HOME} class="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700">
 					{$t('common.navigation.home')}
 				</a>
-				<a
-					href={Urls.RESULTS}
-					class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-				>
+				<a href={Urls.RESULTS} class="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700">
 					{$t('common.navigation.results')}
 				</a>
 
 				{#if user}
-					<a
-						href={portalUrl}
-						class="px-3 py-2 rounded-md text-sm font-bold hover:bg-blue-700"
-					>
+					<a href={portalUrl} class="rounded-md px-3 py-2 text-sm font-bold hover:bg-blue-700">
 						{$t('common.navigation.account')}
 					</a>
 				{:else}
-					<a href={Urls.LOGIN} class="px-3 py-2 rounded-md text-sm font-bold hover:bg-blue-700">
+					<a href={Urls.LOGIN} class="rounded-md px-3 py-2 text-sm font-bold hover:bg-blue-700">
 						{$t('common.navigation.login')}
 					</a>
 				{/if}
@@ -66,7 +60,7 @@
 			<div class="sm:hidden">
 				<button
 					onclick={toggleMobileMenu}
-					class="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-700 focus:outline-none"
+					class="inline-flex items-center justify-center rounded-md p-2 hover:bg-blue-700 focus:outline-none"
 					aria-expanded={mobileMenuOpen}
 				>
 					<span class="sr-only">{$t('common.navigation.openMenu')}</span>
@@ -94,7 +88,7 @@
 	{#if mobileMenuOpen}
 		<!-- Backdrop -->
 		<div
-			class="fixed inset-0 bg-black bg-opacity-50 z-40"
+			class="bg-opacity-50 fixed inset-0 z-40 bg-black"
 			onclick={closeMobileMenu}
 			role="button"
 			tabindex="0"
@@ -102,34 +96,22 @@
 		></div>
 
 		<!-- Drawer -->
-		<div class="fixed top-0 right-0 h-full w-64 bg-blue-600 z-50 shadow-lg">
+		<div class="fixed top-0 right-0 z-50 h-full w-64 bg-blue-600 shadow-lg">
 			<nav class="flex flex-col gap-4 p-10 text-right">
-				<a
-					href={Urls.HOME}
-					class="text-white hover:text-blue-200"
-					onclick={closeMobileMenu}
-				>
+				<a href={Urls.HOME} class="text-white hover:text-blue-200" onclick={closeMobileMenu}>
 					{$t('common.navigation.home')}
 				</a>
-				<a
-					href={Urls.RESULTS}
-					class="text-white hover:text-blue-200"
-					onclick={closeMobileMenu}
-				>
+				<a href={Urls.RESULTS} class="text-white hover:text-blue-200" onclick={closeMobileMenu}>
 					{$t('common.navigation.results')}
 				</a>
-				<a
-					href={Urls.TEAMS}
-					class="text-white hover:text-blue-200"
-					onclick={closeMobileMenu}
-				>
+				<a href={Urls.TEAMS} class="text-white hover:text-blue-200" onclick={closeMobileMenu}>
 					{$t('common.navigation.teams')}
 				</a>
 
 				{#if user}
 					<a
 						href={portalUrl}
-						class="text-white font-bold hover:text-blue-200"
+						class="font-bold text-white hover:text-blue-200"
 						onclick={closeMobileMenu}
 					>
 						{$t('common.navigation.account')}
@@ -137,7 +119,7 @@
 				{:else}
 					<a
 						href={Urls.LOGIN}
-						class="text-white font-bold hover:text-blue-200"
+						class="font-bold text-white hover:text-blue-200"
 						onclick={closeMobileMenu}
 					>
 						{$t('common.navigation.login')}

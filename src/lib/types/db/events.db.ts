@@ -1,5 +1,9 @@
 import type { Tables } from '../database.types';
-import type { RaceCategoryDB, RaceCategoryGenderDB, RaceCategoryLengthDB } from './lookup-tables.db';
+import type {
+	RaceCategoryDB,
+	RaceCategoryGenderDB,
+	RaceCategoryLengthDB
+} from './lookup-tables.db';
 
 /**
  * Database type for events table.

@@ -9,9 +9,9 @@
 	<title>{$t('account.tabs.upcomingEvents')} - ACS</title>
 </svelte:head>
 
-<div class="bg-gray-50 rounded-lg p-8 text-center">
-	<p class="text-gray-600 text-lg mb-2">{$t('account.upcomingEvents.comingSoon')}</p>
-	<p class="text-gray-500 text-sm">
+<div class="rounded-lg bg-gray-50 p-8 text-center">
+	<p class="mb-2 text-lg text-gray-600">{$t('account.upcomingEvents.comingSoon')}</p>
+	<p class="text-sm text-gray-500">
 		{$t('account.upcomingEvents.description')}
 	</p>
 </div>

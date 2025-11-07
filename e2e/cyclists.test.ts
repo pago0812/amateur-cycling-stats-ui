@@ -14,8 +14,14 @@ test.describe('Cyclist Profile', () => {
 		await goToResults(page);
 
 		// Find and click on first event
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const eventsCount = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const eventsCount = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (eventsCount === 0) {
 			test.skip();
@@ -29,7 +35,10 @@ test.describe('Cyclist Profile', () => {
 		await page.waitForLoadState('networkidle');
 
 		// Check if table exists
-		const hasTable = await page.locator('table').isVisible().catch(() => false);
+		const hasTable = await page
+			.locator('table')
+			.isVisible()
+			.catch(() => false);
 
 		if (!hasTable) {
 			test.skip(); // No results available
@@ -56,11 +65,19 @@ test.describe('Cyclist Profile', () => {
 		}
 
 		// Verify race history section exists
-		const raceHistorySection = page.locator('table, section, div').filter({ hasText: /resultados|results|carreras|races/i });
+		const raceHistorySection = page
+			.locator('table, section, div')
+			.filter({ hasText: /resultados|results|carreras|races/i });
 
 		// Either table should be visible or "no results" message
-		const hasRaceTable = await page.locator('table').isVisible().catch(() => false);
-		const hasNoResults = await page.getByText(/no hay resultados|no results/i).isVisible().catch(() => false);
+		const hasRaceTable = await page
+			.locator('table')
+			.isVisible()
+			.catch(() => false);
+		const hasNoResults = await page
+			.getByText(/no hay resultados|no results/i)
+			.isVisible()
+			.catch(() => false);
 
 		expect(hasRaceTable || hasNoResults).toBeTruthy();
 	});
@@ -69,8 +86,14 @@ test.describe('Cyclist Profile', () => {
 		// Navigate to results and find cyclist profile
 		await goToResults(page);
 
-		const eventLink = page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).first();
-		const eventsCount = await page.getByRole('link').filter({ hasText: /fondo|challenge|criterium|climb/i }).count();
+		const eventLink = page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.first();
+		const eventsCount = await page
+			.getByRole('link')
+			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.count();
 
 		if (eventsCount === 0) {
 			test.skip();
@@ -81,7 +104,10 @@ test.describe('Cyclist Profile', () => {
 		await page.waitForURL(/\/results\/.+/);
 		await page.waitForLoadState('networkidle');
 
-		const hasTable = await page.locator('table').isVisible().catch(() => false);
+		const hasTable = await page
+			.locator('table')
+			.isVisible()
+			.catch(() => false);
 		if (!hasTable) {
 			test.skip();
 			return;
@@ -93,7 +119,11 @@ test.describe('Cyclist Profile', () => {
 		await page.waitForURL(/\/cyclists\/.+/);
 
 		// Check if cyclist has race results
-		const hasRaceTable = await page.locator('table tbody tr').count().then(count => count > 0).catch(() => false);
+		const hasRaceTable = await page
+			.locator('table tbody tr')
+			.count()
+			.then((count) => count > 0)
+			.catch(() => false);
 
 		if (!hasRaceTable) {
 			test.skip(); // Cyclist has no results
@@ -129,13 +159,20 @@ test.describe('Cyclist Profile', () => {
 
 		// Should show error page or redirect
 		// Since we don't have explicit 404 pages yet, check for error indicators
-		const has404 = await page.getByText(/404|not found|no encontrado/i).isVisible().catch(() => false);
-		const hasError = await page.getByText(/error/i).isVisible().catch(() => false);
+		const has404 = await page
+			.getByText(/404|not found|no encontrado/i)
+			.isVisible()
+			.catch(() => false);
+		const hasError = await page
+			.getByText(/error/i)
+			.isVisible()
+			.catch(() => false);
 
 		// Either explicit 404 or error page should be shown
 		// Or page redirects to home/results
 		const currentURL = page.url();
-		const isErrorPage = has404 || hasError || currentURL.includes('/')  && !currentURL.includes('/cyclists/');
+		const isErrorPage =
+			has404 || hasError || (currentURL.includes('/') && !currentURL.includes('/cyclists/'));
 
 		expect(isErrorPage).toBeTruthy();
 	});

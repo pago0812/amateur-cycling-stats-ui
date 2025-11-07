@@ -61,11 +61,7 @@ export async function createCyclist(
 		user_id: cyclist.userId ?? null
 	};
 
-	const { data, error } = await supabase
-		.from('cyclists')
-		.insert(insertData)
-		.select()
-		.single();
+	const { data, error } = await supabase.from('cyclists').insert(insertData).select().single();
 
 	if (error) {
 		throw new Error(`Error creating cyclist: ${error.message}`);

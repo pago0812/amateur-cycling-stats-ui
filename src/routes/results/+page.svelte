@@ -11,8 +11,8 @@
 	<title>{$t('common.pageTitle.results')}</title>
 </svelte:head>
 
-<section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
-	<h2 class="text-3xl font-bold mb-8">{$t('events.results.title')}</h2>
+<section class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
+	<h2 class="mb-8 text-3xl font-bold">{$t('events.results.title')}</h2>
 
 	<div class="mb-4 flex gap-4">
 		<SelectQueryParam
@@ -30,11 +30,11 @@
 	</div>
 
 	{#if data.error}
-		<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+		<div class="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
 			{data.error}
 		</div>
 	{:else if data.events.length === 0}
-		<div class="text-center py-8 text-gray-500">{$t('events.results.noEvents')}</div>
+		<div class="py-8 text-center text-gray-500">{$t('events.results.noEvents')}</div>
 	{:else}
 		<EventResultsTable events={data.events} />
 	{/if}

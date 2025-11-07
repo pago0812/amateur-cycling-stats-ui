@@ -93,7 +93,8 @@ export function createMockServerTranslation() {
 export function createMockAuthErrorMessage() {
 	return vi.fn((locale: string, errorCode: string) => {
 		const errorMap: Record<string, string> = {
-			invalid_credentials: locale === 'es' ? 'Email o contraseña incorrectos' : 'Invalid email or password',
+			invalid_credentials:
+				locale === 'es' ? 'Email o contraseña incorrectos' : 'Invalid email or password',
 			email_not_confirmed: locale === 'es' ? 'Email no confirmado' : 'Email not confirmed',
 			user_not_found: locale === 'es' ? 'Usuario no encontrado' : 'User not found'
 		};

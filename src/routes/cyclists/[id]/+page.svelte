@@ -7,9 +7,11 @@
 </script>
 
 <svelte:head>
-	<title>{data.cyclist.name} {data.cyclist.lastName} - {$t('common.navigation.cyclists')} - ACS</title>
+	<title
+		>{data.cyclist.name} {data.cyclist.lastName} - {$t('common.navigation.cyclists')} - ACS</title
+	>
 </svelte:head>
 
-<section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10 lg:py-12">
+<section class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
 	<CyclistProfile cyclist={data.cyclist} />
 </section>

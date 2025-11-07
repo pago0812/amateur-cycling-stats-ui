@@ -1,5 +1,9 @@
 import type { RaceCategoryDB, RaceCategoryGenderDB, RaceCategoryLengthDB } from '$lib/types/db';
-import type { RaceCategory, RaceCategoryGender, RaceCategoryLength } from '$lib/types/domain/race-category.domain';
+import type {
+	RaceCategory,
+	RaceCategoryGender,
+	RaceCategoryLength
+} from '$lib/types/domain/race-category.domain';
 import { mapTimestamps } from './common.adapter';
 
 /**
@@ -16,9 +20,7 @@ export function adaptRaceCategoryFromDb(dbCategory: RaceCategoryDB): RaceCategor
 /**
  * Adapts a raw database race category gender row to domain RaceCategoryGender type.
  */
-export function adaptRaceCategoryGenderFromDb(
-	dbGender: RaceCategoryGenderDB
-): RaceCategoryGender {
+export function adaptRaceCategoryGenderFromDb(dbGender: RaceCategoryGenderDB): RaceCategoryGender {
 	return {
 		id: dbGender.id,
 		name: dbGender.name,
@@ -29,9 +31,7 @@ export function adaptRaceCategoryGenderFromDb(
 /**
  * Adapts a raw database race category length row to domain RaceCategoryLength type.
  */
-export function adaptRaceCategoryLengthFromDb(
-	dbLength: RaceCategoryLengthDB
-): RaceCategoryLength {
+export function adaptRaceCategoryLengthFromDb(dbLength: RaceCategoryLengthDB): RaceCategoryLength {
 	return {
 		id: dbLength.id,
 		name: dbLength.name,

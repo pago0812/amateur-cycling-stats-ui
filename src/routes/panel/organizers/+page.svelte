@@ -9,10 +9,10 @@
 	<title>{$t('panel.tabs.manageOrganizers')} - ACS</title>
 </svelte:head>
 
-<div class="bg-gray-50 rounded-lg p-8 text-center">
-	<h2 class="text-2xl font-bold mb-4">{$t('panel.organizers.title')}</h2>
-	<p class="text-gray-600 text-lg mb-2">{$t('panel.organizers.comingSoon')}</p>
-	<p class="text-gray-500 text-sm">
+<div class="rounded-lg bg-gray-50 p-8 text-center">
+	<h2 class="mb-4 text-2xl font-bold">{$t('panel.organizers.title')}</h2>
+	<p class="mb-2 text-lg text-gray-600">{$t('panel.organizers.comingSoon')}</p>
+	<p class="text-sm text-gray-500">
 		{$t('panel.organizers.description')}
 	</p>
 </div>

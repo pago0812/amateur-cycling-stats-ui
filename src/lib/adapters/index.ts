@@ -18,7 +18,11 @@ export { adaptRaceFromDb, adaptRaceWithResultsFromDb } from './races.adapter';
 export { adaptRaceResultFromDb, adaptRaceResultWithRelationsFromDb } from './race-results.adapter';
 
 // Cyclists
-export { adaptCyclistFromDb, adaptCyclistWithResultsFromDb, adaptCyclistWithResultsFromRpc } from './cyclists.adapter';
+export {
+	adaptCyclistFromDb,
+	adaptCyclistWithResultsFromDb,
+	adaptCyclistWithResultsFromRpc
+} from './cyclists.adapter';
 
 // Race Categories
 export {

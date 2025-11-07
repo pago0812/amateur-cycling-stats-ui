@@ -1,5 +1,9 @@
 import type { Event, EventWithRelations } from '$lib/types/domain/event.domain';
-import type { RaceCategory, RaceCategoryGender, RaceCategoryLength } from '$lib/types/domain/race-category.domain';
+import type {
+	RaceCategory,
+	RaceCategoryGender,
+	RaceCategoryLength
+} from '$lib/types/domain/race-category.domain';
 import type { EventDB, EventWithCategoriesResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 
@@ -91,7 +95,9 @@ export function adaptEventWithRelationsFromDb(
 	return {
 		...baseEvent,
 		supportedRaceCategories: dbData.supportedCategories?.map(adaptRaceCategoryFromJunction) || [],
-		supportedRaceCategoryGenders: dbData.supportedGenders?.map(adaptRaceCategoryGenderFromJunction) || [],
-		supportedRaceCategoryLengths: dbData.supportedLengths?.map(adaptRaceCategoryLengthFromJunction) || []
+		supportedRaceCategoryGenders:
+			dbData.supportedGenders?.map(adaptRaceCategoryGenderFromJunction) || [],
+		supportedRaceCategoryLengths:
+			dbData.supportedLengths?.map(adaptRaceCategoryLengthFromJunction) || []
 	};
 }

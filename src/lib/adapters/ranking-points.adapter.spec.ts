@@ -56,7 +56,12 @@ describe('Ranking Points Adapter', () => {
 		});
 
 		it('should handle different ranking systems', () => {
-			const rankingSystems = ['ranking-uci', 'ranking-national', 'ranking-regional', 'ranking-custom'];
+			const rankingSystems = [
+				'ranking-uci',
+				'ranking-national',
+				'ranking-regional',
+				'ranking-custom'
+			];
 
 			rankingSystems.forEach((rankingId) => {
 				const dbRankingPoint: RankingPointDB = createMockDbRow({

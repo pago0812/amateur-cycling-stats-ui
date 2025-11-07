@@ -5,8 +5,16 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { adaptCyclistFromDb, adaptCyclistWithResultsFromDb, adaptCyclistWithResultsFromRpc } from './cyclists.adapter';
-import type { CyclistDB, CyclistWithResultsResponse, CyclistWithResultsRpcResponse } from '$lib/types/db';
+import {
+	adaptCyclistFromDb,
+	adaptCyclistWithResultsFromDb,
+	adaptCyclistWithResultsFromRpc
+} from './cyclists.adapter';
+import type {
+	CyclistDB,
+	CyclistWithResultsResponse,
+	CyclistWithResultsRpcResponse
+} from '$lib/types/db';
 import { createMockDbRow } from '$lib/test-utils/supabase-mock';
 
 describe('Cyclists Adapter', () => {

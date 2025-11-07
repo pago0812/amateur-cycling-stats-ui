@@ -140,9 +140,9 @@ describe('Cyclists Service', () => {
 				error: { message: 'RPC function failed' }
 			});
 
-			await expect(
-				getCyclistWithResultsById(mockSupabase, { id: 'cyclist-123' })
-			).rejects.toThrow('Error fetching cyclist: RPC function failed');
+			await expect(getCyclistWithResultsById(mockSupabase, { id: 'cyclist-123' })).rejects.toThrow(
+				'Error fetching cyclist: RPC function failed'
+			);
 		});
 
 		it('should throw error when cyclist not found', async () => {
@@ -151,9 +151,9 @@ describe('Cyclists Service', () => {
 				error: null
 			});
 
-			await expect(
-				getCyclistWithResultsById(mockSupabase, { id: 'nonexistent' })
-			).rejects.toThrow('Cyclist not found');
+			await expect(getCyclistWithResultsById(mockSupabase, { id: 'nonexistent' })).rejects.toThrow(
+				'Cyclist not found'
+			);
 		});
 
 		it('should transform RPC response to domain types with camelCase', async () => {

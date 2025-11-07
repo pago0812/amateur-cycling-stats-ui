@@ -37,9 +37,7 @@ export const login = async (
 		});
 
 		// Get translated error message
-		const userMessage = error.code
-			? getAuthErrorMessage(locale, error.code)
-			: error.message;
+		const userMessage = error.code ? getAuthErrorMessage(locale, error.code) : error.message;
 
 		return {
 			error: {
@@ -108,9 +106,7 @@ export const signin = async (
 
 	if (error) {
 		// Get translated error message
-		const userMessage = error.code
-			? getAuthErrorMessage(locale, error.code)
-			: error.message;
+		const userMessage = error.code ? getAuthErrorMessage(locale, error.code) : error.message;
 
 		return {
 			error: {

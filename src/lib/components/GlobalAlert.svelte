@@ -14,14 +14,14 @@
 </script>
 
 {#if mounted && $alertStore.open}
-	<div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+	<div class="fixed top-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
 		<div
-			class="bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center justify-between"
+			class="flex items-center justify-between rounded-lg bg-red-600 px-6 py-4 text-white shadow-lg"
 			role="alert"
 		>
 			<div class="flex items-center gap-3">
 				<svg
-					class="w-6 h-6 flex-shrink-0"
+					class="h-6 w-6 flex-shrink-0"
 					fill="currentColor"
 					viewBox="0 0 20 20"
 					xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +40,7 @@
 				aria-label="Cerrar"
 			>
 				<svg
-					class="w-5 h-5"
+					class="h-5 w-5"
 					fill="currentColor"
 					viewBox="0 0 20 20"
 					xmlns="http://www.w3.org/2000/svg"

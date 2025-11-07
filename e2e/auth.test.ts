@@ -7,7 +7,13 @@
 
 import { expect, test } from '@playwright/test';
 import { TEST_USERS } from './fixtures/test-users';
-import { loginAs, logout, expectAuthenticated, expectUnauthenticated, clearAuth } from './helpers/auth';
+import {
+	loginAs,
+	logout,
+	expectAuthenticated,
+	expectUnauthenticated,
+	clearAuth
+} from './helpers/auth';
 
 test.describe('Authentication', () => {
 	// Clear auth state before each test
@@ -44,7 +50,9 @@ test.describe('Authentication', () => {
 		await page.waitForTimeout(1000);
 
 		// Verify error message is displayed (Spanish error message from global alert or inline)
-		const errorMessage = page.getByText(/email o contraseña incorrectos|invalid.*credentials|credenciales.*inválidas/i);
+		const errorMessage = page.getByText(
+			/email o contraseña incorrectos|invalid.*credentials|credenciales.*inválidas/i
+		);
 		await expect(errorMessage).toBeVisible({ timeout: 5000 });
 
 		// Verify still not authenticated
