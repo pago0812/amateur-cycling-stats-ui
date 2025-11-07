@@ -57,6 +57,7 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - **Adapters translate at DB boundary**: `db.short_id` → `domain.id`
    - **Benefits**: Security (no UUID enumeration), URL-friendly, shorter links
    - **Pattern**:
+
      ```typescript
      // Database table has BOTH fields
      // id (UUID): b0a1c2d3-... (internal, never exposed)
@@ -64,24 +65,25 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
 
      // Domain type (clean)
      interface Event {
-       id: string; // This is the short_id, not UUID
-       name: string;
-       // ...
+     	id: string; // This is the short_id, not UUID
+     	name: string;
+     	// ...
      }
 
      // Adapter translates
      export function adaptEventFromDb(db: EventDB): Event {
-       return {
-         id: db.short_id, // Translate: short_id → id
-         name: db.name,
-         // ...
-       };
+     	return {
+     		id: db.short_id, // Translate: short_id → id
+     		name: db.name
+     		// ...
+     	};
      }
 
      // URLs use short_id
      // /results/sm98nfmsd9
      // /cyclists/abc123xyz0
      ```
+
    - **Service Layer Patterns**:
      - **Direct short_id queries**: Most services query directly by short_id (events, cyclists)
      - **UUID conversion for FKs**: When filtering by foreign keys, convert short_id → UUID first
@@ -106,11 +108,11 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - Example structure:
      ```json
      {
-       "profile": { "title": "...", "field": "..." },
-       "errors": {
-         "notFound": "Resource not found",
-         "loadFailed": "Failed to load resource"
-       }
+     	"profile": { "title": "...", "field": "..." },
+     	"errors": {
+     		"notFound": "Resource not found",
+     		"loadFailed": "Failed to load resource"
+     	}
      }
      ```
    - Supported locales: `es` (Spanish - default), `en` (English)

@@ -5,8 +5,7 @@
  */
 
 import { expect, test } from '@playwright/test';
-import { TEST_CYCLISTS } from './fixtures/test-data';
-import { goToResults, clickCyclistByName } from './helpers/navigation';
+import { goToResults } from './helpers/navigation';
 
 test.describe('Cyclist Profile', () => {
 	test('cyclist profile displays details and race history', async ({ page }) => {
@@ -63,11 +62,6 @@ test.describe('Cyclist Profile', () => {
 			const heading = await page.locator('h2').textContent();
 			expect(heading).toContain(cyclistName.trim().split(' ')[0]); // Check first name at least
 		}
-
-		// Verify race history section exists
-		const raceHistorySection = page
-			.locator('table, section, div')
-			.filter({ hasText: /resultados|results|carreras|races/i });
 
 		// Either table should be visible or "no results" message
 		const hasRaceTable = await page

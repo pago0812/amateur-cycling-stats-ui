@@ -33,16 +33,8 @@ export async function getRaceWithResultsWithFilters(
 	const [eventResult, categoryResult, genderResult, lengthResult] = await Promise.all([
 		supabase.from('events').select('id').eq('short_id', params.eventId).single(),
 		supabase.from('race_categories').select('id').eq('short_id', params.categoryId).single(),
-		supabase
-			.from('race_category_genders')
-			.select('id')
-			.eq('short_id', params.genderId)
-			.single(),
-		supabase
-			.from('race_category_lengths')
-			.select('id')
-			.eq('short_id', params.lengthId)
-			.single()
+		supabase.from('race_category_genders').select('id').eq('short_id', params.genderId).single(),
+		supabase.from('race_category_lengths').select('id').eq('short_id', params.lengthId).single()
 	]);
 
 	// Check if any lookup failed

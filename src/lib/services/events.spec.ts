@@ -6,10 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getPastEvents, getFutureEvents, getEventWithCategoriesById } from './events';
-import {
-	createMockSupabaseClient,
-	mockSupabaseQuery
-} from '$lib/test-utils/supabase-mock';
+import { createMockSupabaseClient, mockSupabaseQuery } from '$lib/test-utils/supabase-mock';
 import type { EventDB, EventWithCategoriesResponse } from '$lib/types/db';
 
 describe('Events Service', () => {
@@ -53,7 +50,6 @@ describe('Events Service', () => {
 		});
 
 		it('should use current year when no year param provided', async () => {
-			const currentYear = new Date().getFullYear();
 			const mockEvents: EventDB[] = [];
 
 			mockSupabaseQuery(mockSupabase, { data: mockEvents, error: null });
