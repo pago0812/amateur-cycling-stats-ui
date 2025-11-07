@@ -20,11 +20,9 @@ vi.mock('$lib/i18n', () => ({
 	loadTranslations: vi.fn()
 }));
 
-// Mock CyclistResultsTable component
+// Mock CyclistResultsTable component - return a stub function
 vi.mock('./CyclistResultsTable.svelte', () => ({
-	default: {
-		render: () => ({ html: '<div>Mocked Table</div>' })
-	}
+	default: () => null
 }));
 
 describe('CyclistProfile Component', () => {

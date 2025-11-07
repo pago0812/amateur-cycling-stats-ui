@@ -7,12 +7,23 @@
 import { page } from '@vitest/browser/context';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
-import { writable } from 'svelte/store';
 import AccountLayout from './+layout.svelte';
+
+// Create a mock writable function using vi.hoisted
+const mockWritable = vi.hoisted(() => {
+	return (value: any) => ({
+		subscribe: (fn: (value: any) => void) => {
+			fn(value);
+			return () => {};
+		},
+		set: (newValue: any) => {},
+		update: (fn: (value: any) => any) => {}
+	});
+});
 
 // Mock i18n
 vi.mock('$lib/i18n', () => ({
-	t: writable((key: string) => {
+	t: mockWritable((key: string) => {
 		const translations: Record<string, string> = {
 			'account.title': 'Mi Cuenta',
 			'account.subtitle': 'Gestiona tu perfil',
@@ -21,15 +32,15 @@ vi.mock('$lib/i18n', () => ({
 		};
 		return translations[key] || key;
 	}),
-	locale: writable('es'),
-	locales: writable(['es', 'en']),
-	loading: writable(false),
+	locale: mockWritable('es'),
+	locales: mockWritable(['es', 'en']),
+	loading: mockWritable(false),
 	loadTranslations: vi.fn()
 }));
 
 // Mock $app/stores
 vi.mock('$app/stores', () => ({
-	page: writable({
+	page: mockWritable({
 		url: new URL('http://localhost:5173/account'),
 		params: {},
 		route: { id: '/account' },

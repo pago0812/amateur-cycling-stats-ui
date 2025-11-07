@@ -11,26 +11,21 @@ import { writable } from 'svelte/store';
 import SelectQueryParam from './SelectQueryParam.svelte';
 
 // Mock SvelteKit stores and navigation
-const mockPageUrl = new URL('http://localhost:4173/results/event-1');
-const mockPageStore = writable({
-	url: mockPageUrl,
-	params: { id: 'event-1' },
-	route: { id: '/results/[id]' },
-	status: 200,
-	error: null,
-	data: {},
-	form: undefined,
-	state: {}
-});
-
-const mockGoto = vi.fn();
-
 vi.mock('$app/stores', () => ({
-	page: mockPageStore
+	page: writable({
+		url: new URL('http://localhost:4173/results/event-1'),
+		params: { id: 'event-1' },
+		route: { id: '/results/[id]' },
+		status: 200,
+		error: null,
+		data: {},
+		form: undefined,
+		state: {}
+	})
 }));
 
 vi.mock('$app/navigation', () => ({
-	goto: mockGoto
+	goto: vi.fn()
 }));
 
 describe('SelectQueryParam Component', () => {

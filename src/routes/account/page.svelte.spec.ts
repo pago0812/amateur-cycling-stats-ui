@@ -20,12 +20,9 @@ vi.mock('$lib/i18n', () => ({
 	loadTranslations: vi.fn()
 }));
 
-// Mock CyclistProfile component
+// Mock CyclistProfile component - return a stub function
 vi.mock('$lib/components/CyclistProfile.svelte', () => ({
-	default: class MockCyclistProfile {
-		$$prop_def = { cyclist: {} };
-		constructor() {}
-	}
+	default: () => null
 }));
 
 describe('Account Page Component', () => {
