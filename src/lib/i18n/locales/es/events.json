@@ -2,6 +2,7 @@
 	"home": {
 		"title": "Próximos eventos",
 		"noEvents": "No hay eventos próximos disponibles.",
+		"noResults": "No hay resultados disponibles",
 		"date": "Fecha",
 		"location": "Ubicación",
 		"status": "Estado"

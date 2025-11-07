@@ -1,19 +1,12 @@
 <script lang="ts">
 	import { alertStore } from '$lib/stores/alert-store';
-	import { onMount } from 'svelte';
-
-	let mounted = $state(false);
-
-	onMount(() => {
-		mounted = true;
-	});
 
 	function handleClose() {
 		alertStore.closeAlert();
 	}
 </script>
 
-{#if mounted && $alertStore.open}
+{#if $alertStore.open}
 	<div class="fixed top-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
 		<div
 			class="flex items-center justify-between rounded-lg bg-red-600 px-6 py-4 text-white shadow-lg"

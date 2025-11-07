@@ -1,6 +1,6 @@
 {
 	"title": "Admin Panel",
-	"subtitle": "Manage system-wide settings and configurations",
+	"subtitle": "System settings and configuration",
 	"tabs": {
 		"generalConfig": "General Config"
 	},

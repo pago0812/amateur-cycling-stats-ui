@@ -20,7 +20,7 @@
 		</div>
 	{:else if data.events.length === 0}
 		<div class="py-8 text-center">
-			<p class="text-gray-600">{$t('events.home.noEvents')}</p>
+			<p class="text-gray-600">{$t('events.home.noResults')}</p>
 		</div>
 	{:else}
 		<div class="grid gap-4">

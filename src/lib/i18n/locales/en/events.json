@@ -2,6 +2,7 @@
 	"home": {
 		"title": "Upcoming events",
 		"noEvents": "No upcoming events available.",
+		"noResults": "No results available",
 		"date": "Date",
 		"location": "Location",
 		"status": "Status"
