@@ -232,7 +232,8 @@ All services located in `src/lib/services/`:
 - Supabase Auth with automatic cookie management via `@supabase/ssr`
 - Server-side session handling in `hooks.server.ts`
 - Supabase client attached to `event.locals.supabase` for all requests
-- `event.locals.safeGetSession()` helper returns enriched user data via `get_user_with_relations()` RPC
+- `event.locals.safeGetSession()` helper uses `getUser()` to validate JWT with Auth server (more secure than `getSession()`)
+- Returns enriched user data via `get_user_with_relations()` RPC
 - HTTP-only cookies managed automatically by Supabase
 - Root layout loads user state for all pages via `safeGetSession()`
 - Protected routes redirect to `/login` if not authenticated
@@ -1032,3 +1033,4 @@ export const load: PageServerLoad = async ({ url }) => {
 - API route handlers with `+server.ts`
 - Middleware for common logic
 - Rate limiting for form submissions
+- Always ask if I want to commit changes before do it

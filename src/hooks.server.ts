@@ -41,16 +41,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.locale = locale;
 
 	/**
-	 * Get the current session and user.
-	 * Unlike getUser(), getSession() doesn't make an extra request to Supabase.
-	 * However, it's recommended to use getUser() for critical auth checks.
+	 * Get the current authenticated user.
+	 * Uses getUser() which validates the JWT by contacting the Supabase Auth server.
+	 * This is more secure than getSession() which only reads from cookies.
 	 */
 	event.locals.safeGetSession = async () => {
 		const {
-			data: { session }
-		} = await event.locals.supabase.auth.getSession();
+			data: { user },
+			error: authError
+		} = await event.locals.supabase.auth.getUser();
 
-		if (!session) {
+		if (authError || !user) {
 			return { session: null, user: null };
 		}
 
@@ -58,7 +59,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const { data: rpcResponse, error } = await event.locals.supabase.rpc(
 			'get_user_with_relations',
 			{
-				user_uuid: session.user.id
+				user_uuid: user.id
 			}
 		);
 
@@ -66,7 +67,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			if (error) {
 				console.error('Error fetching user with relations:', error);
 			}
-			return { session, user: null };
+			return { session: null, user: null };
 		}
 
 		// Transform snake_case DB response to camelCase domain type
@@ -74,7 +75,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			rpcResponse as unknown as UserWithRelationsRpcResponse
 		);
 
-		return { session, user: userData };
+		return { session: null, user: userData };
 	};
 
 	// Resolve the request
