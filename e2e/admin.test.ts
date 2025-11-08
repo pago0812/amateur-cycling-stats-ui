@@ -86,12 +86,14 @@ test.describe('Admin Page', () => {
 
 		// Check for title
 		const title = page.getByRole('heading', {
-			name: /panel de administración|admin panel/i
+			name: /Panel de Administración|Admin Panel/i
 		});
 		await expect(title).toBeVisible();
 
 		// Check for subtitle
-		const subtitle = page.getByText(/configuración.*sistema|system.*settings/i);
+		const subtitle = page.getByText(
+			/Gestiona la configuración y ajustes del sistema|System settings and configuration/i
+		);
 		await expect(subtitle).toBeVisible();
 	});
 });

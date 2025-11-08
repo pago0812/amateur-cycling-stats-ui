@@ -5,30 +5,22 @@
  */
 
 import { expect, test } from '@playwright/test';
-import {
-	TEST_EVENTS,
-	TEST_RACE_CATEGORIES,
-	TEST_GENDERS,
-	TEST_LENGTHS,
-	getCurrentYear,
-	getPastYear
-} from './fixtures/test-data';
-import {
-	goToHome,
-	goToResults,
-	clickEventByName,
-	selectFilter,
-	expectNoResultsMessage
-} from './helpers/navigation';
+import { getCurrentYear, getPastYear } from './fixtures/test-data';
+import { goToHome, goToResults, selectFilter, expectNoResultsMessage } from './helpers/navigation';
+import { clearAuth } from './helpers/auth';
 
 test.describe('Event Browsing', () => {
+	test.beforeEach(async ({ page }) => {
+		await clearAuth(page);
+	});
+
 	test('home page displays future events correctly', async ({ page }) => {
 		// Navigate to home page
 		await goToHome(page);
 
 		// Verify page title
 		await expect(
-			page.getByRole('heading', { name: /próximos eventos|upcoming events/i })
+			page.getByRole('heading', { name: /Próximos eventos|Upcoming events/i })
 		).toBeVisible();
 
 		// Check if events table/list exists
@@ -36,15 +28,15 @@ test.describe('Event Browsing', () => {
 		await expect(eventsContainer).toBeVisible();
 
 		// Verify at least one event is displayed (if future events exist in seed data)
-		// Note: This might fail if no future events exist - that's expected
-		const eventLinks = page
-			.getByRole('link')
-			.filter({ hasText: /challenge|fondo|criterium|climb/i });
-		const count = await eventLinks.count();
+		// Note: Home page shows events as cards (headings), not links
+		const eventHeadings = page
+			.getByRole('heading', { level: 3 })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i });
+		const count = await eventHeadings.count();
 
 		if (count > 0) {
 			// If future events exist, verify one is visible
-			await expect(eventLinks.first()).toBeVisible();
+			await expect(eventHeadings.first()).toBeVisible();
 		} else {
 			// If no future events, verify "no events" message
 			await expectNoResultsMessage(page);
@@ -55,11 +47,11 @@ test.describe('Event Browsing', () => {
 		// Navigate to home page
 		await goToHome(page);
 
-		// Check if any events are displayed
-		const eventLinks = page
-			.getByRole('link')
-			.filter({ hasText: /challenge|fondo|criterium|climb/i });
-		const count = await eventLinks.count();
+		// Check if any events are displayed (home page shows events as cards, not links)
+		const eventHeadings = page
+			.getByRole('heading', { level: 3 })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i });
+		const count = await eventHeadings.count();
 
 		if (count === 0) {
 			// Verify "no events" message is shown
@@ -120,13 +112,13 @@ test.describe('Event Browsing', () => {
 		// Find and click on first available event (past event from seed data)
 		const eventLink = page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.first();
 
 		// Check if event exists
 		const count = await page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.count();
 
 		if (count === 0) {
@@ -164,11 +156,11 @@ test.describe('Event Browsing', () => {
 
 		const eventLink = page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.first();
 		const count = await page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.count();
 
 		if (count === 0) {
@@ -221,11 +213,11 @@ test.describe('Event Browsing', () => {
 
 		const eventLink = page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.first();
 		const count = await page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.count();
 
 		if (count === 0) {
@@ -269,11 +261,11 @@ test.describe('Event Browsing', () => {
 
 		const eventLink = page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.first();
 		const count = await page
 			.getByRole('link')
-			.filter({ hasText: /fondo|challenge|criterium|climb/i })
+			.filter({ hasText: /fondo|vuelta|copa|tour|challenge|criterium|climb/i })
 			.count();
 
 		if (count === 0) {
@@ -306,7 +298,9 @@ test.describe('Event Browsing', () => {
 
 			// Check if no results message appears
 			const hasNoResults = await page
-				.getByText(/no hay resultados|no results|no.+disponibles/i)
+				.getByText(
+					/No results available for this filter combination|No hay resultados disponibles para esta combinación de filtros/i
+				)
 				.isVisible()
 				.catch(() => false);
 

@@ -55,12 +55,6 @@ export const actions = {
 		const loginResponse = await login(locals.supabase, { email, password }, locals.locale);
 
 		if (loginResponse.error) {
-			console.error('[LOGIN ERROR]', {
-				status: loginResponse.error.status,
-				name: loginResponse.error.name,
-				message: loginResponse.error.message,
-				fullError: loginResponse.error
-			});
 			return fail(400, {
 				error: loginResponse.error.message,
 				email

@@ -6,8 +6,13 @@
 
 import { expect, test } from '@playwright/test';
 import { goToResults } from './helpers/navigation';
+import { clearAuth } from './helpers/auth';
 
 test.describe('Cyclist Profile', () => {
+	test.beforeEach(async ({ page }) => {
+		await clearAuth(page);
+	});
+
 	test('cyclist profile displays details and race history', async ({ page }) => {
 		// Navigate to results to find a race with cyclist links
 		await goToResults(page);

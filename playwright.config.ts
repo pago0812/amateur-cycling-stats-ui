@@ -10,12 +10,16 @@ export default defineConfig({
 	use: {
 		baseURL: 'http://localhost:4173',
 		trace: 'on-first-retry',
-		screenshot: 'only-on-failure'
+		screenshot: 'only-on-failure',
+		// Ensure clean context per test - no shared storage state
+		storageState: undefined
 	},
 	// Increase timeout for slower CI environments
 	timeout: 30 * 1000,
 	// Retry failed tests once
 	retries: process.env.CI ? 2 : 0,
-	// Run tests in parallel
-	workers: process.env.CI ? 1 : undefined
+	// Run tests in parallel with explicit mode enabled
+	fullyParallel: true,
+	// Limit parallel workers to prevent resource contention
+	workers: process.env.CI ? 1 : 3
 });

@@ -27,15 +27,6 @@ export const login = async (
 	});
 
 	if (error) {
-		// Log the raw Supabase error for debugging
-		console.error('[SUPABASE LOGIN ERROR]', {
-			code: error.code,
-			message: error.message,
-			status: error.status,
-			name: error.name,
-			fullError: error
-		});
-
 		// Get translated error message
 		const userMessage = error.code ? getAuthErrorMessage(locale, error.code) : error.message;
 

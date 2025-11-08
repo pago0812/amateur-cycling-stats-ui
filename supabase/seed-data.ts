@@ -6,6 +6,23 @@
  */
 
 // ============================================================================
+// DATE HELPERS - Generate relative dates for consistent testing
+// ============================================================================
+
+function formatDateTime(date: Date): string {
+	return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+function getRelativeDate(monthsOffset: number): { dateTime: string; year: number } {
+	const date = new Date();
+	date.setMonth(date.getMonth() + monthsOffset);
+	return {
+		dateTime: formatDateTime(date),
+		year: date.getFullYear()
+	};
+}
+
+// ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
@@ -207,16 +224,23 @@ export const seedAnonymousCyclists: AnonymousCyclist[] = [
 // EVENT DATA (5 events)
 // ============================================================================
 
+// Generate relative dates for events
+const pastEvent1Date = getRelativeDate(-6); // 6 months ago
+const pastEvent2Date = getRelativeDate(-3); // 3 months ago
+const pastEvent3Date = getRelativeDate(-1); // 1 month ago
+const futureEvent1Date = getRelativeDate(2); // 2 months from now
+const draftEvent1Date = getRelativeDate(4); // 4 months from now
+
 export const seedEvents: EventData[] = [
 	// Past Event 1 (FINISHED)
 	{
 		id: 'e0000000-0000-0000-0000-000000000001',
-		name: 'Gran Fondo Madrid 2024',
+		name: `Gran Fondo Madrid ${pastEvent1Date.year}`,
 		city: 'Madrid',
 		country: 'España',
 		state: 'Madrid',
-		dateTime: '2024-06-15 09:00:00',
-		year: 2024,
+		dateTime: pastEvent1Date.dateTime,
+		year: pastEvent1Date.year,
 		eventStatus: 'FINISHED',
 		isPublicVisible: true,
 		createdByUserId: 'b0000000-0000-0000-0000-000000000001',
@@ -228,12 +252,12 @@ export const seedEvents: EventData[] = [
 	// Past Event 2 (FINISHED)
 	{
 		id: 'e0000000-0000-0000-0000-000000000002',
-		name: 'Vuelta a Valencia Amateur 2024',
+		name: `Vuelta a Valencia Amateur ${pastEvent2Date.year}`,
 		city: 'Valencia',
 		country: 'España',
 		state: 'Valencia',
-		dateTime: '2024-09-10 08:00:00',
-		year: 2024,
+		dateTime: pastEvent2Date.dateTime,
+		year: pastEvent2Date.year,
 		eventStatus: 'FINISHED',
 		isPublicVisible: true,
 		createdByUserId: 'b0000000-0000-0000-0000-000000000002',
@@ -245,12 +269,12 @@ export const seedEvents: EventData[] = [
 	// Past Event 3 (FINISHED)
 	{
 		id: 'e0000000-0000-0000-0000-000000000003',
-		name: 'Copa Andalucía 2024',
+		name: `Copa Andalucía ${pastEvent3Date.year}`,
 		city: 'Sevilla',
 		country: 'España',
 		state: 'Andalucía',
-		dateTime: '2024-11-20 09:30:00',
-		year: 2024,
+		dateTime: pastEvent3Date.dateTime,
+		year: pastEvent3Date.year,
 		eventStatus: 'FINISHED',
 		isPublicVisible: true,
 		createdByUserId: 'b0000000-0000-0000-0000-000000000001',
@@ -262,12 +286,12 @@ export const seedEvents: EventData[] = [
 	// Future Event (AVAILABLE)
 	{
 		id: 'e0000000-0000-0000-0000-000000000004',
-		name: 'Tour de Cataluña Amateur 2025',
+		name: `Tour de Cataluña Amateur ${futureEvent1Date.year}`,
 		city: 'Barcelona',
 		country: 'España',
 		state: 'Cataluña',
-		dateTime: '2025-07-15 08:00:00',
-		year: 2025,
+		dateTime: futureEvent1Date.dateTime,
+		year: futureEvent1Date.year,
 		eventStatus: 'AVAILABLE',
 		isPublicVisible: true,
 		createdByUserId: 'b0000000-0000-0000-0000-000000000002',
@@ -279,12 +303,12 @@ export const seedEvents: EventData[] = [
 	// Draft Event (DRAFT)
 	{
 		id: 'e0000000-0000-0000-0000-000000000005',
-		name: 'Test Event 2025',
+		name: `Test Event ${draftEvent1Date.year}`,
 		city: 'Bilbao',
 		country: 'España',
 		state: 'País Vasco',
-		dateTime: '2025-12-01 10:00:00',
-		year: 2025,
+		dateTime: draftEvent1Date.dateTime,
+		year: draftEvent1Date.year,
 		eventStatus: 'DRAFT',
 		isPublicVisible: false,
 		createdByUserId: 'b0000000-0000-0000-0000-000000000001',
@@ -299,11 +323,18 @@ export const seedEvents: EventData[] = [
 // RACE DATA (20 races = 4 races × 5 events)
 // ============================================================================
 
+// Helper to add minutes to a date string
+function addMinutesToDate(dateTimeStr: string, minutes: number): string {
+	const date = new Date(dateTimeStr.replace(' ', 'T'));
+	date.setMinutes(date.getMinutes() + minutes);
+	return formatDateTime(date);
+}
+
 export const seedRaces: RaceData[] = [
 	// Event 1 - Past (FINISHED) - ELITE races
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000001',
-		dateTime: '2024-06-15 09:00:00',
+		dateTime: pastEvent1Date.dateTime,
 		categoryName: 'ELITE',
 		genderName: 'MALE',
 		lengthName: 'LONG',
@@ -312,7 +343,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000001',
-		dateTime: '2024-06-15 09:15:00',
+		dateTime: addMinutesToDate(pastEvent1Date.dateTime, 15),
 		categoryName: 'ELITE',
 		genderName: 'MALE',
 		lengthName: 'SHORT',
@@ -321,7 +352,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000001',
-		dateTime: '2024-06-15 10:00:00',
+		dateTime: addMinutesToDate(pastEvent1Date.dateTime, 60),
 		categoryName: 'ELITE',
 		genderName: 'FEMALE',
 		lengthName: 'LONG',
@@ -330,7 +361,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000001',
-		dateTime: '2024-06-15 10:15:00',
+		dateTime: addMinutesToDate(pastEvent1Date.dateTime, 75),
 		categoryName: 'ELITE',
 		genderName: 'FEMALE',
 		lengthName: 'SHORT',
@@ -341,7 +372,7 @@ export const seedRaces: RaceData[] = [
 	// Event 2 - Past (FINISHED) - MA races
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000002',
-		dateTime: '2024-09-10 08:00:00',
+		dateTime: pastEvent2Date.dateTime,
 		categoryName: 'MA',
 		genderName: 'MALE',
 		lengthName: 'LONG',
@@ -350,7 +381,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000002',
-		dateTime: '2024-09-10 08:15:00',
+		dateTime: addMinutesToDate(pastEvent2Date.dateTime, 15),
 		categoryName: 'MA',
 		genderName: 'MALE',
 		lengthName: 'SHORT',
@@ -359,7 +390,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000002',
-		dateTime: '2024-09-10 09:00:00',
+		dateTime: addMinutesToDate(pastEvent2Date.dateTime, 60),
 		categoryName: 'MA',
 		genderName: 'FEMALE',
 		lengthName: 'LONG',
@@ -368,7 +399,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000002',
-		dateTime: '2024-09-10 09:15:00',
+		dateTime: addMinutesToDate(pastEvent2Date.dateTime, 75),
 		categoryName: 'MA',
 		genderName: 'FEMALE',
 		lengthName: 'SHORT',
@@ -379,7 +410,7 @@ export const seedRaces: RaceData[] = [
 	// Event 3 - Past (FINISHED) - Mixed ELITE and MA
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000003',
-		dateTime: '2024-11-20 09:30:00',
+		dateTime: pastEvent3Date.dateTime,
 		categoryName: 'ELITE',
 		genderName: 'MALE',
 		lengthName: 'LONG',
@@ -388,7 +419,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000003',
-		dateTime: '2024-11-20 09:45:00',
+		dateTime: addMinutesToDate(pastEvent3Date.dateTime, 15),
 		categoryName: 'ELITE',
 		genderName: 'FEMALE',
 		lengthName: 'SHORT',
@@ -397,7 +428,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000003',
-		dateTime: '2024-11-20 10:30:00',
+		dateTime: addMinutesToDate(pastEvent3Date.dateTime, 60),
 		categoryName: 'MA',
 		genderName: 'MALE',
 		lengthName: 'LONG',
@@ -406,7 +437,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000003',
-		dateTime: '2024-11-20 10:45:00',
+		dateTime: addMinutesToDate(pastEvent3Date.dateTime, 75),
 		categoryName: 'MA',
 		genderName: 'FEMALE',
 		lengthName: 'SHORT',
@@ -417,7 +448,7 @@ export const seedRaces: RaceData[] = [
 	// Event 4 - Future (AVAILABLE) - Mixed
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000004',
-		dateTime: '2025-07-15 08:00:00',
+		dateTime: futureEvent1Date.dateTime,
 		categoryName: 'ELITE',
 		genderName: 'MALE',
 		lengthName: 'LONG',
@@ -426,7 +457,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000004',
-		dateTime: '2025-07-15 08:15:00',
+		dateTime: addMinutesToDate(futureEvent1Date.dateTime, 15),
 		categoryName: 'ELITE',
 		genderName: 'FEMALE',
 		lengthName: 'LONG',
@@ -435,7 +466,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000004',
-		dateTime: '2025-07-15 09:00:00',
+		dateTime: addMinutesToDate(futureEvent1Date.dateTime, 60),
 		categoryName: 'MA',
 		genderName: 'MALE',
 		lengthName: 'SHORT',
@@ -444,7 +475,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000004',
-		dateTime: '2025-07-15 09:15:00',
+		dateTime: addMinutesToDate(futureEvent1Date.dateTime, 75),
 		categoryName: 'MA',
 		genderName: 'FEMALE',
 		lengthName: 'SHORT',
@@ -455,7 +486,7 @@ export const seedRaces: RaceData[] = [
 	// Event 5 - Draft (DRAFT) - Mixed visibility
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000005',
-		dateTime: '2025-12-01 10:00:00',
+		dateTime: draftEvent1Date.dateTime,
 		categoryName: 'ELITE',
 		genderName: 'MALE',
 		lengthName: 'SHORT',
@@ -464,7 +495,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000005',
-		dateTime: '2025-12-01 10:15:00',
+		dateTime: addMinutesToDate(draftEvent1Date.dateTime, 15),
 		categoryName: 'ELITE',
 		genderName: 'FEMALE',
 		lengthName: 'LONG',
@@ -473,7 +504,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000005',
-		dateTime: '2025-12-01 11:00:00',
+		dateTime: addMinutesToDate(draftEvent1Date.dateTime, 60),
 		categoryName: 'MA',
 		genderName: 'MALE',
 		lengthName: 'LONG',
@@ -482,7 +513,7 @@ export const seedRaces: RaceData[] = [
 	},
 	{
 		eventId: 'e0000000-0000-0000-0000-000000000005',
-		dateTime: '2025-12-01 11:15:00',
+		dateTime: addMinutesToDate(draftEvent1Date.dateTime, 75),
 		categoryName: 'MA',
 		genderName: 'FEMALE',
 		lengthName: 'SHORT',

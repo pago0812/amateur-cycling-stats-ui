@@ -32,7 +32,7 @@ export async function loginAs(page: Page, user: TestUser) {
 	await page.getByRole('button', { name: /iniciar sesión|log in/i }).click();
 
 	// Wait for redirect away from login page (could be /panel, /account, or /)
-	await page.waitForURL((url) => url.pathname !== '/login', { timeout: 10000 });
+	await page.waitForURL((url) => url.pathname !== '/login', { timeout: 20000 });
 
 	// Verify we're authenticated
 	await expectAuthenticated(page);
@@ -90,18 +90,22 @@ export async function expectUnauthenticated(page: Page) {
  * @param page - Playwright page object
  */
 export async function clearAuth(page: Page) {
+	// Clear all cookies for the browser context
 	await page.context().clearCookies();
-	// Try to clear storage, but don't fail if not accessible
+
+	// Navigate to blank page to ensure clean slate
+	await page.goto('about:blank');
+
+	// Clear storage
 	try {
 		await page.evaluate(() => {
-			try {
-				localStorage.clear();
-				sessionStorage.clear();
-			} catch (e) {
-				// Storage not accessible, ignore
-			}
+			localStorage.clear();
+			sessionStorage.clear();
 		});
-	} catch (e) {
-		// Ignore storage errors
+	} catch {
+		// Ignore storage errors (page may not have storage access)
 	}
+
+	// Navigate to home page to reset state
+	await page.goto('/');
 }

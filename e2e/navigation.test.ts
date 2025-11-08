@@ -10,6 +10,10 @@ import { loginAs, clearAuth } from './helpers/auth';
 import { TEST_USERS } from './fixtures/test-users';
 
 test.describe('Navigation', () => {
+	test.beforeEach(async ({ page }) => {
+		await clearAuth(page);
+	});
+
 	test('header navigation links work correctly', async ({ page }) => {
 		// Start at home
 		await goToHome(page);
@@ -152,9 +156,6 @@ test.describe('Navigation', () => {
 	});
 
 	test('global alert displays error messages', async ({ page }) => {
-		// Clear any existing auth
-		await clearAuth(page);
-
 		// Trigger an error by attempting login with invalid credentials
 		await page.goto('/login');
 		await page.waitForSelector('form');
@@ -166,10 +167,8 @@ test.describe('Navigation', () => {
 		// Wait for error message
 		await page.waitForTimeout(1000);
 
-		// Verify error message is displayed
-		const errorMessage = page.getByText(
-			/email o contraseña incorrectos|invalid.*credentials|credenciales.*inválidas/i
-		);
+		// Verify error message is displayed (matches i18n auth error messages)
+		const errorMessage = page.getByText(/Email o contraseña incorrectos|Invalid email or password/i);
 		await expect(errorMessage).toBeVisible({ timeout: 5000 });
 
 		// This demonstrates that error messages are shown to users

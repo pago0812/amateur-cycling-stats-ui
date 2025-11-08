@@ -49,10 +49,8 @@ test.describe('Authentication', () => {
 		// Wait a bit for response
 		await page.waitForTimeout(1000);
 
-		// Verify error message is displayed (Spanish error message from global alert or inline)
-		const errorMessage = page.getByText(
-			/email o contraseña incorrectos|invalid.*credentials|credenciales.*inválidas/i
-		);
+		// Verify error message is displayed (Spanish/English error message from global alert or inline)
+		const errorMessage = page.getByText(/Email o contraseña incorrectos|Invalid email or password/i);
 		await expect(errorMessage).toBeVisible({ timeout: 5000 });
 
 		// Verify still not authenticated
@@ -70,7 +68,7 @@ test.describe('Authentication', () => {
 		await expect(page).toHaveURL('/account');
 
 		// Verify account content is visible (not redirected)
-		await expect(page.locator('h1, h2')).toBeVisible();
+		await expect(page.locator('h1, h2').first()).toBeVisible();
 
 		// Verify authenticated state
 		await expectAuthenticated(page);
