@@ -19,7 +19,7 @@
 	<title>{$t('common.pageTitle.login')}</title>
 </svelte:head>
 
-<section class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
+<section class="py-6 sm:py-8 md:py-10 lg:py-12">
 	<div class="flex flex-col items-center">
 		<h2 class="mb-8 text-3xl font-bold">{$t('auth.login.title')}</h2>
 

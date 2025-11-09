@@ -1,4 +1,4 @@
-import type { User } from './user.domain';
+import type { User, UserWithRelations } from './user.domain';
 import type { Organization } from './organization.domain';
 
 /**
@@ -24,6 +24,6 @@ export interface Organizer {
  */
 export interface OrganizerWithRelations extends Organizer {
 	// Populated relationships
-	user?: User;
+	user?: UserWithRelations; // Changed from User to UserWithRelations to include role info
 	organization?: Organization;
 }

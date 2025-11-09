@@ -2,11 +2,66 @@
 	"title": "Admin Panel",
 	"subtitle": "System settings and configuration",
 	"tabs": {
-		"generalConfig": "General Config"
+		"generalConfig": "General Config",
+		"organizations": "Organizations"
+	},
+	"breadcrumbs": {
+		"generalConfig": "General Config",
+		"allOrganizations": "All Organizations"
 	},
 	"generalConfig": {
 		"title": "General Configuration",
 		"comingSoon": "Coming Soon",
 		"description": "Here you will be able to manage system-wide settings and configurations"
+	},
+	"organizations": {
+		"title": "Organizations",
+		"subtitle": "Manage cycling event organizations",
+		"addButton": "Add Organization",
+		"tabs": {
+			"overview": "Overview",
+			"members": "Members"
+		},
+		"table": {
+			"name": "Name",
+			"description": "Description",
+			"eventCount": "Events",
+			"createdAt": "Created",
+			"actions": "Actions",
+			"edit": "Edit",
+			"delete": "Delete",
+			"noResults": "No organizations found"
+		},
+		"form": {
+			"nameLabel": "Organization Name",
+			"namePlaceholder": "Enter organization name",
+			"descriptionLabel": "Description",
+			"descriptionPlaceholder": "Enter organization description",
+			"createTitle": "Create Organization",
+			"editTitle": "Edit Organization",
+			"submitCreate": "Create Organization",
+			"submitUpdate": "Update Organization",
+			"cancel": "Cancel"
+		},
+		"deleteConfirm": {
+			"title": "Delete Organization",
+			"message": "Are you sure you want to delete {name}? This will mark it as inactive but preserve all data.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"success": {
+			"created": "Organization created successfully",
+			"updated": "Organization updated successfully",
+			"deleted": "Organization marked as inactive"
+		},
+		"errors": {
+			"loadFailed": "Failed to load organizations",
+			"createFailed": "Failed to create organization",
+			"updateFailed": "Failed to update organization",
+			"deleteFailed": "Failed to delete organization",
+			"notFound": "Organization not found",
+			"nameRequired": "Organization name is required",
+			"nameMinLength": "Name must be at least 3 characters"
+		}
 	}
 }

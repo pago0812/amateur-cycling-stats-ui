@@ -79,6 +79,7 @@ describe('Users Adapter', () => {
 						short_id: '1',
 						name: 'Pro Cycling League Spain',
 						description: 'Professional cycling organization',
+						is_active: true,
 						created_at: '2024-01-01T00:00:00Z',
 						updated_at: '2024-01-01T00:00:00Z'
 					}

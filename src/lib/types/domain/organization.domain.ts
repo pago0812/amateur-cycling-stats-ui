@@ -13,6 +13,12 @@ export interface Organization {
 	name: string;
 	description: string | null;
 
+	// Status
+	isActive: boolean;
+
+	// Aggregated data (optional, for list views)
+	eventCount?: number;
+
 	// Timestamps
 	createdAt: string;
 	updatedAt: string;

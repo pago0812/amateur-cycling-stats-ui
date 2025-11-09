@@ -3,8 +3,7 @@
 	"subtitle": "Gestiona tu organización, eventos y organizadores",
 	"tabs": {
 		"overview": "Resumen",
-		"manageEvents": "Eventos",
-		"manageOrganizers": "Organizadores"
+		"members": "Miembros"
 	},
 	"overview": {
 		"title": "Resumen",

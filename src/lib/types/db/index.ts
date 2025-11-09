@@ -28,7 +28,7 @@ export type { RaceResultDB, RaceResultWithRelationsResponse } from './race-resul
 export type { UserDB, UserWithRelationsRpcResponse } from './users.db';
 export type { RoleDB } from './roles.db';
 export type { OrganizationDB } from './organizations.db';
-export type { OrganizerDB } from './organizers.db';
+export type { OrganizerDB, OrganizerWithUserResponse } from './organizers.db';
 export type { RankingPointDB } from './ranking-points.db';
 
 // Lookup/reference table types

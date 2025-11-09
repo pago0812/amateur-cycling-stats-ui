@@ -21,6 +21,9 @@ export function adaptOrganizationFromDb(dbOrganization: OrganizationDB): Organiz
 		name: dbOrganization.name,
 		description: dbOrganization.description,
 
+		// Status
+		isActive: dbOrganization.is_active,
+
 		// Timestamps
 		...mapTimestamps(dbOrganization)
 	};

@@ -9,7 +9,7 @@
 	<title>{$t('common.pageTitle.home')}</title>
 </svelte:head>
 
-<section class="px-2 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8 lg:px-8 lg:py-10">
+<section class="py-4 sm:py-6 md:py-8 lg:py-10">
 	<h2 class="mb-4 text-2xl font-bold sm:mb-6 sm:text-3xl md:mb-8 md:text-4xl">
 		{$t('events.home.title')}
 	</h2>

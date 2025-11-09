@@ -12,6 +12,6 @@
 	>
 </svelte:head>
 
-<section class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
+<section class="py-6 sm:py-8 md:py-10 lg:py-12">
 	<CyclistProfile cyclist={data.cyclist} />
 </section>

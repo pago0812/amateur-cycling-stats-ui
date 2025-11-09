@@ -44,7 +44,7 @@ export { adaptRoleFromDb } from './roles.adapter';
 export { adaptOrganizationFromDb } from './organizations.adapter';
 
 // Organizers
-export { adaptOrganizerFromDb } from './organizers.adapter';
+export { adaptOrganizerFromDb, adaptOrganizerWithUserFromDb } from './organizers.adapter';
 
 // Race Rankings
 export { adaptRaceRankingFromDb } from './race-rankings.adapter';

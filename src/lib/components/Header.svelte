@@ -29,7 +29,7 @@
 </script>
 
 <nav class="bg-blue-600 text-white">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+	<div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 		<div class="flex h-16 items-center justify-between">
 			<!-- Logo -->
 			<div class="flex-shrink-0">

@@ -15,7 +15,7 @@
 <div class="min-h-screen bg-white">
 	<Header user={data.user} />
 	<GlobalAlert />
-	<main>
+	<main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 		{@render children()}
 	</main>
 </div>

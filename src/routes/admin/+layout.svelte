@@ -7,7 +7,10 @@
 	let { children }: { data: LayoutData; children: Snippet } = $props();
 
 	// Define navigation tabs for admin
-	const tabs = [{ path: '/admin', label: $t('admin.tabs.generalConfig') }];
+	const tabs = [
+		{ path: '/admin', label: $t('admin.tabs.generalConfig') },
+		{ path: '/admin/organizations', label: $t('admin.tabs.organizations') }
+	];
 </script>
 
 <div class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">

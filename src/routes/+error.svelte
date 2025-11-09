@@ -7,8 +7,8 @@
 	<title>{$page.status} - {$t('common.general.error')} - ACS</title>
 </svelte:head>
 
-<section class="px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
-	<div class="mx-auto max-w-2xl">
+<section class="py-6 sm:py-8 md:py-10 lg:py-12">
+	<div>
 		<div class="rounded-lg border border-gray-200 bg-gray-50 px-8 py-12 text-center">
 			<!-- Error Status Code -->
 			<h1 class="mb-4 text-6xl font-bold text-gray-800">

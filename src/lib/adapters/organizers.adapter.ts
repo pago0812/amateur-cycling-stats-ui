@@ -4,8 +4,8 @@
  * Transforms database types (snake_case) to domain types (camelCase) for organizers.
  */
 
-import type { OrganizerDB } from '$lib/types/db';
-import type { Organizer } from '$lib/types/domain';
+import type { OrganizerDB, OrganizerWithUserResponse } from '$lib/types/db';
+import type { Organizer, OrganizerWithRelations, UserWithRelations } from '$lib/types/domain';
 import { mapTimestamps } from './common.adapter';
 
 /**
@@ -23,5 +23,33 @@ export function adaptOrganizerFromDb(dbOrganizer: OrganizerDB): Organizer {
 
 		// Timestamps
 		...mapTimestamps(dbOrganizer)
+	};
+}
+
+/**
+ * Transform OrganizerWithUserResponse (database type with user relations)
+ * to OrganizerWithRelations (domain type with populated user and role).
+ */
+export function adaptOrganizerWithUserFromDb(
+	dbOrganizer: OrganizerWithUserResponse
+): OrganizerWithRelations {
+	const baseOrganizer = adaptOrganizerFromDb(dbOrganizer);
+
+	// Transform user with role
+	const user: UserWithRelations = {
+		id: dbOrganizer.users.short_id,
+		username: dbOrganizer.users.username,
+		roleId: dbOrganizer.users.role_id,
+		...mapTimestamps(dbOrganizer.users),
+		role: {
+			id: dbOrganizer.users.roles.short_id,
+			name: dbOrganizer.users.roles.name,
+			...mapTimestamps(dbOrganizer.users.roles)
+		}
+	};
+
+	return {
+		...baseOrganizer,
+		user
 	};
 }

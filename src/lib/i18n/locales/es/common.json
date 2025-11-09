@@ -8,7 +8,8 @@
 		"account": "Cuenta",
 		"login": "Iniciar sesión",
 		"logout": "Cerrar sesión",
-		"openMenu": "Abrir menú"
+		"openMenu": "Abrir menú",
+		"back": "Volver"
 	},
 	"general": {
 		"year": "Año",
@@ -25,5 +26,16 @@
 		"login": "Iniciar sesión - ACS",
 		"signin": "Registrarse - ACS",
 		"portal": "Cuenta - ACS"
+	},
+	"members": {
+		"table": {
+			"username": "Usuario",
+			"role": "Rol",
+			"dateAdded": "Fecha de Alta",
+			"noResults": "No se encontraron miembros"
+		},
+		"errors": {
+			"loadFailed": "Error al cargar los miembros"
+		}
 	}
 }

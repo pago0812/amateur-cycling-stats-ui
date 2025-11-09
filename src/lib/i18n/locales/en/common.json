@@ -8,7 +8,8 @@
 		"account": "Account",
 		"login": "Log in",
 		"logout": "Log out",
-		"openMenu": "Open menu"
+		"openMenu": "Open menu",
+		"back": "Back"
 	},
 	"general": {
 		"year": "Year",
@@ -25,5 +26,16 @@
 		"login": "Log in - ACS",
 		"signin": "Sign up - ACS",
 		"portal": "Account - ACS"
+	},
+	"members": {
+		"table": {
+			"username": "Username",
+			"role": "Role",
+			"dateAdded": "Date Added",
+			"noResults": "No members found"
+		},
+		"errors": {
+			"loadFailed": "Failed to load members"
+		}
 	}
 }

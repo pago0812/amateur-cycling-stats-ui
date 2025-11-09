@@ -209,6 +209,77 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 - `Header.svelte` - Main navigation with authentication state
 - `GlobalAlert.svelte` - Global error/notification system
 
+**Navigation Toolbar Components:**
+
+- `SecondaryToolbar.svelte` - Section-level navigation (Admin, Panel, Account)
+  - Props: `tabs: Tab[]`, `showLogout?: boolean`
+  - Features: Active state detection with longest matching path algorithm, optional logout button
+  - Styling: Unified color palette (gray-800/gray-500), 16px base font, fixed 36px height
+  - Active State Logic: Finds most specific matching tab by sorting matches by path length (descending)
+  - Usage: Root section navigation (e.g., Admin tabs: General Config, Organizations)
+  - Example: When at `/admin/organizations/[id]`, the "Organizations" tab is active (not "General Config")
+
+- `TertiaryToolbar.svelte` - Subsection navigation with breadcrumb hierarchy
+  - Props: `breadcrumbs: Breadcrumb[]`, `tabs?: Tab[]`, `showLogout?: boolean`, `actions?: Snippet`
+  - Features: Breadcrumb navigation showing page hierarchy, optional tabs, custom actions
+  - Breadcrumb Pattern: Uses `/` separator, clickable parent links, bold current page (non-clickable)
+  - Styling: Same unified palette as SecondaryToolbar, fixed 36px height for layout stability
+  - Usage: All subsection pages for consistent navigation (prevents layout shift)
+  - Layout: Breadcrumbs + tabs + actions aligned on same baseline using `items-end` and `leading-none`
+  - Example Breadcrumbs:
+    - `/admin` → `| General Config |`
+    - `/admin/organizations` → `| All Organizations |`
+    - `/admin/organizations/[id]` → `| All Organizations / Pro Cycling League Spain |` + tabs
+
+**Breadcrumb Navigation Pattern:**
+
+Breadcrumbs provide hierarchical navigation showing the user's location in the app:
+
+```typescript
+interface Breadcrumb {
+  label: string;
+  href?: string; // undefined for current page (last item)
+}
+
+// Example: Organization detail page
+const breadcrumbs = [
+  { label: 'All Organizations', href: '/admin/organizations' }, // Clickable parent
+  { label: data.organization.name } // Current page (not clickable)
+];
+```
+
+**Benefits:**
+- Clear page hierarchy and navigation context
+- One-click navigation to parent pages
+- Replaces back buttons with more intuitive navigation
+- Consistent across all admin/panel pages
+- Fixed height prevents cumulative layout shift (CLS)
+
+**Toolbar Design System:**
+- **Fixed Heights**: Both toolbars use `h-9` (36px) to prevent layout shift across pages
+- **Color Palette**:
+  - Primary text: `text-gray-800` (#1f2937) - Active tabs, current breadcrumb, buttons
+  - Secondary text: `text-gray-500` (#6b7280) - Inactive tabs, breadcrumb links
+  - Separator: `text-gray-400` (#9ca3af) - Breadcrumb "/" separators
+  - Active border: `border-gray-800` - Matches active text color (no blue)
+  - Hover border: `border-gray-300` - Subtle feedback on inactive tabs
+  - Logout hover: `hover:text-red-600` - Red accent for destructive action
+- **Typography**:
+  - Base font: `text-base` (16px) - Tabs, buttons, breadcrumbs
+  - All elements: `leading-none` - Removes extra line-height for clean alignment
+- **Spacing**:
+  - Toolbar margin: `mb-6` - Consistent spacing below toolbars
+  - Tab gap: `gap-8` - Generous spacing between tabs
+  - Breadcrumb gap: `gap-2` - Tight spacing for breadcrumb items
+  - Tab padding: `px-1 pb-3` - Minimal horizontal, bottom for border alignment
+  - Breadcrumb padding: `px-1 pb-2` - Consistent with tabs
+  - Element gap: `gap-4` or `gap-6` - Between breadcrumbs, tabs, actions
+- **Alignment**:
+  - Container: `items-end` - Aligns all elements to bottom baseline
+  - Elements: `pb-2` or `pb-3` - Consistent bottom padding for alignment
+  - Text: `leading-none` - Critical for perfect baseline alignment
+  - No top/bottom margin on inline elements - Prevents misalignment
+
 **Table Components:**
 
 - `EventResultsTable.svelte` - Display events with date, name, location
@@ -1061,6 +1132,51 @@ export const load: PageServerLoad = async ({ url }) => {
 	return { data, selectedFilter: filter };
 };
 ```
+
+**Page Layout Best Practices:**
+
+The root layout (`src/routes/+layout.svelte`) provides centralized horizontal padding and max-width for all page content:
+
+```html
+<main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+	{@render children()}
+</main>
+```
+
+**Rules for Page-Level Styling:**
+
+1. **NEVER add horizontal padding (`px-*`) to page-level sections** - The layout already provides `px-4 sm:px-6 lg:px-8`
+2. **ONLY add vertical padding (`py-*`)** - Pages control their own vertical spacing
+3. **NEVER add `max-w-*` to page containers** - The layout already provides `max-w-6xl`
+4. **NEVER duplicate horizontal spacing** - It creates double padding and misalignment
+
+**Correct Pattern:**
+
+```svelte
+<!-- ✅ CORRECT - Only vertical padding -->
+<section class="py-6 sm:py-8 md:py-10 lg:py-12">
+	<h2>Page Title</h2>
+	<!-- Content automatically gets horizontal padding from layout -->
+</section>
+```
+
+**Incorrect Pattern:**
+
+```svelte
+<!-- ❌ WRONG - Duplicates layout's horizontal padding -->
+<section class="px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-12">
+	<h2>Page Title</h2>
+	<!-- Double padding = misalignment with header -->
+</section>
+```
+
+**Benefits:**
+
+- ✅ Consistent horizontal spacing across all pages
+- ✅ Perfect alignment with header navigation
+- ✅ Single source of truth for max-width
+- ✅ No code repetition
+- ✅ Easier to maintain and update
 
 ## Common Gotchas
 

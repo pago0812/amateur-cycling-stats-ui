@@ -2,11 +2,66 @@
 	"title": "Panel de Administración",
 	"subtitle": "Gestiona la configuración y ajustes del sistema",
 	"tabs": {
-		"generalConfig": "Configuración General"
+		"generalConfig": "Configuración General",
+		"organizations": "Organizaciones"
+	},
+	"breadcrumbs": {
+		"generalConfig": "Configuración General",
+		"allOrganizations": "Todas las Organizaciones"
 	},
 	"generalConfig": {
 		"title": "Configuración General",
 		"comingSoon": "Próximamente",
 		"description": "Aquí podrás gestionar la configuración y ajustes del sistema"
+	},
+	"organizations": {
+		"title": "Organizaciones",
+		"subtitle": "Gestiona las organizaciones de eventos ciclistas",
+		"addButton": "Añadir Organización",
+		"tabs": {
+			"overview": "Información General",
+			"members": "Miembros"
+		},
+		"table": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"eventCount": "Eventos",
+			"createdAt": "Creación",
+			"actions": "Acciones",
+			"edit": "Editar",
+			"delete": "Eliminar",
+			"noResults": "No se encontraron organizaciones"
+		},
+		"form": {
+			"nameLabel": "Nombre de la Organización",
+			"namePlaceholder": "Ingresa el nombre de la organización",
+			"descriptionLabel": "Descripción",
+			"descriptionPlaceholder": "Ingresa la descripción de la organización",
+			"createTitle": "Crear Organización",
+			"editTitle": "Editar Organización",
+			"submitCreate": "Crear Organización",
+			"submitUpdate": "Actualizar Organización",
+			"cancel": "Cancelar"
+		},
+		"deleteConfirm": {
+			"title": "Eliminar Organización",
+			"message": "¿Estás seguro de que deseas eliminar {name}? Esta acción la marcará como inactiva pero preservará todos los datos.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"success": {
+			"created": "Organización creada exitosamente",
+			"updated": "Organización actualizada exitosamente",
+			"deleted": "Organización marcada como inactiva"
+		},
+		"errors": {
+			"loadFailed": "Error al cargar las organizaciones",
+			"createFailed": "Error al crear la organización",
+			"updateFailed": "Error al actualizar la organización",
+			"deleteFailed": "Error al eliminar la organización",
+			"notFound": "Organización no encontrada",
+			"nameRequired": "El nombre de la organización es obligatorio",
+			"nameMinLength": "El nombre debe tener al menos 3 caracteres"
+		}
 	}
 }
