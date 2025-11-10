@@ -2,15 +2,11 @@ import type { PageServerLoad } from './$types';
 import { getOrganizersByOrganizationId } from '$lib/services/organizers';
 
 export const load: PageServerLoad = async ({ parent, locals }) => {
-	// Get user from parent layout
-	const { user } = await parent();
+	// Get organization from parent layout
+	const { organization } = await parent();
 
-	// Get organization ID from user's organizer relationship
-	const organizationId = user.organizer?.organizationId;
-
-	if (!organizationId) {
-		// Organizer doesn't have an organization linked - shouldn't happen
-		console.error('Organizer user has no organization ID');
+	if (!organization) {
+		console.error('No organization found for organizer');
 		return { organizers: [] };
 	}
 
@@ -21,7 +17,7 @@ export const load: PageServerLoad = async ({ parent, locals }) => {
 		const { data: orgData } = await locals.supabase
 			.from('organizations')
 			.select('id')
-			.eq('short_id', organizationId)
+			.eq('short_id', organization.id)
 			.single();
 
 		if (!orgData) {

@@ -1,23 +1,27 @@
 {
-	"title": "Panel de Control",
+	"title": "Panel de organizador",
 	"subtitle": "Gestiona tu organización, eventos y organizadores",
 	"tabs": {
-		"overview": "Resumen",
-		"members": "Miembros"
+		"summary": "Resumen",
+		"organization": "Organización"
 	},
-	"overview": {
-		"title": "Resumen",
-		"comingSoon": "Próximamente",
-		"description": "Aquí podrás ver el resumen y estadísticas de tu organización"
+	"breadcrumbs": {
+		"summary": "Resumen",
+		"myOrganization": "Organización"
 	},
-	"events": {
-		"title": "Gestión de Eventos",
+	"summary": {
+		"title": "Panel de Resumen",
 		"comingSoon": "Próximamente",
-		"description": "Aquí podrás crear y gestionar eventos, carreras y resultados"
+		"description": "Aquí podrás ver métricas y estadísticas de tu actividad"
 	},
-	"organizers": {
-		"title": "Gestión de Organizadores",
-		"comingSoon": "Próximamente",
-		"description": "Aquí podrás gestionar los organizadores de tu organización"
+	"organization": {
+		"title": "Detalles de la Organización",
+		"tabs": {
+			"overview": "Información General",
+			"members": "Miembros"
+		},
+		"errors": {
+			"notFound": "No se encontró información de la organización"
+		}
 	}
 }

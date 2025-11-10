@@ -2,7 +2,7 @@
 	"title": "Admin Panel",
 	"subtitle": "System settings and configuration",
 	"tabs": {
-		"generalConfig": "General Config",
+		"summary": "Summary",
 		"organizations": "Organizations"
 	},
 	"breadcrumbs": {

@@ -11,8 +11,8 @@
 
 	// Define navigation tabs for panel
 	const tabs = [
-		{ path: '/panel', label: $t('panel.tabs.overview') },
-		{ path: '/panel/members', label: $t('panel.tabs.members') }
+		{ path: '/panel', label: $t('panel.tabs.summary') },
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') }
 	];
 
 	// Logout action handler

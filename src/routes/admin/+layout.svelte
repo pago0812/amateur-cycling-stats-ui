@@ -11,7 +11,7 @@
 
 	// Define navigation tabs for admin
 	const tabs = [
-		{ path: '/admin', label: $t('admin.tabs.generalConfig') },
+		{ path: '/admin', label: $t('admin.tabs.summary') },
 		{ path: '/admin/organizations', label: $t('admin.tabs.organizations') }
 	];
 

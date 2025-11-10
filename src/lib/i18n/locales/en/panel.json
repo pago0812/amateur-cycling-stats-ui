@@ -1,23 +1,27 @@
 {
-	"title": "Control Panel",
+	"title": "Organizator Panel",
 	"subtitle": "Manage your organization, events and organizers",
 	"tabs": {
-		"overview": "Overview",
-		"members": "Members"
+		"summary": "Summary",
+		"organization": "Organization"
 	},
-	"overview": {
-		"title": "Overview",
-		"comingSoon": "Coming Soon",
-		"description": "Here you will be able to view your organization's overview and statistics"
+	"breadcrumbs": {
+		"summary": "Summary",
+		"myOrganization": "Organization"
 	},
-	"events": {
-		"title": "Event Management",
+	"summary": {
+		"title": "Summary Dashboard",
 		"comingSoon": "Coming Soon",
-		"description": "Here you will be able to create and manage events, races and results"
+		"description": "Here you will be able to view metrics and statistics of your activity"
 	},
-	"organizers": {
-		"title": "Organizer Management",
-		"comingSoon": "Coming Soon",
-		"description": "Here you will be able to manage your organization's organizers"
+	"organization": {
+		"title": "Organization Details",
+		"tabs": {
+			"overview": "General Information",
+			"members": "Members"
+		},
+		"errors": {
+			"notFound": "Organization information not found"
+		}
 	}
 }

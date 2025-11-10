@@ -2,7 +2,7 @@
 	"title": "Panel de Administración",
 	"subtitle": "Gestiona la configuración y ajustes del sistema",
 	"tabs": {
-		"generalConfig": "Configuración General",
+		"summary": "Resumen",
 		"organizations": "Organizaciones"
 	},
 	"breadcrumbs": {
