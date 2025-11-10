@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
-	import TertiaryToolbar from '$lib/components/TertiaryToolbar.svelte';
+	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
 	import type { LayoutData } from './$types';
 	import type { Snippet } from 'svelte';
 
@@ -12,7 +12,7 @@
 		{ label: data.organization.name } // Current page
 	];
 
-	// Define tertiary navigation tabs for organization detail
+	// Define navigation tabs for organization detail
 	const tabs = [
 		{
 			path: `/admin/organizations/${data.organization.id}`,
@@ -26,8 +26,8 @@
 </script>
 
 <section>
-	<!-- Tertiary Toolbar with breadcrumbs and tabs -->
-	<TertiaryToolbar {breadcrumbs} {tabs} />
+	<!-- Menu Toolbar with breadcrumbs and tabs -->
+	<MenuToolbar {breadcrumbs} {tabs} level="secondary" />
 
 	<!-- Page Content -->
 	<div>

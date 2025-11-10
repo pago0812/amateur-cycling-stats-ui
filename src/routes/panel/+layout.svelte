@@ -1,33 +1,38 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
-	import TertiaryToolbar from '$lib/components/TertiaryToolbar.svelte';
+	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
 	import type { LayoutData } from './$types';
 	import type { Snippet } from 'svelte';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
-	// Define breadcrumb for panel (single item - current organization/panel)
-	const breadcrumbs = [{ label: $t('panel.title') }];
+	// Logout form reference
+	let logoutForm: HTMLFormElement;
 
-	// Define tertiary navigation tabs for panel
+	// Define navigation tabs for panel
 	const tabs = [
 		{ path: '/panel', label: $t('panel.tabs.overview') },
 		{ path: '/panel/members', label: $t('panel.tabs.members') }
 	];
+
+	// Logout action handler
+	const handleLogout = () => {
+		logoutForm.requestSubmit();
+	};
 </script>
 
-<div class="py-8">
-	<!-- Page Header -->
-	<div class="mb-8">
-		<h1 class="mb-2 text-4xl font-bold">{$t('panel.title')}</h1>
-		<p class="text-gray-600">{$t('panel.subtitle')}</p>
-	</div>
+<!-- Hidden logout form -->
+<form method="POST" action="?/logout" bind:this={logoutForm} class="hidden"></form>
 
-	<!-- Tertiary Toolbar with breadcrumbs, tabs, and logout -->
-	<TertiaryToolbar {breadcrumbs} {tabs} showLogout={true} />
+<!-- Menu Navigation Toolbar -->
+<MenuToolbar
+	breadcrumbs={[{ label: $t('panel.title') }]}
+	{tabs}
+	action={{ label: $t('common.navigation.logout'), onClick: handleLogout, variant: 'danger' }}
+	level="primary"
+/>
 
-	<!-- Page Content -->
-	<div>
-		{@render children()}
-	</div>
+<!-- Page Content -->
+<div>
+	{@render children()}
 </div>

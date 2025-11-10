@@ -17,7 +17,9 @@ vi.mock('$lib/i18n', () => ({
 		const translations: Record<string, string> = {
 			'admin.title': 'Panel de Administración',
 			'admin.subtitle': 'Gestiona la configuración del sistema',
-			'admin.tabs.generalConfig': 'Configuración General'
+			'admin.tabs.generalConfig': 'Configuración General',
+			'admin.tabs.organizations': 'Organizaciones',
+			'common.navigation.logout': 'Cerrar sesión'
 		};
 		return translations[key] || key;
 	}),
@@ -59,11 +61,11 @@ describe('Admin Layout Component', () => {
 		}
 	};
 
-	it('should render page title', async () => {
+	it('should render page title in breadcrumb', async () => {
 		render(AdminLayout, { data: mockAdminData, children: (() => {}) as any });
 
-		const heading = page.getByRole('heading', { name: /Panel de Administración/i });
-		await expect.element(heading).toBeInTheDocument();
+		const breadcrumb = page.getByText('Panel de Administración');
+		await expect.element(breadcrumb).toBeInTheDocument();
 	});
 
 	it('should render General Config tab', async () => {

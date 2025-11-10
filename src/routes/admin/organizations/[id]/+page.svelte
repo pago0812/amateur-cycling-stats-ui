@@ -10,13 +10,15 @@
 	<title>{data.organization.name} - {$t('admin.organizations.title')} - ACS</title>
 </svelte:head>
 
-<!-- Organization details (back button and title now in layout) -->
-<OrganizationProfile organization={data.organization} />
+<div class="mt-8">
+	<!-- Organization details -->
+	<OrganizationProfile organization={data.organization} />
 
-<!-- Placeholder for future actions -->
-<div class="mt-8 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
-	<p class="mb-2 text-lg font-semibold text-gray-700">Funcionalidad en desarrollo</p>
-	<p class="text-gray-600">
-		En el futuro aquí estarán disponibles las opciones para editar y eliminar la organización.
-	</p>
+	<!-- Placeholder for future actions -->
+	<div class="mt-8 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+		<p class="mb-2 text-lg font-semibold text-gray-700">Funcionalidad en desarrollo</p>
+		<p class="text-gray-600">
+			En el futuro aquí estarán disponibles las opciones para editar y eliminar la organización.
+		</p>
+	</div>
 </div>

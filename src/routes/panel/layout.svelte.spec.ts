@@ -29,8 +29,8 @@ vi.mock('$lib/i18n', () => ({
 			'panel.title': 'Panel de Control',
 			'panel.subtitle': 'Gestiona tu organización',
 			'panel.tabs.overview': 'Resumen',
-			'panel.tabs.manageEvents': 'Eventos',
-			'panel.tabs.manageOrganizers': 'Organizadores'
+			'panel.tabs.members': 'Miembros',
+			'common.navigation.logout': 'Cerrar sesión'
 		};
 		return translations[key] || key;
 	}),
@@ -72,23 +72,21 @@ describe('Panel Layout Component', () => {
 		}
 	};
 
-	it('should render page title', async () => {
+	it('should render page title in breadcrumb', async () => {
 		render(PanelLayout, { data: mockOrganizerData, children: (() => {}) as any });
 
-		const heading = page.getByRole('heading', { name: /Panel de Control/i });
-		await expect.element(heading).toBeInTheDocument();
+		const breadcrumb = page.getByText('Panel de Control');
+		await expect.element(breadcrumb).toBeInTheDocument();
 	});
 
-	it('should render 3 tabs for organizers', async () => {
+	it('should render 2 tabs (Overview and Members)', async () => {
 		render(PanelLayout, { data: mockOrganizerData, children: (() => {}) as any });
 
 		const overviewTab = page.getByRole('link', { name: /Resumen/i });
-		const eventsTab = page.getByRole('link', { name: /Eventos/i });
-		const organizersTab = page.getByRole('link', { name: /Organizadores/i });
+		const membersTab = page.getByRole('link', { name: /Miembros/i });
 
 		await expect.element(overviewTab).toBeInTheDocument();
-		await expect.element(eventsTab).toBeInTheDocument();
-		await expect.element(organizersTab).toBeInTheDocument();
+		await expect.element(membersTab).toBeInTheDocument();
 	});
 
 	it('should have correct href attributes', async () => {

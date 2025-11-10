@@ -1,10 +1,16 @@
 <script lang="ts">
 	import OrganizationsTable from '$lib/components/OrganizationsTable.svelte';
-	import TertiaryToolbar from '$lib/components/TertiaryToolbar.svelte';
+	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
 	import { t } from '$lib/i18n';
+	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	// Add organization handler
+	const handleAddOrganization = () => {
+		goto('/admin/organizations/new');
+	};
 </script>
 
 <svelte:head>
@@ -12,19 +18,16 @@
 </svelte:head>
 
 <section>
-	<!-- Tertiary Toolbar with breadcrumb -->
-	<TertiaryToolbar breadcrumbs={[{ label: $t('admin.breadcrumbs.allOrganizations') }]} />
-
-	<!-- Add button -->
-	<div class="mb-6 flex justify-end">
-		<a
-			href="/admin/organizations/new"
-			class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-		>
-			{$t('admin.organizations.addButton')}
-		</a>
-	</div>
-
+	<!-- Menu Toolbar with breadcrumb and Add button -->
+	<MenuToolbar
+		breadcrumbs={[{ label: $t('admin.breadcrumbs.allOrganizations') }]}
+		action={{
+			label: $t('admin.organizations.addButton'),
+			onClick: handleAddOrganization,
+			variant: 'primary'
+		}}
+		level="secondary"
+	/>
 	<!-- Error message if organizations failed to load -->
 	{#if data.error}
 		<div class="mb-6 rounded-md border border-red-300 bg-red-50 p-4">
@@ -35,5 +38,7 @@
 	{/if}
 
 	<!-- Organizations table -->
-	<OrganizationsTable organizations={data.organizations} />
+	<div class="mt-8">
+		<OrganizationsTable organizations={data.organizations} />
+	</div>
 </section>

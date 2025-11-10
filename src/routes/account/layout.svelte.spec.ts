@@ -64,18 +64,11 @@ describe('Account Layout Component', () => {
 		}
 	};
 
-	it('should render page title', async () => {
+	it('should render page title in breadcrumb', async () => {
 		render(AccountLayout, { data: mockData, children: (() => {}) as any });
 
-		const heading = page.getByRole('heading', { name: /Mi Cuenta/i });
-		await expect.element(heading).toBeInTheDocument();
-	});
-
-	it('should render page subtitle', async () => {
-		render(AccountLayout, { data: mockData, children: (() => {}) as any });
-
-		const subtitle = page.getByText(/Gestiona tu perfil/i);
-		await expect.element(subtitle).toBeInTheDocument();
+		const breadcrumb = page.getByText('Mi Cuenta');
+		await expect.element(breadcrumb).toBeInTheDocument();
 	});
 
 	it('should render Profile tab', async () => {

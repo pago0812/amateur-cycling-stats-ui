@@ -17,7 +17,7 @@
 </script>
 
 <!-- Organization info grid -->
-<dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+<dl class="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2">
 	<!-- Name -->
 	<div>
 		<dt class="text-sm font-medium text-gray-500">{$t('admin.organizations.table.name')}</dt>
@@ -45,7 +45,9 @@
 	<!-- Event Count (optional) -->
 	{#if organization.eventCount !== undefined}
 		<div>
-			<dt class="text-sm font-medium text-gray-500">{$t('admin.organizations.table.eventCount')}</dt>
+			<dt class="text-sm font-medium text-gray-500">
+				{$t('admin.organizations.table.eventCount')}
+			</dt>
 			<dd class="mt-1 text-lg font-semibold text-gray-900">{organization.eventCount}</dd>
 		</div>
 	{/if}
