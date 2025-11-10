@@ -145,6 +145,16 @@ npm run seed:users   # Seed test users (run after supabase db reset)
   - Two-level system: Primary (section nav) and Secondary (page nav)
   - See `src/lib/components/MenuToolbar.md` for comprehensive documentation
 
+**UI Components:**
+- `Button.svelte` - Reusable button component with consistent styling
+  - Variants: `filled`, `outlined`, `text`
+  - Colors: `primary` (blue), `secondary` (gray), `danger` (red), `success` (green)
+  - Sizes: `sm`, `md` (default), `lg`
+  - Features: `fullWidth` option, link mode (renders `<a>` when `href` provided)
+  - Enhanced UX: pointer cursor, hover shadow, active press effect
+  - Accessibility: supports `ariaLabel` and `ariaExpanded`
+  - **Usage**: All button styling controlled via props only (no custom classes)
+
 **Table Components:**
 - `EventResultsTable.svelte` - Display events with date, name, location
 - `ResultsTable.svelte` - Display race results with cyclist links
@@ -224,6 +234,14 @@ All services located in `src/lib/services/`:
 - Svelte 5 runes syntax (`$props`, `$state`, `$derived`, `$effect`)
 - Tailwind utility classes for styling
 - Progressive enhancement with `use:enhance` directive
+
+**Button Usage Guidelines:**
+- **ALWAYS** use the `Button` component for interactive buttons and button-like links
+- **NEVER** create custom button implementations with inline styles
+- Use appropriate variant: `filled` for primary actions, `outlined` for secondary, `text` for tertiary
+- Choose correct color: `primary` (blue), `secondary` (gray), `danger` (destructive), `success` (positive)
+- Select proper size: `sm` (navigation), `md` (forms/default), `lg` (hero sections)
+- Standard inline text links (e.g., in tables) can remain as plain `<a>` tags
 
 ## Supabase Integration
 
