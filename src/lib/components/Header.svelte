@@ -3,6 +3,7 @@
 	import type { UserWithRelations } from '$lib/types/domain';
 	import { RoleTypeEnum } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
+	import Button from '$lib/components/Button.svelte';
 
 	let { user = null }: { user?: UserWithRelations | null } = $props();
 	let mobileMenuOpen = $state(false);
@@ -38,32 +39,34 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden sm:flex sm:gap-4">
-				<a href={Urls.HOME} class="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700">
+				<Button href={Urls.HOME} variant="filled" color="primary" size="md">
 					{$t('common.navigation.home')}
-				</a>
-				<a href={Urls.RESULTS} class="rounded-md px-3 py-2 text-sm font-medium hover:bg-blue-700">
+				</Button>
+				<Button href={Urls.RESULTS} variant="filled" color="primary" size="md">
 					{$t('common.navigation.results')}
-				</a>
+				</Button>
 
 				{#if user}
-					<a href={portalUrl} class="rounded-md px-3 py-2 text-sm font-bold hover:bg-blue-700">
+					<Button href={portalUrl} variant="filled" color="primary" size="md">
 						{$t('common.navigation.account')}
-					</a>
+					</Button>
 				{:else}
-					<a href={Urls.LOGIN} class="rounded-md px-3 py-2 text-sm font-bold hover:bg-blue-700">
+					<Button href={Urls.LOGIN} variant="filled" color="primary" size="md">
 						{$t('common.navigation.login')}
-					</a>
+					</Button>
 				{/if}
 			</div>
 
 			<!-- Mobile menu button -->
 			<div class="sm:hidden">
-				<button
+				<Button
+					variant="text"
+					color="primary"
+					size="sm"
 					onclick={toggleMobileMenu}
-					class="inline-flex items-center justify-center rounded-md p-2 hover:bg-blue-700 focus:outline-none"
-					aria-expanded={mobileMenuOpen}
+					ariaLabel={$t('common.navigation.openMenu')}
+					ariaExpanded={mobileMenuOpen}
 				>
-					<span class="sr-only">{$t('common.navigation.openMenu')}</span>
 					<!-- Hamburger icon -->
 					<svg
 						class="h-6 w-6"
@@ -79,7 +82,7 @@
 							d="M4 6h16M4 12h16M4 18h16"
 						/>
 					</svg>
-				</button>
+				</Button>
 			</div>
 		</div>
 	</div>

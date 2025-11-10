@@ -28,7 +28,7 @@
 <MenuToolbar
 	breadcrumbs={[{ label: $t('admin.title') }]}
 	{tabs}
-	action={{ label: $t('common.navigation.logout'), onClick: handleLogout, variant: 'danger' }}
+	action={{ label: $t('common.navigation.logout'), onClick: handleLogout }}
 	level="primary"
 />
 

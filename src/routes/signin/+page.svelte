@@ -4,6 +4,7 @@
 	import { alertStore } from '$lib/stores/alert-store';
 	import { t } from '$lib/i18n';
 	import type { ActionData } from './$types';
+	import Button from '$lib/components/Button.svelte';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -66,12 +67,9 @@
 			</div>
 
 			<div class="mt-4 flex flex-col items-center gap-4">
-				<button
-					type="submit"
-					class="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-				>
+				<Button type="submit" variant="filled" color="primary" fullWidth>
 					{$t('auth.signin.submit')}
-				</button>
+				</Button>
 
 				<a href={Urls.LOGIN} class="text-blue-600 hover:text-blue-800 hover:underline">
 					{$t('auth.signin.hasAccount')}

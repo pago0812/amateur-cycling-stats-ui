@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Button from '$lib/components/Button.svelte';
 
 	interface Tab {
 		path: string;
@@ -43,19 +44,6 @@
 	const isActive = (tabPath: string) => {
 		return activeTabPath === tabPath;
 	};
-
-	// Get button classes based on variant
-	const getActionButtonClass = (variant?: string) => {
-		const baseClass = 'text-base leading-none font-medium transition-colors';
-		switch (variant) {
-			case 'danger':
-				return `${baseClass} text-gray-800 hover:text-red-600`;
-			case 'secondary':
-				return `${baseClass} text-gray-500 hover:text-gray-800`;
-			default: // 'primary'
-				return `${baseClass} text-gray-800 hover:text-gray-600`;
-		}
-	};
 </script>
 
 <!-- Menu Navigation Toolbar -->
@@ -73,13 +61,19 @@
 						<!-- Clickable breadcrumb (not current page) -->
 						<a
 							href={breadcrumb.href}
-							class="px-1 {level === 'primary' ? 'text-lg' : 'text-base'} leading-none text-gray-500 transition-colors hover:text-gray-800 hover:underline"
+							class="px-1 {level === 'primary'
+								? 'text-lg'
+								: 'text-base'} leading-none text-gray-500 transition-colors hover:text-gray-800 hover:underline"
 						>
 							{breadcrumb.label}
 						</a>
 					{:else}
 						<!-- Current page (last breadcrumb) -->
-						<span class="px-1 {level === 'primary' ? 'text-lg' : 'text-base'} leading-none text-gray-800">
+						<span
+							class="px-1 {level === 'primary'
+								? 'text-lg'
+								: 'text-base'} leading-none text-gray-800"
+						>
 							{breadcrumb.label}
 						</span>
 					{/if}
@@ -89,13 +83,14 @@
 			<!-- Action Button (right-aligned) -->
 			{#if action}
 				<div class="shrink-0">
-					<button
-						type="button"
-						class={getActionButtonClass(action.variant)}
+					<Button
+						variant="text"
+						color={action.variant ?? 'primary'}
+						size="sm"
 						onclick={action.onClick}
 					>
 						{action.label}
-					</button>
+					</Button>
 				</div>
 			{/if}
 		</div>
