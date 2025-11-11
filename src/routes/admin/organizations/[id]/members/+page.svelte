@@ -5,6 +5,12 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	// Add member handler - TODO: implement member creation functionality
+	const handleAddMember = () => {
+		// TODO: Navigate to add member page or open modal
+		console.log('Add member functionality to be implemented');
+	};
 </script>
 
 <svelte:head>
@@ -12,23 +18,24 @@
 </svelte:head>
 
 <section>
-	<!-- Menu Toolbar with breadcrumbs and tabs (no edit action) -->
+	<!-- Menu Toolbar with breadcrumbs and Add member action -->
 	<MenuToolbar
 		breadcrumbs={[
-			{ label: $t('admin.breadcrumbs.allOrganizations'), href: '/admin/organizations' },
-			{ label: data.organization.name }
-		]}
-		tabs={[
+			{ label: $t('admin.title'), href: '/admin' },
+			{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
 			{
-				path: `/admin/organizations/${data.organization.id}`,
-				label: $t('admin.organizations.tabs.overview')
+				label: data.organization.name,
+				href: `/admin/organizations/${data.organization.id}`
 			},
+			{ label: $t('admin.breadcrumbs.members') }
+		]}
+		actions={[
 			{
-				path: `/admin/organizations/${data.organization.id}/members`,
-				label: $t('admin.organizations.tabs.members')
+				label: $t('admin.organizations.actions.addMember'),
+				onClick: handleAddMember,
+				variant: 'primary'
 			}
 		]}
-		level="secondary"
 	/>
 
 	<div class="mt-8">

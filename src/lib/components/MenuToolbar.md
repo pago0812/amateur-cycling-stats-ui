@@ -1,6 +1,6 @@
 # MenuToolbar Component
 
-A flexible navigation toolbar component that supports hierarchical breadcrumb navigation, horizontal tabs, and action buttons. Used across all authenticated sections of the application (/admin, /panel, /account).
+A flexible navigation toolbar component that supports hierarchical breadcrumb navigation, horizontal tabs, and action buttons. Each page defines its own complete navigation context through a single unified toolbar.
 
 ## Component Location
 `src/lib/components/MenuToolbar.svelte`
@@ -12,7 +12,6 @@ interface MenuToolbarProps {
   breadcrumbs: Breadcrumb[];        // Required - Page hierarchy
   tabs?: Tab[];                     // Optional - Navigation tabs
   actions?: ActionButton[];         // Optional - Right-aligned action buttons
-  level?: 'primary' | 'secondary';  // Optional - Toolbar hierarchy level (default: 'primary')
 }
 
 interface Breadcrumb {
@@ -33,58 +32,37 @@ interface ActionButton {
 }
 ```
 
-## Toolbar Hierarchy System
+## Architecture
 
-The application uses a **two-level toolbar hierarchy** to create clear information architecture:
+The MenuToolbar uses a **single-level unified architecture** where each page (`+page.svelte`) defines its complete navigation context.
 
-### Primary Toolbar (level="primary")
-- **Location**: Section-level layouts (`+layout.svelte`)
-- **Purpose**: Define main section navigation
+### Page-Level Toolbar
+- **Location**: Every page that needs navigation (`+page.svelte`)
+- **Purpose**: Provide complete navigation context for the current page
 - **Styling**:
-  - Larger breadcrumb font: `text-lg` (18px)
+  - Consistent breadcrumb font: `text-lg` (18px)
   - Full padding: `p-4`
-- **Pattern**:
-  - Single breadcrumb showing section name
-  - Navigation tabs for main subsections
-  - Logout button (in authenticated sections)
+- **Components**:
+  - **Breadcrumbs**: Full hierarchical path from root to current page
+  - **Tabs**: Optional navigation tabs for related pages
+  - **Actions**: Optional page-specific action buttons
+- **Content Spacing**: Content below toolbar should have `mt-8` margin
 
-**Example**: `/admin` layout
-```svelte
-<MenuToolbar
-  breadcrumbs={[{ label: 'Admin' }]}
-  tabs={[
-    { path: '/admin', label: 'General Config' },
-    { path: '/admin/organizations', label: 'Organizations' }
-  ]}
-  actions={[{ label: 'Logout', onClick: handleLogout, variant: 'secondary' }]}
-  level="primary"
-/>
-```
-
-### Secondary Toolbar (level="secondary")
-- **Location**: Page-level components (`+page.svelte` or nested `+layout.svelte`)
-- **Purpose**: Show page-specific navigation and context
-- **Styling**:
-  - Standard breadcrumb font: `text-base` (16px)
-  - Reduced padding: `px-4 pb-4` (no top padding for tighter spacing)
-- **Pattern**:
-  - Detailed breadcrumb path (parent → current)
-  - Optional tabs for subsection navigation
-  - Optional action buttons (Add, Edit, etc.)
-- **Content Spacing**: Content below secondary toolbar should have `mt-8` margin
-
-**Example**: `/admin/organizations/[id]` layout
+**Example**: Admin organizations overview page
 ```svelte
 <MenuToolbar
   breadcrumbs={[
-    { label: 'All Organizations', href: '/admin/organizations' },
+    { label: 'Admin Panel', href: '/admin' },
+    { label: 'Organizations', href: '/admin/organizations' },
     { label: organization.name }
   ]}
   tabs={[
-    { path: `/admin/organizations/${id}`, label: 'Overview' },
-    { path: `/admin/organizations/${id}/members`, label: 'Members' }
+    { path: `/admin/organizations/${id}`, label: 'General information' }
   ]}
-  level="secondary"
+  actions={[
+    { label: 'Edit Organization', onClick: handleEdit, variant: 'primary' },
+    { label: 'Delete Organization', onClick: handleDelete, variant: 'danger' }
+  ]}
 />
 
 <div class="mt-8">
@@ -94,49 +72,17 @@ The application uses a **two-level toolbar hierarchy** to create clear informati
 
 ## Usage Patterns
 
-### Pattern 1: Primary Toolbar Only
-Pages that don't need detailed navigation.
+### Pattern 1: Simple Section Navigation
+Root pages with tabs for subsections.
 
 ```svelte
-<!-- In +layout.svelte -->
+<!-- In +page.svelte -->
 <MenuToolbar
-  breadcrumbs={[{ label: 'Panel' }]}
+  breadcrumbs={[{ label: 'Admin Panel' }]}
   tabs={[
-    { path: '/panel', label: 'Overview' },
-    { path: '/panel/members', label: 'Members' }
-  ]}
-  actions={[{ label: 'Logout', onClick: handleLogout }]}
-  level="primary"
-/>
-
-<div>
-  {@render children()}
-</div>
-```
-
-### Pattern 2: Two Toolbars (Primary + Secondary)
-Pages with complex hierarchy requiring multiple navigation levels.
-
-```svelte
-<!-- In +layout.svelte (Primary) -->
-<MenuToolbar
-  breadcrumbs={[{ label: 'Admin' }]}
-  tabs={[
-    { path: '/admin', label: 'General Config' },
+    { path: '/admin', label: 'Summary' },
     { path: '/admin/organizations', label: 'Organizations' }
   ]}
-  actions={[{ label: 'Logout', onClick: handleLogout, variant: 'secondary' }]}
-  level="primary"
-/>
-
-<div>
-  {@render children()}
-</div>
-
-<!-- In +page.svelte (Secondary) -->
-<MenuToolbar
-  breadcrumbs={[{ label: 'General Config' }]}
-  level="secondary"
 />
 
 <div class="mt-8">
@@ -144,51 +90,31 @@ Pages with complex hierarchy requiring multiple navigation levels.
 </div>
 ```
 
-### Pattern 3: Secondary with Breadcrumb Path
-Shows hierarchical navigation with clickable parent links.
+### Pattern 2: List Page with Action
+Listing pages with an "Add" button.
 
 ```svelte
 <MenuToolbar
   breadcrumbs={[
-    { label: 'All Organizations', href: '/admin/organizations' },
-    { label: 'Pro Cycling League Spain' }
+    { label: 'Admin Panel', href: '/admin' },
+    { label: 'Organizations' }
   ]}
-  tabs={[
-    { path: `/admin/organizations/${id}`, label: 'Overview' },
-    { path: `/admin/organizations/${id}/members`, label: 'Members' }
-  ]}
-  level="secondary"
-/>
-
-<div class="mt-8">
-  <!-- Page content -->
-</div>
-```
-
-### Pattern 4: Secondary with Single Action
-Includes page-specific actions like Add, Edit, etc.
-
-```svelte
-<MenuToolbar
-  breadcrumbs={[{ label: 'All Organizations' }]}
   actions={[
     {
-      label: 'Add Organization',
+      label: 'Add organization',
       onClick: handleAddOrganization,
       variant: 'primary'
     }
   ]}
-  level="secondary"
 />
 
-<!-- Content starts immediately (no mt-8) when using table layout -->
-<div class="p-4 py-12">
+<div class="mt-8">
   <OrganizationsTable organizations={data.organizations} />
 </div>
 ```
 
-### Pattern 5: Multiple Actions
-Display multiple action buttons for pages with several operations.
+### Pattern 3: Detail Page with Tabs and Actions
+Detail pages with related tabs and multiple actions.
 
 ```svelte
 <script lang="ts">
@@ -203,30 +129,56 @@ Display multiple action buttons for pages with several operations.
 
 <MenuToolbar
   breadcrumbs={[
-    { label: 'All Organizations', href: '/admin/organizations' },
+    { label: 'Admin Panel', href: '/admin' },
+    { label: 'Organizations', href: '/admin/organizations' },
     { label: data.organization.name }
   ]}
   tabs={[
-    { path: `/admin/organizations/${id}`, label: 'Overview' },
-    { path: `/admin/organizations/${id}/members`, label: 'Members' }
+    { path: `/admin/organizations/${id}`, label: 'General information' }
   ]}
   actions={[
-    {
-      label: 'Edit Organization',
-      onClick: handleEdit,
-      variant: 'primary'
-    },
-    {
-      label: 'Delete',
-      onClick: handleDelete,
-      variant: 'danger'
-    }
+    { label: 'Edit Organization', onClick: handleEdit, variant: 'primary' },
+    { label: 'Delete Organization', onClick: handleDelete, variant: 'danger' }
   ]}
-  level="secondary"
 />
 
 <div class="mt-8">
   <OrganizationProfile organization={data.organization} />
+</div>
+```
+
+### Pattern 4: Form Page with Submit Action
+Form pages with deep breadcrumb paths and submit button.
+
+```svelte
+<script lang="ts">
+  let organizationForm: HTMLFormElement;
+
+  const handleSubmit = () => {
+    organizationForm.requestSubmit();
+  };
+</script>
+
+<MenuToolbar
+  breadcrumbs={[
+    { label: 'Admin Panel', href: '/admin' },
+    { label: 'Organizations', href: '/admin/organizations' },
+    { label: data.organization.name, href: `/admin/organizations/${id}` },
+    { label: 'Edit' }
+  ]}
+  actions={[
+    {
+      label: 'Update Organization',
+      onClick: handleSubmit,
+      variant: 'primary'
+    }
+  ]}
+/>
+
+<div class="mt-8">
+  <form bind:this={organizationForm} method="POST" use:enhance>
+    <!-- Form fields -->
+  </form>
 </div>
 ```
 
@@ -277,15 +229,13 @@ The toolbar supports multiple action buttons displayed side-by-side with consist
 - **Background**: `bg-gray-50` - Toolbar background
 
 ### Typography
-- **Primary breadcrumbs**: `text-lg leading-none` (18px, no line-height)
-- **Secondary breadcrumbs**: `text-base leading-none` (16px, no line-height)
+- **Breadcrumbs**: `text-lg leading-none` (18px, no line-height)
 - **Tabs**: `text-base leading-none` (16px, no line-height)
 - **Action buttons**: `text-base leading-none` (16px, no line-height)
 
 ### Spacing
-- **Toolbar padding (primary)**: `p-4` (16px all sides)
-- **Toolbar padding (secondary)**: `px-4 pb-4` (16px horizontal and bottom, no top)
-- **Content margin**: `mt-8` (32px below secondary toolbar)
+- **Toolbar padding**: `p-4` (16px all sides)
+- **Content margin**: `mt-8` (32px below toolbar)
 - **Tab gap**: `gap-8` (32px between tabs)
 - **Breadcrumb gap**: `gap-2` (8px between items)
 
@@ -294,58 +244,42 @@ The toolbar supports multiple action buttons displayed side-by-side with consist
 ```svelte
 <script lang="ts">
   import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+  import { goto } from '$app/navigation';
   import { t } from '$lib/i18n';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
 
-  // Logout form reference
-  let logoutForm: HTMLFormElement;
-
-  // Primary toolbar tabs
-  const mainTabs = [
-    { path: '/admin', label: $t('admin.tabs.generalConfig') },
-    { path: '/admin/organizations', label: $t('admin.tabs.organizations') }
-  ];
-
-  // Secondary toolbar breadcrumbs with hierarchy
+  // Page breadcrumbs showing full hierarchy
   const breadcrumbs = [
+    { label: $t('admin.breadcrumbs.adminPanel'), href: '/admin' },
     { label: $t('admin.breadcrumbs.allOrganizations'), href: '/admin/organizations' },
     { label: data.organization.name }
   ];
 
-  // Secondary toolbar tabs for subsections
-  const subTabs = [
-    { path: `/admin/organizations/${data.organization.id}`, label: $t('admin.organizations.tabs.overview') },
-    { path: `/admin/organizations/${data.organization.id}/members`, label: $t('admin.organizations.tabs.members') }
+  // Page tabs for related views
+  const tabs = [
+    { path: `/admin/organizations/${data.organization.id}`, label: $t('admin.organizations.tabs.generalInformation') }
   ];
 
-  const handleLogout = () => {
-    logoutForm.requestSubmit();
+  const handleEdit = () => {
+    goto(`/admin/organizations/${data.organization.id}/edit`);
   };
 
-  const handleAddMember = () => {
-    // Add member logic
+  const handleDelete = () => {
+    // Open delete confirmation modal
+    isDeleteModalOpen = true;
   };
 </script>
 
-<!-- Hidden logout form -->
-<form method="POST" action="?/logout" bind:this={logoutForm} class="hidden"></form>
-
-<!-- Primary Toolbar (in layout) -->
-<MenuToolbar
-  breadcrumbs={[{ label: $t('admin.title') }]}
-  tabs={mainTabs}
-  actions={[{ label: $t('common.navigation.logout'), onClick: handleLogout, variant: 'secondary' }]}
-  level="primary"
-/>
-
-<!-- Secondary Toolbar (in page) -->
+<!-- Page Toolbar with complete navigation context -->
 <MenuToolbar
   {breadcrumbs}
-  tabs={subTabs}
-  actions={[{ label: $t('admin.organizations.addMember'), onClick: handleAddMember, variant: 'primary' }]}
-  level="secondary"
+  {tabs}
+  actions={[
+    { label: $t('admin.organizations.editButton'), onClick: handleEdit, variant: 'primary' },
+    { label: $t('admin.organizations.deleteButton'), onClick: handleDelete, variant: 'danger' }
+  ]}
 />
 
 <!-- Page Content with spacing -->
@@ -356,15 +290,16 @@ The toolbar supports multiple action buttons displayed side-by-side with consist
 
 ## Benefits
 
-1. **Clear Hierarchy**: Two-level system creates clear information architecture
-2. **Consistent Navigation**: Same component used across all authenticated sections
-3. **Flexible**: Supports breadcrumbs, tabs, and actions in any combination
-4. **Smart Active State**: Longest-path matching for accurate tab highlighting
-5. **Accessible**: Semantic HTML with proper nav elements
-6. **Responsive**: Horizontal scrolling for tabs on small screens
-7. **i18n Ready**: Works with translation keys for all text content
-8. **Type-Safe**: Full TypeScript support with interface definitions
+1. **Simplified Architecture**: Single-level system eliminates layout/page coordination complexity
+2. **Complete Context**: Each page declares its full navigation hierarchy
+3. **Easier to Maintain**: All navigation logic lives in one place per page
+4. **Flexible**: Supports breadcrumbs, tabs, and actions in any combination
+5. **Smart Active State**: Longest-path matching for accurate tab highlighting
+6. **Accessible**: Semantic HTML with proper nav elements
+7. **Responsive**: Horizontal scrolling for tabs on small screens
+8. **i18n Ready**: Works with translation keys for all text content
+9. **Type-Safe**: Full TypeScript support with interface definitions
 
 ## Migration Note
 
-This component replaces the deprecated `SecondaryToolbar` and `TertiaryToolbar` components, providing a unified interface for all toolbar navigation needs.
+The component has been simplified from a two-level system (primary/secondary) to a unified single-level architecture. The `level` prop has been removed, and all toolbars now use consistent styling. This makes the navigation hierarchy easier to understand and maintain.

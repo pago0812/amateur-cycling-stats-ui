@@ -20,7 +20,10 @@
 <section>
 	<!-- Menu Toolbar with breadcrumb and Add button -->
 	<MenuToolbar
-		breadcrumbs={[{ label: $t('admin.breadcrumbs.allOrganizations') }]}
+		breadcrumbs={[
+			{ label: $t('admin.title'), href: '/admin' },
+			{ label: $t('admin.breadcrumbs.organizations') }
+		]}
 		actions={[
 			{
 				label: $t('admin.organizations.addButton'),
@@ -28,7 +31,6 @@
 				variant: 'primary'
 			}
 		]}
-		level="secondary"
 	/>
 	<!-- Error message if organizations failed to load -->
 	{#if data.error}

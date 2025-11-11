@@ -7,7 +7,11 @@
 	},
 	"breadcrumbs": {
 		"generalConfig": "Configuración General",
-		"allOrganizations": "Todas las Organizaciones"
+		"allOrganizations": "Todas las Organizaciones",
+		"organizations": "Organizaciones",
+		"newOrganization": "Nueva Organización",
+		"edit": "Editar",
+		"members": "Miembros"
 	},
 	"generalConfig": {
 		"title": "Configuración General",
@@ -21,7 +25,12 @@
 		"editButton": "Editar Organización",
 		"tabs": {
 			"overview": "Información General",
-			"members": "Miembros"
+			"members": "Miembros",
+			"generalInformation": "Información General"
+		},
+		"actions": {
+			"deleteOrganization": "Eliminar Organización",
+			"addMember": "Añadir Miembro"
 		},
 		"table": {
 			"name": "Nombre",

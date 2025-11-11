@@ -1,13 +1,20 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
-	import type { PageData } from './$types';
+	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
 
-	let { data }: { data: PageData } = $props();
+	// Define navigation tabs for panel section
+	const tabs = [
+		{ path: '/panel', label: $t('panel.tabs.summary') },
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') }
+	];
 </script>
 
 <svelte:head>
 	<title>{$t('panel.tabs.summary')} - ACS</title>
 </svelte:head>
+
+<!-- Menu Toolbar with breadcrumb and tabs -->
+<MenuToolbar breadcrumbs={[{ label: $t('panel.title') }]} {tabs} />
 
 <!-- Summary/Dashboard placeholder -->
 <div class="mt-8 rounded-lg bg-gray-50 p-8 text-center">

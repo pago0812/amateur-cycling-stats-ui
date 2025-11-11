@@ -10,8 +10,13 @@
 	<title>{$t('panel.tabs.manageEvents')} - ACS</title>
 </svelte:head>
 
-<!-- Subsection toolbar with page title -->
-<MenuToolbar breadcrumbs={[{ label: $t('panel.events.title') }]} level="secondary" />
+<!-- Menu Toolbar with full breadcrumb path -->
+<MenuToolbar
+	breadcrumbs={[
+		{ label: $t('panel.title'), href: '/panel' },
+		{ label: $t('panel.events.title') }
+	]}
+/>
 
 <div class="mt-8">
 	<div class="rounded-lg bg-gray-50 p-8 text-center">

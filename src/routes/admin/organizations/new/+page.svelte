@@ -49,8 +49,9 @@
 	<!-- Menu Toolbar with breadcrumbs and submit action -->
 	<MenuToolbar
 		breadcrumbs={[
-			{ label: $t('admin.breadcrumbs.allOrganizations'), href: '/admin/organizations' },
-			{ label: $t('admin.organizations.form.createTitle') }
+			{ label: $t('admin.title'), href: '/admin' },
+			{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
+			{ label: $t('admin.breadcrumbs.newOrganization') }
 		]}
 		actions={[
 			{
@@ -59,7 +60,6 @@
 				variant: 'primary'
 			}
 		]}
-		level="secondary"
 	/>
 
 	<!-- Organization Form -->

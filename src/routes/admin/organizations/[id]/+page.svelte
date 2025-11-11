@@ -63,13 +63,14 @@
 	<!-- Menu Toolbar with breadcrumbs, tabs, and actions -->
 	<MenuToolbar
 		breadcrumbs={[
-			{ label: $t('admin.breadcrumbs.allOrganizations'), href: '/admin/organizations' },
+			{ label: $t('admin.title'), href: '/admin' },
+			{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
 			{ label: data.organization.name }
 		]}
 		tabs={[
 			{
 				path: `/admin/organizations/${data.organization.id}`,
-				label: $t('admin.organizations.tabs.overview')
+				label: $t('admin.organizations.tabs.generalInformation')
 			},
 			{
 				path: `/admin/organizations/${data.organization.id}/members`,
@@ -83,12 +84,11 @@
 				variant: 'primary'
 			},
 			{
-				label: $t('admin.organizations.table.delete'),
+				label: $t('admin.organizations.actions.deleteOrganization'),
 				onClick: handleDeleteOrganization,
 				variant: 'danger'
 			}
 		]}
-		level="secondary"
 	/>
 
 	<!-- Organization details -->
