@@ -7,7 +7,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Add organization handler
+	// Add organization handler - navigate to new page
 	const handleAddOrganization = () => {
 		goto('/admin/organizations/new');
 	};
@@ -21,11 +21,13 @@
 	<!-- Menu Toolbar with breadcrumb and Add button -->
 	<MenuToolbar
 		breadcrumbs={[{ label: $t('admin.breadcrumbs.allOrganizations') }]}
-		action={{
-			label: $t('admin.organizations.addButton'),
-			onClick: handleAddOrganization,
-			variant: 'primary'
-		}}
+		actions={[
+			{
+				label: $t('admin.organizations.addButton'),
+				onClick: handleAddOrganization,
+				variant: 'primary'
+			}
+		]}
 		level="secondary"
 	/>
 	<!-- Error message if organizations failed to load -->

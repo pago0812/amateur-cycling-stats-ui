@@ -21,3 +21,11 @@ export type {
 
 // Roles service types
 export type { RolesResponse } from './roles';
+
+// Organization service types
+export type {
+	GetOrganizationByIdParams,
+	CreateOrganizationParams,
+	UpdateOrganizationParams,
+	DeleteOrganizationParams
+} from './organizations';

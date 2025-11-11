@@ -1,0 +1,72 @@
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import { t } from '$lib/i18n';
+
+	interface OrganizationFormProps {
+		mode: 'create' | 'edit';
+		formElement?: HTMLFormElement;
+		initialData?: {
+			name?: string;
+			description?: string | null;
+		};
+		form?: Record<string, unknown> | null;
+		action?: string;
+	}
+
+	let { mode, formElement = $bindable(), initialData, form, action }: OrganizationFormProps =
+		$props();
+
+	// Form state
+	let isSubmitting = $state(false);
+</script>
+
+<form
+	bind:this={formElement}
+	method="POST"
+	{action}
+	use:enhance={() => {
+		isSubmitting = true;
+		return async ({ update }) => {
+			await update();
+			isSubmitting = false;
+		};
+	}}
+	class="flex flex-col gap-6"
+>
+	<!-- Name Field -->
+	<div class="flex flex-col gap-2">
+		<label for="name" class="text-sm font-medium text-gray-700">
+			{$t('admin.organizations.form.nameLabel')}
+			<span class="text-red-500">*</span>
+		</label>
+		<input
+			type="text"
+			id="name"
+			name="name"
+			required
+			minlength="3"
+			maxlength="255"
+			value={(form?.name as string) || initialData?.name || ''}
+			placeholder={$t('admin.organizations.form.namePlaceholder')}
+			class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+			disabled={isSubmitting}
+		/>
+	</div>
+
+	<!-- Description Field -->
+	<div class="flex flex-col gap-2">
+		<label for="description" class="text-sm font-medium text-gray-700">
+			{$t('admin.organizations.form.descriptionLabel')}
+		</label>
+		<textarea
+			id="description"
+			name="description"
+			rows="4"
+			maxlength="1000"
+			value={(form?.description as string) || initialData?.description || ''}
+			placeholder={$t('admin.organizations.form.descriptionPlaceholder')}
+			class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-vertical"
+			disabled={isSubmitting}
+		></textarea>
+	</div>
+</form>

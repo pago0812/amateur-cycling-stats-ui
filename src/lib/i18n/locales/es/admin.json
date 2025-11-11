@@ -18,6 +18,7 @@
 		"title": "Organizaciones",
 		"subtitle": "Gestiona las organizaciones de eventos ciclistas",
 		"addButton": "Añadir Organización",
+		"editButton": "Editar Organización",
 		"tabs": {
 			"overview": "Información General",
 			"members": "Miembros"

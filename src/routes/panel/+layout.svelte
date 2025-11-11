@@ -22,13 +22,13 @@
 </script>
 
 <!-- Hidden logout form -->
-<form method="POST" action="?/logout" bind:this={logoutForm} class="hidden"></form>
+<form method="POST" action="/panel?/logout" bind:this={logoutForm} class="hidden"></form>
 
 <!-- Menu Navigation Toolbar -->
 <MenuToolbar
 	breadcrumbs={[{ label: $t('panel.title') }]}
 	{tabs}
-	action={{ label: $t('common.navigation.logout'), onClick: handleLogout }}
+	actions={[{ label: $t('common.navigation.logout'), onClick: handleLogout }]}
 	level="primary"
 />
 

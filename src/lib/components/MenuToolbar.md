@@ -11,7 +11,7 @@ A flexible navigation toolbar component that supports hierarchical breadcrumb na
 interface MenuToolbarProps {
   breadcrumbs: Breadcrumb[];        // Required - Page hierarchy
   tabs?: Tab[];                     // Optional - Navigation tabs
-  action?: ActionButton;            // Optional - Right-aligned button
+  actions?: ActionButton[];         // Optional - Right-aligned action buttons
   level?: 'primary' | 'secondary';  // Optional - Toolbar hierarchy level (default: 'primary')
 }
 
@@ -29,6 +29,7 @@ interface ActionButton {
   label: string;                              // Button text
   onClick: () => void;                        // Click handler
   variant?: 'primary' | 'secondary' | 'danger'; // Style variant
+  href?: string;                              // Optional link (overrides onClick)
 }
 ```
 
@@ -55,7 +56,7 @@ The application uses a **two-level toolbar hierarchy** to create clear informati
     { path: '/admin', label: 'General Config' },
     { path: '/admin/organizations', label: 'Organizations' }
   ]}
-  action={{ label: 'Logout', onClick: handleLogout, variant: 'danger' }}
+  actions={[{ label: 'Logout', onClick: handleLogout, variant: 'secondary' }]}
   level="primary"
 />
 ```
@@ -104,7 +105,7 @@ Pages that don't need detailed navigation.
     { path: '/panel', label: 'Overview' },
     { path: '/panel/members', label: 'Members' }
   ]}
-  action={{ label: 'Logout', onClick: handleLogout, variant: 'danger' }}
+  actions={[{ label: 'Logout', onClick: handleLogout }]}
   level="primary"
 />
 
@@ -124,7 +125,7 @@ Pages with complex hierarchy requiring multiple navigation levels.
     { path: '/admin', label: 'General Config' },
     { path: '/admin/organizations', label: 'Organizations' }
   ]}
-  action={{ label: 'Logout', onClick: handleLogout, variant: 'danger' }}
+  actions={[{ label: 'Logout', onClick: handleLogout, variant: 'secondary' }]}
   level="primary"
 />
 
@@ -164,23 +165,68 @@ Shows hierarchical navigation with clickable parent links.
 </div>
 ```
 
-### Pattern 4: Secondary with Action Button
+### Pattern 4: Secondary with Single Action
 Includes page-specific actions like Add, Edit, etc.
 
 ```svelte
 <MenuToolbar
   breadcrumbs={[{ label: 'All Organizations' }]}
-  action={{
-    label: 'Add Organization',
-    onClick: handleAddOrganization,
-    variant: 'primary'
-  }}
+  actions={[
+    {
+      label: 'Add Organization',
+      onClick: handleAddOrganization,
+      variant: 'primary'
+    }
+  ]}
   level="secondary"
 />
 
 <!-- Content starts immediately (no mt-8) when using table layout -->
 <div class="p-4 py-12">
   <OrganizationsTable organizations={data.organizations} />
+</div>
+```
+
+### Pattern 5: Multiple Actions
+Display multiple action buttons for pages with several operations.
+
+```svelte
+<script lang="ts">
+  const handleEdit = () => {
+    goto(`/admin/organizations/${data.organization.id}/edit`);
+  };
+
+  const handleDelete = () => {
+    isDeleteModalOpen = true;
+  };
+</script>
+
+<MenuToolbar
+  breadcrumbs={[
+    { label: 'All Organizations', href: '/admin/organizations' },
+    { label: data.organization.name }
+  ]}
+  tabs={[
+    { path: `/admin/organizations/${id}`, label: 'Overview' },
+    { path: `/admin/organizations/${id}/members`, label: 'Members' }
+  ]}
+  actions={[
+    {
+      label: 'Edit Organization',
+      onClick: handleEdit,
+      variant: 'primary'
+    },
+    {
+      label: 'Delete',
+      onClick: handleDelete,
+      variant: 'danger'
+    }
+  ]}
+  level="secondary"
+/>
+
+<div class="mt-8">
+  <OrganizationProfile organization={data.organization} />
 </div>
 ```
 
@@ -201,12 +247,19 @@ const activeTabPath = $derived.by(() => {
 });
 ```
 
-### Action Button Variants
-Three style variants for different semantic meanings:
+### Action Buttons
+The toolbar supports multiple action buttons displayed side-by-side with consistent spacing (`gap-2`).
 
-- **`primary`**: Standard actions (gray-800, hover: gray-600)
-- **`secondary`**: Less important actions (gray-500, hover: gray-800)
-- **`danger`**: Destructive actions like Logout (gray-800, hover: red-600)
+**Button Variants:**
+- **`primary`**: Standard actions (blue border/text - default)
+- **`secondary`**: Less important actions (gray border/text)
+- **`danger`**: Destructive actions (red border/text)
+
+**Features:**
+- Multiple buttons supported (e.g., Edit + Delete)
+- Optional `href` prop for link-based actions (overrides onClick)
+- Consistent Button component styling
+- `gap-2` spacing between multiple actions
 
 ### Responsive Breadcrumbs
 - Parent links are clickable with hover effects
@@ -283,7 +336,7 @@ Three style variants for different semantic meanings:
 <MenuToolbar
   breadcrumbs={[{ label: $t('admin.title') }]}
   tabs={mainTabs}
-  action={{ label: $t('common.navigation.logout'), onClick: handleLogout, variant: 'danger' }}
+  actions={[{ label: $t('common.navigation.logout'), onClick: handleLogout, variant: 'secondary' }]}
   level="primary"
 />
 
@@ -291,7 +344,7 @@ Three style variants for different semantic meanings:
 <MenuToolbar
   {breadcrumbs}
   tabs={subTabs}
-  action={{ label: $t('admin.organizations.addMember'), onClick: handleAddMember, variant: 'primary' }}
+  actions={[{ label: $t('admin.organizations.addMember'), onClick: handleAddMember, variant: 'primary' }]}
   level="secondary"
 />
 

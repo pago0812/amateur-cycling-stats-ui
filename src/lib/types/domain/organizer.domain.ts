@@ -1,4 +1,4 @@
-import type { User, UserWithRelations } from './user.domain';
+import type { UserWithRelations } from './user.domain';
 import type { Organization } from './organization.domain';
 
 /**

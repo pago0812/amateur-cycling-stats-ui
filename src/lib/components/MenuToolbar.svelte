@@ -16,17 +16,18 @@
 		label: string;
 		onClick: () => void;
 		variant?: 'primary' | 'secondary' | 'danger';
+		href?: string;
 	}
 
 	let {
 		breadcrumbs,
 		tabs,
-		action,
+		actions,
 		level = 'primary'
 	}: {
 		breadcrumbs: Breadcrumb[];
 		tabs?: Tab[];
-		action?: ActionButton;
+		actions?: ActionButton[];
 		level?: 'primary' | 'secondary';
 	} = $props();
 
@@ -80,17 +81,20 @@
 				{/each}
 			</nav>
 
-			<!-- Action Button (right-aligned) -->
-			{#if action}
-				<div class="shrink-0">
-					<Button
-						variant="text"
-						color={action.variant ?? 'primary'}
-						size="sm"
-						onclick={action.onClick}
-					>
-						{action.label}
-					</Button>
+			<!-- Action Buttons (right-aligned) -->
+			{#if actions && actions.length > 0}
+				<div class="flex shrink-0 gap-2">
+					{#each actions as actionItem}
+						<Button
+							variant="outlined"
+							color={actionItem.variant ?? 'primary'}
+							size="sm"
+							href={actionItem.href}
+							onclick={actionItem.href ? undefined : actionItem.onClick}
+						>
+							{actionItem.label}
+						</Button>
+					{/each}
 				</div>
 			{/if}
 		</div>

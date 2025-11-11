@@ -18,6 +18,7 @@
 		"title": "Organizations",
 		"subtitle": "Manage cycling event organizations",
 		"addButton": "Add Organization",
+		"editButton": "Edit Organization",
 		"tabs": {
 			"overview": "Overview",
 			"members": "Members"

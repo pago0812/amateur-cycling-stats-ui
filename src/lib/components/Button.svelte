@@ -39,13 +39,14 @@
 	}: ButtonProps = $props();
 
 	// Base styles applied to all buttons
-	const baseStyles = 'rounded-md font-medium transition-all duration-200 focus:outline-none inline-flex items-center justify-center cursor-pointer hover:shadow-md active:transform active:scale-95';
+	const baseStyles =
+		'rounded-md font-medium transition-all duration-200 focus:outline-none inline-flex items-center justify-center cursor-pointer hover:shadow-md active:transform active:scale-95';
 
 	// Size mappings
 	const sizeStyles = $derived(() => {
 		switch (size) {
 			case 'sm':
-				return 'text-sm px-3 py-2';
+				return 'text-sm px-2 py-1.5';
 			case 'lg':
 				return 'text-lg px-6 py-3';
 			case 'md':
@@ -105,7 +106,9 @@
 	const widthStyles = $derived(fullWidth ? 'w-full' : '');
 
 	// Disabled styles
-	const disabledStyles = $derived(disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '');
+	const disabledStyles = $derived(
+		disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
+	);
 
 	// Combined classes
 	const classes = $derived(
