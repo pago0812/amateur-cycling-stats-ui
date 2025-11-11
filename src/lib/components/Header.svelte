@@ -7,6 +7,7 @@
 
 	let { user = null }: { user?: UserWithRelations | null } = $props();
 	let mobileMenuOpen = $state(false);
+	let logoutForm: HTMLFormElement;
 
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
@@ -14,6 +15,10 @@
 
 	function closeMobileMenu() {
 		mobileMenuOpen = false;
+	}
+
+	function handleLogout() {
+		logoutForm.requestSubmit();
 	}
 
 	// Get the appropriate portal URL based on user role
@@ -28,6 +33,9 @@
 					: Urls.ACCOUNT
 	);
 </script>
+
+<!-- Hidden logout form -->
+<form method="POST" action="/?/logout" bind:this={logoutForm} class="hidden"></form>
 
 <nav class="bg-blue-600 text-white">
 	<div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -49,6 +57,9 @@
 				{#if user}
 					<Button href={portalUrl} variant="filled" color="primary" size="md">
 						{$t('common.navigation.account')}
+					</Button>
+					<Button variant="filled" color="primary" size="md" onclick={handleLogout}>
+						{$t('common.navigation.logout')}
 					</Button>
 				{:else}
 					<Button href={Urls.LOGIN} variant="filled" color="primary" size="md">
@@ -119,6 +130,15 @@
 					>
 						{$t('common.navigation.account')}
 					</a>
+					<button
+						class="text-white hover:text-blue-200"
+						onclick={() => {
+							handleLogout();
+							closeMobileMenu();
+						}}
+					>
+						{$t('common.navigation.logout')}
+					</button>
 				{:else}
 					<a
 						href={Urls.LOGIN}

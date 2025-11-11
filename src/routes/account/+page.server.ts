@@ -1,7 +1,6 @@
-import { error, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 import { getCyclistWithResultsById } from '$lib/services/cyclists';
-import { Urls } from '$lib/constants/urls';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
@@ -30,10 +29,3 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw error(500, 'Failed to load cyclist profile');
 	}
 };
-
-export const actions = {
-	logout: async ({ locals }) => {
-		await locals.supabase.auth.signOut();
-		throw redirect(302, Urls.HOME);
-	}
-} satisfies Actions;
