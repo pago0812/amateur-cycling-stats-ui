@@ -14,7 +14,8 @@ export interface OrganizerWithUserResponse extends OrganizerDB {
 	users: {
 		id: string; // UUID
 		short_id: string; // NanoID
-		username: string;
+		first_name: string;
+		last_name: string | null;
 		role_id: string;
 		created_at: string;
 		updated_at: string;

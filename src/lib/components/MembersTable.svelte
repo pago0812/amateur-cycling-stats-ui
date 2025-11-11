@@ -18,9 +18,9 @@
 	<table class="min-w-full divide-y divide-gray-200">
 		<thead class="bg-gray-50">
 			<tr>
-				<!-- Username - always visible -->
+				<!-- Name - always visible -->
 				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-					{$t('common.members.table.username')}
+					{$t('common.members.table.name')}
 				</th>
 				<!-- Role - hidden on mobile, visible on sm+ -->
 				<th
@@ -46,10 +46,10 @@
 			{:else}
 				{#each organizers as organizer (organizer.id)}
 					<tr>
-						<!-- Username -->
+						<!-- Name -->
 						<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
 							<span class="font-medium">
-								{organizer.user?.username ?? '-'}
+								{organizer.user?.firstName ?? ''} {organizer.user?.lastName ?? ''}
 							</span>
 						</td>
 						<!-- Role - hidden on mobile -->

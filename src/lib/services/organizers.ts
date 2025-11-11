@@ -28,7 +28,8 @@ export async function getOrganizersByOrganizationId(
 			users:user_id (
 				id,
 				short_id,
-				username,
+				first_name,
+				last_name,
 				role_id,
 				created_at,
 				updated_at,

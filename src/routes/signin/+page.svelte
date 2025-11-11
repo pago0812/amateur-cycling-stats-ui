@@ -26,15 +26,15 @@
 
 		<form method="POST" use:enhance class="flex w-full max-w-md flex-col gap-4">
 			<div class="flex flex-col gap-2">
-				<label for="username" class="text-sm font-medium text-gray-700">
-					{$t('auth.signin.username')}
+				<label for="name" class="text-sm font-medium text-gray-700">
+					{$t('auth.signin.name')}
 				</label>
 				<input
 					type="text"
-					id="username"
-					name="username"
+					id="name"
+					name="name"
 					required
-					value={form?.username || ''}
+					value={form?.name || ''}
 					class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>

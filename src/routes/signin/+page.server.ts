@@ -15,14 +15,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions = {
 	default: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const username = formData.get('username')?.toString() || '';
+		const name = formData.get('name')?.toString() || '';
 		const email = formData.get('email')?.toString() || '';
 		const password = formData.get('password')?.toString() || '';
 
-		if (!username || !email || !password) {
+		if (!name || !email || !password) {
 			return fail(400, {
 				error: t(locals.locale, 'auth.errors.allFieldsRequired'),
-				username,
+				name,
 				email
 			});
 		}
@@ -30,14 +30,14 @@ export const actions = {
 		// Register using Supabase Auth (cookies are automatically managed by Supabase)
 		const signinResponse = await signin(
 			locals.supabase,
-			{ username, email, password },
+			{ firstName: name, email, password },
 			locals.locale
 		);
 
 		if (signinResponse.error) {
 			return fail(400, {
 				error: signinResponse.error.message,
-				username,
+				name,
 				email
 			});
 		}
@@ -50,7 +50,7 @@ export const actions = {
 
 		return fail(500, {
 			error: 'Unexpected error occurred',
-			username,
+			name,
 			email
 		});
 	}

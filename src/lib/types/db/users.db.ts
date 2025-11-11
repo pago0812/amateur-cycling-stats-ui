@@ -17,7 +17,8 @@ export type UserDB = Tables<'users'>;
 export interface UserWithRelationsRpcResponse {
 	id: string; // UUID
 	short_id: string; // NanoID
-	username: string;
+	first_name: string;
+	last_name: string | null;
 	role_id: string;
 	created_at: string;
 	updated_at: string;
@@ -32,8 +33,6 @@ export interface UserWithRelationsRpcResponse {
 		id: string; // UUID
 		short_id: string; // NanoID
 		user_id: string;
-		name: string;
-		last_name: string;
 		born_year: number | null;
 		gender_id: string | null;
 		created_at: string;

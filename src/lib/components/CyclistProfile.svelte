@@ -14,14 +14,14 @@
 			<div
 				class="flex h-24 w-24 items-center justify-center rounded-full bg-gray-200 text-3xl font-bold text-gray-600"
 			>
-				{cyclist.name.charAt(0)}{cyclist.lastName.charAt(0)}
+				{cyclist.user?.firstName.charAt(0)}{cyclist.user?.lastName?.charAt(0) || ''}
 			</div>
 
 			<!-- Personal Information -->
 			<div class="flex-1">
 				<h2 class="mb-2 text-3xl font-bold">
-					{cyclist.name}
-					{cyclist.lastName}
+					{cyclist.user?.firstName}
+					{cyclist.user?.lastName || ''}
 				</h2>
 
 				<div class="space-y-1 text-gray-600">

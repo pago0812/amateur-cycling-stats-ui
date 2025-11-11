@@ -58,7 +58,14 @@ export async function getRaceWithResultsWithFilters(
 		return null;
 	}
 
-	// Now query races using the UUIDs
+	const uuids = {
+		eventId: eventResult.data.id,
+		categoryId: categoryResult.data.id,
+		genderId: genderResult.data.id,
+		lengthId: lengthResult.data.id
+	};
+
+	// Query races using the UUIDs
 	const { data, error } = await supabase
 		.from('races')
 		.select(
@@ -66,15 +73,18 @@ export async function getRaceWithResultsWithFilters(
 			*,
 			race_results(
 				*,
-				cyclists(*),
+				cyclists(
+					*,
+					users(*)
+				),
 				ranking_points(*)
 			)
 		`
 		)
-		.eq('event_id', eventResult.data.id) // Use UUIDs for filtering
-		.eq('race_category_id', categoryResult.data.id)
-		.eq('race_category_gender_id', genderResult.data.id)
-		.eq('race_category_length_id', lengthResult.data.id)
+		.eq('event_id', uuids.eventId) // Use UUIDs for filtering
+		.eq('race_category_id', uuids.categoryId)
+		.eq('race_category_gender_id', uuids.genderId)
+		.eq('race_category_length_id', uuids.lengthId)
 		.order('place', { referencedTable: 'race_results', ascending: true })
 		.single(); // Ensure exactly one result
 
@@ -84,7 +94,6 @@ export async function getRaceWithResultsWithFilters(
 			return null;
 		}
 		// Other errors are unexpected - throw them
-		console.error('Unexpected error fetching race:', error);
 		throw new Error(`Error fetching race: ${error.message}`);
 	}
 

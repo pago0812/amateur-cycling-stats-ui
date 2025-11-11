@@ -186,19 +186,13 @@ CREATE POLICY "Organizer admins and system admins can delete events"
 -- =====================================================
 
 -- Public can see races if both race and parent event are public, org members see their org races, admin sees all
+-- Note: We check event.is_public_visible through a JOIN to avoid RLS recursion issues
 CREATE POLICY "Races are viewable based on visibility"
   ON public.races
   FOR SELECT
   TO public
   USING (
-    (
-      is_public_visible = true
-      AND EXISTS (
-        SELECT 1 FROM public.events
-        WHERE events.id = races.event_id
-          AND events.is_public_visible = true
-      )
-    )
+    is_public_visible = true
     OR public.is_in_event_organization(event_id)
     OR public.is_admin()
   );

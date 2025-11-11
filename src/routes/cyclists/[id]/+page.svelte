@@ -8,7 +8,8 @@
 
 <svelte:head>
 	<title
-		>{data.cyclist.name} {data.cyclist.lastName} - {$t('common.navigation.cyclists')} - ACS</title
+		>{data.cyclist.user?.firstName}
+		{data.cyclist.user?.lastName || ''} - {$t('common.navigation.cyclists')} - ACS</title
 	>
 </svelte:head>
 

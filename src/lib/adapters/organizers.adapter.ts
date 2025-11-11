@@ -38,7 +38,8 @@ export function adaptOrganizerWithUserFromDb(
 	// Transform user with role
 	const user: UserWithRelations = {
 		id: dbOrganizer.users.short_id,
-		username: dbOrganizer.users.username,
+		firstName: dbOrganizer.users.first_name,
+		lastName: dbOrganizer.users.last_name,
 		roleId: dbOrganizer.users.role_id,
 		...mapTimestamps(dbOrganizer.users),
 		role: {

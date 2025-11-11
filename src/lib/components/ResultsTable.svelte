@@ -30,13 +30,13 @@
 						{result.place}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{#if result.cyclist}
+						{#if result.cyclist?.user}
 							<a
 								href="/cyclists/{result.cyclist.id}"
 								class="text-blue-600 hover:text-blue-800 hover:underline"
 							>
-								{result.cyclist.lastName}
-								{result.cyclist.name}
+								{result.cyclist.user.lastName || ''}
+								{result.cyclist.user.firstName}
 							</a>
 						{:else}
 							-

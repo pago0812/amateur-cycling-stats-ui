@@ -23,10 +23,6 @@ DECLARE
     org_pro_league_id UUID;
     org_valencia_fed_id UUID;
 
-    -- Cyclist Gender IDs
-    gender_m_id UUID;
-    gender_f_id UUID;
-
     -- Ranking IDs
     ranking_uci_id UUID;
     ranking_national_id UUID;
@@ -61,26 +57,7 @@ BEGIN
     );
 
     -- =====================================================
-    -- 2. GET CYCLIST GENDER IDs
-    -- =====================================================
-    SELECT id INTO gender_m_id FROM public.cyclist_genders WHERE name = 'M' LIMIT 1;
-    SELECT id INTO gender_f_id FROM public.cyclist_genders WHERE name = 'F' LIMIT 1;
-
-    -- =====================================================
-    -- 3. CREATE UNLINKED CYCLIST PROFILES
-    -- =====================================================
-    RAISE NOTICE '- Creating unlinked cyclist profiles (athletes without user accounts)...';
-
-    INSERT INTO public.cyclists (name, last_name, born_year, gender_id, user_id, created_at, updated_at)
-    VALUES
-        ('Pedro', 'López', 1990, gender_m_id, NULL, NOW(), NOW()),
-        ('Ana', 'Fernández', 1996, gender_f_id, NULL, NOW(), NOW()),
-        ('Diego', 'Sánchez', 2003, gender_m_id, NULL, NOW(), NOW()),
-        ('Laura', 'Torres', 1999, gender_f_id, NULL, NOW(), NOW()),
-        ('Miguel', 'Ramírez', 1988, gender_m_id, NULL, NOW(), NOW());
-
-    -- =====================================================
-    -- 4. GET RANKING IDs
+    -- 2. GET RANKING IDs
     -- =====================================================
     SELECT id INTO ranking_uci_id FROM public.race_rankings WHERE name = 'UCI' LIMIT 1;
     SELECT id INTO ranking_national_id FROM public.race_rankings WHERE name = 'NATIONAL' LIMIT 1;
@@ -88,7 +65,7 @@ BEGIN
     SELECT id INTO ranking_custom_id FROM public.race_rankings WHERE name = 'CUSTOM' LIMIT 1;
 
     -- =====================================================
-    -- 5. CREATE RANKING POINTS
+    -- 3. CREATE RANKING POINTS
     -- =====================================================
     RAISE NOTICE '- Creating ranking points for all ranking systems...';
 
@@ -151,12 +128,12 @@ BEGIN
     RAISE NOTICE '';
     RAISE NOTICE '📊 Data Created:';
     RAISE NOTICE '   - 2 Organizations';
-    RAISE NOTICE '   - 5 Unlinked cyclists (no user accounts)';
     RAISE NOTICE '   - All 4 Ranking Systems with points (~38 total)';
     RAISE NOTICE '';
     RAISE NOTICE '⚠️  NEXT STEP: Run "npm run seed:users"';
     RAISE NOTICE '   This will create:';
-    RAISE NOTICE '     - 6 Users (admin, organizer, staff, 3 cyclists)';
+    RAISE NOTICE '     - 6 Registered users (admin, organizer, staff, 3 cyclists)';
+    RAISE NOTICE '     - 45 Anonymous cyclists (no auth accounts)';
     RAISE NOTICE '     - 4 Events (past, future, draft, ongoing)';
     RAISE NOTICE '     - 12 Races (3 per event)';
     RAISE NOTICE '     - ~54 Race Results';

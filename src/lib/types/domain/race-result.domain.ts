@@ -1,5 +1,5 @@
 import type { RaceWithRelations } from './race.domain';
-import type { Cyclist } from './cyclist.domain';
+import type { CyclistWithRelations } from './cyclist.domain';
 import type { RankingPoint } from './ranking-point.domain';
 
 /**
@@ -27,11 +27,11 @@ export interface RaceResult {
 
 /**
  * Race result with populated relationships.
- * Used when fetching results with cyclist info and ranking points.
+ * Used when fetching results with cyclist info (including user names) and ranking points.
  */
 export interface RaceResultWithRelations extends RaceResult {
 	// Populated relationships
 	race?: RaceWithRelations;
-	cyclist?: Cyclist;
+	cyclist?: CyclistWithRelations;
 	rankingPoint?: RankingPoint;
 }

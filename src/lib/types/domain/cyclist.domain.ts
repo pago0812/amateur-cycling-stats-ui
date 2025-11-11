@@ -5,19 +5,18 @@ import type { RaceResultWithRelations } from './race-result.domain';
 /**
  * Cyclist domain type - athlete profile.
  * All fields use camelCase convention.
+ * Names are stored in the linked User record.
  */
 export interface Cyclist {
 	// Identity
 	id: string;
 
 	// Basic Info
-	name: string;
-	lastName: string;
 	bornYear: number | null;
 
 	// Relationships (Foreign Keys)
 	genderId: string | null;
-	userId: string | null; // Link to user account (optional - organizers can create cyclists without accounts)
+	userId: string; // Always required - every cyclist has a linked user (for name storage)
 
 	// Timestamps
 	createdAt: string;

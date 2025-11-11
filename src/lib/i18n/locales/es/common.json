@@ -29,7 +29,7 @@
 	},
 	"members": {
 		"table": {
-			"username": "Usuario",
+			"name": "Nombre",
 			"role": "Rol",
 			"dateAdded": "Fecha de Alta",
 			"noResults": "No se encontraron miembros"

@@ -27,6 +27,7 @@ export function adaptRaceFromDb(dbRace: RaceDB): Race {
 
 /**
  * Adapts race result from nested response (used within race queries).
+ * Now includes user data for cyclist names.
  */
 function adaptRaceResultFromNested(
 	dbResult: RaceWithResultsResponse['race_results'][0]
@@ -42,9 +43,24 @@ function adaptRaceResultFromNested(
 		...mapTimestamps(dbResult)
 	};
 
+	// Create cyclist with user data for names
+	const cyclist = {
+		...adaptCyclistFromDb(dbResult.cyclists),
+		user: dbResult.cyclists.users
+			? {
+					id: dbResult.cyclists.users.short_id,
+					firstName: dbResult.cyclists.users.first_name,
+					lastName: dbResult.cyclists.users.last_name,
+					roleId: dbResult.cyclists.users.role_id || '',
+					createdAt: dbResult.cyclists.users.created_at || '',
+					updatedAt: dbResult.cyclists.users.updated_at || ''
+				}
+			: undefined
+	};
+
 	return {
 		...baseResult,
-		cyclist: adaptCyclistFromDb(dbResult.cyclists),
+		cyclist,
 		rankingPoint: dbResult.ranking_points
 			? adaptRankingPointFromDb(dbResult.ranking_points)
 			: undefined

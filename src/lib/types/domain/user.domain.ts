@@ -3,15 +3,16 @@ import type { Cyclist } from './cyclist.domain';
 import type { OrganizerWithRelations } from './organizer.domain';
 
 /**
- * User domain type - authenticated user account.
+ * User domain type - user profile (can be linked to auth or standalone).
  * All fields use camelCase convention.
  */
 export interface User {
 	// Identity
-	id: string; // Linked to Supabase auth.users
+	id: string;
 
 	// Basic Info
-	username: string;
+	firstName: string;
+	lastName: string | null;
 
 	// Relationships (Foreign Keys)
 	roleId: string;

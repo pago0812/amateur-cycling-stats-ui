@@ -267,17 +267,29 @@ async function getRankingPointId(rankingId: string, place: number): Promise<stri
 }
 
 /**
- * Get cyclist ID by user ID
+ * Get cyclist ID by auth user ID (converts to public user ID first)
  */
-async function getCyclistIdByUserId(userId: string): Promise<string> {
+async function getCyclistIdByUserId(authUserId: string): Promise<string> {
+	// First get the public user ID from auth user ID
+	const { data: userData, error: userError } = await supabase
+		.from('users')
+		.select('id')
+		.eq('auth_user_id', authUserId)
+		.single();
+
+	if (userError || !userData) {
+		throw new Error(`Failed to find public user for auth ID: ${authUserId}. Error: ${userError?.message}`);
+	}
+
+	// Then get the cyclist ID
 	const { data, error } = await supabase
 		.from('cyclists')
 		.select('id')
-		.eq('user_id', userId)
+		.eq('user_id', userData.id)
 		.single();
 
 	if (error || !data) {
-		throw new Error(`Failed to find cyclist for user: ${userId}. Error: ${error?.message}`);
+		throw new Error(`Failed to find cyclist for public user: ${userData.id}. Error: ${error?.message}`);
 	}
 
 	return data.id;
@@ -300,7 +312,8 @@ async function createTestUser(user: TestUser): Promise<void> {
 		password: user.password,
 		email_confirm: true,
 		user_metadata: {
-			username: user.username
+			first_name: user.firstName,
+			last_name: user.lastName || null
 		}
 	});
 
@@ -317,12 +330,13 @@ async function createTestUser(user: TestUser): Promise<void> {
 	// Step 3: Create or update public.users entry
 	const { error: userError } = await supabase.from('users').upsert(
 		{
-			id: user.id,
-			username: user.username,
+			auth_user_id: user.id,
+			first_name: user.firstName,
+			last_name: user.lastName || null,
 			role_id: roleId
 		},
 		{
-			onConflict: 'id'
+			onConflict: 'auth_user_id'
 		}
 	);
 
@@ -336,23 +350,21 @@ async function createTestUser(user: TestUser): Promise<void> {
 	if (user.cyclistData) {
 		const genderId = await getCyclistGenderId(user.cyclistData.gender);
 
-		// Update the auto-created cyclist profile
+		// Update the auto-created cyclist profile (names come from users table now)
 		const { error: cyclistError } = await supabase
 			.from('cyclists')
 			.update({
-				name: user.cyclistData.name,
-				last_name: user.cyclistData.lastName,
 				born_year: user.cyclistData.bornYear,
 				gender_id: genderId
 			})
-			.eq('user_id', user.id);
+			.eq('user_id', (await supabase.from('users').select('id').eq('auth_user_id', user.id).single()).data?.id);
 
 		if (cyclistError) {
 			throw new Error(`Failed to update cyclist profile: ${cyclistError.message}`);
 		}
 
 		console.log(
-			`   ✅ Cyclist profile updated: ${user.cyclistData.name} ${user.cyclistData.lastName}`
+			`   ✅ Cyclist profile updated: ${user.firstName} ${user.lastName}`
 		);
 	}
 
@@ -360,10 +372,21 @@ async function createTestUser(user: TestUser): Promise<void> {
 	if (user.organizerData) {
 		const organizationId = await getOrganizationId(user.organizerData.organizationName);
 
+		// Get the public.users.id (not auth user id)
+		const { data: publicUser, error: getUserError } = await supabase
+			.from('users')
+			.select('id')
+			.eq('auth_user_id', user.id)
+			.single();
+
+		if (getUserError || !publicUser) {
+			throw new Error(`Failed to get public user ID: ${getUserError?.message}`);
+		}
+
 		// Create organizer profile
 		const { error: organizerError } = await supabase.from('organizers').upsert(
 			{
-				user_id: user.id,
+				user_id: publicUser.id,
 				organization_id: organizationId
 			},
 			{
@@ -386,37 +409,57 @@ async function createTestUser(user: TestUser): Promise<void> {
 // ============================================================================
 
 /**
- * Create anonymous cyclists (cyclists without user accounts)
+ * Create anonymous cyclists (cyclists without auth accounts)
+ * Creates User records first, then links cyclist profiles to them
  */
 async function createAnonymousCyclists(): Promise<Map<string, string>> {
-	console.log('\n\n👥 Creating anonymous cyclists...');
+	console.log('\n\n👥 Creating anonymous cyclists (users without auth accounts)...');
 
 	const cyclistIdMap = new Map<string, string>();
+	const cyclistRoleId = await getRoleId('cyclist');
 
 	for (let i = 0; i < anonymousCyclistsData.length; i++) {
 		const cyclist = anonymousCyclistsData[i];
 		const genderId = await getCyclistGenderId(cyclist.gender);
 
-		const { data, error } = await supabase
-			.from('cyclists')
+		// Step 1: Create User record WITHOUT auth_user_id
+		// Note: The trigger will automatically create a cyclist profile
+		const { data: userData, error: userError } = await supabase
+			.from('users')
 			.insert({
-				name: cyclist.name,
+				first_name: cyclist.name,
 				last_name: cyclist.lastName,
-				born_year: cyclist.bornYear,
-				gender_id: genderId,
-				user_id: null
+				role_id: cyclistRoleId,
+				auth_user_id: null  // No auth account for anonymous cyclists
 			})
 			.select('id')
 			.single();
 
-		if (error) {
+		if (userError || !userData) {
 			throw new Error(
-				`Failed to create anonymous cyclist ${cyclist.name} ${cyclist.lastName}: ${error.message}`
+				`Failed to create user for anonymous cyclist ${cyclist.name} ${cyclist.lastName}: ${userError?.message}`
+			);
+		}
+
+		// Step 2: Update the auto-created cyclist profile with birth year and gender
+		const { data: cyclistData, error: cyclistError } = await supabase
+			.from('cyclists')
+			.update({
+				born_year: cyclist.bornYear,
+				gender_id: genderId
+			})
+			.eq('user_id', userData.id)
+			.select('id')
+			.single();
+
+		if (cyclistError || !cyclistData) {
+			throw new Error(
+				`Failed to update cyclist profile for ${cyclist.name} ${cyclist.lastName}: ${cyclistError?.message}`
 			);
 		}
 
 		// Store mapping: anon-0 -> cyclist UUID
-		cyclistIdMap.set(`anon-${i}`, data.id);
+		cyclistIdMap.set(`anon-${i}`, cyclistData.id);
 
 		if ((i + 1) % 10 === 0) {
 			console.log(`   ✅ Created ${i + 1} / ${anonymousCyclistsData.length} cyclists`);
@@ -441,6 +484,17 @@ async function seedEvents(): Promise<void> {
 		// Get organization ID
 		const organizationId = await getOrganizationId(event.organizationName);
 
+		// Get the public.users.id from auth user id
+		const { data: publicUser, error: getUserError } = await supabase
+			.from('users')
+			.select('id')
+			.eq('auth_user_id', event.createdByUserId)
+			.single();
+
+		if (getUserError || !publicUser) {
+			throw new Error(`Failed to get public user ID for creator: ${getUserError?.message}`);
+		}
+
 		// Get category, gender, and length IDs for supported configurations
 		const categoryIds = await Promise.all(
 			event.supportedCategories.map((cat) => getRaceCategoryId(cat))
@@ -463,7 +517,7 @@ async function seedEvents(): Promise<void> {
 			year: event.year,
 			event_status: event.eventStatus,
 			is_public_visible: event.isPublicVisible,
-			created_by: event.createdByUserId,
+			created_by: publicUser.id,
 			organization_id: organizationId
 		});
 
@@ -521,20 +575,38 @@ async function seedRaces(): Promise<void> {
 		const rankingId = await getRaceRankingId(race.rankingName);
 
 		// Create race
-		const { error: raceError } = await supabase.from('races').insert({
-			event_id: race.eventId,
-			date_time: race.dateTime,
-			race_category_id: categoryId,
-			race_category_gender_id: genderId,
-			race_category_length_id: lengthId,
-			race_ranking_id: rankingId,
-			is_public_visible: race.isPublicVisible
-		});
+		const { data: raceData, error: raceError } = await supabase
+			.from('races')
+			.insert({
+				event_id: race.eventId,
+				date_time: race.dateTime,
+				race_category_id: categoryId,
+				race_category_gender_id: genderId,
+				race_category_length_id: lengthId,
+				race_ranking_id: rankingId,
+				is_public_visible: race.isPublicVisible
+			})
+			.select('id');
 
-		if (raceError) throw new Error(`Failed to create race: ${raceError.message}`);
+		if (raceError) {
+			console.error(`   ❌ Failed to create race for event ${race.eventId}:`);
+			console.error(`      Category: ${race.categoryName}, Gender: ${race.genderName}, Length: ${race.lengthName}`);
+			console.error(`      Error: ${raceError.message}`);
+			throw new Error(`Failed to create race: ${raceError.message}`);
+		}
+
+		if (!raceData || raceData.length === 0) {
+			console.error(`   ❌ Race created but no data returned for event ${race.eventId}`);
+		}
 	}
 
+	// Verify races were actually created
+	const { data: allRaces, error: countError } = await supabase
+		.from('races')
+		.select('id', { count: 'exact' });
+
 	console.log(`   ✅ Total: ${racesData.length} races created`);
+	console.log(`   ✅ Verification: ${allRaces?.length || 0} races in database`);
 }
 
 // ============================================================================

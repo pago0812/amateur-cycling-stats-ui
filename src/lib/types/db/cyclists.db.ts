@@ -45,15 +45,16 @@ export interface CyclistWithResultsResponse extends CyclistDB {
  *
  * IMPORTANT: RPC returns both id (UUID) and short_id fields.
  * Adapters translate short_id → domain.id (UUID stays internal).
+ * Names (first_name, last_name) come from joined users table.
  */
 export interface CyclistWithResultsRpcResponse {
 	id: string; // UUID
 	short_id: string; // NanoID (translates to domain.id)
-	name: string;
-	last_name: string;
+	first_name: string; // From joined users table
+	last_name: string | null; // From joined users table
 	born_year: number | null;
 	gender_id: string | null;
-	user_id: string | null;
+	user_id: string; // Required - always has linked user
 	created_at: string;
 	updated_at: string;
 	gender: CyclistGenderDB | null;

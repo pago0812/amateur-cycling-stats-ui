@@ -14,8 +14,9 @@ export function adaptUserWithRelationsFromRpc(
 	rpcResponse: UserWithRelationsRpcResponse
 ): UserWithRelations {
 	return {
-		id: rpcResponse.id,
-		username: rpcResponse.username,
+		id: rpcResponse.short_id,
+		firstName: rpcResponse.first_name,
+		lastName: rpcResponse.last_name,
 		roleId: rpcResponse.role_id,
 		...mapTimestamps(rpcResponse),
 		role: adaptRoleFromDb(rpcResponse.role),

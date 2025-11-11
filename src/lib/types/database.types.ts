@@ -69,33 +69,27 @@ export type Database = {
           created_at: string | null
           gender_id: string | null
           id: string
-          last_name: string
-          name: string
           short_id: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           born_year?: number | null
           created_at?: string | null
           gender_id?: string | null
           id?: string
-          last_name?: string
-          name?: string
           short_id: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           born_year?: number | null
           created_at?: string | null
           gender_id?: string | null
           id?: string
-          last_name?: string
-          name?: string
           short_id?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -550,13 +544,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "races_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "races_race_category_gender_id_fkey"
             columns: ["race_category_gender_id"]
             isOneToOne: false
@@ -650,28 +637,34 @@ export type Database = {
       }
       users: {
         Row: {
+          auth_user_id: string | null
           created_at: string | null
+          first_name: string
           id: string
+          last_name: string | null
           role_id: string | null
           short_id: string
           updated_at: string | null
-          username: string
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string | null
-          id: string
+          first_name: string
+          id?: string
+          last_name?: string | null
           role_id?: string | null
           short_id: string
           updated_at?: string | null
-          username: string
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string | null
+          first_name?: string
           id?: string
+          last_name?: string | null
           role_id?: string | null
           short_id?: string
           updated_at?: string | null
-          username?: string
         }
         Relationships: [
           {
@@ -692,6 +685,7 @@ export type Database = {
         Args: { alphabet?: string; size?: number }
         Returns: string
       }
+      generate_short_id: { Args: never; Returns: string }
       get_cyclist_with_results: {
         Args: { cyclist_short_id: string }
         Returns: Json

@@ -14,7 +14,8 @@ describe('Users Adapter', () => {
 			const rpcResponse: UserWithRelationsRpcResponse = {
 				id: 'user-123',
 				short_id: '123',
-				username: 'cyclist1@example.com',
+				first_name: 'Carlos',
+				last_name: 'Rodríguez',
 				role_id: 'role-cyclist',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-02T00:00:00Z',
@@ -29,8 +30,6 @@ describe('Users Adapter', () => {
 					id: 'cyclist-123',
 					short_id: '123',
 					user_id: 'user-123',
-					name: 'Carlos',
-					last_name: 'Rodríguez',
 					born_year: 1995,
 					gender_id: 'gender-male',
 					created_at: '2024-01-01T00:00:00Z',
@@ -41,12 +40,12 @@ describe('Users Adapter', () => {
 
 			const result = adaptUserWithRelationsFromRpc(rpcResponse);
 
-			expect(result.id).toBe('user-123'); // BUG: Adapter uses id instead of short_id
-			expect(result.username).toBe('cyclist1@example.com');
+			expect(result.id).toBe('123'); // Uses short_id
+			expect(result.firstName).toBe('Carlos');
+			expect(result.lastName).toBe('Rodríguez');
 			expect(result.roleId).toBe('role-cyclist'); // Foreign keys are NOT transformed
 			expect(result.role!.name).toBe('CYCLIST');
-			expect(result.cyclist?.name).toBe('Carlos');
-			expect(result.cyclist?.lastName).toBe('Rodríguez');
+			expect(result.cyclist?.userId).toBe('user-123');
 			expect(result.cyclist?.bornYear).toBe(1995);
 			expect(result.organizer).toBeUndefined();
 		});
@@ -55,7 +54,8 @@ describe('Users Adapter', () => {
 			const rpcResponse: UserWithRelationsRpcResponse = {
 				id: 'user-456',
 				short_id: '456',
-				username: 'organizer@example.com',
+				first_name: 'Maria',
+				last_name: 'García',
 				role_id: 'role-organizer-admin',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
@@ -88,8 +88,9 @@ describe('Users Adapter', () => {
 
 			const result = adaptUserWithRelationsFromRpc(rpcResponse);
 
-			expect(result.id).toBe('user-456'); // BUG: Adapter uses id instead of short_id
-			expect(result.username).toBe('organizer@example.com');
+			expect(result.id).toBe('456'); // Uses short_id
+			expect(result.firstName).toBe('Maria');
+			expect(result.lastName).toBe('García');
 			expect(result.role!.name).toBe('ORGANIZER_ADMIN');
 			expect(result.organizer?.organizationId).toBe('org-1'); // Foreign keys are NOT transformed
 			expect(result.organizer?.organization!.name).toBe('Pro Cycling League Spain');
@@ -101,7 +102,8 @@ describe('Users Adapter', () => {
 			const rpcResponse: UserWithRelationsRpcResponse = {
 				id: 'user-admin',
 				short_id: 'admin',
-				username: 'admin@acs.com',
+				first_name: 'Admin',
+				last_name: 'User',
 				role_id: 'role-admin',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
@@ -118,8 +120,9 @@ describe('Users Adapter', () => {
 
 			const result = adaptUserWithRelationsFromRpc(rpcResponse);
 
-			expect(result.id).toBe('user-admin'); // BUG: Adapter uses id instead of short_id
-			expect(result.username).toBe('admin@acs.com');
+			expect(result.id).toBe('admin'); // Uses short_id
+			expect(result.firstName).toBe('Admin');
+			expect(result.lastName).toBe('User');
 			expect(result.role!.name).toBe('ADMIN');
 			expect(result.cyclist).toBeUndefined();
 			expect(result.organizer).toBeUndefined();
@@ -132,7 +135,8 @@ describe('Users Adapter', () => {
 				const rpcResponse: UserWithRelationsRpcResponse = {
 					id: 'user-test',
 					short_id: 'test',
-					username: 'test@example.com',
+					first_name: 'Test',
+					last_name: 'User',
 					role_id: `role-${roleName}`,
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z',
@@ -158,7 +162,8 @@ describe('Users Adapter', () => {
 			const rpcResponse: UserWithRelationsRpcResponse = {
 				id: 'user-123',
 				short_id: '123',
-				username: 'test@example.com',
+				first_name: 'Test',
+				last_name: 'User',
 				role_id: 'role-public',
 				created_at: '2024-01-15T10:30:00Z',
 				updated_at: '2024-02-20T14:45:00Z',
@@ -183,7 +188,8 @@ describe('Users Adapter', () => {
 			const rpcResponse: UserWithRelationsRpcResponse = {
 				id: 'user-123',
 				short_id: '123',
-				username: 'newcyclist@example.com',
+				first_name: 'New',
+				last_name: 'Cyclist',
 				role_id: 'role-cyclist',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
@@ -198,8 +204,6 @@ describe('Users Adapter', () => {
 					id: 'cyclist-new',
 					short_id: 'new',
 					user_id: 'user-123',
-					name: '',
-					last_name: '',
 					born_year: null,
 					gender_id: null,
 					created_at: '2024-01-01T00:00:00Z',
@@ -212,8 +216,6 @@ describe('Users Adapter', () => {
 
 			expect(result.cyclist?.bornYear).toBeNull();
 			expect(result.cyclist?.genderId).toBeNull();
-			expect(result.cyclist?.name).toBe('');
-			expect(result.cyclist?.lastName).toBe('');
 		});
 	});
 });

@@ -71,16 +71,16 @@ export const login = async (
 };
 
 /**
- * Register a new user with email, password, and username.
- * The username is stored in user metadata and will be used to create the profile.
+ * Register a new user with email, password, first name, and last name.
+ * The names are stored in user metadata and will be used to create the profile.
  * @param supabase - Supabase client instance
- * @param credentials - Username, email, and password
+ * @param credentials - First name, last name (optional), email, and password
  * @param locale - User's locale for error messages (default: 'es')
  * @returns UserSessionResponse with session data or error
  */
 export const signin = async (
 	supabase: SupabaseClient<Database>,
-	{ username, email, password }: SigninRequest,
+	{ firstName, lastName, email, password }: SigninRequest,
 	locale: string = 'es'
 ): Promise<UserSessionResponse> => {
 	const { data, error } = await supabase.auth.signUp({
@@ -88,7 +88,8 @@ export const signin = async (
 		password,
 		options: {
 			data: {
-				username // Store username in user metadata for the trigger to use
+				first_name: firstName, // Store first_name in user metadata for the trigger to use
+				last_name: lastName || null // Store last_name (optional)
 			}
 		}
 	});

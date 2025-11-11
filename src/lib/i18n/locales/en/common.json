@@ -29,7 +29,7 @@
 	},
 	"members": {
 		"table": {
-			"username": "Username",
+			"name": "Name",
 			"role": "Role",
 			"dateAdded": "Date Added",
 			"noResults": "No members found"

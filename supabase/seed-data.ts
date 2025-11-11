@@ -30,11 +30,10 @@ export interface TestUser {
 	id: string;
 	email: string;
 	password: string;
-	username: string;
+	firstName: string;
+	lastName?: string;
 	roleName: 'admin' | 'organizer' | 'organizer_staff' | 'cyclist';
 	cyclistData?: {
-		name: string;
-		lastName: string;
 		bornYear: number;
 		gender: 'M' | 'F';
 	};
@@ -97,14 +96,16 @@ export const seedUsers: TestUser[] = [
 		id: 'a0000000-0000-0000-0000-000000000001',
 		email: 'admin@acs.com',
 		password: '#admin123',
-		username: 'admin',
+		firstName: 'Admin',
+		lastName: 'User',
 		roleName: 'admin'
 	},
 	{
 		id: 'b0000000-0000-0000-0000-000000000001',
 		email: 'organizer@example.com',
 		password: 'password123',
-		username: 'organizer1',
+		firstName: 'Organizer',
+		lastName: 'Admin',
 		roleName: 'organizer',
 		organizerData: {
 			organizationName: 'Pro Cycling League Spain'
@@ -114,7 +115,8 @@ export const seedUsers: TestUser[] = [
 		id: 'b0000000-0000-0000-0000-000000000002',
 		email: 'staff@example.com',
 		password: 'password123',
-		username: 'staff1',
+		firstName: 'Staff',
+		lastName: 'Member',
 		roleName: 'organizer_staff',
 		organizerData: {
 			organizationName: 'Valencia Cycling Federation'
@@ -124,11 +126,10 @@ export const seedUsers: TestUser[] = [
 		id: 'c0000000-0000-0000-0000-000000000001',
 		email: 'cyclist1@example.com',
 		password: 'password123',
-		username: 'cyclist1',
+		firstName: 'Carlos',
+		lastName: 'Rodríguez',
 		roleName: 'cyclist',
 		cyclistData: {
-			name: 'Carlos',
-			lastName: 'Rodríguez',
 			bornYear: 1995,
 			gender: 'M'
 		}
@@ -137,11 +138,10 @@ export const seedUsers: TestUser[] = [
 		id: 'c0000000-0000-0000-0000-000000000002',
 		email: 'cyclist2@example.com',
 		password: 'password123',
-		username: 'cyclist2',
+		firstName: 'María',
+		lastName: 'García',
 		roleName: 'cyclist',
 		cyclistData: {
-			name: 'María',
-			lastName: 'García',
 			bornYear: 1998,
 			gender: 'F'
 		}
@@ -150,11 +150,10 @@ export const seedUsers: TestUser[] = [
 		id: 'c0000000-0000-0000-0000-000000000003',
 		email: 'cyclist3@example.com',
 		password: 'password123',
-		username: 'cyclist3',
+		firstName: 'Javier',
+		lastName: 'Martínez',
 		roleName: 'cyclist',
 		cyclistData: {
-			name: 'Javier',
-			lastName: 'Martínez',
 			bornYear: 1992,
 			gender: 'M'
 		}

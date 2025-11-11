@@ -25,11 +25,9 @@ export function adaptCyclistFromDb(
 ): Cyclist {
 	return {
 		id: dbCyclist.short_id, // Translate: short_id → id (UUID stays internal)
-		name: dbCyclist.name,
-		lastName: 'last_name' in dbCyclist ? dbCyclist.last_name : '',
 		bornYear: 'born_year' in dbCyclist ? dbCyclist.born_year : null,
 		genderId: 'gender_id' in dbCyclist ? dbCyclist.gender_id : null,
-		userId: 'user_id' in dbCyclist ? dbCyclist.user_id : null,
+		userId: 'user_id' in dbCyclist ? dbCyclist.user_id : '',
 		...mapTimestamps(dbCyclist)
 	};
 }
@@ -75,20 +73,28 @@ export function adaptCyclistWithResultsFromDb(
  * Adapts RPC response from get_cyclist_with_results() to domain type.
  * Transforms snake_case → camelCase for nested race results.
  * Translates short_id → id for domain abstraction.
+ * Names come from joined users table and are populated in the user property.
  */
 export function adaptCyclistWithResultsFromRpc(
 	rpcData: CyclistWithResultsRpcResponse
 ): CyclistWithRelations {
 	return {
 		id: rpcData.short_id, // Translate: short_id → id (UUID stays internal)
-		name: rpcData.name,
-		lastName: rpcData.last_name,
 		bornYear: rpcData.born_year,
 		genderId: rpcData.gender_id,
 		userId: rpcData.user_id,
 		createdAt: rpcData.created_at,
 		updatedAt: rpcData.updated_at,
 		gender: rpcData.gender ? adaptCyclistGenderFromDb(rpcData.gender) : undefined,
+		// Populate user with names from joined users table
+		user: {
+			id: rpcData.user_id,
+			firstName: rpcData.first_name,
+			lastName: rpcData.last_name,
+			roleId: '', // Not available in this RPC
+			createdAt: '',
+			updatedAt: ''
+		},
 		raceResults: rpcData.race_results.map((result) => ({
 			id: result.short_id, // Translate: short_id → id
 			place: result.place,
