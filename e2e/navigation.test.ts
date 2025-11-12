@@ -168,7 +168,9 @@ test.describe('Navigation', () => {
 		await page.waitForTimeout(1000);
 
 		// Verify error message is displayed (matches i18n auth error messages)
-		const errorMessage = page.getByText(/Email o contraseña incorrectos|Invalid email or password/i);
+		const errorMessage = page.getByText(
+			/Email o contraseña incorrectos|Invalid email or password/i
+		);
 		await expect(errorMessage).toBeVisible({ timeout: 5000 });
 
 		// This demonstrates that error messages are shown to users

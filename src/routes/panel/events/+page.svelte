@@ -12,10 +12,7 @@
 
 <!-- Menu Toolbar with full breadcrumb path -->
 <MenuToolbar
-	breadcrumbs={[
-		{ label: $t('panel.title'), href: '/panel' },
-		{ label: $t('panel.events.title') }
-	]}
+	breadcrumbs={[{ label: $t('panel.title'), href: '/panel' }, { label: $t('panel.events.title') }]}
 />
 
 <div class="mt-8">

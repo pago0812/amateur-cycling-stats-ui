@@ -26,7 +26,7 @@ describe('Cyclists Service', () => {
 			const mockRpcResponse: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Carlos',
+				first_name: 'Carlos',
 				last_name: 'Rodríguez',
 				born_year: 1995,
 				gender_id: 'gender-male',
@@ -134,8 +134,8 @@ describe('Cyclists Service', () => {
 
 			expect(result).not.toBeNull();
 			expect(result!.id).toBe('123'); // Uses short_id from RPC response
-			expect(result!.name).toBe('Carlos');
-			expect(result!.lastName).toBe('Rodríguez');
+			expect(result!.user?.firstName).toBe('Carlos');
+			expect(result!.user?.lastName).toBe('Rodríguez');
 			expect(result!.raceResults).toHaveLength(1);
 			expect(result!.raceResults![0].place).toBe(1);
 			expect(result!.raceResults![0]!.race!.name).toBe('Gran Fondo - LONG/MALE/ABS');
@@ -169,11 +169,11 @@ describe('Cyclists Service', () => {
 			const mockRpcResponse: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Test',
+				first_name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
 				gender_id: null,
-				user_id: null,
+				user_id: 'user-123',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
 				gender: null,
@@ -188,32 +188,30 @@ describe('Cyclists Service', () => {
 			const result = await getCyclistWithResultsById(mockSupabase, { id: 'cyclist-123' });
 
 			// Verify camelCase transformation
-			expect(result).toHaveProperty('lastName');
 			expect(result).toHaveProperty('bornYear');
 			expect(result).toHaveProperty('genderId');
 			expect(result).toHaveProperty('userId');
 			expect(result).toHaveProperty('createdAt');
 			expect(result).toHaveProperty('updatedAt');
-			expect(result).not.toHaveProperty('last_name');
+			expect(result).toHaveProperty('user');
+			expect(result!.user).toHaveProperty('firstName');
+			expect(result!.user).toHaveProperty('lastName');
 			expect(result).not.toHaveProperty('born_year');
+			expect(result).not.toHaveProperty('gender_id');
 		});
 	});
 
 	describe('createCyclist', () => {
 		it('should create cyclist with all fields', async () => {
 			const newCyclist = {
-				name: 'María',
-				lastName: 'García',
+				userId: 'user-456',
 				bornYear: 1998,
-				genderId: 'gender-female',
-				userId: 'user-456'
+				genderId: 'gender-female'
 			};
 
 			const mockCreatedCyclist: CyclistDB = {
 				id: 'cyclist-new',
 				short_id: 'new',
-				name: 'María',
-				last_name: 'García',
 				born_year: 1998,
 				gender_id: 'gender-female',
 				user_id: 'user-456',
@@ -231,9 +229,7 @@ describe('Cyclists Service', () => {
 
 			const result = await createCyclist(mockSupabase, newCyclist);
 
-			expect(result.id).toBe('new'); // short_id extracted from 'cyclist-new'
-			expect(result.name).toBe('María');
-			expect(result.lastName).toBe('García');
+			expect(result.id).toBe('new'); // short_id extracted
 			expect(result.bornYear).toBe(1998);
 			expect(result.genderId).toBe('gender-female');
 			expect(result.userId).toBe('user-456');
@@ -241,18 +237,15 @@ describe('Cyclists Service', () => {
 
 		it('should create cyclist with minimal fields (null optional fields)', async () => {
 			const newCyclist = {
-				name: 'Unregistered',
-				lastName: 'Athlete'
+				userId: 'user-123'
 			};
 
 			const mockCreatedCyclist: CyclistDB = {
 				id: 'cyclist-minimal',
 				short_id: 'minimal',
-				name: 'Unregistered',
-				last_name: 'Athlete',
 				born_year: null,
 				gender_id: null,
-				user_id: null,
+				user_id: 'user-123',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z'
 			};
@@ -267,11 +260,9 @@ describe('Cyclists Service', () => {
 
 			const result = await createCyclist(mockSupabase, newCyclist);
 
-			expect(result.name).toBe('Unregistered');
-			expect(result.lastName).toBe('Athlete');
 			expect(result.bornYear).toBeNull();
 			expect(result.genderId).toBeNull();
-			expect(result.userId).toBeNull();
+			expect(result.userId).toBe('user-123');
 		});
 
 		it('should throw error on database failure', async () => {
@@ -286,9 +277,9 @@ describe('Cyclists Service', () => {
 				error: { message: 'Unique constraint violation' }
 			});
 
-			await expect(
-				createCyclist(mockSupabase, { name: 'Test', lastName: 'Cyclist' })
-			).rejects.toThrow('Error creating cyclist: Unique constraint violation');
+			await expect(createCyclist(mockSupabase, { userId: 'user-test' })).rejects.toThrow(
+				'Error creating cyclist: Unique constraint violation'
+			);
 		});
 
 		it('should throw error when data is null despite no error', async () => {
@@ -300,17 +291,15 @@ describe('Cyclists Service', () => {
 			queryMock.select.mockReturnThis();
 			queryMock.single.mockResolvedValue({ data: null, error: null });
 
-			await expect(
-				createCyclist(mockSupabase, { name: 'Test', lastName: 'Cyclist' })
-			).rejects.toThrow('Failed to create cyclist');
+			await expect(createCyclist(mockSupabase, { userId: 'user-test' })).rejects.toThrow(
+				'Failed to create cyclist'
+			);
 		});
 
 		it('should transform DB response to domain type with camelCase', async () => {
 			const mockCreatedCyclist: CyclistDB = {
 				id: 'cyclist-test',
 				short_id: 'test',
-				name: 'Test',
-				last_name: 'Cyclist',
 				born_year: 1990,
 				gender_id: 'gender-male',
 				user_id: 'user-123',
@@ -327,20 +316,17 @@ describe('Cyclists Service', () => {
 			queryMock.single.mockResolvedValue({ data: mockCreatedCyclist, error: null });
 
 			const result = await createCyclist(mockSupabase, {
-				name: 'Test',
-				lastName: 'Cyclist',
+				userId: 'user-123',
 				bornYear: 1990,
-				genderId: 'gender-male',
-				userId: 'user-123'
+				genderId: 'gender-male'
 			});
 
 			// Verify camelCase transformation
-			expect(result).toHaveProperty('lastName');
 			expect(result).toHaveProperty('bornYear');
 			expect(result).toHaveProperty('genderId');
 			expect(result).toHaveProperty('userId');
-			expect(result).not.toHaveProperty('last_name');
 			expect(result).not.toHaveProperty('born_year');
+			expect(result).not.toHaveProperty('gender_id');
 		});
 	});
 });

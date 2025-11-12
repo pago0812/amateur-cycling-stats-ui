@@ -93,13 +93,21 @@ describe('Race Results Adapter', () => {
 				cyclists: {
 					id: 'cyclist-123',
 					short_id: '123',
-					name: 'Carlos',
-					last_name: 'Rodríguez',
 					born_year: 1995,
 					gender_id: 'gender-male',
 					user_id: 'user-123',
 					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z'
+					updated_at: '2024-01-01T00:00:00Z',
+					users: {
+						id: 'user-123',
+						short_id: 'u123',
+						first_name: 'Carlos',
+						last_name: 'Rodríguez',
+						role_id: 'role-cyclist',
+						auth_user_id: null,
+						created_at: '2024-01-01T00:00:00Z',
+						updated_at: '2024-01-01T00:00:00Z'
+					}
 				},
 				ranking_points: {
 					id: 'rp-123',
@@ -118,8 +126,8 @@ describe('Race Results Adapter', () => {
 			expect(result.place).toBe(1);
 			expect(result.time).toBe('02:30:45');
 			expect(result.points).toBe(100);
-			expect(result.cyclist!.name).toBe('Carlos');
-			expect(result.cyclist!.lastName).toBe('Rodríguez');
+			expect(result.cyclist!.user?.firstName).toBe('Carlos');
+			expect(result.cyclist!.user?.lastName).toBe('Rodríguez');
 			expect(result.rankingPoint?.points).toBe(100);
 			expect(result.rankingPoint?.place).toBe(1);
 		});
@@ -139,13 +147,21 @@ describe('Race Results Adapter', () => {
 				cyclists: {
 					id: 'cyclist-123',
 					short_id: '123',
-					name: 'Test',
-					last_name: 'Cyclist',
 					born_year: 1995,
 					gender_id: 'gender-1',
-					user_id: null,
+					user_id: 'user-123',
 					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z'
+					updated_at: '2024-01-01T00:00:00Z',
+					users: {
+						id: 'user-123',
+						short_id: 'u123',
+						first_name: 'Test',
+						last_name: 'Cyclist',
+						role_id: 'role-cyclist',
+						auth_user_id: null,
+						created_at: '2024-01-01T00:00:00Z',
+						updated_at: '2024-01-01T00:00:00Z'
+					}
 				},
 				ranking_points: null
 			};
@@ -171,13 +187,21 @@ describe('Race Results Adapter', () => {
 				cyclists: {
 					id: 'cyclist-123',
 					short_id: '123',
-					name: 'María',
-					last_name: 'García',
 					born_year: 1998,
 					gender_id: 'gender-female',
 					user_id: 'user-456',
 					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-02T00:00:00Z'
+					updated_at: '2024-01-02T00:00:00Z',
+					users: {
+						id: 'user-456',
+						short_id: 'u456',
+						first_name: 'María',
+						last_name: 'García',
+						role_id: 'role-cyclist',
+						auth_user_id: null,
+						created_at: '2024-01-01T00:00:00Z',
+						updated_at: '2024-01-02T00:00:00Z'
+					}
 				},
 				ranking_points: {
 					id: 'rp-123',
@@ -192,16 +216,16 @@ describe('Race Results Adapter', () => {
 
 			const result = adaptRaceResultWithRelationsFromDb(dbResult);
 
-			expect(result.cyclist).toEqual({
-				id: '123', // short_id extracted from 'cyclist-123'
-				name: 'María',
-				lastName: 'García',
+			expect(result.cyclist).toMatchObject({
+				id: '123', // short_id extracted
 				bornYear: 1998,
-				genderId: 'gender-female', // Foreign keys are NOT transformed
-				userId: 'user-456', // Foreign keys are NOT transformed
+				genderId: 'gender-female',
+				userId: 'user-456',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-02T00:00:00Z'
 			});
+			expect(result.cyclist!.user?.firstName).toBe('María');
+			expect(result.cyclist!.user?.lastName).toBe('García');
 		});
 
 		it('should transform ranking point with all fields', () => {
@@ -219,13 +243,21 @@ describe('Race Results Adapter', () => {
 				cyclists: {
 					id: 'cyclist-123',
 					short_id: '123',
-					name: 'Test',
-					last_name: 'Cyclist',
 					born_year: 1995,
 					gender_id: 'gender-1',
-					user_id: null,
+					user_id: 'user-123',
 					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z'
+					updated_at: '2024-01-01T00:00:00Z',
+					users: {
+						id: 'user-123',
+						short_id: 'u123',
+						first_name: 'Test',
+						last_name: 'Cyclist',
+						role_id: 'role-cyclist',
+						auth_user_id: null,
+						created_at: '2024-01-01T00:00:00Z',
+						updated_at: '2024-01-01T00:00:00Z'
+					}
 				},
 				ranking_points: {
 					id: 'rp-123',

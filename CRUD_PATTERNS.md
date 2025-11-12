@@ -719,6 +719,7 @@ export const actions: Actions = {
 **Location**: `/src/lib/components/ConfirmModal.svelte`
 
 **Props**:
+
 - `open: boolean` - Control visibility
 - `title: string` - Modal heading
 - `message: string` - Description text
@@ -729,12 +730,14 @@ export const actions: Actions = {
 - `onCancel: () => void` - Cancel callback
 
 **Features**:
+
 - Backdrop click to cancel
 - Escape key to cancel
 - ARIA attributes for accessibility
 - Uses existing Button component
 
 **Usage**:
+
 ```svelte
 <ConfirmModal
 	open={isOpen}
@@ -753,6 +756,7 @@ export const actions: Actions = {
 **Location**: `/src/lib/components/GlobalAlert.svelte`
 
 **Features**:
+
 - Auto-closes after 5 seconds
 - Manual close button
 - 4 variants: `success`, `error`, `info`, `warning`
@@ -760,6 +764,7 @@ export const actions: Actions = {
 - Accessible with ARIA attributes
 
 **Usage**:
+
 ```typescript
 import { alertStore } from '$lib/stores/alert-store';
 
@@ -778,12 +783,14 @@ alertStore.closeAlert();
 **Location**: `/src/lib/components/MenuToolbar.svelte`
 
 **Props**:
+
 - `breadcrumbs: Breadcrumb[]` - Navigation hierarchy
 - `tabs?: Tab[]` - Horizontal tabs
 - `actions?: ActionButton[]` - Right-aligned action buttons
 - `level: 'primary' | 'secondary'` - Hierarchy level
 
 **Multiple Actions**:
+
 ```svelte
 <MenuToolbar
 	breadcrumbs={[...]}
@@ -879,12 +886,14 @@ export const actions: Actions = {
 ### 1. Form State Management
 
 **Use Svelte 5 runes for reactive state**:
+
 ```typescript
 let hasProcessedForm = $state(false);
 let formElement: HTMLFormElement = $state()!;
 ```
 
 **Track form submission to prevent duplicate processing**:
+
 ```typescript
 $effect(() => {
 	if (form && !hasProcessedForm) {
@@ -903,6 +912,7 @@ $effect(() => {
 ### 2. Error Handling
 
 **Always use i18n for error messages**:
+
 ```typescript
 // ❌ Bad
 throw error(404, 'Not found');
@@ -912,6 +922,7 @@ throw error(404, t(locals.locale, 'resource.errors.notFound'));
 ```
 
 **Handle expected errors gracefully**:
+
 ```typescript
 try {
 	const resource = await getResource(supabase, { id });
@@ -929,14 +940,17 @@ try {
 ### 3. Navigation Consistency
 
 **Always use MenuToolbar actions for primary operations**:
+
 ```svelte
 <!-- ✅ Good: Submit in toolbar -->
 <MenuToolbar
-	actions={[{
-		label: $t('form.submit'),
-		onClick: handleSubmit,
-		variant: 'primary'
-	}]}
+	actions={[
+		{
+			label: $t('form.submit'),
+			onClick: handleSubmit,
+			variant: 'primary'
+		}
+	]}
 />
 
 <!-- ❌ Bad: Submit button at bottom of form -->
@@ -946,6 +960,7 @@ try {
 ### 4. Redirect Pattern
 
 **Place redirect outside try-catch to avoid catching it as error**:
+
 ```typescript
 // ✅ Good
 try {
@@ -967,6 +982,7 @@ try {
 ### 5. Alert Timing
 
 **Show success alert before redirect**:
+
 ```svelte
 use:enhance={() => {
 	return async ({ result, update }) => {
@@ -981,6 +997,7 @@ use:enhance={() => {
 ### 6. Translation Keys Organization
 
 **Organize by feature and action**:
+
 ```json
 {
 	"resource": {
@@ -1021,6 +1038,7 @@ use:enhance={() => {
 ### 7. Type Safety
 
 **Use explicit types for all parameters**:
+
 ```typescript
 // ✅ Good
 export interface DeleteResourceParams {

@@ -50,7 +50,9 @@ test.describe('Authentication', () => {
 		await page.waitForTimeout(1000);
 
 		// Verify error message is displayed (Spanish/English error message from global alert or inline)
-		const errorMessage = page.getByText(/Email o contraseña incorrectos|Invalid email or password/i);
+		const errorMessage = page.getByText(
+			/Email o contraseña incorrectos|Invalid email or password/i
+		);
 		await expect(errorMessage).toBeVisible({ timeout: 5000 });
 
 		// Verify still not authenticated

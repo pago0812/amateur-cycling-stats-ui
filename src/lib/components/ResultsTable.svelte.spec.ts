@@ -44,13 +44,19 @@ describe('ResultsTable Component', () => {
 			updatedAt: '2024-01-01T00:00:00Z',
 			cyclist: {
 				id: 'cyclist-1',
-				name: 'Carlos',
-				lastName: 'Rodríguez',
 				bornYear: 1995,
 				genderId: 'gender-male',
-				userId: null,
+				userId: 'user-1',
 				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z'
+				updatedAt: '2024-01-01T00:00:00Z',
+				user: {
+					id: 'user-1',
+					firstName: 'Carlos',
+					lastName: 'Rodríguez',
+					roleId: 'role-cyclist',
+					createdAt: '2024-01-01T00:00:00Z',
+					updatedAt: '2024-01-01T00:00:00Z'
+				}
 			},
 			race: undefined,
 			rankingPoint: {

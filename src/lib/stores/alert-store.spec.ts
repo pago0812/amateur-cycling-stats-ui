@@ -143,14 +143,15 @@ describe('Alert Store', () => {
 		it('should provide current state to new subscribers', () => {
 			alertStore.openAlert('Current message');
 
-			let receivedState: { open: boolean; text: string } | null = null;
+			let receivedState: { open: boolean; text: string; type: string } | null = null;
 			const unsubscribe = alertStore.subscribe((state) => {
 				receivedState = state;
 			});
 
 			expect(receivedState).toEqual({
 				open: true,
-				text: 'Current message'
+				text: 'Current message',
+				type: 'error'
 			});
 			unsubscribe();
 		});

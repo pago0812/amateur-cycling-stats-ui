@@ -22,8 +22,6 @@ describe('Cyclists Adapter', () => {
 			const dbCyclist: CyclistDB = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Carlos',
-				last_name: 'Rodríguez',
 				born_year: 1995,
 				gender_id: 'gender-male',
 				user_id: 'user-123',
@@ -34,12 +32,10 @@ describe('Cyclists Adapter', () => {
 			const result = adaptCyclistFromDb(dbCyclist);
 
 			expect(result).toEqual({
-				id: '123', // short_id extracted from 'cyclist-123'
-				name: 'Carlos',
-				lastName: 'Rodríguez',
+				id: '123', // short_id becomes domain id
 				bornYear: 1995,
-				genderId: 'gender-male', // Foreign keys are NOT transformed
-				userId: 'user-123', // Foreign keys are NOT transformed
+				genderId: 'gender-male',
+				userId: 'user-123',
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String)
 			});
@@ -49,11 +45,9 @@ describe('Cyclists Adapter', () => {
 			const dbCyclist: CyclistDB = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Test',
-				last_name: 'Cyclist',
 				born_year: null,
 				gender_id: null,
-				user_id: null,
+				user_id: 'user-123', // Required field
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z'
 			};
@@ -62,26 +56,24 @@ describe('Cyclists Adapter', () => {
 
 			expect(result.bornYear).toBeNull();
 			expect(result.genderId).toBeNull();
-			expect(result.userId).toBeNull();
+			expect(result.userId).toBe('user-123');
 		});
 
-		it('should handle cyclist without user account', () => {
+		it('should extract short_id as domain id', () => {
 			const dbCyclist: CyclistDB = {
-				id: 'cyclist-unlinked',
-				short_id: 'unlinked',
-				name: 'Unregistered',
-				last_name: 'Athlete',
+				id: 'cyclist-abc123',
+				short_id: 'abc123',
 				born_year: 1990,
 				gender_id: 'gender-male',
-				user_id: null,
+				user_id: 'user-456',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z'
 			};
 
 			const result = adaptCyclistFromDb(dbCyclist);
 
-			expect(result.userId).toBeNull();
-			expect(result.name).toBe('Unregistered');
+			expect(result.id).toBe('abc123'); // short_id becomes domain id
+			expect(result.userId).toBe('user-456');
 		});
 	});
 
@@ -90,8 +82,6 @@ describe('Cyclists Adapter', () => {
 			const dbCyclist: CyclistWithResultsResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Carlos',
-				last_name: 'Rodríguez',
 				born_year: 1995,
 				gender_id: 'gender-male',
 				user_id: 'user-123',
@@ -192,9 +182,9 @@ describe('Cyclists Adapter', () => {
 
 			const result = adaptCyclistWithResultsFromDb(dbCyclist);
 
-			expect(result.id).toBe('123'); // short_id extracted from 'cyclist-123'
-			expect(result.name).toBe('Carlos');
-			expect(result.lastName).toBe('Rodríguez');
+			expect(result.id).toBe('123'); // short_id becomes domain id
+			expect(result.bornYear).toBe(1995);
+			expect(result.userId).toBe('user-123');
 			expect(result.gender?.name).toBe('M');
 			expect(result.raceResults).toHaveLength(1);
 			expect(result.raceResults![0].place).toBe(1);
@@ -208,11 +198,9 @@ describe('Cyclists Adapter', () => {
 			const dbCyclist: CyclistWithResultsResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Test',
-				last_name: 'Cyclist',
 				born_year: 1995,
 				gender_id: null,
-				user_id: null,
+				user_id: 'user-123',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
 				gender: null,
@@ -228,8 +216,6 @@ describe('Cyclists Adapter', () => {
 			const dbCyclist: CyclistWithResultsResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'New',
-				last_name: 'Cyclist',
 				born_year: 2000,
 				gender_id: 'gender-female',
 				user_id: 'user-456',
@@ -256,7 +242,7 @@ describe('Cyclists Adapter', () => {
 			const rpcData: CyclistWithResultsRpcResponse = {
 				id: 'uuid-cyclist-123',
 				short_id: 'cyclist-123',
-				name: 'María',
+				first_name: 'María',
 				last_name: 'García',
 				born_year: 1998,
 				gender_id: 'gender-female',
@@ -358,8 +344,8 @@ describe('Cyclists Adapter', () => {
 			const result = adaptCyclistWithResultsFromRpc(rpcData);
 
 			expect(result.id).toBe('cyclist-123'); // Uses short_id directly from RPC
-			expect(result.name).toBe('María');
-			expect(result.lastName).toBe('García');
+			expect(result.user?.firstName).toBe('María');
+			expect(result.user?.lastName).toBe('García');
 			expect(result.bornYear).toBe(1998);
 			expect(result.gender?.name).toBe('F');
 			expect(result.raceResults).toHaveLength(1);
@@ -372,11 +358,11 @@ describe('Cyclists Adapter', () => {
 			const rpcData: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Test',
+				first_name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
 				gender_id: null,
-				user_id: null,
+				user_id: 'user-123',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
 				gender: null,
@@ -467,7 +453,7 @@ describe('Cyclists Adapter', () => {
 			const rpcData: CyclistWithResultsRpcResponse = {
 				id: 'cyclist-123',
 				short_id: '123',
-				name: 'Test',
+				first_name: 'Test',
 				last_name: 'Cyclist',
 				born_year: 1995,
 				gender_id: 'gender-male',

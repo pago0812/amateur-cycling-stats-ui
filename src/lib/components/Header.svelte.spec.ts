@@ -48,7 +48,8 @@ describe('Header Component', () => {
 	it('should show account link when user is authenticated', async () => {
 		const mockUser: UserWithRelations = {
 			id: 'user-123',
-			username: 'testuser',
+			firstName: 'Test',
+			lastName: 'User',
 			roleId: 'role-cyclist',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
@@ -71,7 +72,7 @@ describe('Header Component', () => {
 	it('should render mobile menu button', async () => {
 		render(Header, { user: null });
 
-		const mobileButton = page.getByRole('button');
+		const mobileButton = page.getByRole('button', { name: 'common.navigation.openMenu' });
 		await expect.element(mobileButton).toBeInTheDocument();
 	});
 });

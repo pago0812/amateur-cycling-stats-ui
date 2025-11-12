@@ -17,16 +17,16 @@ type TypedSupabaseClient = SupabaseClient<Database>;
  * Filters only active organizations (is_active = true) via RLS.
  * Includes aggregated event count for list view.
  */
-export async function getAllOrganizations(
-	supabase: TypedSupabaseClient
-): Promise<Organization[]> {
+export async function getAllOrganizations(supabase: TypedSupabaseClient): Promise<Organization[]> {
 	// Query organizations with event count aggregation
 	const { data, error } = await supabase
 		.from('organizations')
-		.select(`
+		.select(
+			`
 			*,
 			events:events(count)
-		`)
+		`
+		)
 		.eq('is_active', true)
 		.order('name', { ascending: true });
 
@@ -57,10 +57,12 @@ export async function getOrganizationById(
 ): Promise<Organization | null> {
 	const { data, error } = await supabase
 		.from('organizations')
-		.select(`
+		.select(
+			`
 			*,
 			events:events(count)
-		`)
+		`
+		)
 		.eq('short_id', params.id)
 		.eq('is_active', true)
 		.single();

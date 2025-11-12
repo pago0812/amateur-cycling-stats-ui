@@ -28,13 +28,19 @@ vi.mock('./CyclistResultsTable.svelte', () => ({
 describe('CyclistProfile Component', () => {
 	const mockCyclist: CyclistWithRelations = {
 		id: 'cyclist-1',
-		name: 'Carlos',
-		lastName: 'Rodríguez',
 		bornYear: 1990,
 		genderId: 'gender-1',
 		userId: 'user-1',
 		createdAt: '2024-01-01T00:00:00Z',
 		updatedAt: '2024-01-01T00:00:00Z',
+		user: {
+			id: 'user-1',
+			firstName: 'Carlos',
+			lastName: 'Rodríguez',
+			roleId: 'role-cyclist',
+			createdAt: '2024-01-01T00:00:00Z',
+			updatedAt: '2024-01-01T00:00:00Z'
+		},
 		gender: {
 			id: 'gender-1',
 			name: 'Masculino',

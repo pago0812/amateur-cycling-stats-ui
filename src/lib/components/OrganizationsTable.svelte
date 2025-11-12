@@ -57,7 +57,7 @@
 				</tr>
 			{:else}
 				{#each organizations as org (org.id)}
-					<tr class="cursor-pointer hover:bg-gray-50 transition-colors">
+					<tr class="cursor-pointer transition-colors hover:bg-gray-50">
 						<!-- Make entire row clickable by wrapping in a link -->
 						<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
 							<a
@@ -69,11 +69,7 @@
 						</td>
 						<!-- Description - hidden on mobile -->
 						<td class="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">
-							<a
-								href="/admin/organizations/{org.id}"
-								class="block"
-								title={org.description || ''}
-							>
+							<a href="/admin/organizations/{org.id}" class="block" title={org.description || ''}>
 								{truncate(org.description, 50)}
 							</a>
 						</td>
@@ -84,7 +80,7 @@
 							</a>
 						</td>
 						<!-- Created Date - hidden on mobile and tablet -->
-						<td class="hidden px-6 py-4 text-sm text-gray-600 whitespace-nowrap lg:table-cell">
+						<td class="hidden px-6 py-4 text-sm whitespace-nowrap text-gray-600 lg:table-cell">
 							<a href="/admin/organizations/{org.id}" class="block">
 								{formatDate(org.createdAt)}
 							</a>

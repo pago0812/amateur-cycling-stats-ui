@@ -13,8 +13,13 @@
 		action?: string;
 	}
 
-	let { mode, formElement = $bindable(), initialData, form, action }: OrganizationFormProps =
-		$props();
+	let {
+		mode,
+		formElement = $bindable(),
+		initialData,
+		form,
+		action
+	}: OrganizationFormProps = $props();
 
 	// Form state
 	let isSubmitting = $state(false);
@@ -65,7 +70,7 @@
 			maxlength="1000"
 			value={(form?.description as string) || initialData?.description || ''}
 			placeholder={$t('admin.organizations.form.descriptionPlaceholder')}
-			class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-vertical"
+			class="resize-vertical rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 			disabled={isSubmitting}
 		></textarea>
 	</div>

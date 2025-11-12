@@ -136,13 +136,21 @@ describe('Races Adapter', () => {
 						cyclists: {
 							id: 'cyclist-1',
 							short_id: '1',
-							name: 'Carlos',
-							last_name: 'Rodríguez',
 							born_year: 1995,
 							gender_id: 'gender-male',
 							user_id: 'user-1',
 							created_at: '2024-01-01T00:00:00Z',
-							updated_at: '2024-01-01T00:00:00Z'
+							updated_at: '2024-01-01T00:00:00Z',
+							users: {
+								id: 'user-1',
+								short_id: 'u1',
+								first_name: 'Carlos',
+								last_name: 'Rodríguez',
+								role_id: 'role-cyclist',
+								auth_user_id: null,
+								created_at: '2024-01-01T00:00:00Z',
+								updated_at: '2024-01-01T00:00:00Z'
+							}
 						},
 						ranking_points: {
 							id: 'rp-1',
@@ -163,8 +171,8 @@ describe('Races Adapter', () => {
 			expect(result.name).toBe('Gran Fondo - LONG/MALE/ABS');
 			expect(result.raceResults).toHaveLength(1);
 			expect(result.raceResults?.[0].place).toBe(1);
-			expect(result.raceResults?.[0]!.cyclist!.name).toBe('Carlos');
-			expect(result.raceResults?.[0]!.cyclist!.lastName).toBe('Rodríguez');
+			expect(result.raceResults?.[0]!.cyclist!.user?.firstName).toBe('Carlos');
+			expect(result.raceResults?.[0]!.cyclist!.user?.lastName).toBe('Rodríguez');
 			expect(result.raceResults?.[0]!.rankingPoint?.points).toBe(100);
 		});
 
@@ -221,13 +229,21 @@ describe('Races Adapter', () => {
 						cyclists: {
 							id: 'cyclist-1',
 							short_id: '1',
-							name: 'Test',
-							last_name: 'Cyclist',
 							born_year: 1995,
 							gender_id: 'gender-1',
-							user_id: null,
+							user_id: 'user-1',
 							created_at: '2024-01-01T00:00:00Z',
-							updated_at: '2024-01-01T00:00:00Z'
+							updated_at: '2024-01-01T00:00:00Z',
+							users: {
+								id: 'user-1',
+								short_id: 'u1',
+								first_name: 'Test',
+								last_name: 'Cyclist',
+								role_id: 'role-cyclist',
+								auth_user_id: null,
+								created_at: '2024-01-01T00:00:00Z',
+								updated_at: '2024-01-01T00:00:00Z'
+							}
 						},
 						ranking_points: null
 					}

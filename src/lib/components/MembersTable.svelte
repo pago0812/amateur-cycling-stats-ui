@@ -49,7 +49,8 @@
 						<!-- Name -->
 						<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
 							<span class="font-medium">
-								{organizer.user?.firstName ?? ''} {organizer.user?.lastName ?? ''}
+								{organizer.user?.firstName ?? ''}
+								{organizer.user?.lastName ?? ''}
 							</span>
 						</td>
 						<!-- Role - hidden on mobile -->
@@ -57,7 +58,7 @@
 							{organizer.user?.role?.name ?? '-'}
 						</td>
 						<!-- Date Added - hidden on mobile -->
-						<td class="hidden px-6 py-4 text-sm text-gray-600 whitespace-nowrap md:table-cell">
+						<td class="hidden px-6 py-4 text-sm whitespace-nowrap text-gray-600 md:table-cell">
 							{formatDate(organizer.createdAt)}
 						</td>
 					</tr>

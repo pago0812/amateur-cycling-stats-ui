@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -544,6 +539,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "races_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "races_race_category_gender_id_fkey"
             columns: ["race_category_gender_id"]
             isOneToOne: false
@@ -681,10 +683,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_nanoid: {
-        Args: { alphabet?: string; size?: number }
-        Returns: string
-      }
       generate_short_id: { Args: never; Returns: string }
       get_cyclist_with_results: {
         Args: { cyclist_short_id: string }
@@ -698,9 +696,14 @@ export type Database = {
       }
       has_role: { Args: { role_name: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
+      is_cyclist_created_by_org: {
+        Args: { cyclist_id: string }
+        Returns: boolean
+      }
+      is_cyclist_unlinked: { Args: { cyclist_id: string }; Returns: boolean }
       is_in_event_organization: { Args: { event_id: string }; Returns: boolean }
       is_organizer: { Args: never; Returns: boolean }
-      is_organizer_admin: { Args: never; Returns: boolean }
+      is_organizer_owner: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
@@ -836,3 +839,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

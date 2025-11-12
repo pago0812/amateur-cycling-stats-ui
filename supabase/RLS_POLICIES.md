@@ -23,18 +23,21 @@ The system implements a 5-level role hierarchy:
 ### Core Role Checks
 
 #### `is_admin() → BOOLEAN`
+
 ```sql
 -- Returns TRUE if current user has 'admin' role
 SELECT public.is_admin();
 ```
 
 #### `has_role(role_name TEXT) → BOOLEAN`
+
 ```sql
 -- Returns TRUE if current user has specified role
 SELECT public.has_role('cyclist');
 ```
 
 #### `get_my_role() → TEXT`
+
 ```sql
 -- Returns current user's role name ('admin', 'organizer_owner', 'organizer_staff', 'cyclist', 'public')
 SELECT public.get_my_role();
@@ -43,12 +46,14 @@ SELECT public.get_my_role();
 ### Organization Checks
 
 #### `is_organizer() → BOOLEAN`
+
 ```sql
 -- Returns TRUE if current user has an organizer profile (either owner or staff)
 SELECT public.is_organizer();
 ```
 
 #### `is_organizer_owner() → BOOLEAN`
+
 ```sql
 -- Returns TRUE if current user is an organizer with 'organizer_owner' role
 -- Note: Currently checks for 'organizer' - will be updated to 'organizer_owner'
@@ -56,6 +61,7 @@ SELECT public.is_organizer_owner();
 ```
 
 #### `get_user_organization_id() → UUID`
+
 ```sql
 -- Returns the organization_id for current user's organizer profile
 -- Returns NULL if user is not an organizer
@@ -63,6 +69,7 @@ SELECT public.get_user_organization_id();
 ```
 
 #### `is_in_event_organization(event_id UUID) → BOOLEAN`
+
 ```sql
 -- Returns TRUE if current user belongs to the organization that owns the event
 SELECT public.is_in_event_organization('event-uuid-here');
@@ -71,6 +78,7 @@ SELECT public.is_in_event_organization('event-uuid-here');
 ### Cyclist Checks
 
 #### `is_cyclist_unlinked(cyclist_id UUID) → BOOLEAN`
+
 ```sql
 -- Returns TRUE if cyclist has no auth_user_id (anonymous/unregistered cyclist)
 -- Used for delete permissions: organizers can only delete unlinked cyclists
@@ -82,6 +90,7 @@ SELECT public.is_cyclist_unlinked('cyclist-uuid-here');
 ## Policy Matrix
 
 ### Legend
+
 - ✅ **Allowed**
 - ❌ **Denied**
 - 🔒 **Conditional** (see notes)
@@ -94,15 +103,16 @@ These tables contain system reference data that rarely changes.
 
 ### cyclist_genders
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ | ✅ | ✅ | ✅ |
-| **organizer_owner** | ✅ | ❌ | ❌ | ❌ |
-| **organizer_staff** | ✅ | ❌ | ❌ | ❌ |
-| **cyclist** | ✅ | ❌ | ❌ | ❌ |
-| **public** | ✅ | ❌ | ❌ | ❌ |
+| Role                | SELECT | INSERT | UPDATE | DELETE |
+| ------------------- | ------ | ------ | ------ | ------ |
+| **admin**           | ✅     | ✅     | ✅     | ✅     |
+| **organizer_owner** | ✅     | ❌     | ❌     | ❌     |
+| **organizer_staff** | ✅     | ❌     | ❌     | ❌     |
+| **cyclist**         | ✅     | ❌     | ❌     | ❌     |
+| **public**          | ✅     | ❌     | ❌     | ❌     |
 
 **Policies:**
+
 ```sql
 -- Everyone can view genders
 CREATE POLICY "Everyone can view cyclist genders"
@@ -118,6 +128,7 @@ CREATE POLICY "Only admins can manage cyclist genders"
 ### race_categories, race_category_genders, race_category_lengths, race_rankings
 
 Same permissions as `cyclist_genders` - all lookup tables follow the same pattern:
+
 - **Public read access** (everyone can view reference data)
 - **Admin-only write access** (only admins can manage system data)
 
@@ -125,17 +136,18 @@ Same permissions as `cyclist_genders` - all lookup tables follow the same patter
 
 ### roles
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ | ✅ | ✅ | ✅ |
-| **organizer_owner** | ✅ | ❌ | ❌ | ❌ |
-| **organizer_staff** | ✅ | ❌ | ❌ | ❌ |
-| **cyclist** | ✅ | ❌ | ❌ | ❌ |
-| **public** | ❌ | ❌ | ❌ | ❌ |
+| Role                | SELECT | INSERT | UPDATE | DELETE |
+| ------------------- | ------ | ------ | ------ | ------ |
+| **admin**           | ✅     | ✅     | ✅     | ✅     |
+| **organizer_owner** | ✅     | ❌     | ❌     | ❌     |
+| **organizer_staff** | ✅     | ❌     | ❌     | ❌     |
+| **cyclist**         | ✅     | ❌     | ❌     | ❌     |
+| **public**          | ❌     | ❌     | ❌     | ❌     |
 
 **Rationale:** Roles are reference data that authenticated users need to see for their own user profiles and in nested queries (e.g., viewing organizer profiles with role information). Only admins can modify roles.
 
 **Policies:**
+
 ```sql
 -- Authenticated users can view roles
 CREATE POLICY "Authenticated users can view roles"
@@ -155,15 +167,16 @@ CREATE POLICY "Only admins can manage roles"
 
 ### ranking_points
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ | ✅ | ✅ | ✅ |
-| **organizer_owner** | ✅ | ❌ | ❌ | ❌ |
-| **organizer_staff** | ✅ | ❌ | ❌ | ❌ |
-| **cyclist** | ✅ | ❌ | ❌ | ❌ |
-| **public** | ✅ | ❌ | ❌ | ❌ |
+| Role                | SELECT | INSERT | UPDATE | DELETE |
+| ------------------- | ------ | ------ | ------ | ------ |
+| **admin**           | ✅     | ✅     | ✅     | ✅     |
+| **organizer_owner** | ✅     | ❌     | ❌     | ❌     |
+| **organizer_staff** | ✅     | ❌     | ❌     | ❌     |
+| **cyclist**         | ✅     | ❌     | ❌     | ❌     |
+| **public**          | ✅     | ❌     | ❌     | ❌     |
 
 **Policies:**
+
 ```sql
 -- Everyone can view ranking points
 CREATE POLICY "Ranking points are viewable by everyone"
@@ -182,21 +195,23 @@ CREATE POLICY "Only admins can manage ranking points"
 
 ### users
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ | ✅ | ✅ All | ✅ All |
-| **organizer_owner** | ✅ | 🔒 Unlinked only | 🔒 Org's unlinked users | 🔒 Org's unlinked users |
-| **organizer_staff** | ✅ | 🔒 Unlinked only | 🔒 Org's unlinked users | 🔒 Org's unlinked users |
-| **cyclist** | ✅ | 🔒 Self only | 🔒 Self only | ❌ |
-| **public** | ✅ | 🔒 Cyclist role only | ❌ | ❌ |
+| Role                | SELECT | INSERT               | UPDATE                  | DELETE                  |
+| ------------------- | ------ | -------------------- | ----------------------- | ----------------------- |
+| **admin**           | ✅     | ✅                   | ✅ All                  | ✅ All                  |
+| **organizer_owner** | ✅     | 🔒 Unlinked only     | 🔒 Org's unlinked users | 🔒 Org's unlinked users |
+| **organizer_staff** | ✅     | 🔒 Unlinked only     | 🔒 Org's unlinked users | 🔒 Org's unlinked users |
+| **cyclist**         | ✅     | 🔒 Self only         | 🔒 Self only            | ❌                      |
+| **public**          | ✅     | 🔒 Cyclist role only | ❌                      | ❌                      |
 
 **Notes:**
+
 - **Unlinked users:** Users with `auth_user_id IS NULL` (created by organizers for race results)
 - **Org's unlinked users:** Unlinked users created by someone in the same organization
 - **Self only:** Users can only manage their own profile (`auth_user_id = auth.uid()`)
 - **Public insert:** During registration, public users can create user records with cyclist role
 
 **Policies:**
+
 ```sql
 -- Everyone can view user profiles (needed for race results with cyclist names)
 CREATE POLICY "Everyone can view user profiles"
@@ -257,15 +272,16 @@ CREATE POLICY "Organizers can delete org unlinked users"
 
 ### cyclists
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ | ✅ | ✅ All | ✅ All |
-| **organizer_owner** | ✅ | ✅ | 🔒 Org cyclists | 🔒 Unlinked only |
-| **organizer_staff** | ✅ | ✅ | 🔒 Org cyclists | 🔒 Unlinked only |
-| **cyclist** | ✅ | 🔒 Self only | 🔒 Self only | ❌ |
-| **public** | ✅ | ❌ | ❌ | ❌ |
+| Role                | SELECT | INSERT       | UPDATE          | DELETE           |
+| ------------------- | ------ | ------------ | --------------- | ---------------- |
+| **admin**           | ✅     | ✅           | ✅ All          | ✅ All           |
+| **organizer_owner** | ✅     | ✅           | 🔒 Org cyclists | 🔒 Unlinked only |
+| **organizer_staff** | ✅     | ✅           | 🔒 Org cyclists | 🔒 Unlinked only |
+| **cyclist**         | ✅     | 🔒 Self only | 🔒 Self only    | ❌               |
+| **public**          | ✅     | ❌           | ❌              | ❌               |
 
 **Notes:**
+
 - **Org cyclists:** Cyclists created by anyone in the organizer's organization (tracked via `created_by` in events)
 - **Unlinked only:** Can only delete cyclists with `user.auth_user_id IS NULL`
 - **Self only:** Cyclists can only manage their own profile (`user_id = auth.uid()`)
@@ -273,6 +289,7 @@ CREATE POLICY "Organizers can delete org unlinked users"
 **Rationale:** Organizers create cyclist profiles for race results. They can manage cyclists they've created but cannot delete verified (linked) accounts.
 
 **Policies:**
+
 ```sql
 -- Everyone can view all cyclist profiles
 CREATE POLICY "Cyclists are viewable by everyone"
@@ -353,20 +370,22 @@ CREATE POLICY "Organizers can delete unlinked cyclists"
 
 ### organizations
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ All (including inactive) | ✅ | ✅ All | ❌ (soft delete only) |
-| **organizer_owner** | ✅ Active only | ❌ | 🔒 Own org | 🔒 Own org (soft delete) |
-| **organizer_staff** | ✅ Active only | ❌ | 🔒 Own org | ❌ |
-| **cyclist** | ✅ Active only | ❌ | ❌ | ❌ |
-| **public** | ✅ Active only | ❌ | ❌ | ❌ |
+| Role                | SELECT                      | INSERT | UPDATE     | DELETE                   |
+| ------------------- | --------------------------- | ------ | ---------- | ------------------------ |
+| **admin**           | ✅ All (including inactive) | ✅     | ✅ All     | ❌ (soft delete only)    |
+| **organizer_owner** | ✅ Active only              | ❌     | 🔒 Own org | 🔒 Own org (soft delete) |
+| **organizer_staff** | ✅ Active only              | ❌     | 🔒 Own org | ❌                       |
+| **cyclist**         | ✅ Active only              | ❌     | ❌         | ❌                       |
+| **public**          | ✅ Active only              | ❌     | ❌         | ❌                       |
 
 **Notes:**
+
 - **Active only:** Can only see organizations where `is_active = true`
 - **Own org:** Can only modify their own organization (`organization_id = get_user_organization_id()`)
 - **Soft delete:** Delete means setting `is_active = false`, not hard deletion
 
 **Policies:**
+
 ```sql
 -- Public can view active organizations
 CREATE POLICY "Public can view active organizations"
@@ -423,21 +442,23 @@ CREATE POLICY "Organizer owners can soft delete own organization"
 
 ### organizers
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ All | ✅ | ✅ All | ✅ All |
-| **organizer_owner** | ✅ All | 🔒 Own org | 🔒 Own org | 🔒 Own org |
-| **organizer_staff** | ✅ All | ❌ | 🔒 Self only | ❌ |
-| **cyclist** | ❌ | ❌ | ❌ | ❌ |
-| **public** | ❌ | ❌ | ❌ | ❌ |
+| Role                | SELECT | INSERT     | UPDATE       | DELETE     |
+| ------------------- | ------ | ---------- | ------------ | ---------- |
+| **admin**           | ✅ All | ✅         | ✅ All       | ✅ All     |
+| **organizer_owner** | ✅ All | 🔒 Own org | 🔒 Own org   | 🔒 Own org |
+| **organizer_staff** | ✅ All | ❌         | 🔒 Self only | ❌         |
+| **cyclist**         | ❌     | ❌         | ❌           | ❌         |
+| **public**          | ❌     | ❌         | ❌           | ❌         |
 
 **Notes:**
+
 - **Own org:** Can only manage organizers in their organization
 - **Self only:** Staff can only update their own organizer profile
 
 **Rationale:** Organizer owners need to manage their team members. Staff can update their own info but cannot add/remove team members.
 
 **Policies:**
+
 ```sql
 -- Users can view own organizer profile
 CREATE POLICY "Users can view own organizer profile"
@@ -500,20 +521,22 @@ CREATE POLICY "Organizer staff can update own profile"
 
 ### events
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ All | ✅ | ✅ All | ✅ All |
+| Role                | SELECT                 | INSERT     | UPDATE     | DELETE     |
+| ------------------- | ---------------------- | ---------- | ---------- | ---------- |
+| **admin**           | ✅ All                 | ✅         | ✅ All     | ✅ All     |
 | **organizer_owner** | 🔒 Org events + Public | 🔒 Own org | 🔒 Own org | 🔒 Own org |
 | **organizer_staff** | 🔒 Org events + Public | 🔒 Own org | 🔒 Own org | 🔒 Own org |
-| **cyclist** | 🔒 Public only | ❌ | ❌ | ❌ |
-| **public** | 🔒 Public only | ❌ | ❌ | ❌ |
+| **cyclist**         | 🔒 Public only         | ❌         | ❌         | ❌         |
+| **public**          | 🔒 Public only         | ❌         | ❌         | ❌         |
 
 **Notes:**
+
 - **Public only:** Can only see events where `is_public_visible = true`
 - **Org events:** Can see all events owned by their organization
 - **Own org:** Can only manage events where `organization_id = get_user_organization_id()`
 
 **Policies:**
+
 ```sql
 -- Public can see public events, org members see org events, admins see all
 CREATE POLICY "Events are viewable based on visibility and organization"
@@ -562,15 +585,16 @@ CREATE POLICY "Organization members can delete events"
 
 ### races
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ All | ✅ | ✅ All | ✅ All |
+| Role                | SELECT                | INSERT        | UPDATE       | DELETE       |
+| ------------------- | --------------------- | ------------- | ------------ | ------------ |
+| **admin**           | ✅ All                | ✅            | ✅ All       | ✅ All       |
 | **organizer_owner** | 🔒 Org races + Public | 🔒 Org events | 🔒 Org races | 🔒 Org races |
 | **organizer_staff** | 🔒 Org races + Public | 🔒 Org events | 🔒 Org races | 🔒 Org races |
-| **cyclist** | 🔒 Public only | ❌ | ❌ | ❌ |
-| **public** | 🔒 Public only | ❌ | ❌ | ❌ |
+| **cyclist**         | 🔒 Public only        | ❌            | ❌           | ❌           |
+| **public**          | 🔒 Public only        | ❌            | ❌           | ❌           |
 
 **Notes:**
+
 - **Public only:** Can only see races where both `race.is_public_visible = true` AND `event.is_public_visible = true`
 - **Org races:** Races belonging to events owned by their organization
 - **Org events:** Can create races for events owned by their organization
@@ -578,6 +602,7 @@ CREATE POLICY "Organization members can delete events"
 **Rationale:** Staff can fully manage races (including delete) for their organization's events.
 
 **Policies:**
+
 ```sql
 -- Public sees public races, org members see org races, admins see all
 CREATE POLICY "Races are viewable based on visibility"
@@ -623,15 +648,16 @@ CREATE POLICY "Event organization members can delete races"
 
 ### race_results
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ All | ✅ | ✅ All | ✅ All |
+| Role                | SELECT                  | INSERT       | UPDATE         | DELETE         |
+| ------------------- | ----------------------- | ------------ | -------------- | -------------- |
+| **admin**           | ✅ All                  | ✅           | ✅ All         | ✅ All         |
 | **organizer_owner** | 🔒 Org results + Public | 🔒 Org races | 🔒 Org results | 🔒 Org results |
 | **organizer_staff** | 🔒 Org results + Public | 🔒 Org races | 🔒 Org results | 🔒 Org results |
-| **cyclist** | 🔒 Public only | ❌ | ❌ | ❌ |
-| **public** | 🔒 Public only | ❌ | ❌ | ❌ |
+| **cyclist**         | 🔒 Public only          | ❌           | ❌             | ❌             |
+| **public**          | 🔒 Public only          | ❌           | ❌             | ❌             |
 
 **Notes:**
+
 - **Public only:** Can only see results where both `race.is_public_visible = true` AND `event.is_public_visible = true`
 - **Org results:** Results for races belonging to their organization's events
 - **Org races:** Can create results for races in their organization's events
@@ -639,6 +665,7 @@ CREATE POLICY "Event organization members can delete races"
 **Rationale:** Staff need full CRUD access to manage race results (including fixing mistakes by deleting).
 
 **Policies:**
+
 ```sql
 -- Public sees results if race and event are public, org members see org results, admins see all
 CREATE POLICY "Race results are viewable based on visibility"
@@ -714,19 +741,21 @@ These tables link events to their supported categories, genders, and lengths.
 
 ### event_supported_categories
 
-| Role | SELECT | INSERT | UPDATE | DELETE |
-|------|--------|--------|--------|--------|
-| **admin** | ✅ | ✅ | ✅ | ✅ |
+| Role                | SELECT                 | INSERT        | UPDATE        | DELETE        |
+| ------------------- | ---------------------- | ------------- | ------------- | ------------- |
+| **admin**           | ✅                     | ✅            | ✅            | ✅            |
 | **organizer_owner** | 🔒 Org events + Public | 🔒 Org events | 🔒 Org events | 🔒 Org events |
 | **organizer_staff** | 🔒 Org events + Public | 🔒 Org events | 🔒 Org events | 🔒 Org events |
-| **cyclist** | 🔒 Public only | ❌ | ❌ | ❌ |
-| **public** | 🔒 Public only | ❌ | ❌ | ❌ |
+| **cyclist**         | 🔒 Public only         | ❌            | ❌            | ❌            |
+| **public**          | 🔒 Public only         | ❌            | ❌            | ❌            |
 
 **Notes:**
+
 - Visibility follows parent event's `is_public_visible` flag
 - Organization members can fully manage their event's configurations
 
 **Policies:**
+
 ```sql
 -- Viewable if parent event is viewable
 CREATE POLICY "Event supported categories viewable with event"
@@ -783,6 +812,7 @@ RACE_RESULT viewable when BOTH race AND event are public
 ### Organization Member Access
 
 Organization members (both owner and staff) bypass public visibility checks:
+
 - See **all events** owned by their organization
 - See **all races** in their organization's events
 - See **all race results** for their organization's races
@@ -799,6 +829,7 @@ Admins have **unrestricted access** to all data, regardless of visibility flags 
 ### Authentication Context
 
 All policies use `auth.uid()` to identify the current user:
+
 ```sql
 -- Check if user is viewing their own profile
 WHERE auth_user_id = auth.uid()
@@ -824,6 +855,7 @@ WHERE user_id IN (SELECT id FROM users WHERE auth_user_id = auth.uid())
 ## Testing RLS Policies
 
 ### Test as Anonymous User
+
 ```sql
 SET ROLE anon;
 SELECT * FROM events;  -- Should only see public events
@@ -831,6 +863,7 @@ RESET ROLE;
 ```
 
 ### Test as Specific User
+
 ```sql
 -- Set session to specific user
 SELECT auth.uid();  -- Should return user's UUID
@@ -838,6 +871,7 @@ SELECT * FROM events;  -- Should see user's org events + public
 ```
 
 ### Test Policy Coverage
+
 ```sql
 -- Ensure all tables have RLS enabled
 SELECT schemaname, tablename, rowsecurity
@@ -864,6 +898,7 @@ When updating RLS policies:
 ## Changelog
 
 ### 2025-01-11
+
 - Created comprehensive RLS policy documentation
 - Documented all current policies and helper functions
 - Identified discrepancies between desired and current state

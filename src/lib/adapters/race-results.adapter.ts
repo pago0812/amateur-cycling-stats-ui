@@ -28,6 +28,21 @@ export function adaptRaceResultFromDb(dbResult: RaceResultDB): RaceResult {
 export function adaptRaceResultWithRelationsFromDb(
 	dbData: RaceResultWithRelationsResponse
 ): RaceResultWithRelations {
+	// Create cyclist with user data for names
+	const cyclist = {
+		...adaptCyclistFromDb(dbData.cyclists),
+		user: dbData.cyclists.users
+			? {
+					id: dbData.cyclists.users.short_id,
+					firstName: dbData.cyclists.users.first_name,
+					lastName: dbData.cyclists.users.last_name,
+					roleId: dbData.cyclists.users.role_id || '',
+					createdAt: dbData.cyclists.users.created_at || '',
+					updatedAt: dbData.cyclists.users.updated_at || ''
+				}
+			: undefined
+	};
+
 	return {
 		id: dbData.short_id, // Translate: short_id → id
 		place: dbData.place,
@@ -37,7 +52,7 @@ export function adaptRaceResultWithRelationsFromDb(
 		cyclistId: dbData.cyclist_id,
 		rankingPointId: dbData.ranking_point_id,
 		...mapTimestamps(dbData),
-		cyclist: adaptCyclistFromDb(dbData.cyclists),
+		cyclist,
 		rankingPoint: dbData.ranking_points ? adaptRankingPointFromDb(dbData.ranking_points) : undefined
 	};
 }

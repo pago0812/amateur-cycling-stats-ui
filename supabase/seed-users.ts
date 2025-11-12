@@ -278,7 +278,9 @@ async function getCyclistIdByUserId(authUserId: string): Promise<string> {
 		.single();
 
 	if (userError || !userData) {
-		throw new Error(`Failed to find public user for auth ID: ${authUserId}. Error: ${userError?.message}`);
+		throw new Error(
+			`Failed to find public user for auth ID: ${authUserId}. Error: ${userError?.message}`
+		);
 	}
 
 	// Then get the cyclist ID
@@ -289,7 +291,9 @@ async function getCyclistIdByUserId(authUserId: string): Promise<string> {
 		.single();
 
 	if (error || !data) {
-		throw new Error(`Failed to find cyclist for public user: ${userData.id}. Error: ${error?.message}`);
+		throw new Error(
+			`Failed to find cyclist for public user: ${userData.id}. Error: ${error?.message}`
+		);
 	}
 
 	return data.id;
@@ -357,15 +361,16 @@ async function createTestUser(user: TestUser): Promise<void> {
 				born_year: user.cyclistData.bornYear,
 				gender_id: genderId
 			})
-			.eq('user_id', (await supabase.from('users').select('id').eq('auth_user_id', user.id).single()).data?.id);
+			.eq(
+				'user_id',
+				(await supabase.from('users').select('id').eq('auth_user_id', user.id).single()).data?.id
+			);
 
 		if (cyclistError) {
 			throw new Error(`Failed to update cyclist profile: ${cyclistError.message}`);
 		}
 
-		console.log(
-			`   ✅ Cyclist profile updated: ${user.firstName} ${user.lastName}`
-		);
+		console.log(`   ✅ Cyclist profile updated: ${user.firstName} ${user.lastName}`);
 	}
 
 	// Step 5: Handle organizer-specific data
@@ -430,7 +435,7 @@ async function createAnonymousCyclists(): Promise<Map<string, string>> {
 				first_name: cyclist.name,
 				last_name: cyclist.lastName,
 				role_id: cyclistRoleId,
-				auth_user_id: null  // No auth account for anonymous cyclists
+				auth_user_id: null // No auth account for anonymous cyclists
 			})
 			.select('id')
 			.single();
@@ -590,7 +595,9 @@ async function seedRaces(): Promise<void> {
 
 		if (raceError) {
 			console.error(`   ❌ Failed to create race for event ${race.eventId}:`);
-			console.error(`      Category: ${race.categoryName}, Gender: ${race.genderName}, Length: ${race.lengthName}`);
+			console.error(
+				`      Category: ${race.categoryName}, Gender: ${race.genderName}, Length: ${race.lengthName}`
+			);
 			console.error(`      Error: ${raceError.message}`);
 			throw new Error(`Failed to create race: ${raceError.message}`);
 		}

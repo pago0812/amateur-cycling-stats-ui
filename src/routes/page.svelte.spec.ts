@@ -53,7 +53,7 @@ describe('/+page.svelte', () => {
 
 		render(Page, { data: mockData });
 
-		const message = page.getByText('events.home.noEvents');
+		const message = page.getByText('events.home.noResults');
 		await expect.element(message).toBeInTheDocument();
 	});
 
