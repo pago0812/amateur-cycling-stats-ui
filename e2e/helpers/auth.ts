@@ -21,15 +21,18 @@ export async function loginAs(page: Page, user: TestUser) {
 	// Navigate to login page
 	await page.goto('/login');
 
-	// Wait for login form to be visible
-	await page.waitForSelector('form');
+	// Wait for email input to be visible (more specific than waiting for form)
+	await page.waitForSelector('#email', { state: 'visible' });
 
 	// Fill in credentials using input IDs
 	await page.fill('#email', user.email);
 	await page.fill('#password', user.password);
 
-	// Submit form
-	await page.getByRole('button', { name: /iniciar sesión|log in/i }).click();
+	// Submit form - use main area to avoid header button
+	await page
+		.getByRole('main')
+		.getByRole('button', { name: /iniciar sesión|log in/i })
+		.click();
 
 	// Wait for redirect away from login page (could be /panel, /account, or /)
 	await page.waitForURL((url) => url.pathname !== '/login', { timeout: 20000 });
@@ -58,30 +61,34 @@ export async function logout(page: Page) {
 
 /**
  * Assert that user is authenticated
- * Checks for presence of "Cuenta" or "Account" link in header
+ * Checks for presence of "Account" button/link in header navigation
  * @param page - Playwright page object
  */
 export async function expectAuthenticated(page: Page) {
 	// Wait for navigation to be visible
 	await page.waitForSelector('nav');
 
-	// Check for authenticated user link (Cuenta/Account)
-	const accountLink = page.getByRole('link', { name: /cuenta|account/i });
-	await expect(accountLink).toBeVisible();
+	// Check for authenticated user button (Account) in navigation
+	// Note: Header uses Button component with href, which renders as <a role="button">
+	const accountButton = page
+		.getByRole('navigation')
+		.getByRole('button', { name: /account/i });
+	await expect(accountButton).toBeVisible();
 }
 
 /**
  * Assert that user is NOT authenticated
- * Checks for presence of "Iniciar sesión" or "Log in" link in header
+ * Checks for presence of "Log in" button/link in header navigation
  * @param page - Playwright page object
  */
 export async function expectUnauthenticated(page: Page) {
 	// Wait for navigation to be visible
 	await page.waitForSelector('nav');
 
-	// Check for login link (Iniciar sesión/Log in)
-	const loginLink = page.getByRole('link', { name: /iniciar sesión|log in/i });
-	await expect(loginLink).toBeVisible();
+	// Check for login button (Log in) in navigation
+	// Note: Header uses Button component with href, which renders as <a role="button">
+	const loginButton = page.getByRole('navigation').getByRole('button', { name: /log in/i });
+	await expect(loginButton).toBeVisible();
 }
 
 /**

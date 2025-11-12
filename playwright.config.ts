@@ -16,10 +16,11 @@ export default defineConfig({
 	},
 	// Increase timeout for slower CI environments
 	timeout: 30 * 1000,
-	// Retry failed tests once
-	retries: process.env.CI ? 2 : 0,
+	// Retry failed tests to handle auth flakiness from Supabase rate limiting
+	retries: process.env.CI ? 2 : 1,
 	// Run tests in parallel with explicit mode enabled
 	fullyParallel: true,
-	// Limit parallel workers to prevent resource contention
-	workers: process.env.CI ? 1 : 3
+	// Limit parallel workers to prevent resource contention with Supabase Auth API
+	// Lower worker count helps avoid auth rate limiting and concurrent session conflicts
+	workers: process.env.CI ? 1 : 2
 });
