@@ -18,7 +18,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 
 	// Redirect organizers to panel
 	if (
-		user.role?.name === RoleTypeEnum.ORGANIZER_ADMIN ||
+		user.role?.name === RoleTypeEnum.ORGANIZER_OWNER ||
 		user.role?.name === RoleTypeEnum.ORGANIZER_STAFF
 	) {
 		throw redirect(302, Urls.PANEL);

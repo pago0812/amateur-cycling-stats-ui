@@ -62,7 +62,7 @@ describe('Users Adapter', () => {
 				role: {
 					id: 'role-organizer-admin',
 					short_id: 'organizer-admin',
-					name: 'ORGANIZER_ADMIN',
+					name: 'ORGANIZER_OWNER',
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z'
 				},
@@ -91,7 +91,7 @@ describe('Users Adapter', () => {
 			expect(result.id).toBe('456'); // Uses short_id
 			expect(result.firstName).toBe('Maria');
 			expect(result.lastName).toBe('García');
-			expect(result.role!.name).toBe('ORGANIZER_ADMIN');
+			expect(result.role!.name).toBe('ORGANIZER_OWNER');
 			expect(result.organizer?.organizationId).toBe('org-1'); // Foreign keys are NOT transformed
 			expect(result.organizer?.organization!.name).toBe('Pro Cycling League Spain');
 			expect(result.organizer?.organization!.description).toBe('Professional cycling organization');

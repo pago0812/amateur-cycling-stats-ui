@@ -23,7 +23,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 
 	// Ensure user is organizer
 	if (
-		user.role?.name !== RoleTypeEnum.ORGANIZER_ADMIN &&
+		user.role?.name !== RoleTypeEnum.ORGANIZER_OWNER &&
 		user.role?.name !== RoleTypeEnum.ORGANIZER_STAFF
 	) {
 		throw redirect(302, Urls.LOGIN);

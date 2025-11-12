@@ -119,6 +119,7 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 ### Route Structure
 
 **Public Routes:**
+
 - `/` - Home page with upcoming events
 - `/results` - Past events listing with year filter
 - `/results/[id]` - Event detail with race results and filters
@@ -128,6 +129,7 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 - `/ranking` - Ranking page (stub)
 
 **Authentication Routes:**
+
 - `/login` - Login page
 - `/signin` - Registration page
 - `/admin` - Admin dashboard (requires ADMIN role)
@@ -137,15 +139,18 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 ### Component Library
 
 **Layout Components:**
+
 - `Header.svelte` - Main navigation with authentication state
 - `GlobalAlert.svelte` - Global error/notification system
 
 **Navigation Components:**
+
 - `MenuToolbar.svelte` - Unified navigation toolbar with hierarchical breadcrumbs, tabs, and actions
   - Two-level system: Primary (section nav) and Secondary (page nav)
   - See `src/lib/components/MenuToolbar.md` for comprehensive documentation
 
 **UI Components:**
+
 - `Button.svelte` - Reusable button component with consistent styling
   - Variants: `filled`, `outlined`, `text`
   - Colors: `primary` (blue), `secondary` (gray), `danger` (red), `success` (green)
@@ -156,16 +161,19 @@ npm run seed:users   # Seed test users (run after supabase db reset)
   - **Usage**: All button styling controlled via props only (no custom classes)
 
 **Table Components:**
+
 - `EventResultsTable.svelte` - Display events with date, name, location
 - `ResultsTable.svelte` - Display race results with cyclist links
 - `CyclistResultsTable.svelte` - Display cyclist's race history
 - `OrganizationsTable.svelte` - Display organizations
 
 **Profile Components:**
+
 - `CyclistProfile.svelte` - Display cyclist profile information
 - `OrganizationProfile.svelte` - Display organization information
 
 **Form Components:**
+
 - `SelectQueryParam.svelte` - URL-based filter dropdowns
 
 ### Service Layer
@@ -183,16 +191,19 @@ All services located in `src/lib/services/`:
 ### Key Patterns
 
 **Server-Side Rendering (SSR):**
+
 - All pages use `+page.server.ts` for data loading
 - Data fetched on the server for SEO and performance
 - No client-side data fetching with `onMount`
 
 **Form Actions (Progressive Enhancement):**
+
 - Forms use SvelteKit form actions for POST requests
 - Work without JavaScript, enhanced with `use:enhance`
 - Server-side validation and error handling
 
 **Authentication & Session Management:**
+
 - Supabase Auth with automatic cookie management via `@supabase/ssr`
 - Server-side session handling in `hooks.server.ts`
 - `event.locals.safeGetSession()` helper validates JWT with Auth server
@@ -200,6 +211,7 @@ All services located in `src/lib/services/`:
 - Protected routes redirect to `/login` if not authenticated
 
 **Graceful Error Handling:**
+
 - Services distinguish between expected "not found" vs unexpected errors
 - Return `null` for expected missing data (e.g., PGRST116 "no rows found")
 - Throw errors only for unexpected database issues
@@ -224,18 +236,21 @@ All services located in `src/lib/services/`:
    - Return domain types (camelCase) to consumers
 
 **State Management:**
+
 - Svelte stores for global state
 - Component-level `$state` runes for local reactive state
 - `$derived` runes for computed values
 - `$effect` runes for side effects
 
 **Component Structure (Svelte 5):**
+
 - TypeScript script blocks with explicit type annotations
 - Svelte 5 runes syntax (`$props`, `$state`, `$derived`, `$effect`)
 - Tailwind utility classes for styling
 - Progressive enhancement with `use:enhance` directive
 
 **Button Usage Guidelines:**
+
 - **ALWAYS** use the `Button` component for interactive buttons and button-like links
 - **NEVER** create custom button implementations with inline styles
 - Use appropriate variant: `filled` for primary actions, `outlined` for secondary, `text` for tertiary
@@ -279,11 +294,13 @@ supabase gen types typescript --linked > src/lib/types/database.types.ts
 The project uses a **two-stage seeding approach**:
 
 **Stage 1: User-Independent Data (SQL)**
+
 - Run automatically during `supabase db reset`
 - Defined in `supabase/seed.sql`
 - Creates: Organizations, unlinked cyclists, ranking systems
 
 **Stage 2: User-Dependent Data (TypeScript)**
+
 - Run manually via `npm run seed:users`
 - Uses Supabase Admin API
 - Defined in `supabase/seed-users.ts`
@@ -311,7 +328,7 @@ npm run seed:users
 ### Row Level Security (RLS)
 
 - All tables have RLS enabled
-- Role-based policies (PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_ADMIN, ADMIN)
+- Role-based policies (PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_OWNER, ADMIN)
 - Organization-based access control
 - Helper functions: `is_admin()`, `is_organizer()`, `is_organizer_admin()`, `is_in_event_organization()`
 
@@ -320,20 +337,24 @@ npm run seed:users
 ### Core Entities
 
 **Authentication & Authorization:**
+
 - **User** - Authenticated users linked to Supabase Auth
-- **Role** - User roles (5 types: PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_ADMIN, ADMIN)
+- **Role** - User roles (5 types: PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_OWNER, ADMIN)
 - **Organization** - Companies/clubs that organize events
 - **Organizer** - Junction table linking users to organizations
 
 **Events & Races:**
+
 - **Event** - Cycling event owned by an organization
 - **Race** - Individual race within an event
 - **RaceResult** - Performance record linking cyclist to race
 
 **Athletes:**
+
 - **Cyclist** - Athlete profile (nullable user_id for unregistered athletes)
 
 **Reference Data:**
+
 - **RaceCategory** - Age/experience categories (26 types)
 - **RaceCategoryGender** - Gender categories (FEMALE, MALE, OPEN)
 - **RaceCategoryLength** - Distance types (LONG, SHORT, SPRINT, UNIQUE)
@@ -344,16 +365,19 @@ npm run seed:users
 ### Business Rules
 
 **Event Status Flow:**
+
 - DRAFT → AVAILABLE → SOLD_OUT → ON_GOING → FINISHED
 
 **User Roles & Permissions:**
+
 - `PUBLIC` - Anonymous visitors (read-only for public content)
 - `CYCLIST` - Default role for new signups
 - `ORGANIZER_STAFF` - Limited admin access (create/edit results for org's events)
-- `ORGANIZER_ADMIN` - Full org access (manage events, races, results)
+- `ORGANIZER_OWNER` - Full org access (manage events, races, results)
 - `ADMIN` - System administrator (full access)
 
 **Visibility Rules:**
+
 - Events/Races have independent `is_public_visible` flags
 - Public users only see content where both event AND race are public
 - Organization members see all their org's content
@@ -362,6 +386,7 @@ npm run seed:users
 ## Development Best Practices
 
 **When Adding New Pages:**
+
 1. Create `+page.svelte` for the UI
 2. Create `+page.server.ts` for SSR data loading
 3. Use `PageServerLoad` type from `./$types`
@@ -370,6 +395,7 @@ npm run seed:users
 6. Add `<svelte:head>` for SEO meta tags
 
 **When Adding New Components:**
+
 1. Use `.svelte` extension
 2. Use Svelte 5 runes syntax
 3. Add TypeScript type annotations
@@ -377,6 +403,7 @@ npm run seed:users
 5. Place in `src/lib/components/` directory
 
 **When Adding New Services:**
+
 1. Place in `src/lib/services/` directory
 2. Add proper TypeScript types
 3. Use adapters to transform DB → Domain types
@@ -412,12 +439,11 @@ export const actions = {
 The root layout provides centralized horizontal padding and max-width:
 
 ```html
-<main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-	{@render children()}
-</main>
+<main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{@render children()}</main>
 ```
 
 **Rules:**
+
 1. **NEVER add horizontal padding (`px-*`)** - Layout provides it
 2. **ONLY add vertical padding (`py-*`)** - Pages control vertical spacing
 3. **NEVER add `max-w-*`** - Layout provides it
@@ -442,6 +468,7 @@ The application has been fully migrated from **Next.js/Strapi** to **SvelteKit/S
 **i18n:** next-intl → sveltekit-i18n
 
 **Key Improvements:**
+
 - 100% server-side rendering
 - Type-safe throughout with strict TypeScript
 - Comprehensive Row Level Security

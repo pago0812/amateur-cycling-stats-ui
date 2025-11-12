@@ -32,7 +32,7 @@ export interface TestUser {
 	password: string;
 	firstName: string;
 	lastName?: string;
-	roleName: 'admin' | 'organizer' | 'organizer_staff' | 'cyclist';
+	roleName: 'admin' | 'organizer_owner' | 'organizer_staff' | 'cyclist';
 	cyclistData?: {
 		bornYear: number;
 		gender: 'M' | 'F';
@@ -106,7 +106,7 @@ export const seedUsers: TestUser[] = [
 		password: 'password123',
 		firstName: 'Organizer',
 		lastName: 'Admin',
-		roleName: 'organizer',
+		roleName: 'organizer_owner',
 		organizerData: {
 			organizationName: 'Pro Cycling League Spain'
 		}

@@ -27,7 +27,7 @@
 			? Urls.LOGIN
 			: user.role?.name === RoleTypeEnum.ADMIN
 				? Urls.ADMIN
-				: user.role?.name === RoleTypeEnum.ORGANIZER_ADMIN ||
+				: user.role?.name === RoleTypeEnum.ORGANIZER_OWNER ||
 					  user.role?.name === RoleTypeEnum.ORGANIZER_STAFF
 					? Urls.PANEL
 					: Urls.ACCOUNT

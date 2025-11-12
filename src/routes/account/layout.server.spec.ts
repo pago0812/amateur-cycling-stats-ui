@@ -41,7 +41,7 @@ describe('Account Layout Server', () => {
 				user: {
 					id: 'user-1',
 					username: 'organizer',
-					role: { name: RoleTypeEnum.ORGANIZER_ADMIN }
+					role: { name: RoleTypeEnum.ORGANIZER_OWNER }
 				}
 			})
 		};

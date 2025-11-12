@@ -79,7 +79,7 @@ describe('Panel Layout Server', () => {
 				user: {
 					id: 'user-organizer',
 					username: 'organizer',
-					role: { name: RoleTypeEnum.ORGANIZER_ADMIN }
+					role: { name: RoleTypeEnum.ORGANIZER_OWNER }
 				}
 			})
 		};
@@ -88,7 +88,7 @@ describe('Panel Layout Server', () => {
 
 		expect(result).toBeDefined();
 		expect(result?.user).toBeDefined();
-		expect(result?.user?.role?.name).toBe(RoleTypeEnum.ORGANIZER_ADMIN);
+		expect(result?.user?.role?.name).toBe(RoleTypeEnum.ORGANIZER_OWNER);
 	});
 
 	it('should redirect admins to /admin', async () => {

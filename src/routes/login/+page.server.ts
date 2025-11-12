@@ -22,7 +22,7 @@ function getRedirectUrlForRole(roleName?: string): string {
 	}
 
 	// Organizers go to /panel
-	if (roleName === RoleTypeEnum.ORGANIZER_ADMIN || roleName === RoleTypeEnum.ORGANIZER_STAFF) {
+	if (roleName === RoleTypeEnum.ORGANIZER_OWNER || roleName === RoleTypeEnum.ORGANIZER_STAFF) {
 		return Urls.PANEL;
 	}
 

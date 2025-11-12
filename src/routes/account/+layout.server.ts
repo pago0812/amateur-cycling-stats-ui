@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	// Only cyclists can access /account
 	// Redirect organizers and admins to /panel
 	if (
-		user.role?.name === RoleTypeEnum.ORGANIZER_ADMIN ||
+		user.role?.name === RoleTypeEnum.ORGANIZER_OWNER ||
 		user.role?.name === RoleTypeEnum.ORGANIZER_STAFF ||
 		user.role?.name === RoleTypeEnum.ADMIN
 	) {
