@@ -21,18 +21,20 @@ test.describe('Panel Page', () => {
 		await expect(page).toHaveURL(/\/panel/);
 	});
 
-	test('organizer sees 3 tabs', async ({ page }) => {
+	test('displays MenuToolbar with breadcrumb and tabs', async ({ page }) => {
 		// Login as organizer
 		await loginAs(page, TEST_USERS.organizer);
 
-		// Check for tabs
-		const overviewTab = page.getByRole('link', { name: /resumen|overview/i });
-		const eventsTab = page.getByRole('link', { name: /eventos|events/i });
-		const organizersTab = page.getByRole('link', { name: /organizadores|organizers/i });
+		// Verify MenuToolbar breadcrumb is visible
+		const breadcrumb = page.getByText(/panel del organizador|organizator panel/i);
+		await expect(breadcrumb).toBeVisible();
 
-		await expect(overviewTab).toBeVisible();
-		await expect(eventsTab).toBeVisible();
-		await expect(organizersTab).toBeVisible();
+		// Check for navigation tabs (Summary and Organization)
+		const summaryTab = page.getByRole('link', { name: /resumen|summary/i });
+		const organizationTab = page.getByRole('link', { name: /organización|organization/i });
+
+		await expect(summaryTab).toBeVisible();
+		await expect(organizationTab).toBeVisible();
 	});
 
 	test('admin login redirects to /admin (not /panel)', async ({ page }) => {
@@ -43,24 +45,28 @@ test.describe('Panel Page', () => {
 		await expect(page).toHaveURL(/\/admin/);
 	});
 
-	test('can navigate between panel sections', async ({ page }) => {
+	test('can navigate between panel sections using breadcrumbs', async ({ page }) => {
 		// Login as organizer
 		await loginAs(page, TEST_USERS.organizer);
 
-		// Click events tab
-		const eventsTab = page.getByRole('link', { name: /eventos|events/i });
-		await eventsTab.click();
-		await expect(page).toHaveURL('/panel/events');
+		// Click organization tab
+		const organizationTab = page.getByRole('link', { name: /organización|organization/i });
+		await organizationTab.click();
+		await expect(page).toHaveURL('/panel/organization');
 
-		// Click organizers tab
-		const organizersTab = page.getByRole('link', { name: /organizadores|organizers/i });
-		await organizersTab.click();
-		await expect(page).toHaveURL('/panel/organizers');
+		// Should show breadcrumb trail with clickable panel link
+		const panelBreadcrumb = page.getByRole('link', {
+			name: /panel del organizador|organizator panel/i
+		});
+		await expect(panelBreadcrumb).toBeVisible();
 
-		// Click overview tab
-		const overviewTab = page.getByRole('link', { name: /resumen|overview/i });
-		await overviewTab.click();
+		// Click panel breadcrumb to go back to summary
+		await panelBreadcrumb.click();
 		await expect(page).toHaveURL('/panel');
+
+		// Should show coming soon message again
+		const comingSoon = page.getByText(/próximamente|coming soon/i);
+		await expect(comingSoon).toBeVisible();
 	});
 
 	test('panel sections show placeholder content', async ({ page }) => {
