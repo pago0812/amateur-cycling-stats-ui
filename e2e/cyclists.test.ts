@@ -53,22 +53,35 @@ test.describe('Cyclist Profile', () => {
 		const cyclistLink = page.locator('table').getByRole('link').first();
 		await expect(cyclistLink).toBeVisible();
 
-		const cyclistName = await cyclistLink.textContent();
+		const cyclistNameFromTable = await cyclistLink.textContent();
 		await cyclistLink.click();
 
 		// Wait for cyclist profile page to load
 		await page.waitForURL(/\/cyclists\/.+/);
 
-		// Verify cyclist name is displayed in heading
-		await expect(page.locator('h2')).toBeVisible();
+		// Verify cyclist profile is displayed with heading
+		const heading = page.locator('h2');
+		await expect(heading).toBeVisible();
 
-		if (cyclistName) {
-			// Verify name appears in heading
-			const heading = await page.locator('h2').textContent();
-			expect(heading).toContain(cyclistName.trim().split(' ')[0]); // Check first name at least
+		// Verify name components appear in heading
+		// Note: Results table shows "lastName firstName" but profile shows "firstName lastName"
+		if (cyclistNameFromTable) {
+			const nameParts = cyclistNameFromTable
+				.trim()
+				.split(/\s+/)
+				.filter((part) => part.length > 0);
+			const headingText = await heading.textContent();
+
+			// Check that at least one name part appears in the heading
+			const hasNamePart = nameParts.some((part) => headingText?.includes(part));
+			expect(hasNamePart).toBeTruthy();
 		}
 
-		// Either table should be visible or "no results" message
+		// Verify profile photo placeholder with initials is visible
+		const avatar = page.locator('div').filter({ hasText: /^[A-Z]{1,2}$/ }).first();
+		await expect(avatar).toBeVisible();
+
+		// Either race results table should be visible or "no results" message
 		const hasRaceTable = await page
 			.locator('table')
 			.isVisible()
