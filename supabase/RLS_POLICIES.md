@@ -519,6 +519,117 @@ CREATE POLICY "Organizer staff can update own profile"
 
 ---
 
+### organization_invitations
+
+| Role                              | SELECT                    | INSERT            | UPDATE                    | DELETE                    |
+| --------------------------------- | ------------------------- | ----------------- | ------------------------- | ------------------------- |
+| **admin**                         | ✅ All                    | ✅ All            | ✅ All                    | ✅ All                    |
+| **organizer_owner (State A)**     | 🔒 Own pending invitation | ❌                | 🔒 Own to 'accepted'      | 🔒 Own pending invitation |
+| **organizer_owner (State B)**     | 🔒 Org invitations        | 🔒 Org invitations| 🔒 Org invitations        | 🔒 Org invitations        |
+| **organizer_staff**               | ❌                        | ❌                | ❌                        | ❌                        |
+| **cyclist**                       | ❌                        | ❌                | ❌                        | ❌                        |
+| **public**                        | ❌                        | ❌                | ❌                        | ❌                        |
+
+**Notes:**
+
+- **Organizer Owner has TWO states:**
+  - **State A (Invitation Flow):** User has `organizer_owner` role but is NOT yet linked to organization (no record in `organizers` table). This state occurs during the invitation acceptance process.
+  - **State B (Linked Owner):** User has `organizer_owner` role AND is linked to organization (has record in `organizers` table). This is the normal active owner state.
+- **Own pending invitation:** Users in State A can only see invitations matching their email with status='pending'
+- **Own to 'accepted':** State A users can only update their invitation status from 'pending' to 'accepted' (prevents setting to 'expired')
+- **Org invitations:** State B users can manage all invitations for their organization
+- **Helper functions used:**
+  - `current_user_email_matches(email)` - SECURITY DEFINER function to check if auth.users email matches
+  - `is_linked_organizer_owner()` - Returns true if user is in State B (has organizer_owner role AND linked to org)
+  - `get_user_organization_id()` - Returns organization_id from organizers table for current user
+
+**Policies:**
+
+```sql
+-- Admin policies: Full access to all invitations
+CREATE POLICY "Admins can read all organization invitations"
+  ON organization_invitations FOR SELECT TO authenticated
+  USING (public.is_admin());
+
+CREATE POLICY "Admins can insert organization invitations"
+  ON organization_invitations FOR INSERT TO authenticated
+  WITH CHECK (public.is_admin());
+
+CREATE POLICY "Admins can update organization invitations"
+  ON organization_invitations FOR UPDATE TO authenticated
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+CREATE POLICY "Admins can delete organization invitations"
+  ON organization_invitations FOR DELETE TO authenticated
+  USING (public.is_admin());
+
+-- State A (Invitation Flow) policies: Users accepting invitations
+CREATE POLICY "Invitation flow: Read own pending invitation"
+  ON organization_invitations FOR SELECT TO authenticated
+  USING (
+    public.current_user_email_matches(email)
+    AND status = 'pending'
+    AND NOT public.is_linked_organizer_owner()
+  );
+
+CREATE POLICY "Invitation flow: Accept own pending invitation"
+  ON organization_invitations FOR UPDATE TO authenticated
+  USING (
+    public.current_user_email_matches(email)
+    AND status = 'pending'
+    AND NOT public.is_linked_organizer_owner()
+  )
+  WITH CHECK (
+    status = 'accepted'  -- Can only set to 'accepted'
+  );
+
+CREATE POLICY "Invitation flow: Delete own pending invitation"
+  ON organization_invitations FOR DELETE TO authenticated
+  USING (
+    public.current_user_email_matches(email)
+    AND status = 'pending'
+    AND NOT public.is_linked_organizer_owner()
+  );
+
+-- State B (Linked Owner) policies: Organization management
+CREATE POLICY "Linked owner: Read organization invitations"
+  ON organization_invitations FOR SELECT TO authenticated
+  USING (
+    public.is_linked_organizer_owner()
+    AND organization_id = public.get_user_organization_id()
+  );
+
+CREATE POLICY "Linked owner: Create organization invitations"
+  ON organization_invitations FOR INSERT TO authenticated
+  WITH CHECK (
+    public.is_linked_organizer_owner()
+    AND organization_id = public.get_user_organization_id()
+  );
+
+CREATE POLICY "Linked owner: Update organization invitations"
+  ON organization_invitations FOR UPDATE TO authenticated
+  USING (
+    public.is_linked_organizer_owner()
+    AND organization_id = public.get_user_organization_id()
+  )
+  WITH CHECK (
+    public.is_linked_organizer_owner()
+    AND organization_id = public.get_user_organization_id()
+  );
+
+CREATE POLICY "Linked owner: Delete organization invitations"
+  ON organization_invitations FOR DELETE TO authenticated
+  USING (
+    public.is_linked_organizer_owner()
+    AND organization_id = public.get_user_organization_id()
+  );
+```
+
+**Current Status:** ✅ **CORRECT** - Comprehensive policies handle both invitation flow and linked owner states
+
+---
+
 ### events
 
 | Role                | SELECT                 | INSERT     | UPDATE     | DELETE     |

@@ -262,32 +262,79 @@ export type Database = {
           },
         ]
       }
+      organization_invitations: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          invited_owner_name: string
+          last_invitation_sent_at: string | null
+          organization_id: string
+          retry_count: number
+          short_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          invited_owner_name: string
+          last_invitation_sent_at?: string | null
+          organization_id: string
+          retry_count?: number
+          short_id: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          invited_owner_name?: string
+          last_invitation_sent_at?: string | null
+          organization_id?: string
+          retry_count?: number
+          short_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           created_at: string | null
           description: string | null
           id: string
-          is_active: boolean
           name: string
           short_id: string
+          state: Database["public"]["Enums"]["organization_state"]
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: string
-          is_active?: boolean
           name: string
           short_id: string
+          state?: Database["public"]["Enums"]["organization_state"]
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: string
-          is_active?: boolean
           name?: string
           short_id?: string
+          state?: Database["public"]["Enums"]["organization_state"]
           updated_at?: string | null
         }
         Relationships: []
@@ -683,6 +730,45 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_organizer_owner_setup: {
+        Args: {
+          p_auth_user_id: string
+          p_first_name: string
+          p_invitation_email: string
+          p_last_name: string
+        }
+        Returns: Json
+      }
+      create_user_with_cyclist: {
+        Args: {
+          p_auth_user_id: string
+          p_first_name: string
+          p_last_name: string
+        }
+        Returns: string
+      }
+      create_user_with_organizer_owner: {
+        Args: {
+          p_auth_user_id: string
+          p_first_name: string
+          p_last_name: string
+          p_organization_id: string
+        }
+        Returns: string
+      }
+      create_user_with_organizer_staff: {
+        Args: {
+          p_auth_user_id: string
+          p_first_name: string
+          p_last_name: string
+          p_organization_id: string
+        }
+        Returns: string
+      }
+      current_user_email_matches: {
+        Args: { check_email: string }
+        Returns: boolean
+      }
       generate_short_id: { Args: never; Returns: string }
       get_cyclist_with_results: {
         Args: { cyclist_short_id: string }
@@ -702,11 +788,13 @@ export type Database = {
       }
       is_cyclist_unlinked: { Args: { cyclist_id: string }; Returns: boolean }
       is_in_event_organization: { Args: { event_id: string }; Returns: boolean }
+      is_linked_organizer_owner: { Args: never; Returns: boolean }
       is_organizer: { Args: never; Returns: boolean }
       is_organizer_owner: { Args: never; Returns: boolean }
+      user_has_active_invitation: { Args: { org_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      organization_state: "WAITING_OWNER" | "ACTIVE" | "DISABLED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -836,7 +924,9 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      organization_state: ["WAITING_OWNER", "ACTIVE", "DISABLED"],
+    },
   },
 } as const
 

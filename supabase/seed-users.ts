@@ -63,12 +63,12 @@ function loadEnvFile(): void {
 loadEnvFile();
 
 // Get environment variables
-const SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 	console.error('❌ Missing required environment variables:');
-	console.error('   - PUBLIC_SUPABASE_URL');
+	console.error('   - SUPABASE_URL');
 	console.error('   - SUPABASE_SERVICE_ROLE_KEY');
 	console.error('\nMake sure your .env file is configured correctly.');
 	process.exit(1);

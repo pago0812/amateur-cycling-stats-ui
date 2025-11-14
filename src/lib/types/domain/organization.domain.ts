@@ -2,6 +2,11 @@ import type { Event } from './event.domain';
 import type { Organizer } from './organizer.domain';
 
 /**
+ * Organization state enum values
+ */
+export type OrganizationState = 'WAITING_OWNER' | 'ACTIVE' | 'DISABLED';
+
+/**
  * Organization domain type - company/club that organizes cycling events.
  * All fields use camelCase convention.
  */
@@ -14,7 +19,7 @@ export interface Organization {
 	description: string | null;
 
 	// Status
-	isActive: boolean;
+	state: OrganizationState;
 
 	// Aggregated data (optional, for list views)
 	eventCount?: number;

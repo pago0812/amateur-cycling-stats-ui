@@ -5,9 +5,17 @@ import type {
 	SigninRequest,
 	UserSessionResponse
 } from '$lib/types/services/users-management';
+import type {
+	CreateAuthUserForInvitationParams,
+	CreateOrganizerOwnerUserParams,
+	CreateOrganizerStaffUserParams,
+	CreateCyclistUserParams,
+	CreateUserResult
+} from '$lib/types/services';
 import type { UserWithRelationsRpcResponse } from '$lib/types/db';
 import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
+import { createSupabaseAdminClient } from '$lib/server/supabase';
 
 /**
  * Login with email and password using Supabase Auth.
@@ -137,3 +145,183 @@ export const signin = async (
 		}
 	};
 };
+
+/**
+ * Creates an auth user for invitation purposes (no password, email not confirmed).
+ * Uses skip_auto_create flag to prevent automatic public.users creation.
+ *
+ * @param params - Email and optional metadata
+ * @returns CreateUserResult with auth user ID or error
+ */
+export async function createAuthUserForInvitation(
+	params: CreateAuthUserForInvitationParams
+): Promise<CreateUserResult> {
+	try {
+		const adminClient = createSupabaseAdminClient();
+
+		// Create auth user with skip_auto_create flag
+		const { data, error } = await adminClient.auth.admin.createUser({
+			email: params.email,
+			email_confirm: false,
+			user_metadata: {
+				...params.metadata,
+				skip_auto_create: true // Prevent automatic public.users creation
+			}
+		});
+
+		if (error) {
+			console.error('[Auth] Failed to create auth user for invitation:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		if (!data.user) {
+			return {
+				success: false,
+				error: 'No user returned from auth.createUser'
+			};
+		}
+
+		return {
+			success: true,
+			authUserId: data.user.id
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Auth] Error creating auth user for invitation:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
+		};
+	}
+}
+
+/**
+ * Creates or updates a user with organizer_owner role and links to organization.
+ * Calls the Supabase RPC function create_user_with_organizer_owner.
+ *
+ * @param supabase - Supabase client instance
+ * @param params - Auth user ID, names, and organization ID
+ * @returns CreateUserResult with user ID or error
+ */
+export async function createOrganizerOwnerUser(
+	supabase: SupabaseClient<Database>,
+	params: CreateOrganizerOwnerUserParams
+): Promise<CreateUserResult> {
+	try {
+		const { data, error } = await supabase.rpc('create_user_with_organizer_owner', {
+			p_auth_user_id: params.authUserId,
+			p_first_name: params.firstName,
+			p_last_name: params.lastName,
+			p_organization_id: params.organizationId
+		});
+
+		if (error) {
+			console.error('[Users] Failed to create organizer owner user:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		return {
+			success: true,
+			userId: data,
+			authUserId: params.authUserId
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Users] Error creating organizer owner user:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
+		};
+	}
+}
+
+/**
+ * Creates or updates a user with organizer_staff role and links to organization.
+ * Calls the Supabase RPC function create_user_with_organizer_staff.
+ *
+ * @param supabase - Supabase client instance
+ * @param params - Auth user ID, names, and organization ID
+ * @returns CreateUserResult with user ID or error
+ */
+export async function createOrganizerStaffUser(
+	supabase: SupabaseClient<Database>,
+	params: CreateOrganizerStaffUserParams
+): Promise<CreateUserResult> {
+	try {
+		const { data, error } = await supabase.rpc('create_user_with_organizer_staff', {
+			p_auth_user_id: params.authUserId,
+			p_first_name: params.firstName,
+			p_last_name: params.lastName,
+			p_organization_id: params.organizationId
+		});
+
+		if (error) {
+			console.error('[Users] Failed to create organizer staff user:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		return {
+			success: true,
+			userId: data,
+			authUserId: params.authUserId
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Users] Error creating organizer staff user:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
+		};
+	}
+}
+
+/**
+ * Creates or updates a user with cyclist role and ensures cyclist profile exists.
+ * Calls the Supabase RPC function create_user_with_cyclist.
+ *
+ * @param supabase - Supabase client instance
+ * @param params - Auth user ID and names
+ * @returns CreateUserResult with user ID or error
+ */
+export async function createCyclistUser(
+	supabase: SupabaseClient<Database>,
+	params: CreateCyclistUserParams
+): Promise<CreateUserResult> {
+	try {
+		const { data, error } = await supabase.rpc('create_user_with_cyclist', {
+			p_auth_user_id: params.authUserId,
+			p_first_name: params.firstName,
+			p_last_name: params.lastName
+		});
+
+		if (error) {
+			console.error('[Users] Failed to create cyclist user:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		return {
+			success: true,
+			userId: data,
+			authUserId: params.authUserId
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Users] Error creating cyclist user:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
+		};
+	}
+}

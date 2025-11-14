@@ -19,6 +19,7 @@ export interface UserWithRelationsRpcResponse {
 	short_id: string; // NanoID
 	first_name: string;
 	last_name: string | null;
+	email: string | null; // From auth.users, may be null for unlinked users
 	role_id: string;
 	created_at: string;
 	updated_at: string;
@@ -50,7 +51,7 @@ export interface UserWithRelationsRpcResponse {
 			short_id: string; // NanoID
 			name: string;
 			description: string | null;
-			is_active: boolean;
+			state: 'WAITING_OWNER' | 'ACTIVE' | 'DISABLED';
 			created_at: string;
 			updated_at: string;
 		};

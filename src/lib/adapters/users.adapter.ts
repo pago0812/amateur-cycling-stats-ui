@@ -17,6 +17,7 @@ export function adaptUserWithRelationsFromRpc(
 		id: rpcResponse.short_id,
 		firstName: rpcResponse.first_name,
 		lastName: rpcResponse.last_name,
+		email: rpcResponse.email ?? undefined,
 		roleId: rpcResponse.role_id,
 		...mapTimestamps(rpcResponse),
 		role: adaptRoleFromDb(rpcResponse.role),

@@ -78,7 +78,10 @@ test.describe('Cyclist Profile', () => {
 		}
 
 		// Verify profile photo placeholder with initials is visible
-		const avatar = page.locator('div').filter({ hasText: /^[A-Z]{1,2}$/ }).first();
+		const avatar = page
+			.locator('div')
+			.filter({ hasText: /^[A-Z]{1,2}$/ })
+			.first();
 		await expect(avatar).toBeVisible();
 
 		// Either race results table should be visible or "no results" message

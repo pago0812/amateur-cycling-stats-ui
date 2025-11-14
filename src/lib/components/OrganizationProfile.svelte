@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Organization } from '$lib/types/domain';
+	import type { Organization, OrganizationState } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
 
 	let { organization }: { organization: Organization } = $props();
@@ -13,6 +13,34 @@
 			hour: '2-digit',
 			minute: '2-digit'
 		});
+	}
+
+	// Get state badge classes based on organization state
+	function getStateBadgeClasses(state: OrganizationState): string {
+		switch (state) {
+			case 'ACTIVE':
+				return 'bg-green-100 text-green-800';
+			case 'WAITING_OWNER':
+				return 'bg-yellow-100 text-yellow-800';
+			case 'DISABLED':
+				return 'bg-gray-100 text-gray-800';
+			default:
+				return 'bg-gray-100 text-gray-800';
+		}
+	}
+
+	// Get state label i18n key
+	function getStateLabel(state: OrganizationState): string {
+		switch (state) {
+			case 'ACTIVE':
+				return $t('admin.organizations.state.active');
+			case 'WAITING_OWNER':
+				return $t('admin.organizations.state.waitingOwner');
+			case 'DISABLED':
+				return $t('admin.organizations.state.disabled');
+			default:
+				return $t('admin.organizations.state.disabled');
+		}
 	}
 </script>
 
@@ -54,12 +82,14 @@
 
 	<!-- Status -->
 	<div>
-		<dt class="text-sm font-medium text-gray-500">Estado</dt>
+		<dt class="text-sm font-medium text-gray-500">{$t('admin.organizations.state.label')}</dt>
 		<dd class="mt-1">
 			<span
-				class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800"
+				class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {getStateBadgeClasses(
+					organization.state
+				)}"
 			>
-				{organization.isActive ? 'Activa' : 'Inactiva'}
+				{getStateLabel(organization.state)}
 			</span>
 		</dd>
 	</div>

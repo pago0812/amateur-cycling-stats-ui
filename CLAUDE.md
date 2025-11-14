@@ -132,6 +132,8 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 
 - `/login` - Login page
 - `/signin` - Registration page
+- `/auth/callback` - OAuth/invitation callback handler
+- `/auth/complete-setup` - Complete organization owner profile after invitation
 - `/admin` - Admin dashboard (requires ADMIN role)
 - `/panel` - Organizer panel (requires ORGANIZER role)
 - `/account` - User account settings (requires authentication)
@@ -184,9 +186,13 @@ All services located in `src/lib/services/`:
 2. **races.ts** - Race operations (getRaceWithResultsWithFilters)
 3. **race-results.ts** - Race results operations (getRaceResultsByRaceId)
 4. **cyclists.ts** - Cyclist operations (getCyclistWithResultsById, createCyclist)
-5. **users.ts** - User operations (getMyself, updateUser)
-6. **users-management.ts** - Authentication (login, signin)
+5. **users.ts** - User operations (getMyself, updateUser, createUserWithRole, linkUserToOrganization)
+6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser, createOrganizerStaffUser, createCyclistUser)
 7. **roles.ts** - Role management (getRoles)
+8. **organizations.ts** - Organization operations (getAllOrganizations, getOrganizationById, createOrganization, updateOrganization, updateOrganizationState, deleteOrganization, deactivateOrganization, activateOrganization, permanentlyDeleteOrganization)
+9. **organization-invitations.ts** - Invitation operations (createInvitation, getInvitationByEmail, getInvitationByOrganizationId, updateInvitationStatus, incrementRetryCount, deleteInvitationByOrganizationId)
+10. **auth-admin.ts** - Supabase Admin API operations (checkUserExists, generateInvitationLink, deleteAuthUserById)
+11. **mailersend.ts** - Email sending via MailerSend API (sendInvitationEmail)
 
 ### Key Patterns
 
@@ -265,27 +271,71 @@ All services located in `src/lib/services/`:
 Configuration stored in `.env`:
 
 ```env
-PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (server-only)
+# Application Configuration
+SITE_URL=http://127.0.0.1:5173  # Your app's URL (used for auth callbacks)
+
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+**Important**: All environment variables are server-only and imported from `$env/static/private` in SvelteKit. The project does NOT use `PUBLIC_` prefixed variables to ensure credentials are never exposed to the client.
+
+**Note**: `SITE_URL` must match the actual URL where your application is running. In production, this should be your production domain (e.g., `https://yourdomain.com`).
 
 ### Database Migrations
 
 All schema changes managed through Supabase migrations located in `supabase/migrations/`.
 
+**CRITICAL:** Always work with the **LOCAL** database during development. DO NOT reset or push to the remote/linked database without explicit user approval.
+
+**Migration Strategy:**
+
+**🚨 EDIT EXISTING MIGRATIONS (Default Mode)**
+- **DO NOT** create new migration files for fixes or changes during active development
+- **ALWAYS** edit the existing consolidated migration files directly
+- After editing, run `supabase db reset` to apply changes
+- This keeps migration history clean and manageable
+- Switch to "add new migrations" mode only when user explicitly requests it
+
 **Migration Commands:**
 
 ```bash
-# Create new migration
+# Edit existing migration (DEFAULT - use this during development)
+# 1. Edit the migration file directly
+# 2. Reset local database
+supabase db reset
+
+# Create new migration (ONLY when user explicitly requests)
 supabase migration new migration_name
 
-# Push migrations to remote
-supabase db push
+# Apply migrations to LOCAL database
+supabase db reset
 
-# Regenerate TypeScript types
+# Push migrations to remote (ONLY when user explicitly requests)
+supabase db push --linked
+
+# Regenerate TypeScript types from LOCAL database
+supabase gen types typescript --local > src/lib/types/database.types.ts
+
+# Regenerate TypeScript types from LINKED/remote database (only when needed)
 supabase gen types typescript --linked > src/lib/types/database.types.ts
 ```
+
+**Development Workflow (Edit Mode - DEFAULT):**
+1. **Edit existing migration file** in `supabase/migrations/`
+2. Apply to local DB: `supabase db reset`
+3. Regenerate types: `supabase gen types typescript --local > src/lib/types/database.types.ts`
+4. Test locally
+5. **Only after user approval**: `supabase db push --linked`
+
+**Alternative Workflow (Add Mode - only when requested):**
+1. Create migration: `supabase migration new migration_name`
+2. Apply to local DB: `supabase db reset`
+3. Regenerate types: `supabase gen types typescript --local > src/lib/types/database.types.ts`
+4. Test locally
+5. **Only after user approval**: `supabase db push --linked`
 
 **IMPORTANT:** Always regenerate types after schema changes!
 
@@ -325,12 +375,78 @@ npm run seed:users
 - Cyclist 2: `cyclist2@example.com` / `password123`
 - Cyclist 3: `cyclist3@example.com` / `password123`
 
+### MailerSend Integration
+
+**Custom Email Solution for Organization Invitations:**
+
+The application uses **MailerSend** for sending organization owner invitations instead of Supabase's built-in email system. This provides:
+- Full control over email templates and branding
+- Better deliverability and analytics
+- Ability to resend invitations without "user exists" errors
+- Gradual migration path for other email types
+
+**Environment Variables:**
+
+```env
+# MailerSend API Configuration
+MAILERSEND_API_KEY=your_mailersend_api_key_here
+MAILERSEND_FROM_EMAIL=noreply@yourdomain.com  # Must be verified in MailerSend
+MAILERSEND_FROM_NAME=Amateur Cycling Stats
+```
+
+**Email Templates:**
+
+Templates located in `src/lib/templates/email/`:
+- `invitation.html` - Responsive HTML email template
+- `invitation.txt` - Plain text fallback for accessibility
+- `README.md` - Template documentation and customization guide
+
+**Template Variables:**
+- `{{organization_name}}` - Name of the organization
+- `{{owner_name}}` - Full name of invited owner
+- `{{confirmation_url}}` - Complete setup URL with auth token
+- `{{site_url}}` - Base application URL
+
+**Invitation Flow:**
+
+**Creating Organization (First Invitation):**
+1. Admin creates organization → state set to `WAITING_OWNER`
+2. Auth user created with `skip_auto_create` metadata flag
+3. Public user created with `organizer_owner` role via RPC function `create_user_with_organizer_owner()`
+4. Invitation record created in `organization_invitations` table
+5. Invitation link generated via `generateInvitationLink()`
+6. Email sent via MailerSend API with custom template
+
+**Resending Invitation:**
+1. Admin clicks "Resend Invitation" for WAITING_OWNER organization
+2. New invitation link generated for existing auth user (no "user exists" error!)
+3. Email sent via MailerSend with fresh link
+4. Retry count incremented in invitation record
+
+**User Creation Patterns:**
+
+The application uses **role-specific RPC functions** for creating users:
+- `create_user_with_organizer_owner()` - Creates organizer owner + links to organization
+- `create_user_with_organizer_staff()` - Creates organizer staff + links to organization
+- `create_user_with_cyclist()` - Creates cyclist user + cyclist profile
+
+These functions handle:
+- Creating or updating public.users with correct role
+- Cleaning up auto-created cyclist profiles if role changes
+- Creating necessary relationships (organizers, cyclists)
+- All in one atomic transaction
+
+**Database Trigger:**
+
+The `handle_new_user()` trigger supports skipping auto-creation via `skip_auto_create` metadata flag. This allows manual user creation flows while maintaining backwards compatibility with normal signup.
+
 ### Row Level Security (RLS)
 
 - All tables have RLS enabled
 - Role-based policies (PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_OWNER, ADMIN)
 - Organization-based access control
 - Helper functions: `is_admin()`, `is_organizer()`, `is_organizer_admin()`, `is_in_event_organization()`
+- **organization_invitations** - Readable/writable by admins only
 
 ## Domain Model
 
@@ -340,7 +456,8 @@ npm run seed:users
 
 - **User** - Authenticated users linked to Supabase Auth
 - **Role** - User roles (5 types: PUBLIC, CYCLIST, ORGANIZER_STAFF, ORGANIZER_OWNER, ADMIN)
-- **Organization** - Companies/clubs that organize events
+- **Organization** - Companies/clubs that organize events (state: WAITING_OWNER, ACTIVE, DISABLED)
+- **OrganizationInvitation** - Tracks pending owner invitations with retry mechanism
 - **Organizer** - Junction table linking users to organizations
 
 **Events & Races:**
@@ -382,6 +499,32 @@ npm run seed:users
 - Public users only see content where both event AND race are public
 - Organization members see all their org's content
 - Admins see everything
+
+**Organization States:**
+
+- `WAITING_OWNER` - Organization created, pending owner invitation acceptance
+- `ACTIVE` - Organization operational, owner has completed setup
+- `DISABLED` - Organization soft-deleted or invitation expired
+
+**Organization Owner Invitation Flow:**
+
+1. **Admin creates organization** with owner email and name
+2. **System creates** organization with `state = WAITING_OWNER` and invitation record
+3. **Supabase sends** invitation email via Admin API to prospective owner
+4. **Owner clicks link** → redirected to `/auth/callback` → `/auth/complete-setup`
+5. **Owner completes setup** with first name, last name, and password
+6. **System creates** user record with `ORGANIZER_OWNER` role
+7. **System links** user to organization via organizer record
+8. **System updates** organization `state = ACTIVE` and invitation `status = accepted`
+9. **Retry mechanism**: If not accepted within 7 days, system resends invitation (max 3 retries)
+10. **After 3 retries** (21 days total), organization `state = DISABLED`
+
+**Important Rules:**
+
+- Organizers cannot be cyclists (separate accounts required)
+- No account merging during invitation (email must not exist)
+- Password setup required immediately after invitation acceptance
+- Admin can manually resend invitation for `WAITING_OWNER` organizations
 
 ## Development Best Practices
 
@@ -458,6 +601,263 @@ The root layout provides centralized horizontal padding and max-width:
 5. **Handle authentication in server code** - Never expose JWT to client
 6. **Use `goto()` for client-side navigation** - Use `redirect()` for server-side
 
+## Advanced Patterns
+
+### Atomic Database Operations Pattern
+
+**When to Use**: Complex multi-step operations that must succeed or fail together
+
+**Pattern**: Create PostgreSQL RPC functions that combine multiple operations in a single transaction.
+
+**Example**: `complete_organizer_owner_setup()` RPC function
+
+```sql
+CREATE OR REPLACE FUNCTION public.complete_organizer_owner_setup(
+  p_auth_user_id UUID,
+  p_first_name TEXT,
+  p_last_name TEXT,
+  p_invitation_email TEXT
+)
+RETURNS JSONB
+SECURITY DEFINER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Multiple operations in one transaction
+  -- 1. Validate invitation
+  -- 2. Update user profile
+  -- 3. Link to organization
+  -- 4. Accept invitation
+  -- 5. Activate organization
+
+  RETURN jsonb_build_object('success', true, 'organization_short_id', v_org_short_id);
+END;
+$$;
+```
+
+**Benefits**:
+- ✅ **Atomic**: All steps succeed or all fail (no partial updates)
+- ✅ **Fast**: Single database round-trip instead of multiple queries
+- ✅ **Maintainable**: Business logic centralized in database
+- ✅ **Type-safe**: Return JSONB with explicit structure
+
+**Application Code**:
+```typescript
+// Single RPC call handles all database operations
+const { data, error } = await supabase.rpc('complete_organizer_owner_setup', {
+  p_auth_user_id: authUser.id,
+  p_first_name: firstName,
+  p_last_name: lastName,
+  p_invitation_email: email
+});
+
+// Type cast JSONB result (Supabase doesn't auto-infer JSONB structures)
+const result = data as {
+  success: boolean;
+  organization_short_id: string
+};
+```
+
+### Email Integration Pattern (MailerSend)
+
+**When to Use**: Custom transactional emails with full control over templates and delivery
+
+**Why Not Supabase Auth Emails**:
+- Need custom branding and templates
+- Better deliverability and analytics
+- Ability to resend without "user exists" errors
+- Support for multiple email types in one system
+
+**Environment Variables**:
+```env
+MAILERSEND_API_KEY=your_api_key
+MAILERSEND_FROM_EMAIL=noreply@yourdomain.com
+MAILERSEND_FROM_NAME=Amateur Cycling Stats
+```
+
+**Email Templates**: Located in `src/lib/templates/email/`
+- `*.html` - Responsive HTML email
+- `*.txt` - Plain text fallback
+- `README.md` - Template documentation
+
+**Template Variables**: Use `{{variable_name}}` syntax
+```html
+<p>Hello {{owner_name}},</p>
+<p>You've been invited to join {{organization_name}}</p>
+<a href="{{confirmation_url}}">Complete Setup</a>
+```
+
+**Service Implementation**:
+```typescript
+// src/lib/services/mailersend.ts
+export async function sendInvitationEmail(params: {
+  toEmail: string;
+  toName: string;
+  organizationName: string;
+  confirmationUrl: string;
+}) {
+  // Load templates
+  const htmlTemplate = await readFile('src/lib/templates/email/invitation.html', 'utf-8');
+  const textTemplate = await readFile('src/lib/templates/email/invitation.txt', 'utf-8');
+
+  // Replace variables
+  const html = htmlTemplate
+    .replace(/\{\{owner_name\}\}/g, params.toName)
+    .replace(/\{\{organization_name\}\}/g, params.organizationName)
+    .replace(/\{\{confirmation_url\}\}/g, params.confirmationUrl);
+
+  // Send via MailerSend API
+  await fetch('https://api.mailersend.com/v1/email', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${MAILERSEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ from, to, subject, html, text })
+  });
+}
+```
+
+### Organization Owner Invitation Flow Pattern
+
+**Complete Flow**: Admin invites owner → Email sent → Owner accepts → Setup complete
+
+**1. Admin Creates Organization (with invitation)**:
+```typescript
+// Create organization with WAITING_OWNER state
+const org = await createOrganization(supabase, {
+  name: "Pro Cycling League",
+  state: 'WAITING_OWNER'
+});
+
+// Create auth user with skip_auto_create flag
+const { user } = await supabase.auth.admin.createUser({
+  email: ownerEmail,
+  user_metadata: {
+    first_name: ownerFirstName,
+    last_name: ownerLastName,
+    skip_auto_create: true,  // Skip automatic cyclist role assignment
+    organizationId: org.id
+  }
+});
+
+// Create public user with organizer_owner role (via RPC)
+await supabase.rpc('create_user_with_organizer_owner', {
+  p_auth_user_id: user.id,
+  p_first_name: ownerFirstName,
+  p_last_name: ownerLastName,
+  p_organization_id: org.id
+});
+
+// Create invitation record
+await createInvitation(supabase, {
+  organizationId: org.id,
+  email: ownerEmail,
+  invitedOwnerName: `${ownerFirstName} ${ownerLastName}`
+});
+
+// Generate invitation link
+const inviteLink = await generateInvitationLink(email);
+
+// Send email via MailerSend
+await sendInvitationEmail({
+  toEmail: ownerEmail,
+  toName: ownerFirstName,
+  organizationName: org.name,
+  confirmationUrl: inviteLink
+});
+```
+
+**2. Owner Clicks Invitation Link**:
+- Redirects to `/auth/callback` with access/refresh tokens
+- Server sets session via `supabase.auth.setSession()`
+- Detects `organizationId` in user metadata → redirects to `/auth/complete-setup`
+
+**3. Owner Completes Setup**:
+```typescript
+// /auth/complete-setup/+page.server.ts (form action)
+
+// 1. Update password (Auth API - cannot be in database transaction)
+await supabase.auth.updateUser({ password });
+
+// 2. Complete all database operations atomically
+const { data } = await supabase.rpc('complete_organizer_owner_setup', {
+  p_auth_user_id: authUser.id,
+  p_first_name: firstName,
+  p_last_name: lastName,
+  p_invitation_email: email
+});
+
+// This single RPC call does:
+// - Updates public.users (first_name, last_name)
+// - Links user to organization (creates organizer record)
+// - Updates user role to organizer_owner
+// - Marks invitation as 'accepted'
+// - Changes organization state to 'ACTIVE'
+
+// 3. Redirect to organization page
+throw redirect(303, `/admin/organizations/${data.organization_short_id}`);
+```
+
+**4. RLS Policies for Invitation Flow**:
+```sql
+-- Allow invited users to view WAITING_OWNER organizations
+-- Helper function bypasses RLS on invitations table
+CREATE FUNCTION user_has_active_invitation(org_id UUID)
+RETURNS BOOLEAN SECURITY DEFINER AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM organization_invitations oi
+    JOIN auth.users au ON oi.email = au.email
+    WHERE oi.organization_id = org_id
+      AND au.id = auth.uid()
+      AND oi.status IN ('pending', 'accepted')
+  );
+$$;
+
+CREATE POLICY "Invited users can view organizations with active invitations"
+  ON organizations FOR SELECT
+  USING (state = 'WAITING_OWNER' AND user_has_active_invitation(id));
+```
+
+**Key Design Decisions**:
+- **SECURITY DEFINER** helper functions bypass RLS for invitation checks
+- **Accept both 'pending' and 'accepted'** status during setup (transient state)
+- **Atomic RPC** ensures all setup steps succeed or fail together
+- **Password update separate** (Auth API cannot be in DB transaction)
+
+### SvelteKit Redirect Handling Pattern
+
+**Problem**: SvelteKit's `redirect()` throws a `Redirect` object, not a `Response`
+
+**Wrong Pattern** ❌:
+```typescript
+try {
+  throw redirect(303, '/somewhere');
+} catch (err) {
+  if (err instanceof Response) {  // This never matches!
+    throw err;
+  }
+}
+```
+
+**Correct Pattern** ✅:
+```typescript
+try {
+  throw redirect(303, '/somewhere');
+} catch (err) {
+  // Use duck typing to detect redirects
+  if (err && typeof err === 'object' && 'status' in err && 'location' in err) {
+    throw err;  // Re-throw the redirect
+  }
+  // Handle actual errors
+  console.error('Error:', err);
+}
+```
+
+**Why**: The `Redirect` object has `status` and `location` properties but is not a `Response` instance. Duck typing checks for the properties that define a redirect.
+
+**Works for all redirect codes**: 301, 302, 303, 307, 308
+
 ## Migration Context
 
 The application has been fully migrated from **Next.js/Strapi** to **SvelteKit/Supabase** with 100% feature parity and significant improvements:
@@ -479,13 +879,24 @@ The application has been fully migrated from **Next.js/Strapi** to **SvelteKit/S
 
 For migration details, see git history and `supabase/migrations/`.
 
+## Recent Enhancements
+
+**Organization Owner Invitation System** ✅ (Implemented)
+
+- Email-based owner invitations via Supabase Auth
+- Organization state management (WAITING_OWNER, ACTIVE, DISABLED)
+- Automatic retry mechanism with manual resend option
+- Complete profile setup flow for invited owners
+- Admin can create organizations with pending owner setup
+
 ## Future Enhancements
 
+- **Invitation Retry Automation** - Supabase Edge Function for automated retry mechanism
 - Advanced search functionality
 - Real-time updates with WebSockets
 - Image optimization and lazy loading
 - Enhanced SEO with dynamic meta tags
-- Email verification flow
+- Full email verification flow for regular signups
 - Password reset functionality
 - More language support (Catalan, French, etc.)
 - Loading states with `+loading.svelte`

@@ -118,7 +118,9 @@ test.describe('Admin Page', () => {
 		await expect(page).toHaveURL('/admin/organizations');
 
 		// Click breadcrumb to go back to admin (Admin Panel)
-		const adminBreadcrumb = page.getByRole('link', { name: /panel de administración|admin panel/i });
+		const adminBreadcrumb = page.getByRole('link', {
+			name: /panel de administración|admin panel/i
+		});
 		await adminBreadcrumb.click();
 
 		// Should be back on admin summary page

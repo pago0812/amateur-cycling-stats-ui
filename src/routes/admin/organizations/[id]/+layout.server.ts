@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { getOrganizationById } from '$lib/services/organizations';
+import { getOrganizersCountByOrganizationId } from '$lib/services/organizers';
 import { t } from '$lib/i18n/server';
 
 export const load: LayoutServerLoad = async ({ params, locals }) => {
@@ -14,7 +15,19 @@ export const load: LayoutServerLoad = async ({ params, locals }) => {
 			throw error(404, t(locals.locale, 'admin.organizations.errors.notFound'));
 		}
 
-		return { organization };
+		// Get organization UUID from short_id to fetch organizers count
+		const { data: orgData } = await locals.supabase
+			.from('organizations')
+			.select('id')
+			.eq('short_id', params.id)
+			.single();
+
+		// Fetch organizers count for this organization
+		const organizersCount = orgData
+			? await getOrganizersCountByOrganizationId(locals.supabase, orgData.id)
+			: 0;
+
+		return { organization, organizersCount };
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;

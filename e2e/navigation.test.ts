@@ -211,15 +211,11 @@ test.describe('Navigation', () => {
 		await goToHome(page);
 
 		// Verify account button is visible (Button component renders as <a role="button">)
-		const accountButton = page
-			.getByRole('navigation')
-			.getByRole('button', { name: /account/i });
+		const accountButton = page.getByRole('navigation').getByRole('button', { name: /account/i });
 		await expect(accountButton).toBeVisible();
 
 		// Verify login button is NOT visible
-		const loginButton = page
-			.getByRole('navigation')
-			.getByRole('button', { name: /log in/i });
+		const loginButton = page.getByRole('navigation').getByRole('button', { name: /log in/i });
 		await expect(loginButton).not.toBeVisible();
 
 		// Click account button should navigate to account page (for cyclists)

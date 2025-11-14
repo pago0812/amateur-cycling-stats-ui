@@ -70,9 +70,7 @@ export async function expectAuthenticated(page: Page) {
 
 	// Check for authenticated user button (Account) in navigation
 	// Note: Header uses Button component with href, which renders as <a role="button">
-	const accountButton = page
-		.getByRole('navigation')
-		.getByRole('button', { name: /account/i });
+	const accountButton = page.getByRole('navigation').getByRole('button', { name: /account/i });
 	await expect(accountButton).toBeVisible();
 }
 

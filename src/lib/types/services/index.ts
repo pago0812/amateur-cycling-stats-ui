@@ -9,7 +9,15 @@
 export type { ServerError } from './errors';
 
 // User service types
-export type { SetRoleRequest, UserResponse } from './users';
+export type {
+	SetRoleRequest,
+	UserResponse,
+	CreateAuthUserForInvitationParams,
+	CreateOrganizerOwnerUserParams,
+	CreateOrganizerStaffUserParams,
+	CreateCyclistUserParams,
+	CreateUserResult
+} from './users';
 
 // User management service types
 export type {
@@ -27,5 +35,17 @@ export type {
 	GetOrganizationByIdParams,
 	CreateOrganizationParams,
 	UpdateOrganizationParams,
-	DeleteOrganizationParams
+	UpdateOrganizationStateParams,
+	DeleteOrganizationParams,
+	DeactivateOrganizationParams,
+	ActivateOrganizationParams,
+	PermanentlyDeleteOrganizationParams
 } from './organizations';
+
+// MailerSend service types
+export type {
+	SendInvitationEmailParams,
+	SendEmailResult,
+	MailerSendEmailRequest,
+	MailerSendApiResponse
+} from './mailersend';

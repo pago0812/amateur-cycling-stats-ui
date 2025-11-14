@@ -55,3 +55,28 @@ export async function getOrganizersByOrganizationId(
 		adaptOrganizerWithUserFromDb(organizer as OrganizerWithUserResponse)
 	);
 }
+
+/**
+ * Get the count of organizers (members) for a specific organization.
+ * Used to check if organization has any members before allowing permanent deletion.
+ *
+ * @param supabase - Typed Supabase client
+ * @param organizationId - Organization UUID
+ * @returns Count of organizers
+ */
+export async function getOrganizersCountByOrganizationId(
+	supabase: TypedSupabaseClient,
+	organizationId: string
+): Promise<number> {
+	const { count, error } = await supabase
+		.from('organizers')
+		.select('*', { count: 'exact', head: true })
+		.eq('organization_id', organizationId);
+
+	if (error) {
+		console.error('[Organizers] Failed to count organizers:', error);
+		throw new Error(`Failed to count organizers: ${error.message}`);
+	}
+
+	return count ?? 0;
+}

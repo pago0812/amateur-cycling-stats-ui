@@ -74,4 +74,45 @@
 			disabled={isSubmitting}
 		></textarea>
 	</div>
+
+	<!-- Owner fields - Only show in create mode -->
+	{#if mode === 'create'}
+		<!-- Owner Email Field -->
+		<div class="flex flex-col gap-2">
+			<label for="ownerEmail" class="text-sm font-medium text-gray-700">
+				{$t('admin.organizations.form.ownerEmailLabel')}
+				<span class="text-red-500">*</span>
+			</label>
+			<input
+				type="email"
+				id="ownerEmail"
+				name="ownerEmail"
+				required
+				value={(form?.ownerEmail as string) || ''}
+				placeholder={$t('admin.organizations.form.ownerEmailPlaceholder')}
+				class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+				disabled={isSubmitting}
+			/>
+		</div>
+
+		<!-- Owner Name Field -->
+		<div class="flex flex-col gap-2">
+			<label for="ownerName" class="text-sm font-medium text-gray-700">
+				{$t('admin.organizations.form.ownerNameLabel')}
+				<span class="text-red-500">*</span>
+			</label>
+			<input
+				type="text"
+				id="ownerName"
+				name="ownerName"
+				required
+				minlength="2"
+				maxlength="255"
+				value={(form?.ownerName as string) || ''}
+				placeholder={$t('admin.organizations.form.ownerNamePlaceholder')}
+				class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+				disabled={isSubmitting}
+			/>
+		</div>
+	{/if}
 </form>

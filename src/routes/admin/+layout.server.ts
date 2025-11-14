@@ -6,6 +6,8 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
 
+	console.log('user: ', user);
+
 	// Redirect unauthenticated users to login
 	if (!user) {
 		throw redirect(302, Urls.LOGIN);

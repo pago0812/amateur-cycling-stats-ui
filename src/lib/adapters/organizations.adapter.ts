@@ -5,7 +5,7 @@
  */
 
 import type { OrganizationDB } from '$lib/types/db';
-import type { Organization } from '$lib/types/domain';
+import type { Organization, OrganizationState } from '$lib/types/domain';
 import { mapTimestamps } from './common.adapter';
 
 /**
@@ -22,7 +22,7 @@ export function adaptOrganizationFromDb(dbOrganization: OrganizationDB): Organiz
 		description: dbOrganization.description,
 
 		// Status
-		isActive: dbOrganization.is_active,
+		state: dbOrganization.state as OrganizationState,
 
 		// Timestamps
 		...mapTimestamps(dbOrganization)

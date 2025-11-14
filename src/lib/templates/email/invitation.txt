@@ -1,0 +1,29 @@
+🚴 YOU'RE INVITED!
+
+Hello {{owner_name}},
+
+You've been invited to become the owner of the organization "{{organization_name}}" on Amateur Cycling Stats.
+
+As the organization owner, you'll be able to:
+  • Create and manage cycling events
+  • Record race results
+  • Manage your team members
+  • Track athlete performance
+
+COMPLETE YOUR SETUP
+Click the link below to complete your account setup:
+{{confirmation_url}}
+
+---
+
+IMPORTANT: This invitation link will expire in 24 hours.
+
+If you didn't expect this invitation or have any questions, please contact our support team.
+
+---
+
+Amateur Cycling Stats
+Managing amateur cycling events made simple
+
+Visit Website: {{site_url}}
+Get Support: {{site_url}}/support

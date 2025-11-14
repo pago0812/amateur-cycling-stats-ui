@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Organization } from '$lib/types/domain';
+	import type { Organization, OrganizationState } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
 
 	let { organizations }: { organizations: Organization[] } = $props();
@@ -18,6 +18,34 @@
 		if (!text) return '-';
 		return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 	}
+
+	// Get state badge classes based on organization state
+	function getStateBadgeClasses(state: OrganizationState): string {
+		switch (state) {
+			case 'ACTIVE':
+				return 'bg-green-100 text-green-800';
+			case 'WAITING_OWNER':
+				return 'bg-yellow-100 text-yellow-800';
+			case 'DISABLED':
+				return 'bg-gray-100 text-gray-800';
+			default:
+				return 'bg-gray-100 text-gray-800';
+		}
+	}
+
+	// Get state label
+	function getStateLabel(state: OrganizationState): string {
+		switch (state) {
+			case 'ACTIVE':
+				return $t('admin.organizations.state.active');
+			case 'WAITING_OWNER':
+				return $t('admin.organizations.state.waitingOwner');
+			case 'DISABLED':
+				return $t('admin.organizations.state.disabled');
+			default:
+				return $t('admin.organizations.state.disabled');
+		}
+	}
 </script>
 
 <div class="overflow-x-auto rounded-lg bg-white shadow-md">
@@ -27,6 +55,10 @@
 				<!-- Name - always visible -->
 				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
 					{$t('admin.organizations.table.name')}
+				</th>
+				<!-- State - always visible -->
+				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+					{$t('admin.organizations.table.state')}
 				</th>
 				<!-- Description - hidden on mobile, visible on md+ -->
 				<th
@@ -51,7 +83,7 @@
 		<tbody class="divide-y divide-gray-200 bg-white">
 			{#if organizations.length === 0}
 				<tr>
-					<td colspan="4" class="px-6 py-8 text-center text-gray-500">
+					<td colspan="5" class="px-6 py-8 text-center text-gray-500">
 						{$t('admin.organizations.table.noResults')}
 					</td>
 				</tr>
@@ -65,6 +97,18 @@
 								class="block font-medium text-blue-600 hover:text-blue-800"
 							>
 								{org.name}
+							</a>
+						</td>
+						<!-- State - always visible -->
+						<td class="px-6 py-4 text-sm whitespace-nowrap">
+							<a href="/admin/organizations/{org.id}" class="block">
+								<span
+									class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {getStateBadgeClasses(
+										org.state
+									)}"
+								>
+									{getStateLabel(org.state)}
+								</span>
 							</a>
 						</td>
 						<!-- Description - hidden on mobile -->

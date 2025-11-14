@@ -13,6 +13,7 @@ export interface User {
 	// Basic Info
 	firstName: string;
 	lastName: string | null;
+	email?: string; // From auth.users, optional (may not exist for unlinked users)
 
 	// Relationships (Foreign Keys)
 	roleId: string;

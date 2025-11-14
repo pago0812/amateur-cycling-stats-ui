@@ -30,11 +30,22 @@
 		},
 		"actions": {
 			"deleteOrganization": "Eliminar Organización",
-			"addMember": "Añadir Miembro"
+			"deactivateOrganization": "Desactivar Organización",
+			"activateOrganization": "Activar Organización",
+			"deletePermanently": "Eliminar Permanentemente",
+			"addMember": "Añadir Miembro",
+			"resendInvite": "Reenviar Invitación"
+		},
+		"state": {
+			"label": "Estado",
+			"waitingOwner": "Esperando Propietario",
+			"active": "Activa",
+			"disabled": "Deshabilitada"
 		},
 		"table": {
 			"name": "Nombre",
 			"description": "Descripción",
+			"state": "Estado",
 			"eventCount": "Eventos",
 			"createdAt": "Creación",
 			"actions": "Acciones",
@@ -47,6 +58,10 @@
 			"namePlaceholder": "Ingresa el nombre de la organización",
 			"descriptionLabel": "Descripción",
 			"descriptionPlaceholder": "Ingresa la descripción de la organización",
+			"ownerEmailLabel": "Email del Propietario",
+			"ownerEmailPlaceholder": "correo@ejemplo.com",
+			"ownerNameLabel": "Nombre del Propietario",
+			"ownerNamePlaceholder": "Ingresa el nombre del propietario",
 			"createTitle": "Crear Organización",
 			"editTitle": "Editar Organización",
 			"submitCreate": "Crear Organización",
@@ -55,23 +70,54 @@
 		},
 		"deleteConfirm": {
 			"title": "Eliminar Organización",
-			"message": "¿Estás seguro de que deseas eliminar {name}? Esta acción la marcará como inactiva pero preservará todos los datos.",
+			"message": "¿Estás seguro de que deseas eliminar {name}? Esta acción la marcará como deshabilitada pero preservará todos los datos.",
 			"confirm": "Eliminar",
 			"cancel": "Cancelar"
 		},
+		"deactivateConfirm": {
+			"title": "Desactivar Organización",
+			"message": "¿Estás seguro de que deseas desactivar {name}? Esta acción marcará la organización como deshabilitada. Si hay una invitación pendiente, se eliminará junto con el usuario invitado.",
+			"confirm": "Desactivar",
+			"cancel": "Cancelar"
+		},
+		"activateConfirm": {
+			"title": "Activar Organización",
+			"message": "¿Estás seguro de que deseas activar {name}? La organización volverá a estar activa y visible.",
+			"confirm": "Activar",
+			"cancel": "Cancelar"
+		},
+		"deletePermanentlyConfirm": {
+			"title": "Eliminar Permanentemente",
+			"message": "¿Estás seguro de que deseas eliminar permanentemente {name}? Esta acción NO SE PUEDE DESHACER. Todos los datos de la organización se eliminarán de forma permanente.",
+			"confirm": "Eliminar Permanentemente",
+			"cancel": "Cancelar"
+		},
 		"success": {
-			"created": "Organización creada exitosamente",
+			"created": "Organización creada e invitación enviada exitosamente",
 			"updated": "Organización actualizada exitosamente",
-			"deleted": "Organización marcada como inactiva"
+			"deleted": "Organización marcada como deshabilitada",
+			"deactivated": "Organización desactivada exitosamente",
+			"activated": "Organización activada exitosamente",
+			"permanentlyDeleted": "Organización eliminada permanentemente",
+			"invitationResent": "Invitación reenviada exitosamente"
 		},
 		"errors": {
 			"loadFailed": "Error al cargar las organizaciones",
 			"createFailed": "Error al crear la organización",
 			"updateFailed": "Error al actualizar la organización",
 			"deleteFailed": "Error al eliminar la organización",
+			"deactivateFailed": "Error al desactivar la organización",
+			"activateFailed": "Error al activar la organización",
+			"deletePermanentlyFailed": "Error al eliminar permanentemente la organización",
 			"notFound": "Organización no encontrada",
 			"nameRequired": "El nombre de la organización es obligatorio",
-			"nameMinLength": "El nombre debe tener al menos 3 caracteres"
+			"nameMinLength": "El nombre debe tener al menos 3 caracteres",
+			"ownerEmailRequired": "El email del propietario es obligatorio",
+			"ownerEmailInvalid": "El formato del email no es válido",
+			"ownerNameRequired": "El nombre del propietario es obligatorio",
+			"emailExists": "Ya existe un usuario con este email",
+			"invitationFailed": "Error al enviar la invitación",
+			"resendFailed": "Error al reenviar la invitación"
 		}
 	}
 }
