@@ -16,11 +16,11 @@ import { getAuthErrorMessage, t } from '$lib/i18n/server';
  * @param locale - User's locale for error messages (default: 'es')
  * @returns UserSessionResponse with session data or error
  */
-export const login = async (
+export async function login(
 	supabase: SupabaseClient<Database>,
 	{ email, password }: LoginRequest,
 	locale: string = 'es'
-): Promise<UserSessionResponse> => {
+): Promise<UserSessionResponse> {
 	const { data, error } = await supabase.auth.signInWithPassword({
 		email,
 		password
@@ -68,7 +68,7 @@ export const login = async (
 			user: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
 		}
 	};
-};
+}
 
 /**
  * Register a new user with email, password, first name, and last name.
@@ -78,11 +78,11 @@ export const login = async (
  * @param locale - User's locale for error messages (default: 'es')
  * @returns UserSessionResponse with session data or error
  */
-export const signin = async (
+export async function signin(
 	supabase: SupabaseClient<Database>,
 	{ firstName, lastName, email, password }: SigninRequest,
 	locale: string = 'es'
-): Promise<UserSessionResponse> => {
+): Promise<UserSessionResponse> {
 	const { data, error } = await supabase.auth.signUp({
 		email,
 		password,
@@ -136,4 +136,4 @@ export const signin = async (
 			user: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
 		}
 	};
-};
+}
