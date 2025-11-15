@@ -1,3 +1,5 @@
+import { RoleTypeEnum } from './role-type.domain';
+
 /**
  * Admin domain type - system administrator.
  * All fields use camelCase convention.
@@ -17,5 +19,5 @@ export interface Admin {
 	hasAuth: boolean; // Always true for Admin
 
 	// From roles table
-	roleType: 'ADMIN';
+	roleType: RoleTypeEnum.ADMIN;
 }

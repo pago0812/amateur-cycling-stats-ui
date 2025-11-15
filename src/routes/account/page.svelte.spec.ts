@@ -9,6 +9,7 @@ import { render } from 'vitest-browser-svelte';
 import { writable } from 'svelte/store';
 import AccountPage from './+page.svelte';
 import type { Cyclist } from '$lib/types/domain';
+import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => ({
@@ -48,7 +49,7 @@ describe('Account Page Component', () => {
 		email: null,
 		displayName: null,
 		hasAuth: true,
-		roleType: 'CYCLIST',
+		roleType: RoleTypeEnum.CYCLIST,
 		bornYear: 1990,
 		gender: null,
 		createdAt: '2024-01-01T00:00:00Z',

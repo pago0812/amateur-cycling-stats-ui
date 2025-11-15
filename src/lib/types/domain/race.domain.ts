@@ -1,5 +1,5 @@
 import type { Event } from './event.domain';
-import type { RaceResult, RaceResultWithRelations } from './race-result.domain';
+import type { RaceResultWithRelations } from './race-result.domain';
 import type { RaceCategory } from './race-category.domain';
 import type { RaceCategoryGender } from './race-category.domain';
 import type { RaceCategoryLength } from './race-category.domain';

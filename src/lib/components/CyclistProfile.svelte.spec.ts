@@ -10,6 +10,7 @@ import { render } from 'vitest-browser-svelte';
 import { writable } from 'svelte/store';
 import CyclistProfile from './CyclistProfile.svelte';
 import type { Cyclist, RaceResultWithRelations } from '$lib/types/domain';
+import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => ({
@@ -33,7 +34,7 @@ describe('CyclistProfile Component', () => {
 		email: null,
 		displayName: null,
 		hasAuth: true,
-		roleType: 'CYCLIST',
+		roleType: RoleTypeEnum.CYCLIST,
 		bornYear: 1990,
 		gender: {
 			id: 'gender-1',

@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import { adaptUserWithRelationsFromRpc } from './users.adapter';
 import type { UserWithRelationsRpcResponse } from '$lib/types/db';
+import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 
 describe('Users Adapter', () => {
 	describe('adaptUserWithRelationsFromRpc', () => {
@@ -135,7 +136,7 @@ describe('Users Adapter', () => {
 		});
 
 		it('should transform all role types correctly', () => {
-			const roles = ['PUBLIC', 'CYCLIST', 'ORGANIZER_STAFF', 'ORGANIZER_OWNER', 'ADMIN'] as const;
+			const roles = [RoleTypeEnum.PUBLIC, RoleTypeEnum.CYCLIST, RoleTypeEnum.ORGANIZER_STAFF, RoleTypeEnum.ORGANIZER_OWNER, RoleTypeEnum.ADMIN] as const;
 
 			roles.forEach((roleName) => {
 				const rpcResponse: UserWithRelationsRpcResponse = {

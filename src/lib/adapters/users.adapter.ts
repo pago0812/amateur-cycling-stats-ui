@@ -1,5 +1,6 @@
 import type { UserWithRelations, User } from '$lib/types/domain';
 import type { UserWithRelationsRpcResponse, AuthUserRpcResponse } from '$lib/types/db';
+import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from './common.adapter';
 import { adaptOrganizationFromDb } from './organizations.adapter';
 import { adaptOrganizerFromDb } from './organizers.adapter';
@@ -17,12 +18,12 @@ export function adaptAuthUserFromRpc(rpcResponse: AuthUserRpcResponse): User {
 	const roleName = rpcResponse.role.name;
 
 	switch (roleName) {
-		case 'ADMIN':
+		case RoleTypeEnum.ADMIN:
 			return adaptAdminFromRpc(rpcResponse);
-		case 'ORGANIZER_STAFF':
-		case 'ORGANIZER_OWNER':
+		case RoleTypeEnum.ORGANIZER_STAFF:
+		case RoleTypeEnum.ORGANIZER_OWNER:
 			return adaptOrganizerFromRpc(rpcResponse);
-		case 'CYCLIST':
+		case RoleTypeEnum.CYCLIST:
 			return adaptCyclistFromRpc(rpcResponse);
 		default:
 			throw new Error(`Unknown role: ${roleName}`);

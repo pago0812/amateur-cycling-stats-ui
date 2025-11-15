@@ -11,6 +11,7 @@ import type {
 	OrganizerWithRelations,
 	UserWithRelations
 } from '$lib/types/domain';
+import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from './common.adapter';
 
 /**
@@ -18,7 +19,7 @@ import { mapTimestamps } from './common.adapter';
  * Transforms snake_case → camelCase.
  */
 export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organizer {
-	if (rpcResponse.role.name !== 'ORGANIZER_STAFF' && rpcResponse.role.name !== 'ORGANIZER_OWNER') {
+	if (rpcResponse.role.name !== RoleTypeEnum.ORGANIZER_STAFF && rpcResponse.role.name !== RoleTypeEnum.ORGANIZER_OWNER) {
 		throw new Error('Invalid role: expected ORGANIZER_STAFF or ORGANIZER_OWNER');
 	}
 
@@ -28,7 +29,7 @@ export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organiz
 
 	const organizerData = rpcResponse.organizer;
 	const roleType =
-		rpcResponse.role.name === 'ORGANIZER_OWNER' ? 'ORGANIZER_OWNER' : 'ORGANIZER_STAFF';
+		rpcResponse.role.name === RoleTypeEnum.ORGANIZER_OWNER ? RoleTypeEnum.ORGANIZER_OWNER : RoleTypeEnum.ORGANIZER_STAFF;
 
 	return {
 		id: rpcResponse.short_id,

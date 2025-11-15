@@ -1,4 +1,5 @@
 import type { CyclistGender } from './cyclist-gender.domain';
+import { RoleTypeEnum } from './role-type.domain';
 
 /**
  * Cyclist domain type - athlete profile (flattened structure).
@@ -20,7 +21,7 @@ export interface Cyclist {
 	hasAuth: boolean; // Can be false for anonymous cyclists
 
 	// From roles table (nullable for anonymous cyclists)
-	roleType: 'CYCLIST' | null;
+	roleType: RoleTypeEnum.CYCLIST | null;
 
 	// From cyclists table
 	gender: CyclistGender | null;

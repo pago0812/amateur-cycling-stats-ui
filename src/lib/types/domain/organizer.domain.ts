@@ -1,5 +1,6 @@
 import type { UserWithRelations } from './user.domain';
 import type { Organization } from './organization.domain';
+import { RoleTypeEnum } from './role-type.domain';
 
 /**
  * Organizer domain type - staff/owner of an organization (flattened structure).
@@ -20,7 +21,7 @@ export interface Organizer {
 	hasAuth: boolean; // Always true for Organizer
 
 	// From roles table
-	roleType: 'ORGANIZER_OWNER' | 'ORGANIZER_STAFF';
+	roleType: RoleTypeEnum.ORGANIZER_OWNER | RoleTypeEnum.ORGANIZER_STAFF;
 
 	// From organizers table
 	organizationId: string;
