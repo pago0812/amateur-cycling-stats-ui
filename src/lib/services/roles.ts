@@ -27,7 +27,7 @@ export const getRoles = async (supabase: SupabaseClient<Database>): Promise<Role
 				roles: adaptArray(dbRoles, adaptRoleFromDb)
 			}
 		};
-	} catch (error) {
+	} catch {
 		return {
 			error: {
 				status: 500,

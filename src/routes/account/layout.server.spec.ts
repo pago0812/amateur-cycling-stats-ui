@@ -5,7 +5,6 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { redirect } from '@sveltejs/kit';
 import { load } from './+layout.server';
 import { RoleTypeEnum } from '$lib/types/domain';
 

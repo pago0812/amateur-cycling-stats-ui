@@ -1,9 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { SetRoleRequest, UserResponse } from '$lib/types/services/users';
-import type { UserWithRelationsRpcResponse, AuthUserRpcResponse } from '$lib/types/db';
+import type { AuthUserRpcResponse } from '$lib/types/db';
 import type { User } from '$lib/types/domain';
-import { adaptUserWithRelationsFromRpc, adaptAuthUserFromRpc } from '$lib/adapters';
+import { adaptAuthUserFromRpc } from '$lib/adapters';
 
 type RoleNameEnum = Database['public']['Enums']['role_name_enum'];
 
@@ -51,82 +50,6 @@ export const isAuthenticated = async (supabase: SupabaseClient<Database>): Promi
 		return !error && data.user !== null;
 	} catch {
 		return false;
-	}
-};
-
-/**
- * @deprecated Use getAuthUser() for new User union type.
- * Legacy function for getting user with old UserWithRelations type.
- * Update a user's role.
- * Only admins and organizer admins can update user roles (enforced by RLS).
- * @param supabase - Supabase client instance
- * @param params - User ID and new role ID
- * @returns UserResponse with updated user data or error
- */
-export const updateUser = async (
-	supabase: SupabaseClient<Database>,
-	{ roleId, userId }: SetRoleRequest
-): Promise<UserResponse> => {
-	try {
-		// Update the user's role in the database
-		const { error: updateError } = await supabase
-			.from('users')
-			.update({ role_id: roleId })
-			.eq('id', userId);
-
-		if (updateError) {
-			return {
-				error: {
-					status: 400,
-					name: 'UpdateError',
-					message: updateError.message
-				}
-			};
-		}
-
-		// Fetch the user's short_id first (userId is UUID)
-		const { data: userRow, error: userRowError } = await supabase
-			.from('users')
-			.select('short_id')
-			.eq('id', userId)
-			.single();
-
-		if (userRowError || !userRow) {
-			return {
-				error: {
-					status: 500,
-					name: 'UserDataError',
-					message: 'Failed to fetch user'
-				}
-			};
-		}
-
-		// Fetch the updated enriched user data using short_id
-		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations', {
-			user_short_id: userRow.short_id
-		});
-
-		if (userError || !userData) {
-			return {
-				error: {
-					status: 500,
-					name: 'UserDataError',
-					message: 'Failed to fetch updated user data'
-				}
-			};
-		}
-
-		return {
-			data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
-		};
-	} catch (error) {
-		return {
-			error: {
-				status: 500,
-				name: 'FetchError',
-				message: 'Failed to update user'
-			}
-		};
 	}
 };
 

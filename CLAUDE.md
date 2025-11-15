@@ -70,17 +70,26 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - **Type Safety**: Both database and TypeScript enforce valid role values at compile/runtime
 
    **Examples:**
+
    ```typescript
    // ✅ CORRECT - Use RoleTypeEnum
-   if (user.roleType === RoleTypeEnum.CYCLIST) { }
-   if (user.roleType === RoleTypeEnum.ORGANIZER_OWNER || user.roleType === RoleTypeEnum.ORGANIZER_STAFF) { }
+   if (user.roleType === RoleTypeEnum.CYCLIST) {
+   }
+   if (
+   	user.roleType === RoleTypeEnum.ORGANIZER_OWNER ||
+   	user.roleType === RoleTypeEnum.ORGANIZER_STAFF
+   ) {
+   }
 
    // ❌ WRONG - Never use string literals
-   if (user.roleType === 'cyclist') { }
-   if (user.roleType === 'CYCLIST') { }
+   if (user.roleType === 'cyclist') {
+   }
+   if (user.roleType === 'CYCLIST') {
+   }
    ```
 
    **Database examples:**
+
    ```sql
    -- ✅ CORRECT - Use ENUM cast
    WHERE r.name = 'CYCLIST'::role_name_enum
@@ -217,7 +226,7 @@ All services located in `src/lib/services/`:
 3. **race-results.ts** - Race results operations (getRaceResultsByRaceId)
 4. **cyclists.ts** - Cyclist operations (getCyclistById - fetches cyclist without race results, pair with getRaceResultsByUserId for parallel fetching)
 5. **users.ts** - User operations (getMyself, updateUser, createUserWithRole, linkUserToOrganization)
-6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser, createOrganizerStaffUser, createCyclistUser)
+6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser)
 7. **roles.ts** - Role management (getRoles)
 8. **organizations.ts** - Organization operations (getAllOrganizations, getOrganizationById, createOrganization, updateOrganization, updateOrganizationState, deleteOrganization, deactivateOrganization, activateOrganization, permanentlyDeleteOrganization)
 9. **organization-invitations.ts** - Invitation operations (createInvitation, getInvitationByEmail, getInvitationByOrganizationId, updateInvitationStatus, incrementRetryCount, deleteInvitationByOrganizationId)
@@ -242,8 +251,8 @@ All services located in `src/lib/services/`:
 
 - Supabase Auth with automatic cookie management via `@supabase/ssr`
 - Server-side session handling in `hooks.server.ts`
-- `event.locals.getSessionUser()` helper validates JWT and returns User or null
-- Returns enriched user data via `get_user_with_relations()` RPC
+- `event.locals.getSessionUser()` helper validates session and returns User or null
+- Returns enriched user data via `get_auth_user()` RPC
 - Protected routes redirect to `/login` if not authenticated
 
 **Session Optimization Pattern (CRITICAL):**
@@ -516,8 +525,6 @@ Templates located in `src/lib/templates/email/`:
 The application uses **role-specific RPC functions** for creating users:
 
 - `create_user_with_organizer_owner()` - Creates organizer owner + links to organization
-- `create_user_with_organizer_staff()` - Creates organizer staff + links to organization
-- `create_user_with_cyclist()` - Creates cyclist user + cyclist profile
 
 These functions handle:
 

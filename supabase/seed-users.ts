@@ -54,7 +54,7 @@ function loadEnvFile(): void {
 				}
 			}
 		});
-	} catch (error) {
+	} catch {
 		console.error('⚠️  Warning: Could not load .env file');
 	}
 }
@@ -608,9 +608,7 @@ async function seedRaces(): Promise<void> {
 	}
 
 	// Verify races were actually created
-	const { data: allRaces, error: countError } = await supabase
-		.from('races')
-		.select('id', { count: 'exact' });
+	const { data: allRaces } = await supabase.from('races').select('id', { count: 'exact' });
 
 	console.log(`   ✅ Total: ${racesData.length} races created`);
 	console.log(`   ✅ Verification: ${allRaces?.length || 0} races in database`);

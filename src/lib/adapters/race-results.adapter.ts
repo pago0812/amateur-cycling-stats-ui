@@ -1,10 +1,18 @@
 import type { RaceResult, RaceResultWithRelations } from '$lib/types/domain/race-result.domain';
-import type { RaceResultDB, RaceResultWithRelationsResponse, RaceResultRpcItem } from '$lib/types/db';
+import type {
+	RaceResultDB,
+	RaceResultWithRelationsResponse,
+	RaceResultRpcItem
+} from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptRankingPointFromDb } from './ranking-points.adapter';
 import { adaptRaceFromDb } from './races.adapter';
 import { adaptEventFromDb } from './events.adapter';
-import { adaptRaceCategoryFromDb, adaptRaceCategoryGenderFromDb, adaptRaceCategoryLengthFromDb } from './race-categories.adapter';
+import {
+	adaptRaceCategoryFromDb,
+	adaptRaceCategoryGenderFromDb,
+	adaptRaceCategoryLengthFromDb
+} from './race-categories.adapter';
 import { adaptRaceRankingFromDb } from './race-rankings.adapter';
 
 /**
@@ -67,6 +75,8 @@ export function adaptRaceResultFromRpc(rpcResult: RaceResultRpcItem): RaceResult
 			raceCategoryLength: adaptRaceCategoryLengthFromDb(rpcResult.race.race_category_length),
 			raceRanking: adaptRaceRankingFromDb(rpcResult.race.race_ranking)
 		},
-		rankingPoint: rpcResult.ranking_point ? adaptRankingPointFromDb(rpcResult.ranking_point) : undefined
+		rankingPoint: rpcResult.ranking_point
+			? adaptRankingPointFromDb(rpcResult.ranking_point)
+			: undefined
 	};
 }

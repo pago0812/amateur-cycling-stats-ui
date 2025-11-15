@@ -28,11 +28,6 @@
 		goto(`/admin/organizations/${data.organization.id}/edit`);
 	};
 
-	// Delete organization handler - show confirmation modal
-	const handleDeleteOrganization = () => {
-		isDeleteModalOpen = true;
-	};
-
 	// Deactivate organization handler - show confirmation modal
 	const handleDeactivateOrganization = () => {
 		isDeactivateModalOpen = true;
@@ -136,7 +131,7 @@
 	bind:this={resendForm}
 	class="hidden"
 	use:enhance={() => {
-		return async ({ result, update }) => {
+		return async ({ update }) => {
 			await update();
 		};
 	}}

@@ -4,9 +4,9 @@
 	import { t } from '$lib/i18n';
 	import { goto } from '$app/navigation';
 	import { alertStore } from '$lib/stores/alert-store';
-	import type { PageData, ActionData } from './$types';
+	import type { ActionData } from './$types';
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+	let { form }: { form: ActionData } = $props();
 
 	// Form reference for toolbar submit action
 	let organizationForm: HTMLFormElement = $state()!;

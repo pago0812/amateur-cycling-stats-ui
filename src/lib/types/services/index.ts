@@ -10,12 +10,8 @@ export type { ServerError } from './errors';
 
 // User service types
 export type {
-	SetRoleRequest,
-	UserResponse,
 	CreateAuthUserForInvitationParams,
 	CreateOrganizerOwnerUserParams,
-	CreateOrganizerStaffUserParams,
-	CreateCyclistUserParams,
 	CreateUserResult
 } from './users';
 

@@ -58,9 +58,3 @@ export interface AuthUserRpcResponse {
 		};
 	} | null;
 }
-
-/**
- * @deprecated Use AuthUserRpcResponse instead.
- * Kept for backwards compatibility during migration.
- */
-export type UserWithRelationsRpcResponse = AuthUserRpcResponse;

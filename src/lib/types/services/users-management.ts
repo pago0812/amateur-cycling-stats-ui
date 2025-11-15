@@ -1,4 +1,3 @@
-import type { User } from '../domain';
 import type { ServerError } from './errors';
 
 // Requests

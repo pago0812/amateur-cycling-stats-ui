@@ -15,7 +15,11 @@ export { adaptEventFromDb, adaptEventWithRelationsFromDb } from './events.adapte
 export { adaptRaceFromDb, adaptRaceWithResultsFromDb } from './races.adapter';
 
 // Race Results
-export { adaptRaceResultFromDb, adaptRaceResultWithRelationsFromDb, adaptRaceResultFromRpc } from './race-results.adapter';
+export {
+	adaptRaceResultFromDb,
+	adaptRaceResultWithRelationsFromDb,
+	adaptRaceResultFromRpc
+} from './race-results.adapter';
 
 // Cyclists
 export { adaptCyclistFromRpc } from './cyclists.adapter';
@@ -31,7 +35,7 @@ export {
 export { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 // Users
-export { adaptUserWithRelationsFromRpc, adaptAuthUserFromRpc } from './users.adapter';
+export { adaptAuthUserFromRpc } from './users.adapter';
 
 // Admin
 export { adaptAdminFromRpc } from './admin.adapter';

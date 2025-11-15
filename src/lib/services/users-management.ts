@@ -8,8 +8,6 @@ import type {
 import type {
 	CreateAuthUserForInvitationParams,
 	CreateOrganizerOwnerUserParams,
-	CreateOrganizerStaffUserParams,
-	CreateCyclistUserParams,
 	CreateUserResult
 } from '$lib/types/services';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
@@ -198,91 +196,6 @@ export async function createOrganizerOwnerUser(
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 		console.error('[Users] Error creating organizer owner user:', errorMessage);
-		return {
-			success: false,
-			error: errorMessage
-		};
-	}
-}
-
-/**
- * Creates or updates a user with organizer_staff role and links to organization.
- * Calls the Supabase RPC function create_user_with_organizer_staff.
- *
- * @param supabase - Supabase client instance
- * @param params - Auth user ID, names, and organization ID
- * @returns CreateUserResult with user ID or error
- */
-export async function createOrganizerStaffUser(
-	supabase: SupabaseClient<Database>,
-	params: CreateOrganizerStaffUserParams
-): Promise<CreateUserResult> {
-	try {
-		const { data, error } = await supabase.rpc('create_user_with_organizer_staff', {
-			p_auth_user_id: params.authUserId,
-			p_first_name: params.firstName,
-			p_last_name: params.lastName,
-			p_organization_id: params.organizationId
-		});
-
-		if (error) {
-			console.error('[Users] Failed to create organizer staff user:', error);
-			return {
-				success: false,
-				error: error.message
-			};
-		}
-
-		return {
-			success: true,
-			userId: data,
-			authUserId: params.authUserId
-		};
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		console.error('[Users] Error creating organizer staff user:', errorMessage);
-		return {
-			success: false,
-			error: errorMessage
-		};
-	}
-}
-
-/**
- * Creates or updates a user with cyclist role and ensures cyclist profile exists.
- * Calls the Supabase RPC function create_user_with_cyclist.
- *
- * @param supabase - Supabase client instance
- * @param params - Auth user ID and names
- * @returns CreateUserResult with user ID or error
- */
-export async function createCyclistUser(
-	supabase: SupabaseClient<Database>,
-	params: CreateCyclistUserParams
-): Promise<CreateUserResult> {
-	try {
-		const { data, error } = await supabase.rpc('create_user_with_cyclist', {
-			p_auth_user_id: params.authUserId,
-			p_first_name: params.firstName,
-			p_last_name: params.lastName
-		});
-
-		if (error) {
-			console.error('[Users] Failed to create cyclist user:', error);
-			return {
-				success: false,
-				error: error.message
-			};
-		}
-
-		return {
-			success: true,
-			userId: data,
-			authUserId: params.authUserId
-		};
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		console.error('[Users] Error creating cyclist user:', errorMessage);
 		return {
 			success: false,
 			error: errorMessage
