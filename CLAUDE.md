@@ -215,7 +215,7 @@ All services located in `src/lib/services/`:
 1. **events.ts** - Event operations (getFutureEvents, getPastEvents, getEventWithCategoriesById)
 2. **races.ts** - Race operations (getRaceWithResultsWithFilters)
 3. **race-results.ts** - Race results operations (getRaceResultsByRaceId)
-4. **cyclists.ts** - Cyclist operations (getCyclistWithResultsById, createCyclist)
+4. **cyclists.ts** - Cyclist operations (getCyclistById - fetches cyclist without race results, pair with getRaceResultsByUserId for parallel fetching)
 5. **users.ts** - User operations (getMyself, updateUser, createUserWithRole, linkUserToOrganization)
 6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser, createOrganizerStaffUser, createCyclistUser)
 7. **roles.ts** - Role management (getRoles)
@@ -242,9 +242,59 @@ All services located in `src/lib/services/`:
 
 - Supabase Auth with automatic cookie management via `@supabase/ssr`
 - Server-side session handling in `hooks.server.ts`
-- `event.locals.safeGetSession()` helper validates JWT with Auth server
+- `event.locals.getSessionUser()` helper validates JWT and returns User or null
 - Returns enriched user data via `get_user_with_relations()` RPC
 - Protected routes redirect to `/login` if not authenticated
+
+**Session Optimization Pattern (CRITICAL):**
+
+- **Root layout ONLY** (`/src/routes/+layout.server.ts`) calls `getSessionUser()`
+- **All nested layouts/pages** use `parent()` to access user from root layout
+- **Exception**: Form actions may call `getSessionUser()` when state changes (e.g., after login)
+- **Performance**: 1 database call per request instead of 7+ calls
+- **Never** call `getSessionUser()` in nested routes - always use parent data
+
+**Examples:**
+
+```typescript
+// ✅ CORRECT - Root layout calls getSessionUser()
+// /src/routes/+layout.server.ts
+export const load: LayoutServerLoad = async ({ locals, url }) => {
+	const user = await locals.getSessionUser();
+	return { user, locale: locals.locale };
+};
+
+// ✅ CORRECT - Nested layout uses parent()
+// /src/routes/admin/+layout.server.ts
+export const load: LayoutServerLoad = async ({ parent }) => {
+	const { user } = await parent();
+	if (!user) throw redirect(302, '/login');
+	return { user };
+};
+
+// ✅ CORRECT - Page uses parent()
+// /src/routes/account/+page.server.ts
+export const load: PageServerLoad = async ({ parent, locals }) => {
+	const { user } = await parent();
+	// ... use user
+};
+
+// ✅ CORRECT - Form action calls getSessionUser() (state changed)
+// /src/routes/login/+page.server.ts
+export const actions = {
+	default: async ({ request, locals }) => {
+		// Login happens here...
+		const user = await locals.getSessionUser(); // State changed!
+		throw redirect(302, getRedirectUrl(user?.roleType));
+	}
+};
+
+// ❌ WRONG - Nested layout calling getSessionUser()
+export const load: LayoutServerLoad = async ({ locals }) => {
+	const user = await locals.getSessionUser(); // DON'T DO THIS!
+	// Use parent() instead!
+};
+```
 
 **Graceful Error Handling:**
 
@@ -573,9 +623,10 @@ The `handle_new_user()` trigger supports skipping auto-creation via `skip_auto_c
 1. Create `+page.svelte` for the UI
 2. Create `+page.server.ts` for SSR data loading
 3. Use `PageServerLoad` type from `./$types`
-4. Add form actions if page has forms
-5. Handle errors with SvelteKit's `error()` helper
-6. Add `<svelte:head>` for SEO meta tags
+4. **IMPORTANT**: Use `parent()` to get user data (never call `getSessionUser()` directly)
+5. Add form actions if page has forms
+6. Handle errors with SvelteKit's `error()` helper
+7. Add `<svelte:head>` for SEO meta tags
 
 **When Adding New Components:**
 
@@ -593,14 +644,30 @@ The `handle_new_user()` trigger supports skipping auto-creation via `skip_auto_c
 4. Handle errors appropriately
 5. Import DB types from `$lib/types/db`
 
-**Authentication Pattern:**
+**Session Management Pattern:**
 
 ```typescript
-// In +page.server.ts
-export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.safeGetSession();
+// ✅ CORRECT - Get user from parent layout (most common case)
+// In +page.server.ts or nested +layout.server.ts
+export const load: PageServerLoad = async ({ parent }) => {
+	const { user } = await parent(); // User already fetched by root layout
 	if (!user) throw redirect(302, '/login');
 	return { user };
+};
+
+// ✅ CORRECT - Form action after state change (e.g., after login)
+export const actions = {
+	default: async ({ request, locals }) => {
+		// Login/signup happens here...
+		const user = await locals.getSessionUser(); // State changed!
+		throw redirect(302, '/dashboard');
+	}
+};
+
+// ❌ WRONG - Don't call getSessionUser() in nested routes
+export const load: PageServerLoad = async ({ locals }) => {
+	const user = await locals.getSessionUser(); // DON'T DO THIS!
+	// Use parent() instead for better performance
 };
 ```
 
@@ -935,6 +1002,15 @@ The application has been fully migrated from **Next.js/Strapi** to **SvelteKit/S
 For migration details, see git history and `supabase/migrations/`.
 
 ## Recent Enhancements
+
+**Cyclist Type System Cleanup** ✅ (January 2025)
+
+- Removed legacy `CyclistOld` and `CyclistWithRelations` types
+- Removed deprecated `adaptCyclistFromDb` and `adaptCyclistWithResultsFromDb` adapters
+- Removed deprecated `createCyclist` service function
+- Simplified to single `Cyclist` domain type with flat structure
+- Optimized data fetching: `getCyclistById` + `getRaceResultsByUserId` with `Promise.all`
+- Reduced codebase by ~500 lines while maintaining full functionality
 
 **Organization Owner Invitation System** ✅ (Implemented)
 

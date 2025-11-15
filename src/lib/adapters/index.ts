@@ -15,15 +15,10 @@ export { adaptEventFromDb, adaptEventWithRelationsFromDb } from './events.adapte
 export { adaptRaceFromDb, adaptRaceWithResultsFromDb } from './races.adapter';
 
 // Race Results
-export { adaptRaceResultFromDb, adaptRaceResultWithRelationsFromDb } from './race-results.adapter';
+export { adaptRaceResultFromDb, adaptRaceResultWithRelationsFromDb, adaptRaceResultFromRpc } from './race-results.adapter';
 
 // Cyclists
-export {
-	adaptCyclistFromDb,
-	adaptCyclistFromRpc,
-	adaptCyclistWithResultsFromDb,
-	adaptCyclistWithResultsFromRpc
-} from './cyclists.adapter';
+export { adaptCyclistFromRpc } from './cyclists.adapter';
 
 // Race Categories
 export {

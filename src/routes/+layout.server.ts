@@ -3,7 +3,7 @@ import { loadTranslations } from '$lib/i18n';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
 	// Get user from session (via hooks)
-	const { user } = await locals.safeGetSession();
+	const user = await locals.getSessionUser();
 
 	// Get locale from locals (set in hooks.server.ts)
 	const locale = locals.locale;

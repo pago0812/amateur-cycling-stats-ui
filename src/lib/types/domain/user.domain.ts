@@ -1,5 +1,4 @@
 import type { Role } from './role.domain';
-import type { CyclistOld } from './cyclist.domain';
 import type { OrganizerWithRelations } from './organizer.domain';
 import type { Admin } from './admin.domain';
 import type { Organizer } from './organizer.domain';
@@ -41,6 +40,14 @@ export interface UserOld {
 export interface UserWithRelations extends UserOld {
 	// Populated relationships
 	role?: Role;
-	cyclist?: CyclistOld; // Populated if user is a cyclist
+	cyclist?: {
+		// Minimal cyclist type for legacy UserWithRelations
+		id: string;
+		bornYear: number | null;
+		genderId: string | null;
+		userId: string;
+		createdAt: string;
+		updatedAt: string;
+	};
 	organizer?: OrganizerWithRelations; // Populated if user is an organizer (includes organization)
 }

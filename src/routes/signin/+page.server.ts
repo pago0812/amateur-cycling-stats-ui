@@ -4,9 +4,11 @@ import { Urls } from '$lib/constants/urls';
 import { t } from '$lib/i18n/server';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ parent }) => {
+	// Get user from parent layout
+	const { user } = await parent();
+
 	// Redirect if already logged in
-	const { user } = await locals.safeGetSession();
 	if (user) {
 		throw redirect(302, Urls.ACCOUNT);
 	}

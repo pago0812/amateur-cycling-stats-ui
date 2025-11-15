@@ -8,7 +8,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import { writable } from 'svelte/store';
 import AccountPage from './+page.svelte';
-import type { CyclistWithRelations } from '$lib/types/domain';
+import type { Cyclist } from '$lib/types/domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => ({
@@ -41,22 +41,18 @@ vi.mock('$lib/components/CyclistProfile.svelte', () => ({
 }));
 
 describe('Account Page Component', () => {
-	const mockCyclist: CyclistWithRelations = {
+	const mockCyclist: Cyclist = {
 		id: 'cyclist-1',
+		firstName: 'Carlos',
+		lastName: 'Rodríguez',
+		email: null,
+		displayName: null,
+		hasAuth: true,
+		roleType: 'CYCLIST',
 		bornYear: 1990,
-		genderId: 'gender-1',
-		userId: 'user-1',
+		gender: null,
 		createdAt: '2024-01-01T00:00:00Z',
-		updatedAt: '2024-01-01T00:00:00Z',
-		user: {
-			id: 'user-1',
-			firstName: 'Carlos',
-			lastName: 'Rodríguez',
-			roleId: 'role-cyclist',
-			createdAt: '2024-01-01T00:00:00Z',
-			updatedAt: '2024-01-01T00:00:00Z'
-		},
-		raceResults: []
+		updatedAt: '2024-01-01T00:00:00Z'
 	};
 
 	it('should render the page', async () => {
@@ -71,7 +67,8 @@ describe('Account Page Component', () => {
 					createdAt: '2024-01-01T00:00:00Z',
 					updatedAt: '2024-01-01T00:00:00Z'
 				} as any,
-				cyclist: mockCyclist
+				cyclist: mockCyclist,
+				raceResults: []
 			}
 		});
 

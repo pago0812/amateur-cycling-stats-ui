@@ -48,7 +48,6 @@ describe('CyclistResultsTable Component', () => {
 			rankingPointId: 'rp-1',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			cyclist: undefined,
 			race: {
 				id: 'race-1',
 				name: 'Gran Fondo - LONG/MALE/ABS',

@@ -30,9 +30,11 @@ function getRedirectUrlForRole(roleType?: string | null): string {
 	return Urls.LOGIN;
 }
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ parent }) => {
+	// Get user from parent layout
+	const { user } = await parent();
+
 	// Redirect if already logged in
-	const { user } = await locals.safeGetSession();
 	if (user) {
 		throw redirect(302, getRedirectUrlForRole(user.roleType));
 	}
@@ -64,7 +66,7 @@ export const actions = {
 		if (loginResponse.success) {
 			// No need to manually save JWT - Supabase handles cookies automatically
 			// Fetch user data to determine role-based redirect
-			const { user } = await locals.safeGetSession();
+			const user = await locals.getSessionUser();
 			throw redirect(302, getRedirectUrlForRole(user?.roleType));
 		}
 

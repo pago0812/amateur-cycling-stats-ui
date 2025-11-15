@@ -4,7 +4,6 @@ import { mapTimestamps } from './common.adapter';
 import { adaptOrganizationFromDb } from './organizations.adapter';
 import { adaptOrganizerFromDb } from './organizers.adapter';
 import { adaptRoleFromDb } from './roles.adapter';
-import { adaptCyclistFromDb } from './cyclists.adapter';
 import { adaptAdminFromRpc } from './admin.adapter';
 import { adaptOrganizerFromRpc } from './organizers.adapter';
 import { adaptCyclistFromRpc } from './cyclists.adapter';
@@ -47,7 +46,15 @@ export function adaptUserWithRelationsFromRpc(
 		roleId: rpcResponse.role_id,
 		...mapTimestamps(rpcResponse),
 		role: adaptRoleFromDb(rpcResponse.role),
-		cyclist: rpcResponse.cyclist ? adaptCyclistFromDb(rpcResponse.cyclist) : undefined,
+		cyclist: rpcResponse.cyclist
+			? {
+					id: rpcResponse.cyclist.short_id,
+					bornYear: rpcResponse.cyclist.born_year,
+					genderId: rpcResponse.cyclist.gender_id,
+					userId: rpcResponse.cyclist.user_id,
+					...mapTimestamps(rpcResponse.cyclist)
+				}
+			: undefined,
 		organizer: rpcResponse.organizer
 			? {
 					...adaptOrganizerFromDb(rpcResponse.organizer),

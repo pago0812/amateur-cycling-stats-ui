@@ -22,12 +22,10 @@ describe('Admin Layout Server', () => {
 	});
 
 	it('should redirect to /login if not authenticated', async () => {
-		const mockLocals = {
-			safeGetSession: vi.fn().mockResolvedValue({ user: null })
-		};
+		const mockParent = vi.fn().mockResolvedValue({ user: null });
 
 		try {
-			await load({ locals: mockLocals } as any);
+			await load({ parent: mockParent } as any);
 			expect.fail('Should have thrown redirect');
 		} catch (error: any) {
 			expect(error.status).toBe(302);
@@ -36,18 +34,18 @@ describe('Admin Layout Server', () => {
 	});
 
 	it('should redirect cyclists to /account', async () => {
-		const mockLocals = {
-			safeGetSession: vi.fn().mockResolvedValue({
-				user: {
-					id: 'user-cyclist',
-					username: 'cyclist1',
-					role: { name: RoleTypeEnum.CYCLIST }
-				}
-			})
-		};
+		const mockParent = vi.fn().mockResolvedValue({
+			user: {
+				id: 'user-cyclist',
+				firstName: 'Cyclist',
+				lastName: 'One',
+				email: 'cyclist1@example.com',
+				roleType: RoleTypeEnum.CYCLIST
+			}
+		});
 
 		try {
-			await load({ locals: mockLocals } as any);
+			await load({ parent: mockParent } as any);
 			expect.fail('Should have thrown redirect');
 		} catch (error: any) {
 			expect(error.status).toBe(302);
@@ -56,18 +54,18 @@ describe('Admin Layout Server', () => {
 	});
 
 	it('should redirect organizer staff to /panel', async () => {
-		const mockLocals = {
-			safeGetSession: vi.fn().mockResolvedValue({
-				user: {
-					id: 'user-staff',
-					username: 'staff',
-					role: { name: RoleTypeEnum.ORGANIZER_STAFF }
-				}
-			})
-		};
+		const mockParent = vi.fn().mockResolvedValue({
+			user: {
+				id: 'user-staff',
+				firstName: 'Staff',
+				lastName: 'User',
+				email: 'staff@example.com',
+				roleType: RoleTypeEnum.ORGANIZER_STAFF
+			}
+		});
 
 		try {
-			await load({ locals: mockLocals } as any);
+			await load({ parent: mockParent } as any);
 			expect.fail('Should have thrown redirect');
 		} catch (error: any) {
 			expect(error.status).toBe(302);
@@ -76,18 +74,18 @@ describe('Admin Layout Server', () => {
 	});
 
 	it('should redirect organizer admins to /panel', async () => {
-		const mockLocals = {
-			safeGetSession: vi.fn().mockResolvedValue({
-				user: {
-					id: 'user-organizer',
-					username: 'organizer',
-					role: { name: RoleTypeEnum.ORGANIZER_OWNER }
-				}
-			})
-		};
+		const mockParent = vi.fn().mockResolvedValue({
+			user: {
+				id: 'user-organizer',
+				firstName: 'Organizer',
+				lastName: 'Owner',
+				email: 'organizer@example.com',
+				roleType: RoleTypeEnum.ORGANIZER_OWNER
+			}
+		});
 
 		try {
-			await load({ locals: mockLocals } as any);
+			await load({ parent: mockParent } as any);
 			expect.fail('Should have thrown redirect');
 		} catch (error: any) {
 			expect(error.status).toBe(302);
@@ -96,20 +94,20 @@ describe('Admin Layout Server', () => {
 	});
 
 	it('should allow admins to access', async () => {
-		const mockLocals = {
-			safeGetSession: vi.fn().mockResolvedValue({
-				user: {
-					id: 'user-admin',
-					username: 'admin',
-					role: { name: RoleTypeEnum.ADMIN }
-				}
-			})
-		};
+		const mockParent = vi.fn().mockResolvedValue({
+			user: {
+				id: 'user-admin',
+				firstName: 'Admin',
+				lastName: 'User',
+				email: 'admin@example.com',
+				roleType: RoleTypeEnum.ADMIN
+			}
+		});
 
-		const result = await load({ locals: mockLocals } as any);
+		const result = await load({ parent: mockParent } as any);
 
 		expect(result).toBeDefined();
 		expect(result?.user).toBeDefined();
-		expect(result?.user?.role?.name).toBe(RoleTypeEnum.ADMIN);
+		expect(result?.user?.roleType).toBe(RoleTypeEnum.ADMIN);
 	});
 });

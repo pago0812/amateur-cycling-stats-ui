@@ -3,8 +3,9 @@ import type { LayoutServerLoad } from './$types';
 import { Urls } from '$lib/constants/urls';
 import { RoleTypeEnum } from '$lib/types/domain';
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-	const { user } = await locals.safeGetSession();
+export const load: LayoutServerLoad = async ({ parent }) => {
+	// Get user from parent layout (already fetched in root layout)
+	const { user } = await parent();
 
 	// Require authentication
 	if (!user) {

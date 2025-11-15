@@ -171,8 +171,7 @@ describe('Races Adapter', () => {
 			expect(result.name).toBe('Gran Fondo - LONG/MALE/ABS');
 			expect(result.raceResults).toHaveLength(1);
 			expect(result.raceResults?.[0].place).toBe(1);
-			expect(result.raceResults?.[0]!.cyclist!.user?.firstName).toBe('Carlos');
-			expect(result.raceResults?.[0]!.cyclist!.user?.lastName).toBe('Rodríguez');
+			expect(result.raceResults?.[0]!.cyclistId).toBe('cyclist-1');
 			expect(result.raceResults?.[0]!.rankingPoint?.points).toBe(100);
 		});
 

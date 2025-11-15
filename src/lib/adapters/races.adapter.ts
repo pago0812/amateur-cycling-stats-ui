@@ -1,8 +1,7 @@
 import type { Race, RaceWithRelations } from '$lib/types/domain/race.domain';
-import type { RaceResult, RaceResultWithRelations } from '$lib/types/domain/race-result.domain';
+import type { RaceResultWithRelations } from '$lib/types/domain/race-result.domain';
 import type { RaceDB, RaceWithResultsResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
-import { adaptCyclistFromDb } from './cyclists.adapter';
 import { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 /**
@@ -27,12 +26,11 @@ export function adaptRaceFromDb(dbRace: RaceDB): Race {
 
 /**
  * Adapts race result from nested response (used within race queries).
- * Now includes user data for cyclist names.
  */
 function adaptRaceResultFromNested(
 	dbResult: RaceWithResultsResponse['race_results'][0]
 ): RaceResultWithRelations {
-	const baseResult: RaceResult = {
+	return {
 		id: dbResult.short_id, // Translate: short_id → id
 		place: dbResult.place,
 		time: dbResult.time,
@@ -40,27 +38,7 @@ function adaptRaceResultFromNested(
 		raceId: dbResult.race_id,
 		cyclistId: dbResult.cyclist_id,
 		rankingPointId: dbResult.ranking_point_id,
-		...mapTimestamps(dbResult)
-	};
-
-	// Create cyclist with user data for names
-	const cyclist = {
-		...adaptCyclistFromDb(dbResult.cyclists),
-		user: dbResult.cyclists.users
-			? {
-					id: dbResult.cyclists.users.short_id,
-					firstName: dbResult.cyclists.users.first_name,
-					lastName: dbResult.cyclists.users.last_name,
-					roleId: dbResult.cyclists.users.role_id || '',
-					createdAt: dbResult.cyclists.users.created_at || '',
-					updatedAt: dbResult.cyclists.users.updated_at || ''
-				}
-			: undefined
-	};
-
-	return {
-		...baseResult,
-		cyclist,
+		...mapTimestamps(dbResult),
 		rankingPoint: dbResult.ranking_points
 			? adaptRankingPointFromDb(dbResult.ranking_points)
 			: undefined

@@ -21,5 +21,5 @@
 <MenuToolbar breadcrumbs={[{ label: $t('account.title') }]} {tabs} />
 
 <div class="mt-8">
-	<CyclistProfile cyclist={data.cyclist} />
+	<CyclistProfile cyclist={data.cyclist} raceResults={data.raceResults} />
 </div>

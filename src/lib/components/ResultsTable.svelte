@@ -30,13 +30,12 @@
 						{result.place}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{#if result.cyclist?.user}
+						{#if result.cyclistId}
 							<a
-								href="/cyclists/{result.cyclist.id}"
+								href="/cyclists/{result.cyclistId}"
 								class="text-blue-600 hover:text-blue-800 hover:underline"
 							>
-								{result.cyclist.user.lastName || ''}
-								{result.cyclist.user.firstName}
+								{$t('races.table.viewCyclist')}
 							</a>
 						{:else}
 							-

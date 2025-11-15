@@ -42,22 +42,6 @@ describe('ResultsTable Component', () => {
 			rankingPointId: 'rp-1',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			cyclist: {
-				id: 'cyclist-1',
-				bornYear: 1995,
-				genderId: 'gender-male',
-				userId: 'user-1',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-				user: {
-					id: 'user-1',
-					firstName: 'Carlos',
-					lastName: 'Rodríguez',
-					roleId: 'role-cyclist',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z'
-				}
-			},
 			race: undefined,
 			rankingPoint: {
 				id: 'rp-1',
@@ -80,7 +64,7 @@ describe('ResultsTable Component', () => {
 	it('should render cyclist link', async () => {
 		render(ResultsTable, { raceResults: mockRaceResults });
 
-		const cyclistLink = page.getByRole('link', { name: /Rodríguez.*Carlos/ });
+		const cyclistLink = page.getByRole('link', { name: 'races.table.viewCyclist' });
 		await expect.element(cyclistLink).toHaveAttribute('href', '/cyclists/cyclist-1');
 	});
 
@@ -96,7 +80,6 @@ describe('ResultsTable Component', () => {
 				rankingPointId: 'rp-2',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
-				cyclist: undefined,
 				race: undefined,
 				rankingPoint: undefined
 			}

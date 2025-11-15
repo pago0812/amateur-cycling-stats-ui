@@ -126,8 +126,7 @@ describe('Race Results Adapter', () => {
 			expect(result.place).toBe(1);
 			expect(result.time).toBe('02:30:45');
 			expect(result.points).toBe(100);
-			expect(result.cyclist!.user?.firstName).toBe('Carlos');
-			expect(result.cyclist!.user?.lastName).toBe('Rodríguez');
+			expect(result.cyclistId).toBe('cyclist-123');
 			expect(result.rankingPoint?.points).toBe(100);
 			expect(result.rankingPoint?.place).toBe(1);
 		});
@@ -216,16 +215,7 @@ describe('Race Results Adapter', () => {
 
 			const result = adaptRaceResultWithRelationsFromDb(dbResult);
 
-			expect(result.cyclist).toMatchObject({
-				id: '123', // short_id extracted
-				bornYear: 1998,
-				genderId: 'gender-female',
-				userId: 'user-456',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-02T00:00:00Z'
-			});
-			expect(result.cyclist!.user?.firstName).toBe('María');
-			expect(result.cyclist!.user?.lastName).toBe('García');
+			expect(result.cyclistId).toBe('cyclist-123');
 		});
 
 		it('should transform ranking point with all fields', () => {

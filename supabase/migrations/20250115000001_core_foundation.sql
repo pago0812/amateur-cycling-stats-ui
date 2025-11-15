@@ -1016,11 +1016,10 @@ $$;
 
 COMMENT ON FUNCTION public.get_user_with_relations(TEXT) IS 'Returns enriched user data with first_name, last_name, role, and related entities (cyclist or organizer with organization). If no short_id provided, returns data for the authenticated user.';
 
--- =====================================================
--- SECTION 23: RPC Function - Get Cyclist With Results
--- =====================================================
-
-CREATE OR REPLACE FUNCTION public.get_cyclist_with_results(cyclist_short_id TEXT)
+-- Get race results by user short_id
+-- This function fetches ONLY race results for a user (not the cyclist profile)
+-- Useful when you already have user/cyclist data and only need their race history
+CREATE OR REPLACE FUNCTION public.get_race_results_by_user_short_id(p_user_short_id TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1030,150 +1029,192 @@ DECLARE
   result JSONB;
   target_cyclist_id UUID;
 BEGIN
-  -- Find cyclist by short_id
-  SELECT id INTO target_cyclist_id
-  FROM public.cyclists
-  WHERE short_id = cyclist_short_id;
-
-  -- Return NULL if cyclist doesn't exist
-  IF target_cyclist_id IS NULL THEN
-    RETURN NULL;
-  END IF;
-
-  -- Build the cyclist object with nested race_results (using short_id as id)
-  SELECT jsonb_build_object(
-    'id', c.short_id,
-    'first_name', u.first_name,
-    'last_name', u.last_name,
-    'born_year', c.born_year,
-    'gender_id', c.gender_id,
-    'user_id', u.short_id,
-    'created_at', c.created_at,
-    'updated_at', c.updated_at,
-    'gender', CASE
-      WHEN c.gender_id IS NOT NULL THEN (
-        SELECT jsonb_build_object(
-          'id', cg.id,
-          'short_id', cg.short_id,
-          'name', cg.name,
-          'created_at', cg.created_at,
-          'updated_at', cg.updated_at
-        )
-        FROM public.cyclist_genders cg
-        WHERE cg.id = c.gender_id
-      )
-      ELSE NULL
-    END,
-    'race_results', (
-      SELECT COALESCE(jsonb_agg(
-        jsonb_build_object(
-          'id', rr.id,
-          'short_id', rr.short_id,
-          'place', rr.place,
-          'time', rr.time,
-          'cyclist_id', c.short_id,
-          'race_id', r.short_id,
-          'ranking_point_id', rr.ranking_point_id,
-          'created_at', rr.created_at,
-          'updated_at', rr.updated_at,
-          'race', jsonb_build_object(
-            'id', r.id,
-            'short_id', r.short_id,
-            'name', r.name,
-            'description', r.description,
-            'date_time', r.date_time,
-            'is_public_visible', r.is_public_visible,
-            'event_id', e.short_id,
-            'race_category_id', r.race_category_id,
-            'race_category_gender_id', r.race_category_gender_id,
-            'race_category_length_id', r.race_category_length_id,
-            'race_ranking_id', r.race_ranking_id,
-            'created_at', r.created_at,
-            'updated_at', r.updated_at,
-            'event', jsonb_build_object(
-              'id', e.id,
-              'short_id', e.short_id,
-              'name', e.name,
-              'description', e.description,
-              'date_time', e.date_time,
-              'city', e.city,
-              'state', e.state,
-              'country', e.country,
-              'year', e.year,
-              'event_status', e.event_status,
-              'is_public_visible', e.is_public_visible,
-              'organization_id', e.organization_id,
-              'created_by', e.created_by,
-              'created_at', e.created_at,
-              'updated_at', e.updated_at
-            ),
-            'race_category', jsonb_build_object(
-              'id', rc.id,
-              'short_id', rc.short_id,
-              'name', rc.name,
-              'created_at', rc.created_at,
-              'updated_at', rc.updated_at
-            ),
-            'race_category_gender', jsonb_build_object(
-              'id', rcg.id,
-              'short_id', rcg.short_id,
-              'name', rcg.name,
-              'created_at', rcg.created_at,
-              'updated_at', rcg.updated_at
-            ),
-            'race_category_length', jsonb_build_object(
-              'id', rcl.id,
-              'short_id', rcl.short_id,
-              'name', rcl.name,
-              'created_at', rcl.created_at,
-              'updated_at', rcl.updated_at
-            ),
-            'race_ranking', jsonb_build_object(
-              'id', rrank.id,
-              'short_id', rrank.short_id,
-              'name', rrank.name,
-              'created_at', rrank.created_at,
-              'updated_at', rrank.updated_at
-            )
-          ),
-          'ranking_point', CASE
-            WHEN rr.ranking_point_id IS NOT NULL THEN (
-              SELECT jsonb_build_object(
-                'id', rp.id,
-                'short_id', rp.short_id,
-                'place', rp.place,
-                'points', rp.points,
-                'race_ranking_id', rp.race_ranking_id,
-                'created_at', rp.created_at,
-                'updated_at', rp.updated_at
-              )
-              FROM public.ranking_points rp
-              WHERE rp.id = rr.ranking_point_id
-            )
-            ELSE NULL
-          END
-        )
-        ORDER BY e.date_time DESC  -- Most recent events first
-      ), '[]'::jsonb)
-      FROM public.race_results rr
-      JOIN public.races r ON rr.race_id = r.id
-      JOIN public.events e ON r.event_id = e.id
-      JOIN public.race_categories rc ON r.race_category_id = rc.id
-      JOIN public.race_category_genders rcg ON r.race_category_gender_id = rcg.id
-      JOIN public.race_category_lengths rcl ON r.race_category_length_id = rcl.id
-      JOIN public.race_rankings rrank ON r.race_ranking_id = rrank.id
-      WHERE rr.cyclist_id = c.id
-    )
-  ) INTO result
+  -- Find cyclist by user's short_id
+  SELECT c.id INTO target_cyclist_id
   FROM public.cyclists c
   JOIN public.users u ON c.user_id = u.id
-  WHERE c.id = target_cyclist_id;
+  WHERE u.short_id = p_user_short_id;
+
+  -- Return empty array if cyclist doesn't exist or has no results
+  IF target_cyclist_id IS NULL THEN
+    RETURN '[]'::jsonb;
+  END IF;
+
+  -- Build race_results array (using short_id as id)
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'id', rr.id,
+      'short_id', rr.short_id,
+      'place', rr.place,
+      'time', rr.time,
+      'cyclist_id', c.short_id,
+      'race_id', r.short_id,
+      'ranking_point_id', rr.ranking_point_id,
+      'created_at', rr.created_at,
+      'updated_at', rr.updated_at,
+      'race', jsonb_build_object(
+        'id', r.id,
+        'short_id', r.short_id,
+        'name', r.name,
+        'description', r.description,
+        'date_time', r.date_time,
+        'is_public_visible', r.is_public_visible,
+        'event_id', e.short_id,
+        'race_category_id', r.race_category_id,
+        'race_category_gender_id', r.race_category_gender_id,
+        'race_category_length_id', r.race_category_length_id,
+        'race_ranking_id', r.race_ranking_id,
+        'created_at', r.created_at,
+        'updated_at', r.updated_at,
+        'event', jsonb_build_object(
+          'id', e.id,
+          'short_id', e.short_id,
+          'name', e.name,
+          'description', e.description,
+          'date_time', e.date_time,
+          'city', e.city,
+          'state', e.state,
+          'country', e.country,
+          'year', e.year,
+          'event_status', e.event_status,
+          'is_public_visible', e.is_public_visible,
+          'organization_id', e.organization_id,
+          'created_by', e.created_by,
+          'created_at', e.created_at,
+          'updated_at', e.updated_at
+        ),
+        'race_category', jsonb_build_object(
+          'id', rc.id,
+          'short_id', rc.short_id,
+          'name', rc.name,
+          'created_at', rc.created_at,
+          'updated_at', rc.updated_at
+        ),
+        'race_category_gender', jsonb_build_object(
+          'id', rcg.id,
+          'short_id', rcg.short_id,
+          'name', rcg.name,
+          'created_at', rcg.created_at,
+          'updated_at', rcg.updated_at
+        ),
+        'race_category_length', jsonb_build_object(
+          'id', rcl.id,
+          'short_id', rcl.short_id,
+          'name', rcl.name,
+          'created_at', rcl.created_at,
+          'updated_at', rcl.updated_at
+        ),
+        'race_ranking', jsonb_build_object(
+          'id', rrank.id,
+          'short_id', rrank.short_id,
+          'name', rrank.name,
+          'created_at', rrank.created_at,
+          'updated_at', rrank.updated_at
+        )
+      ),
+      'ranking_point', CASE
+        WHEN rr.ranking_point_id IS NOT NULL THEN (
+          SELECT jsonb_build_object(
+            'id', rp.id,
+            'short_id', rp.short_id,
+            'place', rp.place,
+            'points', rp.points,
+            'race_ranking_id', rp.race_ranking_id,
+            'created_at', rp.created_at,
+            'updated_at', rp.updated_at
+          )
+          FROM public.ranking_points rp
+          WHERE rp.id = rr.ranking_point_id
+        )
+        ELSE NULL
+      END
+    )
+    ORDER BY e.date_time DESC  -- Most recent events first
+  ), '[]'::jsonb) INTO result
+  FROM public.race_results rr
+  JOIN public.races r ON rr.race_id = r.id
+  JOIN public.events e ON r.event_id = e.id
+  JOIN public.race_categories rc ON r.race_category_id = rc.id
+  JOIN public.race_category_genders rcg ON r.race_category_gender_id = rcg.id
+  JOIN public.race_category_lengths rcl ON r.race_category_length_id = rcl.id
+  JOIN public.race_rankings rrank ON r.race_ranking_id = rrank.id
+  JOIN public.cyclists c ON rr.cyclist_id = c.id
+  WHERE rr.cyclist_id = target_cyclist_id;
 
   RETURN result;
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_cyclist_with_results(TEXT) IS 'Returns enriched cyclist data with first_name, last_name from joined users table and nested race results array. Results sorted by event date (most recent first).';
+COMMENT ON FUNCTION public.get_race_results_by_user_short_id(TEXT) IS 'Returns only race results array for a user (by user short_id). Does not return cyclist profile. Results sorted by event date (most recent first). Returns empty array if user has no cyclist profile or no results.';
+
+-- Get cyclist by user short_id
+-- This function fetches cyclist profile data (users + roles + cyclists)
+-- Does NOT join auth.users or race results
+-- Useful for parallel fetching with race results
+CREATE OR REPLACE FUNCTION public.get_cyclist_by_user_short_id(p_user_short_id TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  result JSONB;
+  target_user_id UUID;
+BEGIN
+  -- Find user by short_id
+  SELECT id INTO target_user_id
+  FROM public.users
+  WHERE short_id = p_user_short_id;
+
+  -- Return NULL if user doesn't exist
+  IF target_user_id IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  -- Build cyclist object (users + roles + cyclists, NO auth.users)
+  SELECT jsonb_build_object(
+    'short_id', u.short_id,
+    'first_name', u.first_name,
+    'last_name', u.last_name,
+    'role_id', u.role_id,
+    'created_at', u.created_at,
+    'updated_at', u.updated_at,
+    'role', jsonb_build_object(
+      'id', r.id,
+      'short_id', r.short_id,
+      'name', r.name,
+      'created_at', r.created_at,
+      'updated_at', r.updated_at
+    ),
+    'cyclist', CASE
+      WHEN c.id IS NOT NULL THEN jsonb_build_object(
+        'short_id', c.short_id,
+        'born_year', c.born_year,
+        'gender_id', c.gender_id,
+        'created_at', c.created_at,
+        'updated_at', c.updated_at,
+        'gender', CASE WHEN cg.id IS NOT NULL THEN jsonb_build_object(
+          'id', cg.id,
+          'short_id', cg.short_id,
+          'name', cg.name,
+          'created_at', cg.created_at,
+          'updated_at', cg.updated_at
+        ) ELSE NULL END
+      )
+      ELSE NULL
+    END
+  ) INTO result
+  FROM public.users u
+  JOIN public.roles r ON u.role_id = r.id
+  LEFT JOIN public.cyclists c ON c.user_id = u.id
+  LEFT JOIN public.cyclist_genders cg ON c.gender_id = cg.id
+  WHERE u.id = target_user_id;
+
+  RETURN result;
+END;
+$$;
+
+COMMENT ON FUNCTION public.get_cyclist_by_user_short_id(TEXT) IS 'Returns cyclist profile data (users + roles + cyclists) by user short_id. Does NOT join auth.users or race results. Returns NULL if user does not exist. Optimized for parallel fetching with race results.';
 
 -- =====================================================
 -- SECTION 24: Enable RLS on All Tables

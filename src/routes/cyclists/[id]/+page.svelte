@@ -8,11 +8,11 @@
 
 <svelte:head>
 	<title
-		>{data.cyclist.user?.firstName}
-		{data.cyclist.user?.lastName || ''} - {$t('common.navigation.cyclists')} - ACS</title
+		>{data.cyclist.firstName}
+		{data.cyclist.lastName || ''} - {$t('common.navigation.cyclists')} - ACS</title
 	>
 </svelte:head>
 
 <section class="py-6 sm:py-8 md:py-10 lg:py-12">
-	<CyclistProfile cyclist={data.cyclist} />
+	<CyclistProfile cyclist={data.cyclist} raceResults={data.raceResults} />
 </section>

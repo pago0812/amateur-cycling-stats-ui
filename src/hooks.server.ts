@@ -48,7 +48,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	 * First checks if authenticated, then fetches user data if session exists.
 	 * Returns null if no valid session or user not found in database.
 	 */
-	event.locals.safeGetSession = async () => {
+	event.locals.getSessionUser = async () => {
 		try {
 			// Check authentication status first (faster check)
 			const authenticated = await isAuthenticated(event.locals.supabase);
@@ -56,16 +56,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 			console.log('authenticated', authenticated);
 
 			if (!authenticated) {
-				return { session: null, user: null };
+				return null;
 			}
 
 			// Fetch enriched user data using service function
 			const user = await getAuthUser(event.locals.supabase);
-			return { session: null, user };
+			return user;
 		} catch (error) {
 			// Log unexpected errors (authentication errors are handled in getAuthUser)
 			console.error('Error fetching authenticated user:', error);
-			return { session: null, user: null };
+			return null;
 		}
 	};
 

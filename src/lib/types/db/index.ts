@@ -17,12 +17,7 @@
  */
 
 // Main entity types
-export type {
-	CyclistDB,
-	CyclistInsert,
-	CyclistWithResultsResponse,
-	CyclistWithResultsRpcResponse
-} from './cyclists.db';
+export type { CyclistDB, CyclistInsert, RaceResultRpcItem } from './cyclists.db';
 export type { EventDB, EventWithCategoriesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse } from './races.db';
 export type { RaceResultDB, RaceResultWithRelationsResponse } from './race-results.db';

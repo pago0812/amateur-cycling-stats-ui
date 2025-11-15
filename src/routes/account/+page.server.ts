@@ -1,32 +1,32 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getCyclistWithResultsById } from '$lib/services/cyclists';
-import { RoleTypeEnum } from '$lib/types/domain';
+import { getRaceResultsByUserId } from '$lib/services/race-results';
+import { RoleTypeEnum, type Cyclist } from '$lib/types/domain';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.safeGetSession();
+export const load: PageServerLoad = async ({ parent, locals }) => {
+	// Get user from parent layout (already validated as cyclist)
+	const { user } = await parent();
 
 	// User is guaranteed to exist and be a cyclist from layout
 	if (!user || user.roleType !== RoleTypeEnum.CYCLIST) {
 		throw error(404, 'Cyclist profile not found');
 	}
 
+	// Type guard: user is a Cyclist (has cyclist-specific properties)
+	const cyclist = user as Cyclist;
+
 	try {
-		// Fetch full cyclist data with race results
-		const cyclist = await getCyclistWithResultsById(locals.supabase, {
-			id: user.id
+		// Fetch only race results (cyclist data already available from parent)
+		const raceResults = await getRaceResultsByUserId(locals.supabase, {
+			userId: user.id
 		});
 
-		// Cyclist should always exist if user has cyclist.id, but handle null gracefully
-		if (!cyclist) {
-			throw error(404, 'Cyclist profile not found');
-		}
-
 		return {
-			cyclist
+			cyclist,
+			raceResults
 		};
 	} catch (err) {
-		console.error('Error loading cyclist profile:', err);
-		throw error(500, 'Failed to load cyclist profile');
+		console.error('Error loading race results:', err);
+		throw error(500, 'Failed to load race results');
 	}
 };

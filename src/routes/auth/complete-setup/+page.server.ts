@@ -3,12 +3,13 @@ import type { Actions, PageServerLoad } from './$types';
 import { getInvitationByEmail } from '$lib/services/organization-invitations';
 import { t } from '$lib/i18n/server';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ parent, locals }) => {
 	console.log('=== [Complete Setup Load] START ===');
 
-	const { user } = await locals.safeGetSession();
+	// Get user from parent layout
+	const { user } = await parent();
 
-	console.log('[Complete Setup Load] safeGetSession result:', {
+	console.log('[Complete Setup Load] getSessionUser result:', {
 		hasUser: !!user,
 		userId: user?.id,
 		email: user?.email,
@@ -77,7 +78,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const { user } = await locals.safeGetSession();
+		const user = await locals.getSessionUser();
 
 		if (!user || !user.email) {
 			throw redirect(303, '/login');
