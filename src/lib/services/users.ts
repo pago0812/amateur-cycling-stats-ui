@@ -10,7 +10,7 @@ import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
  * @param supabase - Supabase client instance
  * @returns UserResponse with enriched user data or error
  */
-export const getMyself = async (supabase: SupabaseClient<Database>): Promise<UserResponse> => {
+export async function getMyself(supabase: SupabaseClient<Database>): Promise<UserResponse> {
 	try {
 		// Get the current authenticated user
 		const {
@@ -53,7 +53,7 @@ export const getMyself = async (supabase: SupabaseClient<Database>): Promise<Use
 			}
 		};
 	}
-};
+}
 
 /**
  * Update a user's role.
@@ -62,10 +62,10 @@ export const getMyself = async (supabase: SupabaseClient<Database>): Promise<Use
  * @param params - User ID and new role ID
  * @returns UserResponse with updated user data or error
  */
-export const updateUser = async (
+export async function updateUser(
 	supabase: SupabaseClient<Database>,
 	{ roleId, userId }: SetRoleRequest
-): Promise<UserResponse> => {
+): Promise<UserResponse> {
 	try {
 		// Update the user's role in the database
 		const { error: updateError } = await supabase
@@ -127,4 +127,4 @@ export const updateUser = async (
 			}
 		};
 	}
-};
+}

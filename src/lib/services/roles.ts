@@ -8,7 +8,7 @@ import { adaptRoleFromDb, adaptArray } from '$lib/adapters';
  * @param supabase - Supabase client instance
  * @returns RolesResponse with roles array or error
  */
-export const getRoles = async (supabase: SupabaseClient<Database>): Promise<RolesResponse> => {
+export async function getRoles(supabase: SupabaseClient<Database>): Promise<RolesResponse> {
 	try {
 		const { data: dbRoles, error } = await supabase.from('roles').select('*').order('name');
 
@@ -36,4 +36,4 @@ export const getRoles = async (supabase: SupabaseClient<Database>): Promise<Role
 			}
 		};
 	}
-};
+}
