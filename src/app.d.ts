@@ -2,7 +2,7 @@
 // for information about these interfaces
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { UserWithRelations } from '$lib/types/domain';
+import type { User } from '$lib/types/domain';
 
 declare global {
 	namespace App {
@@ -11,7 +11,7 @@ declare global {
 			supabase: SupabaseClient<Database>;
 			safeGetSession: () => Promise<{
 				session: Session | null;
-				user: UserWithRelations | null;
+				user: User | null;
 			}>;
 			locale: string;
 		}

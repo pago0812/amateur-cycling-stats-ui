@@ -26,9 +26,10 @@ export type {
 export type { EventDB, EventWithCategoriesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse } from './races.db';
 export type { RaceResultDB, RaceResultWithRelationsResponse } from './race-results.db';
-export type { UserDB, UserWithRelationsRpcResponse } from './users.db';
+export type { UserDB, AuthUserRpcResponse, UserWithRelationsRpcResponse } from './users.db';
 export type { RoleDB } from './roles.db';
 export type { OrganizationDB } from './organizations.db';
+export type { OrganizationInvitationDB } from './organization-invitations.db';
 export type { OrganizerDB, OrganizerWithUserResponse } from './organizers.db';
 export type { RankingPointDB } from './ranking-points.db';
 

@@ -45,10 +45,21 @@ $$;
 -- SECTION 2: Roles Table
 -- =====================================================
 
+-- Create ENUM type for role names (most type-safe approach)
+CREATE TYPE role_name_enum AS ENUM (
+  'PUBLIC',
+  'CYCLIST',
+  'ORGANIZER_STAFF',
+  'ORGANIZER_OWNER',
+  'ADMIN'
+);
+
+COMMENT ON TYPE role_name_enum IS 'Valid role names - database-enforced enum for type safety';
+
 CREATE TABLE IF NOT EXISTS public.roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   short_id TEXT NOT NULL UNIQUE,
-  name TEXT NOT NULL UNIQUE,
+  name role_name_enum NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -70,11 +81,11 @@ CREATE TRIGGER handle_roles_updated_at
 
 -- Seed role data (with organizer_owner instead of organizer)
 INSERT INTO public.roles (name) VALUES
-  ('public'),
-  ('cyclist'),
-  ('organizer_staff'),
-  ('organizer_owner'),
-  ('admin')
+  ('PUBLIC'),
+  ('CYCLIST'),
+  ('ORGANIZER_STAFF'),
+  ('ORGANIZER_OWNER'),
+  ('ADMIN')
 ON CONFLICT (name) DO NOTHING;
 
 -- =====================================================
@@ -599,7 +610,7 @@ DECLARE
   user_last_name TEXT;
 BEGIN
   -- Get the cyclist role ID (default role)
-  SELECT id INTO cyclist_role_id FROM public.roles WHERE name = 'cyclist';
+  SELECT id INTO cyclist_role_id FROM public.roles WHERE name = 'CYCLIST'::role_name_enum;
 
   -- Extract first_name and last_name from metadata
   user_first_name := NEW.raw_user_meta_data->>'first_name';
@@ -642,7 +653,7 @@ DECLARE
   default_gender_id UUID;
 BEGIN
   -- Get the CYCLIST role ID
-  SELECT id INTO cyclist_role_id FROM public.roles WHERE name = 'cyclist' LIMIT 1;
+  SELECT id INTO cyclist_role_id FROM public.roles WHERE name = 'CYCLIST'::role_name_enum LIMIT 1;
 
   -- Check if the new user has CYCLIST role
   IF NEW.role_id = cyclist_role_id THEN
@@ -729,7 +740,7 @@ WHERE
 
 -- Get current user's role
 CREATE OR REPLACE FUNCTION public.get_my_role()
-RETURNS TEXT
+RETURNS role_name_enum
 LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
@@ -743,7 +754,7 @@ $$;
 COMMENT ON FUNCTION public.get_my_role() IS 'Returns current authenticated user''s role name';
 
 -- Check if current user has specific role
-CREATE OR REPLACE FUNCTION public.has_role(role_name TEXT)
+CREATE OR REPLACE FUNCTION public.has_role(role_name role_name_enum)
 RETURNS BOOLEAN
 LANGUAGE sql
 SECURITY DEFINER
@@ -758,7 +769,7 @@ AS $$
   );
 $$;
 
-COMMENT ON FUNCTION public.has_role(TEXT) IS 'Checks if current user has the specified role';
+COMMENT ON FUNCTION public.has_role(role_name_enum) IS 'Checks if current user has the specified role';
 
 -- Check if current user is admin
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -767,7 +778,7 @@ LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT public.has_role('admin');
+  SELECT public.has_role('ADMIN'::role_name_enum);
 $$;
 
 COMMENT ON FUNCTION public.is_admin() IS 'Returns TRUE if current user has admin role';
@@ -805,7 +816,7 @@ AS $$
     JOIN public.users ON organizers.user_id = users.id
     JOIN public.roles ON users.role_id = roles.id
     WHERE users.auth_user_id = auth.uid()
-      AND roles.name = 'organizer_owner'
+      AND roles.name = 'ORGANIZER_OWNER'::role_name_enum
   );
 $$;
 
@@ -949,7 +960,7 @@ BEGIN
       'updated_at', r.updated_at
     ),
     'cyclist', CASE
-      WHEN r.name = 'cyclist' THEN (
+      WHEN r.name = 'CYCLIST'::role_name_enum THEN (
         SELECT jsonb_build_object(
           'id', c.id,
           'short_id', c.short_id,
@@ -966,7 +977,7 @@ BEGIN
       ELSE NULL
     END,
     'organizer', CASE
-      WHEN r.name IN ('organizer_staff', 'organizer_owner') THEN (
+      WHEN r.name IN ('ORGANIZER_STAFF'::role_name_enum, 'ORGANIZER_OWNER'::role_name_enum) THEN (
         SELECT jsonb_build_object(
           'id', o.id,
           'short_id', o.short_id,

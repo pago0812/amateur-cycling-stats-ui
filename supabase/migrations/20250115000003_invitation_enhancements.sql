@@ -43,7 +43,7 @@ BEGIN
   END IF;
 
   -- Original logic: Get the cyclist role ID (default role)
-  SELECT id INTO cyclist_role_id FROM public.roles WHERE name = 'cyclist';
+  SELECT id INTO cyclist_role_id FROM public.roles WHERE name = 'CYCLIST'::role_name_enum;
 
   -- Extract first_name and last_name from metadata
   user_first_name := NEW.raw_user_meta_data->>'first_name';
@@ -88,7 +88,7 @@ DECLARE
   v_user_id UUID;
 BEGIN
   -- Get organizer_owner role ID
-  SELECT id INTO v_role_id FROM public.roles WHERE name = 'organizer_owner';
+  SELECT id INTO v_role_id FROM public.roles WHERE name = 'ORGANIZER_OWNER'::role_name_enum;
 
   IF v_role_id IS NULL THEN
     RAISE EXCEPTION 'organizer_owner role not found';
@@ -144,7 +144,7 @@ DECLARE
   v_user_id UUID;
 BEGIN
   -- Get organizer_staff role ID
-  SELECT id INTO v_role_id FROM public.roles WHERE name = 'organizer_staff';
+  SELECT id INTO v_role_id FROM public.roles WHERE name = 'ORGANIZER_STAFF'::role_name_enum;
 
   IF v_role_id IS NULL THEN
     RAISE EXCEPTION 'organizer_staff role not found';
@@ -200,7 +200,7 @@ DECLARE
   v_default_gender_id UUID;
 BEGIN
   -- Get cyclist role ID
-  SELECT id INTO v_role_id FROM public.roles WHERE name = 'cyclist';
+  SELECT id INTO v_role_id FROM public.roles WHERE name = 'CYCLIST'::role_name_enum;
 
   IF v_role_id IS NULL THEN
     RAISE EXCEPTION 'cyclist role not found';
@@ -402,7 +402,7 @@ AS $$
     FROM public.users u
     JOIN public.roles r ON u.role_id = r.id
     WHERE u.auth_user_id = auth.uid()
-      AND r.name = 'organizer_owner'
+      AND r.name = 'ORGANIZER_OWNER'::role_name_enum
       AND public.get_user_organization_id() IS NOT NULL  -- Has organizers record
   );
 $$;

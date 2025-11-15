@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		hasUser: !!user,
 		userId: user?.id,
 		email: user?.email,
-		role: user?.role
+		roleType: user?.roleType
 	});
 
 	if (!user || !user.email) {
@@ -39,7 +39,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(303, '/auth/setup-failed?error=no_invitation');
 	}
 
-	console.log('[Complete Setup Load] 🔄 Fetching organization data for ID:', invitation.organizationId);
+	console.log(
+		'[Complete Setup Load] 🔄 Fetching organization data for ID:',
+		invitation.organizationId
+	);
 
 	// Get organization UUID from invitation
 	const { data: orgData, error: orgError } = await locals.supabase

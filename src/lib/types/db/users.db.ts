@@ -1,4 +1,4 @@
-import type { Tables } from '../database.types';
+import type { Tables, Database } from '../database.types';
 
 /**
  * Database type for users table.
@@ -7,26 +7,27 @@ import type { Tables } from '../database.types';
 export type UserDB = Tables<'users'>;
 
 /**
- * Type for enriched user data returned by get_user_with_relations RPC.
+ * Type for enriched user data returned by get_auth_user RPC (formerly get_user_with_relations).
  * This is the raw response from the database (snake_case).
- * Use the adapter to transform this to UserWithRelations domain type.
+ * Use the adapter to transform this to domain User types.
  *
  * IMPORTANT: RPC returns both id (UUID) and short_id fields.
  * Adapters translate short_id → domain.id (UUID stays internal).
  */
-export interface UserWithRelationsRpcResponse {
+export interface AuthUserRpcResponse {
 	id: string; // UUID
 	short_id: string; // NanoID
 	first_name: string;
 	last_name: string | null;
 	email: string | null; // From auth.users, may be null for unlinked users
+	display_name: string | null; // From auth.users.raw_user_meta_data
 	role_id: string;
 	created_at: string;
 	updated_at: string;
 	role: {
 		id: string; // UUID
 		short_id: string; // NanoID
-		name: string;
+		name: Database['public']['Enums']['role_name_enum'];
 		created_at: string;
 		updated_at: string;
 	};
@@ -57,3 +58,9 @@ export interface UserWithRelationsRpcResponse {
 		};
 	} | null;
 }
+
+/**
+ * @deprecated Use AuthUserRpcResponse instead.
+ * Kept for backwards compatibility during migration.
+ */
+export type UserWithRelationsRpcResponse = AuthUserRpcResponse;

@@ -1,7 +1,7 @@
 export enum RoleTypeEnum {
-	CYCLIST = 'cyclist',
-	ORGANIZER_OWNER = 'organizer_owner',
-	ORGANIZER_STAFF = 'organizer_staff',
-	ADMIN = 'admin',
-	PUBLIC = 'public'
+	CYCLIST = 'CYCLIST',
+	ORGANIZER_OWNER = 'ORGANIZER_OWNER',
+	ORGANIZER_STAFF = 'ORGANIZER_STAFF',
+	ADMIN = 'ADMIN',
+	PUBLIC = 'PUBLIC'
 }

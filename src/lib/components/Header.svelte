@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Urls } from '$lib/constants/urls';
-	import type { UserWithRelations } from '$lib/types/domain';
+	import type { User } from '$lib/types/domain';
 	import { RoleTypeEnum } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
 	import Button from '$lib/components/Button.svelte';
 
-	let { user = null }: { user?: UserWithRelations | null } = $props();
+	let { user = null }: { user?: User | null } = $props();
 	let mobileMenuOpen = $state(false);
 	let logoutForm: HTMLFormElement;
 
@@ -25,10 +25,10 @@
 	const portalUrl = $derived(
 		!user
 			? Urls.LOGIN
-			: user.role?.name === RoleTypeEnum.ADMIN
+			: user.roleType === RoleTypeEnum.ADMIN
 				? Urls.ADMIN
-				: user.role?.name === RoleTypeEnum.ORGANIZER_OWNER ||
-					  user.role?.name === RoleTypeEnum.ORGANIZER_STAFF
+				: user.roleType === RoleTypeEnum.ORGANIZER_OWNER ||
+					  user.roleType === RoleTypeEnum.ORGANIZER_STAFF
 					? Urls.PANEL
 					: Urls.ACCOUNT
 	);

@@ -1,7 +1,6 @@
 import { createSupabaseServerClient } from '$lib/server/supabase';
 import type { Handle } from '@sveltejs/kit';
-import type { UserWithRelationsRpcResponse } from '$lib/types/db';
-import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
+import { getAuthUser, isAuthenticated } from '$lib/services/users';
 import { setLocaleCookie } from '$lib/utils/cookies';
 import {
 	parseAcceptLanguage,
@@ -46,36 +45,28 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	/**
 	 * Get the current authenticated user with enriched profile data.
-	 * Uses get_user_with_relations() RPC which validates session via auth.uid().
+	 * First checks if authenticated, then fetches user data if session exists.
 	 * Returns null if no valid session or user not found in database.
 	 */
 	event.locals.safeGetSession = async () => {
-		// Fetch enriched user data using our PostgreSQL function
-		// RPC function uses auth.uid() when no parameter provided
-		// RPC now includes email from auth.users directly
-		const { data: rpcResponse, error } = await event.locals.supabase.rpc(
-			'get_user_with_relations'
-			// No parameter - RPC will use auth.uid() internally and validate session
-		);
+		try {
+			// Check authentication status first (faster check)
+			const authenticated = await isAuthenticated(event.locals.supabase);
 
-		if (error || !rpcResponse) {
-			if (error) {
-				// Error code 28000 = invalid_authorization_specification (no active session)
-				// This is expected for unauthenticated users, so don't log it
-				// Only log unexpected database errors
-				if (error.code !== '28000') {
-					console.error('Error fetching user with relations:', error);
-				}
+			console.log('authenticated', authenticated);
+
+			if (!authenticated) {
+				return { session: null, user: null };
 			}
+
+			// Fetch enriched user data using service function
+			const user = await getAuthUser(event.locals.supabase);
+			return { session: null, user };
+		} catch (error) {
+			// Log unexpected errors (authentication errors are handled in getAuthUser)
+			console.error('Error fetching authenticated user:', error);
 			return { session: null, user: null };
 		}
-
-		// Transform snake_case DB response to camelCase domain type
-		const userData = adaptUserWithRelationsFromRpc(
-			rpcResponse as unknown as UserWithRelationsRpcResponse
-		);
-
-		return { session: null, user: userData };
 	};
 
 	// Resolve the request

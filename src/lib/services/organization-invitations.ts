@@ -10,6 +10,7 @@ import type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus
 } from '$lib/types/domain/organization-invitation.domain';
+import type { OrganizationInvitationDB } from '$lib/types/db';
 import { adaptOrganizationInvitationFromDb } from '$lib/adapters/organization-invitations.adapter';
 
 type TypedSupabaseClient = SupabaseClient<Database>;
@@ -57,7 +58,7 @@ export async function createInvitation(
 		throw new Error(`Failed to create invitation: ${error.message}`);
 	}
 
-	return adaptOrganizationInvitationFromDb(data);
+	return adaptOrganizationInvitationFromDb(data as OrganizationInvitationDB);
 }
 
 /**
@@ -87,7 +88,7 @@ export async function getInvitationByEmail(
 		throw new Error(`Failed to get invitation: ${error.message}`);
 	}
 
-	return adaptOrganizationInvitationFromDb(data);
+	return adaptOrganizationInvitationFromDb(data as OrganizationInvitationDB);
 }
 
 /**
@@ -117,7 +118,7 @@ export async function getInvitationByOrganizationId(
 		throw new Error(`Failed to get invitation: ${error.message}`);
 	}
 
-	return adaptOrganizationInvitationFromDb(data);
+	return adaptOrganizationInvitationFromDb(data as OrganizationInvitationDB);
 }
 
 /**
@@ -143,7 +144,7 @@ export async function updateInvitationStatus(
 		throw new Error(`Failed to update invitation status: ${error.message}`);
 	}
 
-	return adaptOrganizationInvitationFromDb(data);
+	return adaptOrganizationInvitationFromDb(data as OrganizationInvitationDB);
 }
 
 /**
@@ -174,7 +175,7 @@ export async function getPendingInvitationsForRetry(
 		throw new Error(`Failed to get pending invitations: ${error.message}`);
 	}
 
-	return data.map(adaptOrganizationInvitationFromDb);
+	return data.map((item) => adaptOrganizationInvitationFromDb(item as OrganizationInvitationDB));
 }
 
 /**
@@ -216,7 +217,7 @@ export async function incrementRetryCount(
 		throw new Error(`Failed to increment retry count: ${error.message}`);
 	}
 
-	return adaptOrganizationInvitationFromDb(data);
+	return adaptOrganizationInvitationFromDb(data as OrganizationInvitationDB);
 }
 
 /**

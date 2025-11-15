@@ -8,21 +8,21 @@ import type { Actions, PageServerLoad } from './$types';
 /**
  * Helper function to determine redirect URL based on user role
  */
-function getRedirectUrlForRole(roleName?: string): string {
-	if (!roleName) return Urls.LOGIN;
+function getRedirectUrlForRole(roleType?: string | null): string {
+	if (!roleType) return Urls.LOGIN;
 
 	// Cyclists go to /account
-	if (roleName === RoleTypeEnum.CYCLIST) {
+	if (roleType === RoleTypeEnum.CYCLIST) {
 		return Urls.ACCOUNT;
 	}
 
 	// Admins go to /admin
-	if (roleName === RoleTypeEnum.ADMIN) {
+	if (roleType === RoleTypeEnum.ADMIN) {
 		return Urls.ADMIN;
 	}
 
 	// Organizers go to /panel
-	if (roleName === RoleTypeEnum.ORGANIZER_OWNER || roleName === RoleTypeEnum.ORGANIZER_STAFF) {
+	if (roleType === RoleTypeEnum.ORGANIZER_OWNER || roleType === RoleTypeEnum.ORGANIZER_STAFF) {
 		return Urls.PANEL;
 	}
 
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// Redirect if already logged in
 	const { user } = await locals.safeGetSession();
 	if (user) {
-		throw redirect(302, getRedirectUrlForRole(user.role?.name));
+		throw redirect(302, getRedirectUrlForRole(user.roleType));
 	}
 };
 
@@ -61,11 +61,11 @@ export const actions = {
 			});
 		}
 
-		if (loginResponse.data) {
+		if (loginResponse.success) {
 			// No need to manually save JWT - Supabase handles cookies automatically
 			// Fetch user data to determine role-based redirect
 			const { user } = await locals.safeGetSession();
-			throw redirect(302, getRedirectUrlForRole(user?.role?.name));
+			throw redirect(302, getRedirectUrlForRole(user?.roleType));
 		}
 
 		return fail(500, {

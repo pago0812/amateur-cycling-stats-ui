@@ -20,7 +20,10 @@
 				{$t('auth.completeSetup.title')}
 			</h1>
 			<p class="mt-2 text-lg text-gray-600">
-				{$t('auth.completeSetup.welcome', { organizationName: data.organizationName })}
+				{$t('auth.completeSetup.welcome', { organizationName: data.organizationName } as Record<
+					string,
+					unknown
+				>)}
 			</p>
 			<p class="mt-2 text-sm text-gray-500">
 				{$t('auth.completeSetup.instruction')}

@@ -4,15 +4,52 @@
  * Transforms database types (snake_case) to domain types (camelCase) for organizers.
  */
 
-import type { OrganizerDB, OrganizerWithUserResponse } from '$lib/types/db';
-import type { Organizer, OrganizerWithRelations, UserWithRelations } from '$lib/types/domain';
+import type { OrganizerDB, OrganizerWithUserResponse, AuthUserRpcResponse } from '$lib/types/db';
+import type {
+	Organizer,
+	OrganizerOld,
+	OrganizerWithRelations,
+	UserWithRelations
+} from '$lib/types/domain';
 import { mapTimestamps } from './common.adapter';
 
 /**
- * Transform OrganizerDB (database type) to Organizer (domain type).
+ * Adapts the RPC response from get_auth_user to domain Organizer type (flattened).
+ * Transforms snake_case → camelCase.
+ */
+export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organizer {
+	if (rpcResponse.role.name !== 'ORGANIZER_STAFF' && rpcResponse.role.name !== 'ORGANIZER_OWNER') {
+		throw new Error('Invalid role: expected ORGANIZER_STAFF or ORGANIZER_OWNER');
+	}
+
+	if (!rpcResponse.organizer) {
+		throw new Error('Organizer data missing in RPC response');
+	}
+
+	const organizerData = rpcResponse.organizer;
+	const roleType =
+		rpcResponse.role.name === 'ORGANIZER_OWNER' ? 'ORGANIZER_OWNER' : 'ORGANIZER_STAFF';
+
+	return {
+		id: rpcResponse.short_id,
+		firstName: rpcResponse.first_name,
+		lastName: rpcResponse.last_name ?? '',
+		email: rpcResponse.email ?? '',
+		displayName: rpcResponse.display_name ?? null,
+		hasAuth: true, // Always true for organizers
+		roleType,
+		organizationId: organizerData.organization_id,
+		...mapTimestamps(rpcResponse)
+	};
+}
+
+/**
+ * @deprecated Use adaptOrganizerFromRpc for new flattened Organizer type.
+ * Legacy adapter for old Organizer domain type.
+ * Transform OrganizerDB (database type) to OrganizerOld (domain type).
  * Maps snake_case fields to camelCase.
  */
-export function adaptOrganizerFromDb(dbOrganizer: OrganizerDB): Organizer {
+export function adaptOrganizerFromDbOld(dbOrganizer: OrganizerDB): OrganizerOld {
 	return {
 		// Identity
 		id: dbOrganizer.short_id, // Translate: short_id → id
@@ -27,13 +64,19 @@ export function adaptOrganizerFromDb(dbOrganizer: OrganizerDB): Organizer {
 }
 
 /**
+ * Backwards compatibility alias.
+ * @deprecated Use adaptOrganizerFromDbOld instead.
+ */
+export const adaptOrganizerFromDb = adaptOrganizerFromDbOld;
+
+/**
  * Transform OrganizerWithUserResponse (database type with user relations)
  * to OrganizerWithRelations (domain type with populated user and role).
  */
 export function adaptOrganizerWithUserFromDb(
 	dbOrganizer: OrganizerWithUserResponse
 ): OrganizerWithRelations {
-	const baseOrganizer = adaptOrganizerFromDb(dbOrganizer);
+	const baseOrganizer = adaptOrganizerFromDbOld(dbOrganizer);
 
 	// Transform user with role
 	const user: UserWithRelations = {

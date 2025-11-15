@@ -14,20 +14,20 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	}
 
 	// Redirect cyclists to account page
-	if (user.role?.name === RoleTypeEnum.CYCLIST) {
+	if (user.roleType === RoleTypeEnum.CYCLIST) {
 		throw redirect(302, Urls.ACCOUNT);
 	}
 
 	// Redirect organizers to panel
 	if (
-		user.role?.name === RoleTypeEnum.ORGANIZER_OWNER ||
-		user.role?.name === RoleTypeEnum.ORGANIZER_STAFF
+		user.roleType === RoleTypeEnum.ORGANIZER_OWNER ||
+		user.roleType === RoleTypeEnum.ORGANIZER_STAFF
 	) {
 		throw redirect(302, Urls.PANEL);
 	}
 
 	// Only admins can access this route
-	if (user.role?.name !== RoleTypeEnum.ADMIN) {
+	if (user.roleType !== RoleTypeEnum.ADMIN) {
 		throw redirect(302, Urls.HOME);
 	}
 

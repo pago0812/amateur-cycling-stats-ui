@@ -1,19 +1,20 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getCyclistWithResultsById } from '$lib/services/cyclists';
+import { RoleTypeEnum } from '$lib/types/domain';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
 
 	// User is guaranteed to exist and be a cyclist from layout
-	if (!user?.cyclist?.id) {
+	if (!user || user.roleType !== RoleTypeEnum.CYCLIST) {
 		throw error(404, 'Cyclist profile not found');
 	}
 
 	try {
 		// Fetch full cyclist data with race results
 		const cyclist = await getCyclistWithResultsById(locals.supabase, {
-			id: user.cyclist.id
+			id: user.id
 		});
 
 		// Cyclist should always exist if user has cyclist.id, but handle null gracefully

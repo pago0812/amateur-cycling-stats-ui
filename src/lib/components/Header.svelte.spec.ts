@@ -8,7 +8,8 @@ import { page } from '@vitest/browser/context';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import Header from './Header.svelte';
-import type { UserWithRelations } from '$lib/types/domain';
+import type { Cyclist } from '$lib/types/domain';
+import { RoleTypeEnum } from '$lib/types/domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => {
@@ -46,21 +47,18 @@ describe('Header Component', () => {
 	});
 
 	it('should show account link when user is authenticated', async () => {
-		const mockUser: UserWithRelations = {
+		const mockUser: Cyclist = {
 			id: 'user-123',
 			firstName: 'Test',
 			lastName: 'User',
-			roleId: 'role-cyclist',
+			email: 'test@example.com',
+			displayName: null,
+			hasAuth: true,
+			roleType: RoleTypeEnum.CYCLIST,
+			gender: null,
+			bornYear: 1990,
 			createdAt: '2024-01-01T00:00:00Z',
-			updatedAt: '2024-01-01T00:00:00Z',
-			role: {
-				id: 'role-cyclist',
-				name: 'CYCLIST',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z'
-			},
-			cyclist: undefined,
-			organizer: undefined
+			updatedAt: '2024-01-01T00:00:00Z'
 		};
 
 		render(Header, { user: mockUser });

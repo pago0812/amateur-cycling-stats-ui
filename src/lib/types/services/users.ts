@@ -1,4 +1,4 @@
-import type { User } from '../domain';
+import type { UserWithRelations } from '../domain';
 import type { ServerError } from './errors';
 
 // Requests
@@ -38,7 +38,7 @@ export interface CreateCyclistUserParams {
 
 // Responses
 export interface UserResponse {
-	data?: User;
+	data?: UserWithRelations;
 	error?: ServerError;
 }
 

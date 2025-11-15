@@ -521,14 +521,14 @@ CREATE POLICY "Organizer staff can update own profile"
 
 ### organization_invitations
 
-| Role                              | SELECT                    | INSERT            | UPDATE                    | DELETE                    |
-| --------------------------------- | ------------------------- | ----------------- | ------------------------- | ------------------------- |
-| **admin**                         | ✅ All                    | ✅ All            | ✅ All                    | ✅ All                    |
-| **organizer_owner (State A)**     | 🔒 Own pending invitation | ❌                | 🔒 Own to 'accepted'      | 🔒 Own pending invitation |
-| **organizer_owner (State B)**     | 🔒 Org invitations        | 🔒 Org invitations| 🔒 Org invitations        | 🔒 Org invitations        |
-| **organizer_staff**               | ❌                        | ❌                | ❌                        | ❌                        |
-| **cyclist**                       | ❌                        | ❌                | ❌                        | ❌                        |
-| **public**                        | ❌                        | ❌                | ❌                        | ❌                        |
+| Role                          | SELECT                    | INSERT             | UPDATE               | DELETE                    |
+| ----------------------------- | ------------------------- | ------------------ | -------------------- | ------------------------- |
+| **admin**                     | ✅ All                    | ✅ All             | ✅ All               | ✅ All                    |
+| **organizer_owner (State A)** | 🔒 Own pending invitation | ❌                 | 🔒 Own to 'accepted' | 🔒 Own pending invitation |
+| **organizer_owner (State B)** | 🔒 Org invitations        | 🔒 Org invitations | 🔒 Org invitations   | 🔒 Org invitations        |
+| **organizer_staff**           | ❌                        | ❌                 | ❌                   | ❌                        |
+| **cyclist**                   | ❌                        | ❌                 | ❌                   | ❌                        |
+| **public**                    | ❌                        | ❌                 | ❌                   | ❌                        |
 
 **Notes:**
 

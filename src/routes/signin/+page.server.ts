@@ -42,7 +42,7 @@ export const actions = {
 			});
 		}
 
-		if (signinResponse.data) {
+		if (signinResponse.success) {
 			// No need to manually save JWT - Supabase handles cookies automatically
 			// Redirect cyclists to /account (all new users are cyclists by default)
 			throw redirect(302, Urls.ACCOUNT);

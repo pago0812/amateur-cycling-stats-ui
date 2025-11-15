@@ -421,7 +421,7 @@ async function createAnonymousCyclists(): Promise<Map<string, string>> {
 	console.log('\n\n👥 Creating anonymous cyclists (users without auth accounts)...');
 
 	const cyclistIdMap = new Map<string, string>();
-	const cyclistRoleId = await getRoleId('cyclist');
+	const cyclistRoleId = await getRoleId('CYCLIST');
 
 	for (let i = 0; i < anonymousCyclistsData.length; i++) {
 		const cyclist = anonymousCyclistsData[i];

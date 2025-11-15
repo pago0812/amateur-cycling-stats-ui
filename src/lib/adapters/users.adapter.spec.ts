@@ -17,6 +17,7 @@ describe('Users Adapter', () => {
 				first_name: 'Carlos',
 				last_name: 'Rodríguez',
 				email: 'carlos@example.com',
+				display_name: null,
 				role_id: 'role-cyclist',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-02T00:00:00Z',
@@ -58,6 +59,7 @@ describe('Users Adapter', () => {
 				first_name: 'Maria',
 				last_name: 'García',
 				email: 'maria@example.com',
+				display_name: null,
 				role_id: 'role-organizer-admin',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
@@ -107,6 +109,7 @@ describe('Users Adapter', () => {
 				first_name: 'Admin',
 				last_name: 'User',
 				email: 'admin@example.com',
+				display_name: null,
 				role_id: 'role-admin',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',
@@ -132,7 +135,7 @@ describe('Users Adapter', () => {
 		});
 
 		it('should transform all role types correctly', () => {
-			const roles = ['public', 'cyclist', 'organizer_staff', 'organizer', 'admin'];
+			const roles = ['PUBLIC', 'CYCLIST', 'ORGANIZER_STAFF', 'ORGANIZER_OWNER', 'ADMIN'] as const;
 
 			roles.forEach((roleName) => {
 				const rpcResponse: UserWithRelationsRpcResponse = {
@@ -141,12 +144,13 @@ describe('Users Adapter', () => {
 					first_name: 'Test',
 					last_name: 'User',
 					email: 'test@example.com',
+					display_name: null,
 					role_id: `role-${roleName}`,
 					created_at: '2024-01-01T00:00:00Z',
 					updated_at: '2024-01-01T00:00:00Z',
 					role: {
 						id: `role-${roleName}`,
-						short_id: roleName,
+						short_id: roleName.toLowerCase(),
 						name: roleName,
 						created_at: '2024-01-01T00:00:00Z',
 						updated_at: '2024-01-01T00:00:00Z'
@@ -158,7 +162,7 @@ describe('Users Adapter', () => {
 				const result = adaptUserWithRelationsFromRpc(rpcResponse);
 
 				expect(result.role!.name).toBe(roleName);
-				expect(result.role!.id).toBe(roleName); // Uses short_id from RPC response
+				expect(result.role!.id).toBe(roleName.toLowerCase()); // Uses short_id from RPC response
 			});
 		});
 
@@ -169,6 +173,7 @@ describe('Users Adapter', () => {
 				first_name: 'Test',
 				last_name: 'User',
 				email: 'test@example.com',
+				display_name: null,
 				role_id: 'role-public',
 				created_at: '2024-01-15T10:30:00Z',
 				updated_at: '2024-02-20T14:45:00Z',
@@ -196,6 +201,7 @@ describe('Users Adapter', () => {
 				first_name: 'New',
 				last_name: 'Cyclist',
 				email: 'new@example.com',
+				display_name: null,
 				role_id: 'role-cyclist',
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z',

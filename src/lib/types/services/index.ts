@@ -20,12 +20,7 @@ export type {
 } from './users';
 
 // User management service types
-export type {
-	LoginRequest,
-	SigninRequest,
-	UserSession,
-	UserSessionResponse
-} from './users-management';
+export type { LoginRequest, SigninRequest, AuthResponse } from './users-management';
 
 // Roles service types
 export type { RolesResponse } from './roles';

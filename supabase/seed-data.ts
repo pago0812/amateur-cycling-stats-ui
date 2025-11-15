@@ -32,7 +32,7 @@ export interface TestUser {
 	password: string;
 	firstName: string;
 	lastName?: string;
-	roleName: 'admin' | 'organizer_owner' | 'organizer_staff' | 'cyclist';
+	roleName: 'ADMIN' | 'ORGANIZER_OWNER' | 'ORGANIZER_STAFF' | 'CYCLIST';
 	cyclistData?: {
 		bornYear: number;
 		gender: 'M' | 'F';
@@ -98,7 +98,7 @@ export const seedUsers: TestUser[] = [
 		password: '#admin123',
 		firstName: 'Admin',
 		lastName: 'User',
-		roleName: 'admin'
+		roleName: 'ADMIN'
 	},
 	{
 		id: 'b0000000-0000-0000-0000-000000000001',
@@ -106,7 +106,7 @@ export const seedUsers: TestUser[] = [
 		password: 'password123',
 		firstName: 'Organizer',
 		lastName: 'Admin',
-		roleName: 'organizer_owner',
+		roleName: 'ORGANIZER_OWNER',
 		organizerData: {
 			organizationName: 'Pro Cycling League Spain'
 		}
@@ -117,7 +117,7 @@ export const seedUsers: TestUser[] = [
 		password: 'password123',
 		firstName: 'Staff',
 		lastName: 'Member',
-		roleName: 'organizer_staff',
+		roleName: 'ORGANIZER_STAFF',
 		organizerData: {
 			organizationName: 'Valencia Cycling Federation'
 		}
@@ -128,7 +128,7 @@ export const seedUsers: TestUser[] = [
 		password: 'password123',
 		firstName: 'Carlos',
 		lastName: 'Rodríguez',
-		roleName: 'cyclist',
+		roleName: 'CYCLIST',
 		cyclistData: {
 			bornYear: 1995,
 			gender: 'M'
@@ -140,7 +140,7 @@ export const seedUsers: TestUser[] = [
 		password: 'password123',
 		firstName: 'María',
 		lastName: 'García',
-		roleName: 'cyclist',
+		roleName: 'CYCLIST',
 		cyclistData: {
 			bornYear: 1998,
 			gender: 'F'
@@ -152,7 +152,7 @@ export const seedUsers: TestUser[] = [
 		password: 'password123',
 		firstName: 'Javier',
 		lastName: 'Martínez',
-		roleName: 'cyclist',
+		roleName: 'CYCLIST',
 		cyclistData: {
 			bornYear: 1992,
 			gender: 'M'

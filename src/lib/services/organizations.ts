@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { Organization, OrganizationState } from '$lib/types/domain';
+import type { Organization } from '$lib/types/domain';
 import type {
 	GetOrganizationByIdParams,
 	CreateOrganizationParams,

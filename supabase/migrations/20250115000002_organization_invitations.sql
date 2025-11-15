@@ -175,7 +175,7 @@ BEGIN
       'updated_at', r.updated_at
     ),
     'cyclist', CASE
-      WHEN r.name = 'cyclist' THEN (
+      WHEN r.name = 'CYCLIST'::role_name_enum THEN (
         SELECT jsonb_build_object(
           'id', c.id,
           'short_id', c.short_id,
@@ -192,7 +192,7 @@ BEGIN
       ELSE NULL
     END,
     'organizer', CASE
-      WHEN r.name IN ('organizer_staff', 'organizer_owner') THEN (
+      WHEN r.name IN ('ORGANIZER_STAFF'::role_name_enum, 'ORGANIZER_OWNER'::role_name_enum) THEN (
         SELECT jsonb_build_object(
           'id', o.id,
           'short_id', o.short_id,

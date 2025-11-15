@@ -3,7 +3,7 @@ import type { Database } from '$lib/types/database.types';
 import type {
 	LoginRequest,
 	SigninRequest,
-	UserSessionResponse
+	AuthResponse
 } from '$lib/types/services/users-management';
 import type {
 	CreateAuthUserForInvitationParams,
@@ -12,8 +12,6 @@ import type {
 	CreateCyclistUserParams,
 	CreateUserResult
 } from '$lib/types/services';
-import type { UserWithRelationsRpcResponse } from '$lib/types/db';
-import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
 
@@ -22,13 +20,13 @@ import { createSupabaseAdminClient } from '$lib/server/supabase';
  * @param supabase - Supabase client instance
  * @param credentials - Email and password
  * @param locale - User's locale for error messages (default: 'es')
- * @returns UserSessionResponse with session data or error
+ * @returns AuthResponse with success flag or error
  */
 export const login = async (
 	supabase: SupabaseClient<Database>,
 	{ email, password }: LoginRequest,
 	locale: string = 'es'
-): Promise<UserSessionResponse> => {
+): Promise<AuthResponse> => {
 	const { data, error } = await supabase.auth.signInWithPassword({
 		email,
 		password
@@ -57,25 +55,8 @@ export const login = async (
 		};
 	}
 
-	// Fetch enriched user data (RPC uses auth.uid() when no parameter provided)
-	const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations');
-
-	if (userError || !userData) {
-		return {
-			error: {
-				status: 500,
-				name: 'UserDataError',
-				message: t(locale, 'auth.errors.userDataError')
-			}
-		};
-	}
-
-	return {
-		data: {
-			jwt: data.session.access_token,
-			user: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
-		}
-	};
+	// Session created successfully - hooks.server.ts will fetch user data on next request
+	return { success: true };
 };
 
 /**
@@ -84,13 +65,13 @@ export const login = async (
  * @param supabase - Supabase client instance
  * @param credentials - First name, last name (optional), email, and password
  * @param locale - User's locale for error messages (default: 'es')
- * @returns UserSessionResponse with session data or error
+ * @returns AuthResponse with success flag or error
  */
 export const signin = async (
 	supabase: SupabaseClient<Database>,
 	{ firstName, lastName, email, password }: SigninRequest,
 	locale: string = 'es'
-): Promise<UserSessionResponse> => {
+): Promise<AuthResponse> => {
 	const { data, error } = await supabase.auth.signUp({
 		email,
 		password,
@@ -125,25 +106,8 @@ export const signin = async (
 		};
 	}
 
-	// Fetch enriched user data (RPC uses auth.uid() when no parameter provided)
-	const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations');
-
-	if (userError || !userData) {
-		return {
-			error: {
-				status: 500,
-				name: 'UserDataError',
-				message: t(locale, 'auth.errors.userDataError')
-			}
-		};
-	}
-
-	return {
-		data: {
-			jwt: data.session.access_token,
-			user: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
-		}
-	};
+	// Session created successfully - hooks.server.ts will fetch user data on next request
+	return { success: true };
 };
 
 /**

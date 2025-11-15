@@ -255,7 +255,7 @@
 					{
 						label: $t('admin.organizations.actions.activateOrganization'),
 						onClick: handleActivateOrganization,
-						variant: 'success' as const
+						variant: 'primary' as const
 					}
 				];
 			}
@@ -266,7 +266,7 @@
 					{
 						label: $t('admin.organizations.actions.activateOrganization'),
 						onClick: handleActivateOrganization,
-						variant: 'success' as const
+						variant: 'primary' as const
 					},
 					{
 						label: $t('admin.organizations.actions.deletePermanently'),

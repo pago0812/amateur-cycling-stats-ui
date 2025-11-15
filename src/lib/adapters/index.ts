@@ -20,6 +20,7 @@ export { adaptRaceResultFromDb, adaptRaceResultWithRelationsFromDb } from './rac
 // Cyclists
 export {
 	adaptCyclistFromDb,
+	adaptCyclistFromRpc,
 	adaptCyclistWithResultsFromDb,
 	adaptCyclistWithResultsFromRpc
 } from './cyclists.adapter';
@@ -35,7 +36,10 @@ export {
 export { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 // Users
-export { adaptUserWithRelationsFromRpc } from './users.adapter';
+export { adaptUserWithRelationsFromRpc, adaptAuthUserFromRpc } from './users.adapter';
+
+// Admin
+export { adaptAdminFromRpc } from './admin.adapter';
 
 // Roles
 export { adaptRoleFromDb } from './roles.adapter';
@@ -44,7 +48,11 @@ export { adaptRoleFromDb } from './roles.adapter';
 export { adaptOrganizationFromDb } from './organizations.adapter';
 
 // Organizers
-export { adaptOrganizerFromDb, adaptOrganizerWithUserFromDb } from './organizers.adapter';
+export {
+	adaptOrganizerFromDb,
+	adaptOrganizerFromRpc,
+	adaptOrganizerWithUserFromDb
+} from './organizers.adapter';
 
 // Race Rankings
 export { adaptRaceRankingFromDb } from './race-rankings.adapter';

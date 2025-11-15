@@ -15,12 +15,7 @@ export interface SigninRequest {
 }
 
 // Responses
-export interface UserSession {
-	jwt: string;
-	user: User;
-}
-
-export interface UserSessionResponse {
-	data?: UserSession;
+export interface AuthResponse {
+	success?: boolean;
 	error?: ServerError;
 }

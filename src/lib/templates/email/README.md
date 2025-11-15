@@ -22,10 +22,10 @@ import { readFileSync } from 'fs';
 import { sendInvitationEmail } from '$lib/services/mailersend';
 
 await sendInvitationEmail({
-  to: 'user@example.com',
-  organizationName: 'Pro Cycling League',
-  ownerName: 'John Doe',
-  confirmationUrl: 'https://yourapp.com/auth/complete-setup?token=...'
+	to: 'user@example.com',
+	organizationName: 'Pro Cycling League',
+	ownerName: 'John Doe',
+	confirmationUrl: 'https://yourapp.com/auth/complete-setup?token=...'
 });
 ```
 
@@ -64,7 +64,7 @@ Replace the emoji header `🚴 You're Invited!` with an image:
 
 ```html
 <div class="header">
-    <img src="https://yourcdn.com/logo.png" alt="Your Logo" style="max-width: 200px; height: auto;">
+	<img src="https://yourcdn.com/logo.png" alt="Your Logo" style="max-width: 200px; height: auto;" />
 </div>
 ```
 

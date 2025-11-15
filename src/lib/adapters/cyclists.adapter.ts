@@ -1,8 +1,9 @@
-import type { Cyclist, CyclistWithRelations } from '$lib/types/domain/cyclist.domain';
+import type { Cyclist, CyclistOld, CyclistWithRelations } from '$lib/types/domain/cyclist.domain';
 import type {
 	CyclistDB,
 	CyclistWithResultsResponse,
-	CyclistWithResultsRpcResponse
+	CyclistWithResultsRpcResponse,
+	AuthUserRpcResponse
 } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptCyclistGenderFromDb } from './cyclist-genders.adapter';
@@ -17,12 +18,44 @@ import {
 import { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 /**
- * Adapts a raw database cyclist row to domain Cyclist type.
+ * Adapts the RPC response from get_auth_user to domain Cyclist type (flattened).
+ * Transforms snake_case → camelCase.
+ * Note: gender field is null - full gender object would need separate fetch.
+ */
+export function adaptCyclistFromRpc(rpcResponse: AuthUserRpcResponse): Cyclist {
+	if (rpcResponse.role.name !== 'CYCLIST') {
+		throw new Error('Invalid role: expected CYCLIST');
+	}
+
+	if (!rpcResponse.cyclist) {
+		throw new Error('Cyclist data missing in RPC response');
+	}
+
+	const cyclistData = rpcResponse.cyclist;
+
+	return {
+		id: rpcResponse.short_id,
+		firstName: rpcResponse.first_name,
+		lastName: rpcResponse.last_name ?? '',
+		email: rpcResponse.email ?? null,
+		displayName: rpcResponse.display_name ?? null,
+		hasAuth: rpcResponse.email != null,
+		roleType: 'CYCLIST',
+		gender: null, // Gender object not included in RPC response, only gender_id
+		bornYear: cyclistData.born_year,
+		...mapTimestamps(rpcResponse)
+	};
+}
+
+/**
+ * @deprecated Use adaptCyclistFromRpc for new flattened Cyclist type.
+ * Legacy adapter for old Cyclist domain type.
+ * Adapts a raw database cyclist row to domain CyclistOld type.
  * Transforms snake_case → camelCase and short_id → id (domain abstraction).
  */
-export function adaptCyclistFromDb(
+export function adaptCyclistFromDbOld(
 	dbCyclist: CyclistDB | CyclistWithResultsResponse['race_results'][0]['race']['event']
-): Cyclist {
+): CyclistOld {
 	return {
 		id: dbCyclist.short_id, // Translate: short_id → id (UUID stays internal)
 		bornYear: 'born_year' in dbCyclist ? dbCyclist.born_year : null,
@@ -33,13 +66,19 @@ export function adaptCyclistFromDb(
 }
 
 /**
+ * Backwards compatibility alias.
+ * @deprecated Use adaptCyclistFromDbOld instead.
+ */
+export const adaptCyclistFromDb = adaptCyclistFromDbOld;
+
+/**
  * Adapts cyclist with race results and full race details.
  * Handles complex nested Supabase response from getCyclistWithResultsById().
  */
 export function adaptCyclistWithResultsFromDb(
 	dbData: CyclistWithResultsResponse
 ): CyclistWithRelations {
-	const baseCyclist = adaptCyclistFromDb(dbData);
+	const baseCyclist = adaptCyclistFromDbOld(dbData);
 
 	return {
 		...baseCyclist,

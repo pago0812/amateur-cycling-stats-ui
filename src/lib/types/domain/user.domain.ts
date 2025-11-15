@@ -1,12 +1,23 @@
 import type { Role } from './role.domain';
-import type { Cyclist } from './cyclist.domain';
+import type { CyclistOld } from './cyclist.domain';
 import type { OrganizerWithRelations } from './organizer.domain';
+import type { Admin } from './admin.domain';
+import type { Organizer } from './organizer.domain';
+import type { Cyclist } from './cyclist.domain';
 
 /**
- * User domain type - user profile (can be linked to auth or standalone).
+ * User union type - authenticated user (flattened structure).
+ * A user is either an Admin, Organizer, or Cyclist.
+ * Use this type for authenticated user data (e.g., from getAuthUser()).
+ */
+export type User = Admin | Organizer | Cyclist;
+
+/**
+ * @deprecated Legacy user type - use new User union type instead.
+ * Old user domain type - user profile (can be linked to auth or standalone).
  * All fields use camelCase convention.
  */
-export interface User {
+export interface UserOld {
 	// Identity
 	id: string;
 
@@ -27,9 +38,9 @@ export interface User {
  * User with populated relationships.
  * Used when fetching user profile with role, cyclist profile, and organizer info.
  */
-export interface UserWithRelations extends User {
+export interface UserWithRelations extends UserOld {
 	// Populated relationships
 	role?: Role;
-	cyclist?: Cyclist; // Populated if user is a cyclist
+	cyclist?: CyclistOld; // Populated if user is a cyclist
 	organizer?: OrganizerWithRelations; // Populated if user is an organizer (includes organization)
 }

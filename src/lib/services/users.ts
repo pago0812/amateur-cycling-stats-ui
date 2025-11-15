@@ -1,61 +1,62 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
 import type { SetRoleRequest, UserResponse } from '$lib/types/services/users';
-import type { UserWithRelationsRpcResponse } from '$lib/types/db';
-import { adaptUserWithRelationsFromRpc } from '$lib/adapters';
+import type { UserWithRelationsRpcResponse, AuthUserRpcResponse } from '$lib/types/db';
+import type { User } from '$lib/types/domain';
+import { adaptUserWithRelationsFromRpc, adaptAuthUserFromRpc } from '$lib/adapters';
+
+type RoleNameEnum = Database['public']['Enums']['role_name_enum'];
 
 /**
- * Get the current user's enriched data including role and related entities.
- * Note: In most cases, you should use event.locals.user from hooks instead of calling this directly.
- * @param supabase - Supabase client instance
- * @returns UserResponse with enriched user data or error
+ * Get the authenticated user's data (flattened domain type).
+ * This function validates the session and returns enriched user data.
+ * @param supabase - Supabase client instance with active session
+ * @returns User (Admin | Organizer | Cyclist) or null if not authenticated
+ * @throws Error if RPC fails (excluding authentication errors)
  */
-export const getMyself = async (supabase: SupabaseClient<Database>): Promise<UserResponse> => {
+export const getAuthUser = async (supabase: SupabaseClient<Database>): Promise<User | null> => {
 	try {
-		// Get the current authenticated user
-		const {
-			data: { user: authUser },
-			error: authError
-		} = await supabase.auth.getUser();
+		// Call RPC without parameters (validates session internally)
+		const { data: rpcResponse, error } = await supabase.rpc('get_auth_user');
 
-		if (authError || !authUser) {
-			return {
-				error: {
-					status: 401,
-					name: 'AuthError',
-					message: 'Not authenticated'
-				}
-			};
-		}
-
-		// Fetch enriched user data (RPC uses auth.uid() when no parameter provided)
-		const { data: userData, error: userError } = await supabase.rpc('get_user_with_relations');
-
-		if (userError || !userData) {
-			return {
-				error: {
-					status: 500,
-					name: 'UserDataError',
-					message: 'Failed to fetch user data'
-				}
-			};
-		}
-
-		return {
-			data: adaptUserWithRelationsFromRpc(userData as unknown as UserWithRelationsRpcResponse)
-		};
-	} catch (error) {
-		return {
-			error: {
-				status: 500,
-				name: 'FetchError',
-				message: 'Failed to fetch user'
+		// Error code 28000 = no active session (expected for unauthenticated)
+		if (error) {
+			if (error.code === '28000') {
+				return null; // Not authenticated
 			}
-		};
+			throw new Error(`RPC error: ${error.message}`);
+		}
+
+		if (!rpcResponse) {
+			return null;
+		}
+
+		// Transform to domain type
+		return adaptAuthUserFromRpc(rpcResponse as unknown as AuthUserRpcResponse);
+	} catch (error) {
+		console.error('Failed to get authenticated user:', error);
+		throw error;
 	}
 };
 
 /**
+ * Check if the current session is authenticated.
+ * Simple helper to validate session without fetching full user data.
+ * @param supabase - Supabase client instance
+ * @returns true if authenticated, false otherwise
+ */
+export const isAuthenticated = async (supabase: SupabaseClient<Database>): Promise<boolean> => {
+	try {
+		const { data, error } = await supabase.auth.getUser();
+		return !error && data.user !== null;
+	} catch {
+		return false;
+	}
+};
+
+/**
+ * @deprecated Use getAuthUser() for new User union type.
+ * Legacy function for getting user with old UserWithRelations type.
  * Update a user's role.
  * Only admins and organizer admins can update user roles (enforced by RLS).
  * @param supabase - Supabase client instance
@@ -133,7 +134,7 @@ export interface CreateUserWithRoleParams {
 	authUserId: string;
 	firstName: string;
 	lastName: string;
-	roleName: string; // Role name like 'organizer_owner', 'cyclist', etc.
+	roleName: RoleNameEnum; // Role name like 'ORGANIZER_OWNER', 'CYCLIST', etc.
 }
 
 /**

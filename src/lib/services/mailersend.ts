@@ -7,7 +7,11 @@
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { MAILERSEND_API_KEY, MAILERSEND_FROM_EMAIL, MAILERSEND_FROM_NAME } from '$env/static/private';
+import {
+	MAILERSEND_API_KEY,
+	MAILERSEND_FROM_EMAIL,
+	MAILERSEND_FROM_NAME
+} from '$env/static/private';
 import { SITE_URL } from '$env/static/private';
 import type {
 	SendInvitationEmailParams,
@@ -59,10 +63,7 @@ function loadTemplate(filename: string): string {
 /**
  * Replaces template variables with actual values
  */
-function replaceTemplateVariables(
-	template: string,
-	variables: Record<string, string>
-): string {
+function replaceTemplateVariables(template: string, variables: Record<string, string>): string {
 	let result = template;
 
 	for (const [key, value] of Object.entries(variables)) {

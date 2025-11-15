@@ -10,16 +10,17 @@
 export type { Event, EventWithRelations, EventStatus } from './event.domain';
 export type { Race, RaceWithRelations } from './race.domain';
 export type { RaceResult, RaceResultWithRelations } from './race-result.domain';
-export type { Cyclist, CyclistWithRelations } from './cyclist.domain';
-export type { User, UserWithRelations } from './user.domain';
+export type { Cyclist, CyclistOld, CyclistWithRelations } from './cyclist.domain';
+export type { User, UserOld, UserWithRelations } from './user.domain';
 export type {
 	Organization,
 	OrganizationWithRelations,
 	OrganizationState
 } from './organization.domain';
-export type { Role, RoleName } from './role.domain';
+export type { Role, RoleName, RoleType } from './role.domain';
 export { RoleTypeEnum } from './role-type.domain';
-export type { Organizer, OrganizerWithRelations } from './organizer.domain';
+export type { Organizer, OrganizerOld, OrganizerWithRelations } from './organizer.domain';
+export type { Admin } from './admin.domain';
 
 // Lookup tables
 export type { RaceCategory, RaceCategoryGender, RaceCategoryLength } from './race-category.domain';
