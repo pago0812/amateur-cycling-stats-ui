@@ -1,38 +1,52 @@
-import { getEventWithCategoriesById } from '$lib/services/events';
-import { getRaceWithResultsWithFilters } from '$lib/services/races';
+import { getEventWithRacesById } from '$lib/services/events';
+import { getRaceWithRaceResultsById } from '$lib/services/races';
 import { error } from '@sveltejs/kit';
 import { t } from '$lib/i18n/server';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
-	const event = await getEventWithCategoriesById(locals.supabase, { id: params.id });
+	const event = await getEventWithRacesById(locals.supabase, { id: params.id });
 
 	if (!event) {
 		throw error(404, t(locals.locale, 'events.errors.notFound'));
 	}
 
-	// Get filter values from URL or use defaults from event (use 'id' instead of 'documentId')
-	const categoryId =
-		url.searchParams.get('category') || event?.supportedRaceCategories?.[0]?.id || '';
-	const lengthId =
-		url.searchParams.get('length') || event?.supportedRaceCategoryLengths?.[0]?.id || '';
-	const genderId =
-		url.searchParams.get('gender') || event?.supportedRaceCategoryGenders?.[0]?.id || '';
+	// If event has no races, return null race
+	if (!event.races || event.races.length === 0) {
+		return {
+			event,
+			race: null
+		};
+	}
 
-	// Get race with selected filters - returns null if no race exists for this combination
-	const race = await getRaceWithResultsWithFilters(locals.supabase, {
-		eventId: params.id,
-		categoryId,
-		lengthId,
-		genderId
-	});
+	// Get raceId from URL
+	const raceIdFromUrl = url.searchParams.get('raceId');
 
-	// Return data even if race is null - UI will handle displaying "no results" message
+	// If no raceId in URL, return null race (user hasn't selected filters yet)
+	if (!raceIdFromUrl) {
+		return {
+			event,
+			race: null
+		};
+	}
+
+	// Check if the provided raceId exists in event.races
+	const raceExists = event.races.some((r) => r.id === raceIdFromUrl);
+
+	// If raceId doesn't exist in event.races, return null race
+	if (!raceExists) {
+		return {
+			event,
+			race: null
+		};
+	}
+
+	// Valid raceId - fetch race with results using RPC
+	const race = await getRaceWithRaceResultsById(locals.supabase, { id: raceIdFromUrl });
+
+	// Return event and race
 	return {
 		event,
-		race, // Can be null - UI handles this gracefully
-		selectedCategory: categoryId,
-		selectedLength: lengthId,
-		selectedGender: genderId
+		race
 	};
 };

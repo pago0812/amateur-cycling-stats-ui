@@ -18,29 +18,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to generate short_id using nanoid simulation
-CREATE OR REPLACE FUNCTION public.generate_short_id()
-RETURNS TEXT
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  RETURN lower(substr(md5(random()::text || clock_timestamp()::text), 1, 10));
-END;
-$$;
-
--- Trigger function to auto-generate short_id
-CREATE OR REPLACE FUNCTION public.handle_short_id()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  IF NEW.short_id IS NULL OR NEW.short_id = '' THEN
-    NEW.short_id := public.generate_short_id();
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
 -- =====================================================
 -- SECTION 2: Roles Table
 -- =====================================================
@@ -58,21 +35,12 @@ COMMENT ON TYPE role_name_enum IS 'Valid role names - database-enforced enum for
 
 CREATE TABLE IF NOT EXISTS public.roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name role_name_enum NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 COMMENT ON TABLE public.roles IS 'User roles defining permission levels';
-
--- Indexes
-CREATE INDEX IF NOT EXISTS roles_short_id_idx ON public.roles(short_id);
-
--- Trigger for short_id (MUST be created before INSERT)
-CREATE TRIGGER set_roles_short_id
-  BEFORE INSERT ON public.roles
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER handle_roles_updated_at
@@ -94,7 +62,6 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   auth_user_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   first_name TEXT NOT NULL,
   last_name TEXT,
@@ -111,12 +78,6 @@ COMMENT ON COLUMN public.users.last_name IS 'Optional - last name for all users'
 -- Create indexes
 CREATE INDEX IF NOT EXISTS users_auth_user_id_idx ON public.users(auth_user_id);
 CREATE INDEX IF NOT EXISTS users_role_id_idx ON public.users(role_id);
-CREATE INDEX IF NOT EXISTS users_short_id_idx ON public.users(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_users_short_id
-  BEFORE INSERT ON public.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER handle_users_updated_at
@@ -129,7 +90,6 @@ CREATE TRIGGER handle_users_updated_at
 
 CREATE TABLE IF NOT EXISTS public.organizations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   description TEXT,
   is_active BOOLEAN NOT NULL DEFAULT true,
@@ -141,13 +101,7 @@ COMMENT ON TABLE public.organizations IS 'Organizations that manage cycling even
 COMMENT ON COLUMN public.organizations.is_active IS 'Soft delete flag - false means organization is inactive/deleted';
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS organizations_short_id_idx ON public.organizations(short_id);
 CREATE INDEX IF NOT EXISTS organizations_is_active_idx ON public.organizations(is_active);
-
--- Trigger for short_id
-CREATE TRIGGER set_organizations_short_id
-  BEFORE INSERT ON public.organizations
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER handle_organizations_updated_at
@@ -160,7 +114,6 @@ CREATE TRIGGER handle_organizations_updated_at
 
 CREATE TABLE IF NOT EXISTS public.organizers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   organization_id UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -173,12 +126,6 @@ COMMENT ON TABLE public.organizers IS 'Junction table linking users to organizat
 -- Indexes
 CREATE INDEX IF NOT EXISTS organizers_user_id_idx ON public.organizers(user_id);
 CREATE INDEX IF NOT EXISTS organizers_organization_id_idx ON public.organizers(organization_id);
-CREATE INDEX IF NOT EXISTS organizers_short_id_idx ON public.organizers(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_organizers_short_id
-  BEFORE INSERT ON public.organizers
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_organizers_updated_at
@@ -191,21 +138,12 @@ CREATE TRIGGER set_organizers_updated_at
 
 CREATE TABLE IF NOT EXISTS public.cyclist_genders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 COMMENT ON TABLE public.cyclist_genders IS 'Lookup table for cyclist genders';
-
--- Indexes
-CREATE INDEX IF NOT EXISTS cyclist_genders_short_id_idx ON public.cyclist_genders(short_id);
-
--- Trigger for short_id (MUST be created before INSERT)
-CREATE TRIGGER set_cyclist_genders_short_id
-  BEFORE INSERT ON public.cyclist_genders
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_cyclist_genders_updated_at
@@ -224,21 +162,12 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.race_categories (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 COMMENT ON TABLE public.race_categories IS 'Lookup table for race categories (age/experience groups)';
-
--- Indexes
-CREATE INDEX IF NOT EXISTS race_categories_short_id_idx ON public.race_categories(short_id);
-
--- Trigger for short_id (MUST be created before INSERT)
-CREATE TRIGGER set_race_categories_short_id
-  BEFORE INSERT ON public.race_categories
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_race_categories_updated_at
@@ -281,21 +210,12 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.race_category_genders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 COMMENT ON TABLE public.race_category_genders IS 'Lookup table for race gender categories';
-
--- Indexes
-CREATE INDEX IF NOT EXISTS race_category_genders_short_id_idx ON public.race_category_genders(short_id);
-
--- Trigger for short_id (MUST be created before INSERT)
-CREATE TRIGGER set_race_category_genders_short_id
-  BEFORE INSERT ON public.race_category_genders
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_race_category_genders_updated_at
@@ -315,21 +235,12 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.race_category_lengths (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 COMMENT ON TABLE public.race_category_lengths IS 'Lookup table for race distance categories';
-
--- Indexes
-CREATE INDEX IF NOT EXISTS race_category_lengths_short_id_idx ON public.race_category_lengths(short_id);
-
--- Trigger for short_id (MUST be created before INSERT)
-CREATE TRIGGER set_race_category_lengths_short_id
-  BEFORE INSERT ON public.race_category_lengths
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_race_category_lengths_updated_at
@@ -350,7 +261,6 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.race_rankings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL UNIQUE,
   description TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -358,14 +268,6 @@ CREATE TABLE IF NOT EXISTS public.race_rankings (
 );
 
 COMMENT ON TABLE public.race_rankings IS 'Lookup table for race ranking systems (UCI, national, regional, etc.)';
-
--- Indexes
-CREATE INDEX IF NOT EXISTS race_rankings_short_id_idx ON public.race_rankings(short_id);
-
--- Trigger for short_id (MUST be created before INSERT)
-CREATE TRIGGER set_race_rankings_short_id
-  BEFORE INSERT ON public.race_rankings
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_race_rankings_updated_at
@@ -386,7 +288,6 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.cyclists (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   born_year INT,
   gender_id UUID REFERENCES public.cyclist_genders(id) ON DELETE RESTRICT,
@@ -401,12 +302,6 @@ COMMENT ON COLUMN public.cyclists.user_id IS 'Required - every cyclist links to 
 -- Indexes
 CREATE INDEX IF NOT EXISTS cyclists_user_id_idx ON public.cyclists(user_id);
 CREATE INDEX IF NOT EXISTS cyclists_gender_id_idx ON public.cyclists(gender_id);
-CREATE INDEX IF NOT EXISTS cyclists_short_id_idx ON public.cyclists(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_cyclists_short_id
-  BEFORE INSERT ON public.cyclists
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_cyclists_updated_at
@@ -419,7 +314,6 @@ CREATE TRIGGER set_cyclists_updated_at
 
 CREATE TABLE IF NOT EXISTS public.events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   description TEXT,
   date_time TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -446,12 +340,6 @@ CREATE INDEX IF NOT EXISTS events_organization_id_idx ON public.events(organizat
 CREATE INDEX IF NOT EXISTS events_event_status_idx ON public.events(event_status);
 CREATE INDEX IF NOT EXISTS events_year_idx ON public.events(year);
 CREATE INDEX IF NOT EXISTS events_is_public_visible_idx ON public.events(is_public_visible);
-CREATE INDEX IF NOT EXISTS events_short_id_idx ON public.events(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_events_short_id
-  BEFORE INSERT ON public.events
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_events_updated_at
@@ -495,7 +383,6 @@ COMMENT ON TABLE public.event_supported_lengths IS 'Junction table for events an
 
 CREATE TABLE IF NOT EXISTS public.ranking_points (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   race_ranking_id UUID NOT NULL REFERENCES public.race_rankings(id) ON DELETE RESTRICT,
   points INT NOT NULL,
   place INT NOT NULL,
@@ -508,12 +395,6 @@ COMMENT ON TABLE public.ranking_points IS 'Points awarded for each place in a ra
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS ranking_points_race_ranking_id_idx ON public.ranking_points(race_ranking_id);
-CREATE INDEX IF NOT EXISTS ranking_points_short_id_idx ON public.ranking_points(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_ranking_points_short_id
-  BEFORE INSERT ON public.ranking_points
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_ranking_points_updated_at
@@ -526,7 +407,6 @@ CREATE TRIGGER set_ranking_points_updated_at
 
 CREATE TABLE IF NOT EXISTS public.races (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   event_id UUID NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
   name TEXT,
   description TEXT,
@@ -546,12 +426,6 @@ COMMENT ON TABLE public.races IS 'Individual races within cycling events';
 CREATE INDEX IF NOT EXISTS races_event_id_idx ON public.races(event_id);
 CREATE INDEX IF NOT EXISTS races_race_category_id_idx ON public.races(race_category_id);
 CREATE INDEX IF NOT EXISTS races_is_public_visible_idx ON public.races(is_public_visible);
-CREATE INDEX IF NOT EXISTS races_short_id_idx ON public.races(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_races_short_id
-  BEFORE INSERT ON public.races
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_races_updated_at
@@ -564,7 +438,6 @@ CREATE TRIGGER set_races_updated_at
 
 CREATE TABLE IF NOT EXISTS public.race_results (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  short_id TEXT NOT NULL UNIQUE,
   race_id UUID NOT NULL REFERENCES public.races(id) ON DELETE CASCADE,
   cyclist_id UUID NOT NULL REFERENCES public.cyclists(id) ON DELETE RESTRICT,
   ranking_point_id UUID REFERENCES public.ranking_points(id) ON DELETE SET NULL,
@@ -581,12 +454,6 @@ COMMENT ON TABLE public.race_results IS 'Results for cyclists in races';
 CREATE INDEX IF NOT EXISTS race_results_race_id_idx ON public.race_results(race_id);
 CREATE INDEX IF NOT EXISTS race_results_cyclist_id_idx ON public.race_results(cyclist_id);
 CREATE INDEX IF NOT EXISTS race_results_place_idx ON public.race_results(place);
-CREATE INDEX IF NOT EXISTS race_results_short_id_idx ON public.race_results(short_id);
-
--- Trigger for short_id
-CREATE TRIGGER set_race_results_short_id
-  BEFORE INSERT ON public.race_results
-  FOR EACH ROW EXECUTE FUNCTION public.handle_short_id();
 
 -- Trigger for updated_at
 CREATE TRIGGER set_race_results_updated_at
@@ -900,10 +767,10 @@ COMMENT ON FUNCTION public.is_cyclist_created_by_org(UUID) IS 'Returns TRUE if c
 
 -- =====================================================
 -- SECTION 22: RPC Function - Get User With Relations
--- Get race results by user short_id
+-- Get race results by user UUID
 -- This function fetches ONLY race results for a user (not the cyclist profile)
 -- Useful when you already have user/cyclist data and only need their race history
-CREATE OR REPLACE FUNCTION public.get_race_results_by_user_short_id(p_user_short_id TEXT)
+CREATE OR REPLACE FUNCTION public.get_race_results_by_user_id(p_user_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -913,11 +780,11 @@ DECLARE
   result JSONB;
   target_cyclist_id UUID;
 BEGIN
-  -- Find cyclist by user's short_id
+  -- Find cyclist by user's UUID
   SELECT c.id INTO target_cyclist_id
   FROM public.cyclists c
   JOIN public.users u ON c.user_id = u.id
-  WHERE u.short_id = p_user_short_id;
+  WHERE u.id = p_user_id;
 
   -- Return empty array if cyclist doesn't exist or has no results
   IF target_cyclist_id IS NULL THEN
@@ -928,7 +795,7 @@ BEGIN
   SELECT COALESCE(jsonb_agg(
     jsonb_build_object(
       -- Race result fields
-      'id', rr.short_id,
+      'id', rr.id,
       'place', rr.place,
       'time', rr.time,
       'points', (
@@ -939,7 +806,7 @@ BEGIN
       'created_at', rr.created_at,
       'updated_at', rr.updated_at,
       -- Event fields
-      'event_id', e.short_id,
+      'event_id', e.id,
       'event_name', e.name,
       'event_date_time', e.date_time,
       'event_year', e.year,
@@ -948,13 +815,13 @@ BEGIN
       'event_country', e.country,
       'event_status', e.event_status,
       -- Race fields
-      'race_id', r.short_id,
+      'race_id', r.id,
       'race_name', r.name,
       'race_date_time', r.date_time,
       -- Category IDs (for interim navigation)
-      'race_category_id', rc.short_id,
-      'race_category_gender_id', rcg.short_id,
-      'race_category_length_id', rcl.short_id,
+      'race_category_id', rc.id,
+      'race_category_gender_id', rcg.id,
+      'race_category_length_id', rcl.id,
       -- Category types
       'race_category_type', rc.name,
       'race_category_gender_type', rcg.name,
@@ -976,13 +843,13 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_race_results_by_user_short_id(TEXT) IS 'Returns race results array with flat structure for a user (by user short_id). Does not return cyclist profile. Each result includes flattened event, race, and category data. Results sorted by event date (most recent first). Returns empty array if user has no cyclist profile or no results.';
+COMMENT ON FUNCTION public.get_race_results_by_user_id(UUID) IS 'Returns race results array with flat structure for a user (by user UUID). Does not return cyclist profile. Each result includes flattened event, race, and category data. Results sorted by event date (most recent first). Returns empty array if user has no cyclist profile or no results.';
 
--- Get cyclist by user short_id
+-- Get cyclist by user UUID
 -- This function fetches cyclist profile data (users + roles + cyclists)
 -- Does NOT join auth.users or race results
 -- Useful for parallel fetching with race results
-CREATE OR REPLACE FUNCTION public.get_cyclist_by_user_short_id(p_user_short_id TEXT)
+CREATE OR REPLACE FUNCTION public.get_cyclist_by_user_id(p_user_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -992,10 +859,10 @@ DECLARE
   result JSONB;
   target_user_id UUID;
 BEGIN
-  -- Find user by short_id
+  -- Find user by UUID
   SELECT id INTO target_user_id
   FROM public.users
-  WHERE short_id = p_user_short_id;
+  WHERE id = p_user_id;
 
   -- Return NULL if user doesn't exist
   IF target_user_id IS NULL THEN
@@ -1004,7 +871,7 @@ BEGIN
 
   -- Build cyclist object (users + roles + cyclists, NO auth.users)
   SELECT jsonb_build_object(
-    'short_id', u.short_id,
+    'id', u.id,
     'first_name', u.first_name,
     'last_name', u.last_name,
     'role_id', u.role_id,
@@ -1012,21 +879,19 @@ BEGIN
     'updated_at', u.updated_at,
     'role', jsonb_build_object(
       'id', r.id,
-      'short_id', r.short_id,
       'name', r.name,
       'created_at', r.created_at,
       'updated_at', r.updated_at
     ),
     'cyclist', CASE
       WHEN c.id IS NOT NULL THEN jsonb_build_object(
-        'short_id', c.short_id,
+        'id', c.id,
         'born_year', c.born_year,
         'gender_id', c.gender_id,
         'created_at', c.created_at,
         'updated_at', c.updated_at,
         'gender', CASE WHEN cg.id IS NOT NULL THEN jsonb_build_object(
           'id', cg.id,
-          'short_id', cg.short_id,
           'name', cg.name,
           'created_at', cg.created_at,
           'updated_at', cg.updated_at
@@ -1045,7 +910,211 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_cyclist_by_user_short_id(TEXT) IS 'Returns cyclist profile data (users + roles + cyclists) by user short_id. Does NOT join auth.users or race results. Returns NULL if user does not exist. Optimized for parallel fetching with race results.';
+COMMENT ON FUNCTION public.get_cyclist_by_user_id(UUID) IS 'Returns cyclist profile data (users + roles + cyclists) by user UUID. Does NOT join auth.users or race results. Returns NULL if user does not exist. Optimized for parallel fetching with race results.';
+
+-- Get event with races by event UUID
+-- This function fetches event data with nested races array and supported categories/genders/lengths
+-- Useful for event detail pages that need all event configuration and associated races
+CREATE OR REPLACE FUNCTION public.get_event_with_races_by_event_id(p_event_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  result JSONB;
+  event_uuid UUID;
+  event_data JSONB;
+  races_data JSONB;
+  categories_data JSONB;
+  genders_data JSONB;
+  lengths_data JSONB;
+BEGIN
+  -- Find event by UUID
+  SELECT id INTO event_uuid
+  FROM public.events
+  WHERE id = p_event_id;
+
+  -- Return NULL if event doesn't exist
+  IF event_uuid IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  -- Build event base data
+  SELECT jsonb_build_object(
+    'id', e.id,
+    'name', e.name,
+    'description', e.description,
+    'date_time', e.date_time,
+    'event_status', e.event_status,
+    'year', e.year,
+    'country', e.country,
+    'state', e.state,
+    'city', e.city,
+    'is_public_visible', e.is_public_visible,
+    'created_by', e.created_by,
+    'organization_id', e.organization_id,
+    'created_at', e.created_at,
+    'updated_at', e.updated_at
+  ) INTO event_data
+  FROM public.events e
+  WHERE e.id = event_uuid;
+
+  -- Build races array (aligned with Race interface - IDs only)
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'id', r.id,
+      'name', r.name,
+      'description', r.description,
+      'date_time', r.date_time,
+      'is_public_visible', r.is_public_visible,
+      'event_id', e.id,
+      'race_category_id', rc.id,
+      'race_category_gender_id', rcg.id,
+      'race_category_length_id', rcl.id,
+      'race_ranking_id', rr.id,
+      'created_at', r.created_at,
+      'updated_at', r.updated_at
+    )
+  ), '[]'::jsonb) INTO races_data
+  FROM public.races r
+  JOIN public.events e ON r.event_id = e.id
+  LEFT JOIN public.race_categories rc ON r.race_category_id = rc.id
+  LEFT JOIN public.race_category_genders rcg ON r.race_category_gender_id = rcg.id
+  LEFT JOIN public.race_category_lengths rcl ON r.race_category_length_id = rcl.id
+  LEFT JOIN public.race_rankings rr ON r.race_ranking_id = rr.id
+  WHERE r.event_id = event_uuid;
+
+  -- Build supportedCategories array
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'name', rc.name,
+      'id', rc.id
+    )
+  ), '[]'::jsonb) INTO categories_data
+  FROM public.event_supported_categories esc
+  JOIN public.race_categories rc ON esc.race_category_id = rc.id
+  WHERE esc.event_id = event_uuid;
+
+  -- Build supportedGenders array
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'name', rcg.name,
+      'id', rcg.id
+    )
+  ), '[]'::jsonb) INTO genders_data
+  FROM public.event_supported_genders esg
+  JOIN public.race_category_genders rcg ON esg.race_category_gender_id = rcg.id
+  WHERE esg.event_id = event_uuid;
+
+  -- Build supportedLengths array
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'name', rcl.name,
+      'id', rcl.id
+    )
+  ), '[]'::jsonb) INTO lengths_data
+  FROM public.event_supported_lengths esl
+  JOIN public.race_category_lengths rcl ON esl.race_category_length_id = rcl.id
+  WHERE esl.event_id = event_uuid;
+
+  -- Combine all data
+  result := event_data || jsonb_build_object(
+    'races', races_data,
+    'supportedCategories', categories_data,
+    'supportedGenders', genders_data,
+    'supportedLengths', lengths_data
+  );
+
+  RETURN result;
+END;
+$$;
+
+COMMENT ON FUNCTION public.get_event_with_races_by_event_id(UUID) IS 'Returns event data with nested races array and supported categories/genders/lengths by event UUID. Races array aligned with Race interface (IDs only, no type names). Returns NULL if event does not exist. Useful for event detail pages.';
+
+-- Get race with race results by race UUID
+-- This function fetches a single race with nested race_results array
+-- Each race result includes cyclist, user, and ranking point data
+-- Useful for race detail pages that display full results table
+CREATE OR REPLACE FUNCTION public.get_race_with_results_by_id(p_race_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  result JSONB;
+  race_uuid UUID;
+  race_data JSONB;
+  race_results_data JSONB;
+BEGIN
+  -- Find race by UUID
+  SELECT id INTO race_uuid
+  FROM public.races
+  WHERE id = p_race_id;
+
+  -- Return NULL if race doesn't exist
+  IF race_uuid IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  -- Build race base data
+  SELECT jsonb_build_object(
+    'id', r.id,
+    'name', r.name,
+    'description', r.description,
+    'date_time', r.date_time,
+    'is_public_visible', r.is_public_visible,
+    'event_id', r.event_id,
+    'race_category_id', rc.id,
+    'race_category_gender_id', rcg.id,
+    'race_category_length_id', rcl.id,
+    'race_ranking_id', rr.id,
+    'created_at', r.created_at,
+    'updated_at', r.updated_at
+  ) INTO race_data
+  FROM public.races r
+  LEFT JOIN public.race_categories rc ON r.race_category_id = rc.id
+  LEFT JOIN public.race_category_genders rcg ON r.race_category_gender_id = rcg.id
+  LEFT JOIN public.race_category_lengths rcl ON r.race_category_length_id = rcl.id
+  LEFT JOIN public.race_rankings rr ON r.race_ranking_id = rr.id
+  WHERE r.id = race_uuid;
+
+  -- Build race_results array with nested cyclist and user data
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'id', rres.id,
+      'place', rres.place,
+      'time', rres.time,
+      'points', rp.points,
+      'cyclist_id', c.id,
+      'created_at', rres.created_at,
+      'updated_at', rres.updated_at,
+      'ranking_point', CASE
+        WHEN rp.id IS NOT NULL THEN jsonb_build_object(
+          'id', rp.id,
+          'place', rp.place,
+          'points', rp.points,
+          'race_ranking_id', rp.race_ranking_id
+        )
+        ELSE NULL
+      END
+    )
+    ORDER BY rres.place ASC
+  ), '[]'::jsonb) INTO race_results_data
+  FROM public.race_results rres
+  LEFT JOIN public.cyclists c ON rres.cyclist_id = c.id
+  LEFT JOIN public.ranking_points rp ON rres.ranking_point_id = rp.id
+  WHERE rres.race_id = race_uuid;
+
+  -- Combine race data with race_results array
+  result := race_data || jsonb_build_object('race_results', race_results_data);
+
+  RETURN result;
+END;
+$$;
+
+COMMENT ON FUNCTION public.get_race_with_results_by_id(UUID) IS 'Returns race data with nested race_results array by race UUID. Each result includes cyclist_id, ranking_point data. Results ordered by place ASC. Returns NULL if race does not exist. Useful for race detail pages.';
 
 -- =====================================================
 -- SECTION 24: Enable RLS on All Tables

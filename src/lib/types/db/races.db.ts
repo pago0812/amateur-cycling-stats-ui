@@ -25,3 +25,37 @@ export interface RaceWithResultsResponse extends RaceDB {
 		}
 	>;
 }
+
+/**
+ * RPC response type for get_race_with_results_by_id.
+ * JSONB structure returned by the RPC function (snake_case).
+ */
+export interface RpcRaceWithResultsResponse {
+	id: string;
+	name: string | null;
+	description: string | null;
+	date_time: string;
+	is_public_visible: boolean;
+	event_id: string;
+	race_category_id: string;
+	race_category_gender_id: string;
+	race_category_length_id: string;
+	race_ranking_id: string;
+	created_at: string;
+	updated_at: string;
+	race_results: Array<{
+		id: string;
+		place: number;
+		time: string | null;
+		points: number | null;
+		cyclist_id: string;
+		created_at: string;
+		updated_at: string;
+		ranking_point?: {
+			id: string;
+			place: number;
+			points: number;
+			race_ranking_id: string;
+		} | null;
+	}>;
+}

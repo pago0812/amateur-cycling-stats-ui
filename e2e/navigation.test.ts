@@ -150,7 +150,7 @@ test.describe('Navigation', () => {
 	});
 
 	test('non-existent event shows error or 404', async ({ page }) => {
-		// Navigate to non-existent event (short_id format, ~10 chars)
+		// Navigate to non-existent event (UUID format)
 		await page.goto('/results/nonexist99');
 
 		// Wait for page to load

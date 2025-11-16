@@ -1,9 +1,7 @@
-import type { Organization } from './organization.domain';
-import type { User } from './user.domain';
-import type { Race } from './race.domain';
 import type { RaceCategory } from './race-category.domain';
 import type { RaceCategoryGender } from './race-category.domain';
 import type { RaceCategoryLength } from './race-category.domain';
+import type { Race } from './race.domain';
 
 /**
  * Event status enum
@@ -44,17 +42,16 @@ export interface Event {
 }
 
 /**
- * Event with populated relationships.
- * Used when fetching detailed event data with joins.
+ * Event with races array and supported categories/genders/lengths.
+ * Returned by getEventWithRacesById() service (via RPC).
+ * Used for event detail pages that need all event configuration and associated races.
  */
-export interface EventWithRelations extends Event {
-	// Populated relationships
-	organization?: Organization;
-	createdByUser?: User; // Renamed from createdBy for clarity
-	races?: Race[];
+export interface EventWithRaces extends Event {
+	// Associated races
+	races: Race[];
 
 	// Supported configurations (from junction tables)
-	supportedRaceCategories?: RaceCategory[];
-	supportedRaceCategoryGenders?: RaceCategoryGender[];
-	supportedRaceCategoryLengths?: RaceCategoryLength[];
+	supportedRaceCategories: RaceCategory[];
+	supportedRaceCategoryGenders: RaceCategoryGender[];
+	supportedRaceCategoryLengths: RaceCategoryLength[];
 }

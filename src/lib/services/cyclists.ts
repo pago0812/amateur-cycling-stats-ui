@@ -11,26 +11,26 @@ interface GetCyclistByIdParams {
 }
 
 /**
- * Get cyclist by user short_id (without race results).
+ * Get cyclist by user ID (without race results).
  * Returns domain Cyclist type with camelCase fields, or null if not found.
  *
- * Uses optimized RPC function get_cyclist_by_user_short_id() for better performance.
+ * Uses optimized RPC function get_cyclist_by_user_id() for better performance.
  * Queries users + roles + cyclists tables (does NOT join auth.users).
  * Use this when you need cyclist data and will fetch race results separately.
  *
- * ID parameter is the user's short_id (public ID), not UUID.
+ * ID parameter is the user's UUID.
  * Returns null when user doesn't exist or is not a cyclist (expected case).
  * Throws error only for unexpected database issues.
  *
- * @param id - User's short_id (domain id)
+ * @param id - User's UUID
  * @returns Cyclist if found, null if user doesn't exist or is not a cyclist
  */
 export async function getCyclistById(
 	supabase: TypedSupabaseClient,
 	params: GetCyclistByIdParams
 ): Promise<Cyclist | null> {
-	const { data, error } = await supabase.rpc('get_cyclist_by_user_short_id', {
-		p_user_short_id: params.id
+	const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
+		p_user_id: params.id
 	});
 
 	if (error) {

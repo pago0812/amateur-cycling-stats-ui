@@ -18,8 +18,8 @@
 
 // Main entity types
 export type { CyclistDB, CyclistInsert, RaceResultRpcItem } from './cyclists.db';
-export type { EventDB, EventWithCategoriesResponse } from './events.db';
-export type { RaceDB, RaceWithResultsResponse } from './races.db';
+export type { EventDB, EventWithRacesResponse } from './events.db';
+export type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from './races.db';
 export type { RaceResultDB } from './race-results.db';
 export type { UserDB, AuthUserRpcResponse } from './users.db';
 export type { RoleDB } from './roles.db';

@@ -20,7 +20,7 @@ export function adaptOrganizationInvitationFromDb(
 ): OrganizationInvitation {
 	return {
 		// Identity
-		id: dbInvitation.short_id, // Translate: short_id → id
+		id: dbInvitation.id,
 
 		// Invitation Details
 		organizationId: dbInvitation.organization_id,

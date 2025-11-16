@@ -142,7 +142,6 @@ AS $$
 DECLARE
   v_invitation_id UUID;
   v_organization_id UUID;
-  v_organization_short_id TEXT;
   v_user_id UUID;
 BEGIN
   -- 1. Get and validate pending invitation
@@ -187,34 +186,23 @@ BEGIN
     updated_at = NOW()
   WHERE id = v_invitation_id;
 
-  -- 5. Get organization short_id
-  SELECT short_id INTO v_organization_short_id
-  FROM public.organizations
-  WHERE id = v_organization_id;
-
-  IF v_organization_short_id IS NULL THEN
-    RAISE EXCEPTION 'Organization not found for id: %', v_organization_id
-      USING ERRCODE = '28000';
-  END IF;
-
-  -- 6. Update organization state to ACTIVE
+  -- 5. Update organization state to ACTIVE
   UPDATE public.organizations
   SET
     state = 'ACTIVE',
     updated_at = NOW()
   WHERE id = v_organization_id;
 
-  -- Return success with organization short_id for redirect
+  -- Return success with organization_id for redirect
   RETURN jsonb_build_object(
     'success', true,
-    'organization_short_id', v_organization_short_id,
-    'user_id', v_user_id,
-    'organization_id', v_organization_id
+    'organization_id', v_organization_id,
+    'user_id', v_user_id
   );
 END;
 $$;
 
-COMMENT ON FUNCTION public.complete_organizer_owner_setup IS 'Atomically completes organizer owner setup: updates user profile, links to organization, accepts invitation, and activates organization. Returns organization short_id for redirect. Password must be updated separately via Supabase Auth API.';
+COMMENT ON FUNCTION public.complete_organizer_owner_setup IS 'Atomically completes organizer owner setup: updates user profile, links to organization, accepts invitation, and activates organization. Returns organization UUID for redirect. Password must be updated separately via Supabase Auth API.';
 
 -- =====================================================
 -- SECTION 3: Invited Users Can View WAITING_OWNER Organizations

@@ -37,7 +37,7 @@ export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organiz
 			: RoleTypeEnum.ORGANIZER_STAFF;
 
 	return {
-		id: rpcResponse.short_id,
+		id: rpcResponse.id,
 		firstName: rpcResponse.first_name,
 		lastName: rpcResponse.last_name ?? '',
 		email: rpcResponse.email ?? '',
@@ -58,7 +58,7 @@ export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organiz
 export function adaptOrganizerFromDbOld(dbOrganizer: OrganizerDB): OrganizerOld {
 	return {
 		// Identity
-		id: dbOrganizer.short_id, // Translate: short_id → id
+		id: dbOrganizer.id,
 
 		// Relationships (Foreign Keys)
 		userId: dbOrganizer.user_id,
@@ -86,13 +86,13 @@ export function adaptOrganizerWithUserFromDb(
 
 	// Transform user with role
 	const user: UserWithRelations = {
-		id: dbOrganizer.users.short_id,
+		id: dbOrganizer.users.id,
 		firstName: dbOrganizer.users.first_name,
 		lastName: dbOrganizer.users.last_name,
 		roleId: dbOrganizer.users.role_id,
 		...mapTimestamps(dbOrganizer.users),
 		role: {
-			id: dbOrganizer.users.roles.short_id,
+			id: dbOrganizer.users.roles.id,
 			name: dbOrganizer.users.roles.name,
 			...mapTimestamps(dbOrganizer.users.roles)
 		}

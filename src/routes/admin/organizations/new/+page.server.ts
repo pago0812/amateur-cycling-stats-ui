@@ -94,23 +94,15 @@ export const actions: Actions = {
 				state: 'WAITING_OWNER'
 			});
 
-			// Get the internal UUID for the organization (not the short_id)
-			const { data: orgData } = await locals.supabase
-				.from('organizations')
-				.select('id')
-				.eq('short_id', organization.id)
-				.single();
-
-			if (!orgData) {
-				throw new Error('Failed to get organization UUID');
-			}
+			// Use organization UUID directly
+			const organizationId = organization.id;
 
 			// Step 1: Create auth user with skip_auto_create flag
 			const authUserResult = await createAuthUserForInvitation({
 				email: ownerEmail.trim(),
 				metadata: {
 					invitedOwnerName: ownerName.trim(),
-					organizationId: orgData.id
+					organizationId
 				}
 			});
 
@@ -130,7 +122,7 @@ export const actions: Actions = {
 				authUserId: authUserResult.authUserId,
 				firstName: ownerName.trim(),
 				lastName: '', // We only have full name from the form
-				organizationId: orgData.id
+				organizationId
 			});
 
 			if (!userResult.success) {
@@ -146,7 +138,7 @@ export const actions: Actions = {
 
 			// Step 3: Create invitation record
 			await createInvitation(locals.supabase, {
-				organizationId: orgData.id,
+				organizationId,
 				email: ownerEmail.trim(),
 				invitedOwnerName: ownerName.trim()
 			});

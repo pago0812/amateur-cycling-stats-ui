@@ -15,7 +15,7 @@ import { mapTimestamps } from './common.adapter';
 export function adaptRoleFromDb(dbRole: RoleDB): Role {
 	return {
 		// Identity
-		id: dbRole.short_id, // Translate: short_id → id
+		id: dbRole.id,
 
 		// Basic Info
 		name: dbRole.name,

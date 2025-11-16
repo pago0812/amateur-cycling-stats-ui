@@ -5,7 +5,6 @@
  */
 export interface OrganizationInvitationDB {
 	id: string;
-	short_id: string;
 	organization_id: string;
 	email: string;
 	invited_owner_name: string;

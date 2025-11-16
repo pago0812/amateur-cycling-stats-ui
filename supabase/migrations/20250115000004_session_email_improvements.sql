@@ -9,7 +9,7 @@
 -- SECTION 1: Update get_auth_user with Email and Session Validation
 -- =====================================================
 
-CREATE OR REPLACE FUNCTION public.get_auth_user(user_short_id TEXT DEFAULT NULL)
+CREATE OR REPLACE FUNCTION public.get_auth_user(user_id UUID DEFAULT NULL)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -23,12 +23,9 @@ DECLARE
   user_display_name TEXT;
   current_auth_id UUID;
 BEGIN
-  -- If short_id provided, lookup user ID
-  IF user_short_id IS NOT NULL THEN
-    SELECT id INTO target_user_id
-    FROM public.users
-    WHERE short_id = user_short_id
-    LIMIT 1;
+  -- If user_id provided, use it directly
+  IF user_id IS NOT NULL THEN
+    target_user_id := user_id;
   ELSE
     -- Validate session exists
     current_auth_id := auth.uid();
@@ -71,7 +68,6 @@ BEGIN
   -- Build the base user object with role, email, and display_name
   SELECT jsonb_build_object(
     'id', u.id,
-    'short_id', u.short_id,
     'first_name', u.first_name,
     'last_name', u.last_name,
     'email', user_email,
@@ -81,7 +77,6 @@ BEGIN
     'updated_at', u.updated_at,
     'role', jsonb_build_object(
       'id', r.id,
-      'short_id', r.short_id,
       'name', r.name,
       'created_at', r.created_at,
       'updated_at', r.updated_at
@@ -90,8 +85,7 @@ BEGIN
       WHEN r.name = 'CYCLIST'::role_name_enum THEN (
         SELECT jsonb_build_object(
           'id', c.id,
-          'short_id', c.short_id,
-          'user_id', u.short_id,
+          'user_id', u.id,
           'born_year', c.born_year,
           'gender_id', c.gender_id,
           'created_at', c.created_at,
@@ -107,15 +101,13 @@ BEGIN
       WHEN r.name IN ('ORGANIZER_STAFF'::role_name_enum, 'ORGANIZER_OWNER'::role_name_enum) THEN (
         SELECT jsonb_build_object(
           'id', o.id,
-          'short_id', o.short_id,
-          'user_id', u.short_id,
+          'user_id', u.id,
           'organization_id', o.organization_id,
           'created_at', o.created_at,
           'updated_at', o.updated_at,
           'organization', (
             SELECT jsonb_build_object(
               'id', org.id,
-              'short_id', org.short_id,
               'name', org.name,
               'description', org.description,
               'state', org.state,
@@ -141,7 +133,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_auth_user(TEXT) IS 'Returns enriched user data with first_name, last_name, email, display_name (from auth.users), role, and related entities (cyclist or organizer with organization). If no short_id provided, validates active session and returns data for the authenticated user. Raises exception with error code 28000 if no active session exists.';
+COMMENT ON FUNCTION public.get_auth_user(UUID) IS 'Returns enriched user data with first_name, last_name, email, display_name (from auth.users), role, and related entities (cyclist or organizer with organization). If no user_id provided, validates active session and returns data for the authenticated user. Raises exception with error code 28000 if no active session exists.';
 
 -- =====================================================
 -- END OF CONSOLIDATED MIGRATION 04

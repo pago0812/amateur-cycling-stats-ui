@@ -9,10 +9,14 @@
 export { mapTimestamps, adaptArray, isDefined } from './common.adapter';
 
 // Events
-export { adaptEventFromDb, adaptEventWithRelationsFromDb } from './events.adapter';
+export { adaptEventFromDb, adaptEventWithRacesFromDb } from './events.adapter';
 
 // Races
-export { adaptRaceFromDb, adaptRaceWithResultsFromDb } from './races.adapter';
+export {
+	adaptRaceFromDb,
+	adaptRaceWithResultsFromDb,
+	adaptRaceWithRaceResultsFromRpc
+} from './races.adapter';
 
 // Race Results
 export {
@@ -28,7 +32,10 @@ export { adaptCyclistFromRpc } from './cyclists.adapter';
 export {
 	adaptRaceCategoryFromDb,
 	adaptRaceCategoryGenderFromDb,
-	adaptRaceCategoryLengthFromDb
+	adaptRaceCategoryLengthFromDb,
+	adaptRaceCategoryFromRpc,
+	adaptRaceCategoryGenderFromRpc,
+	adaptRaceCategoryLengthFromRpc
 } from './race-categories.adapter';
 
 // Ranking Points

@@ -7,7 +7,7 @@ import { RoleTypeEnum } from './role-type.domain';
  */
 export interface Admin {
 	// From users table (public.users)
-	id: string; // short_id from users table
+	id: string; // UUID from users table
 	firstName: string;
 	lastName: string;
 	createdAt: string;

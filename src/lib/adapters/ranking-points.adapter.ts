@@ -11,7 +11,6 @@ export function adaptRankingPointFromDb(
 		| RankingPointDB
 		| {
 				id: string;
-				short_id: string; // NanoID (translates to domain.id)
 				place: number;
 				points: number;
 				race_ranking_id: string;
@@ -20,7 +19,7 @@ export function adaptRankingPointFromDb(
 		  }
 ): RankingPoint {
 	return {
-		id: dbRankingPoint.short_id, // Translate: short_id → id
+		id: dbRankingPoint.id,
 		place: dbRankingPoint.place,
 		points: dbRankingPoint.points,
 		raceRankingId: dbRankingPoint.race_ranking_id,

@@ -20,7 +20,7 @@ export function adaptCyclistFromRpc(rpcResponse: AuthUserRpcResponse): Cyclist {
 	const cyclistData = rpcResponse.cyclist;
 
 	return {
-		id: rpcResponse.short_id,
+		id: rpcResponse.id,
 		firstName: rpcResponse.first_name,
 		lastName: rpcResponse.last_name ?? '',
 		email: rpcResponse.email ?? null,

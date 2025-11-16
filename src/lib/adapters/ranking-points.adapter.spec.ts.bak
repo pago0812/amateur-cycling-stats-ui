@@ -12,6 +12,7 @@ describe('Ranking Points Adapter', () => {
 	describe('adaptRankingPointFromDb', () => {
 		it('should transform DB ranking point to domain RankingPoint', () => {
 			const dbRankingPoint: RankingPointDB = {
+				id: 'rp-123',
 				id: '123',
 				place: 1,
 				points: 100,
@@ -43,6 +44,7 @@ describe('Ranking Points Adapter', () => {
 
 			testCases.forEach(({ place, points }) => {
 				const dbRankingPoint: RankingPointDB = {
+					id: `rp-${place}`,
 					id: `${place}`,
 					place,
 					points,
@@ -68,6 +70,7 @@ describe('Ranking Points Adapter', () => {
 
 			rankingSystems.forEach((rankingId) => {
 				const dbRankingPoint: RankingPointDB = {
+					id: `rp-${rankingId}`,
 					id: rankingId.split('-')[1],
 					place: 1,
 					points: 100,
@@ -84,6 +87,7 @@ describe('Ranking Points Adapter', () => {
 
 		it('should handle inline object format (from nested queries)', () => {
 			const inlineRankingPoint = {
+				id: 'rp-inline',
 				id: 'inline',
 				place: 3,
 				points: 30,
@@ -106,6 +110,7 @@ describe('Ranking Points Adapter', () => {
 
 		it('should transform snake_case to camelCase correctly', () => {
 			const dbRankingPoint: RankingPointDB = {
+				id: 'rp-test-case',
 				id: 'testxcase',
 				place: 7,
 				points: 10,

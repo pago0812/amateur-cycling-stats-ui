@@ -6,24 +6,9 @@ export const load: PageServerLoad = async ({ parent, locals }) => {
 	const { organization } = await parent();
 
 	try {
-		// Fetch organizers for this organization
-		// Note: We need to use the UUID (not short_id) for the foreign key query
-		// We'll need to convert the organization.id to UUID first
-
-		// For now, we'll use a direct query with short_id lookup
-		// Get organization UUID from short_id
-		const { data: orgData } = await locals.supabase
-			.from('organizations')
-			.select('id')
-			.eq('short_id', organization.id)
-			.single();
-
-		if (!orgData) {
-			return { organizers: [] };
-		}
-
+		// Fetch organizers for this organization (organization.id is UUID)
 		const organizers = await getOrganizersByOrganizationId(locals.supabase, {
-			organizationId: orgData.id
+			organizationId: organization.id
 		});
 
 		return { organizers };

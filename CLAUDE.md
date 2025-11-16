@@ -43,11 +43,11 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - Domain types are used throughout the application (components, pages, stores)
    - Database types (snake_case) are ONLY used in services and adapters
 
-4. **Public ID Architecture (short_id with NanoID)**
-   - **All public URLs use short_id** (10-character NanoID format: lowercase + numbers)
-   - **Database uses dual-field system**: `id` (UUID - internal) + `short_id` (NanoID - public)
-   - **Domain layer only knows `id: string`** (which receives the short_id value from adapters)
-   - **Adapters translate at DB boundary**: `db.short_id` → `domain.id`
+4. **UUID-Based ID Architecture**
+   - **All IDs use PostgreSQL UUIDs** (generated via `gen_random_uuid()`)
+   - **Database stores single `id` field**: UUID as primary key
+   - **Domain layer uses `id: string`** (receives UUID value from adapters)
+   - **Adapters translate at DB boundary**: `db.id` → `domain.id`
 
 5. **Keep hooks.server.ts Lightweight**
    - `hooks.server.ts` should be easy to read and maintain as it runs on every request
@@ -221,7 +221,7 @@ npm run seed:users   # Seed test users (run after supabase db reset)
 
 All services located in `src/lib/services/`:
 
-1. **events.ts** - Event operations (getFutureEvents, getPastEvents, getEventWithCategoriesById)
+1. **events.ts** - Event operations (getFutureEvents, getPastEvents, getEventWithRacesById)
 2. **races.ts** - Race operations (getRaceWithResultsWithFilters)
 3. **race-results.ts** - Race results operations (getRaceResultsByRaceId)
 4. **cyclists.ts** - Cyclist operations (getCyclistById - fetches cyclist without race results, pair with getRaceResultsByUserId for parallel fetching)
@@ -744,7 +744,7 @@ BEGIN
   -- 4. Accept invitation
   -- 5. Activate organization
 
-  RETURN jsonb_build_object('success', true, 'organization_short_id', v_org_short_id);
+  RETURN jsonb_build_object('success', true, 'organization_id', v_organization_id);
 END;
 $$;
 ```
@@ -770,7 +770,7 @@ const { data, error } = await supabase.rpc('complete_organizer_owner_setup', {
 // Type cast JSONB result (Supabase doesn't auto-infer JSONB structures)
 const result = data as {
 	success: boolean;
-	organization_short_id: string;
+	organization_id: string;
 };
 ```
 
@@ -920,7 +920,7 @@ const { data } = await supabase.rpc('complete_organizer_owner_setup', {
 // - Changes organization state to 'ACTIVE'
 
 // 3. Redirect to organization page
-throw redirect(303, `/admin/organizations/${data.organization_short_id}`);
+throw redirect(303, `/admin/organizations/${data.organization_id}`);
 ```
 
 **4. RLS Policies for Invitation Flow**:
@@ -1002,7 +1002,7 @@ The application has been fully migrated from **Next.js/Strapi** to **SvelteKit/S
 - Type-safe throughout with strict TypeScript
 - Comprehensive Row Level Security
 - Auto-generated database types
-- Dual-field ID system (UUID + NanoID)
+- UUID-based ID system throughout
 - Two-stage seeding approach
 - Performance optimized RPC functions
 

@@ -45,17 +45,16 @@ export const load: PageServerLoad = async ({ parent, locals }) => {
 		invitation.organizationId
 	);
 
-	// Get organization UUID from invitation
+	// Get organization name from invitation
 	const { data: orgData, error: orgError } = await locals.supabase
 		.from('organizations')
-		.select('short_id, name')
+		.select('name')
 		.eq('id', invitation.organizationId)
 		.single();
 
 	console.log('[Complete Setup Load] Organization lookup result:', {
 		error: orgError?.message,
 		hasOrgData: !!orgData,
-		shortId: orgData?.short_id,
 		name: orgData?.name
 	});
 
@@ -188,13 +187,12 @@ export const actions: Actions = {
 			// Type cast the JSONB result (Supabase doesn't auto-infer JSONB structure)
 			const result = setupResult as {
 				success: boolean;
-				organization_short_id: string;
-				user_id: string;
 				organization_id: string;
+				user_id: string;
 			};
 
 			// Success! Redirect to organization page
-			throw redirect(303, `/admin/organizations/${result.organization_short_id}`);
+			throw redirect(303, `/admin/organizations/${result.organization_id}`);
 		} catch (err) {
 			// Re-throw redirects (SvelteKit redirect() throws a Redirect object, not Response)
 			if (err && typeof err === 'object' && 'status' in err && 'location' in err) {

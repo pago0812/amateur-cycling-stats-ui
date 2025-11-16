@@ -15,7 +15,7 @@ import { mapTimestamps } from './common.adapter';
 export function adaptOrganizationFromDb(dbOrganization: OrganizationDB): Organization {
 	return {
 		// Identity
-		id: dbOrganization.short_id, // Translate: short_id → id
+		id: dbOrganization.id,
 
 		// Basic Info
 		name: dbOrganization.name,

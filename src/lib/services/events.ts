@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { Event, EventWithRelations } from '$lib/types/domain';
-import type { EventWithCategoriesResponse } from '$lib/types/db';
-import { adaptEventFromDb, adaptEventWithRelationsFromDb } from '$lib/adapters';
+import type { Event, EventWithRaces } from '$lib/types/domain';
+import type { EventWithRacesResponse } from '$lib/types/db';
+import { adaptEventFromDb, adaptEventWithRacesFromDb } from '$lib/adapters';
 
 type TypedSupabaseClient = SupabaseClient<Database>;
 
@@ -61,52 +61,38 @@ export async function getFutureEvents(supabase: TypedSupabaseClient): Promise<Ev
 }
 
 /**
- * Get event by ID with populated junction tables (categories, genders, lengths).
- * Returns domain EventWithRelations type with camelCase fields, or null if not found.
- * Single PostgreSQL query with JOINs - much faster than Strapi's multiple requests.
+ * Get event by ID with races array and supported categories/genders/lengths.
+ * Uses RPC function for optimized single-query fetch.
+ * Returns domain EventWithRaces type with camelCase fields, or null if not found.
  *
- * ID parameter is the short_id (public ID), not UUID.
- * Query uses short_id column (indexed for fast lookups).
+ * ID parameter is the event's UUID.
+ * RPC function handles all JOINs and data aggregation in PostgreSQL.
  *
  * Returns null when event doesn't exist (expected case).
  * Throws error only for unexpected database issues.
  */
-export async function getEventWithCategoriesById(
+export async function getEventWithRacesById(
 	supabase: TypedSupabaseClient,
 	params: GetEventByIdParams
-): Promise<EventWithRelations | null> {
-	const { data, error } = await supabase
-		.from('events')
-		.select(
-			`
-			*,
-			supportedCategories:event_supported_categories(
-				race_categories(*)
-			),
-			supportedGenders:event_supported_genders(
-				race_category_genders(*)
-			),
-			supportedLengths:event_supported_lengths(
-				race_category_lengths(*)
-			)
-		`
-		)
-		.eq('short_id', params.id) // Changed: Query by short_id instead of UUID
-		.single();
+): Promise<EventWithRaces | null> {
+	const { data, error } = await supabase.rpc('get_event_with_races_by_event_id', {
+		p_event_id: params.id
+	});
+
+	console.log(data);
 
 	if (error) {
-		// PGRST116 = no rows found - expected when event doesn't exist
-		if (error.code === 'PGRST116') {
-			return null;
-		}
-		throw new Error(`Error fetching event: ${error.message}`);
+		throw new Error(`Error fetching event with races: ${error.message}`);
 	}
 
-	// Return null if event doesn't exist (expected case)
+	// RPC returns NULL when event doesn't exist
 	if (!data) {
 		return null;
 	}
 
-	// Use adapter to transform complex response → Domain type
-	return adaptEventWithRelationsFromDb(data as EventWithCategoriesResponse);
+	// Type cast JSONB result (Supabase doesn't auto-infer JSONB structures)
+	const typedData = data as unknown as EventWithRacesResponse;
+
+	// Use adapter to transform DB response → Domain type
+	return adaptEventWithRacesFromDb(typedData);
 }

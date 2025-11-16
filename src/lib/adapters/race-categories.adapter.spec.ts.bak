@@ -16,6 +16,7 @@ describe('Race Categories Adapter', () => {
 	describe('adaptRaceCategoryFromDb', () => {
 		it('should transform DB race category to domain RaceCategory', () => {
 			const dbCategory: RaceCategoryDB = {
+				id: 'cat-abs',
 				id: 'abs',
 				name: 'ABS',
 				created_at: '2024-01-01T00:00:00Z',
@@ -37,6 +38,7 @@ describe('Race Categories Adapter', () => {
 
 			categories.forEach((categoryName) => {
 				const dbCategory: RaceCategoryDB = {
+					id: `cat-${categoryName.toLowerCase()}`,
 					id: categoryName.toLowerCase(),
 					name: categoryName,
 					created_at: '2024-01-01T00:00:00Z',
@@ -54,6 +56,7 @@ describe('Race Categories Adapter', () => {
 	describe('adaptRaceCategoryGenderFromDb', () => {
 		it('should transform DB race category gender to domain RaceCategoryGender', () => {
 			const dbGender: RaceCategoryGenderDB = {
+				id: 'gender-male',
 				id: 'male',
 				name: 'MALE',
 				created_at: '2024-01-01T00:00:00Z',
@@ -75,6 +78,7 @@ describe('Race Categories Adapter', () => {
 
 			genders.forEach((genderName) => {
 				const dbGender: RaceCategoryGenderDB = {
+					id: `gender-${genderName.toLowerCase()}`,
 					id: genderName.toLowerCase(),
 					name: genderName,
 					created_at: '2024-01-01T00:00:00Z',
@@ -92,6 +96,7 @@ describe('Race Categories Adapter', () => {
 	describe('adaptRaceCategoryLengthFromDb', () => {
 		it('should transform DB race category length to domain RaceCategoryLength', () => {
 			const dbLength: RaceCategoryLengthDB = {
+				id: 'length-long',
 				id: 'long',
 				name: 'LONG',
 				created_at: '2024-01-01T00:00:00Z',
@@ -113,6 +118,7 @@ describe('Race Categories Adapter', () => {
 
 			lengths.forEach((lengthName) => {
 				const dbLength: RaceCategoryLengthDB = {
+					id: `length-${lengthName.toLowerCase()}`,
 					id: lengthName.toLowerCase(),
 					name: lengthName,
 					created_at: '2024-01-01T00:00:00Z',

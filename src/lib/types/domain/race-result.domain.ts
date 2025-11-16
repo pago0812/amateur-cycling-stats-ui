@@ -6,7 +6,7 @@
  */
 export interface RaceResult {
 	// Race result fields
-	id: string; // Race result short_id (NanoID)
+	id: string; // Race result UUID
 	place: number; // Final position
 	time: string | null; // Finish time (HH:MM:SS format or null)
 	points: number | null; // Points earned (may be null if not applicable)
@@ -14,7 +14,7 @@ export interface RaceResult {
 	updatedAt: string;
 
 	// Event fields
-	eventId: string; // Event short_id (NanoID)
+	eventId: string; // Event UUID
 	eventName: string;
 	eventDateTime: string;
 	eventYear: number;
@@ -24,14 +24,14 @@ export interface RaceResult {
 	eventStatus: string; // DRAFT | AVAILABLE | SOLD_OUT | ON_GOING | FINISHED
 
 	// Race fields
-	raceId: string; // Race short_id (NanoID)
+	raceId: string; // Race UUID
 	raceName: string | null;
 	raceDateTime: string;
 
 	// Category IDs (for interim navigation)
-	raceCategoryId: string; // Category short_id (NanoID)
-	raceCategoryGenderId: string; // Gender short_id (NanoID)
-	raceCategoryLengthId: string; // Length short_id (NanoID)
+	raceCategoryId: string; // Category UUID
+	raceCategoryGenderId: string; // Gender UUID
+	raceCategoryLengthId: string; // Length UUID
 
 	// Category types (enum values)
 	raceCategoryType: string; // ELITE | MASTER_30 | MASTER_40 | etc.

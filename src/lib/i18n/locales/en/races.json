@@ -2,7 +2,10 @@
 	"filters": {
 		"category": "Category",
 		"gender": "Gender",
-		"distance": "Distance"
+		"distance": "Distance",
+		"selectCategory": "Select category",
+		"selectGender": "Select gender",
+		"selectDistance": "Select distance"
 	},
 	"table": {
 		"position": "Position",

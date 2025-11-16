@@ -35,11 +35,11 @@ export const actions: Actions = {
 	},
 
 	resendInvite: async ({ params, locals }) => {
-		// Get organization UUID from short_id
+		// Get organization state and name
 		const { data: orgData, error: orgError } = await locals.supabase
 			.from('organizations')
-			.select('id, state')
-			.eq('short_id', params.id)
+			.select('id, state, name')
+			.eq('id', params.id)
 			.single();
 
 		if (orgError || !orgData) {
@@ -65,19 +65,6 @@ export const actions: Actions = {
 				});
 			}
 
-			// Get organization name for email template
-			const { data: org } = await locals.supabase
-				.from('organizations')
-				.select('name')
-				.eq('id', orgData.id)
-				.single();
-
-			if (!org) {
-				return fail(404, {
-					error: t(locals.locale, 'admin.organizations.errors.notFound')
-				});
-			}
-
 			// Generate new invitation link for existing auth user
 			const callbackUrl = `${SITE_URL}/auth/callback`;
 			const linkResult = await generateInvitationLink({
@@ -95,7 +82,7 @@ export const actions: Actions = {
 			// Send invitation email via MailerSend
 			const emailResult = await sendInvitationEmail({
 				to: invitation.email,
-				organizationName: org.name,
+				organizationName: orgData.name,
 				ownerName: invitation.invitedOwnerName,
 				confirmationUrl: linkResult.actionLink
 			});
@@ -125,11 +112,11 @@ export const actions: Actions = {
 	deactivate: async ({ params, locals }) => {
 		// Layout already ensures user is authenticated and has ADMIN role
 		try {
-			// Get organization UUID from short_id
+			// Get organization state
 			const { data: orgData, error: orgError } = await locals.supabase
 				.from('organizations')
 				.select('id, state')
-				.eq('short_id', params.id)
+				.eq('id', params.id)
 				.single();
 
 			if (orgError || !orgData) {
@@ -143,11 +130,11 @@ export const actions: Actions = {
 
 			// If there's a pending invitation, clean it up
 			if (invitation) {
-				// Get auth user ID from public.users
+				// Get auth user ID by invitation email
 				const { data: usersData } = await locals.supabase
 					.from('users')
 					.select('auth_user_id')
-					.eq('short_id', invitation.id.substring(0, 10)) // Use invitation ID to find user
+					.eq('email', invitation.email)
 					.maybeSingle();
 
 				// If we found the auth user, try to delete them

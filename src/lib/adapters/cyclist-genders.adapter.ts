@@ -15,7 +15,7 @@ import { mapTimestamps } from './common.adapter';
 export function adaptCyclistGenderFromDb(dbCyclistGender: CyclistGenderDB): CyclistGender {
 	return {
 		// Identity
-		id: dbCyclistGender.short_id, // Translate: short_id → id
+		id: dbCyclistGender.id,
 
 		// Basic Info
 		name: dbCyclistGender.name,

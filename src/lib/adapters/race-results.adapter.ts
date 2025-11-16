@@ -5,7 +5,7 @@ import { adaptRankingPointFromDb } from './ranking-points.adapter';
 
 /**
  * Adapts a single race result item from RPC response with flat structure.
- * Used by get_race_results_by_user_short_id RPC.
+ * Used by get_race_results_by_user_id RPC.
  * Simple snake_case → camelCase transformation.
  */
 export function adaptRaceResultFromRpc(rpcResult: RaceResultRpcItem): RaceResult {
@@ -49,7 +49,7 @@ export function adaptRaceResultFromRpc(rpcResult: RaceResultRpcItem): RaceResult
 /**
  * Adapts array of race results from RPC response.
  * Handles type casting from JSONB and maps to domain types.
- * Used by get_race_results_by_user_short_id RPC.
+ * Used by get_race_results_by_user_id RPC.
  */
 export function adaptRaceResultsFromRpc(rpcResult: RaceResultRpcItem[]): RaceResult[] {
 	const results = rpcResult || [];
@@ -64,7 +64,7 @@ export function adaptRaceResultFromNested(
 	dbResult: RaceWithResultsResponse['race_results'][0]
 ): RaceDetailResult {
 	return {
-		id: dbResult.short_id, // Translate: short_id → id
+		id: dbResult.id,
 		place: dbResult.place,
 		time: dbResult.time,
 		points: dbResult.points,

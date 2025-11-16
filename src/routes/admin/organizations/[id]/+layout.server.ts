@@ -8,24 +8,18 @@ export const load: LayoutServerLoad = async ({ params, locals }) => {
 	// Note: Authentication and ADMIN role check handled by /admin/+layout.server.ts
 
 	try {
-		// Fetch organization by short_id
+		// Fetch organization by UUID
 		const organization = await getOrganizationById(locals.supabase, { id: params.id });
 
 		if (!organization) {
 			throw error(404, t(locals.locale, 'admin.organizations.errors.notFound'));
 		}
 
-		// Get organization UUID from short_id to fetch organizers count
-		const { data: orgData } = await locals.supabase
-			.from('organizations')
-			.select('id')
-			.eq('short_id', params.id)
-			.single();
-
-		// Fetch organizers count for this organization
-		const organizersCount = orgData
-			? await getOrganizersCountByOrganizationId(locals.supabase, orgData.id)
-			: 0;
+		// Fetch organizers count for this organization (organization.id is UUID)
+		const organizersCount = await getOrganizersCountByOrganizationId(
+			locals.supabase,
+			organization.id
+		);
 
 		return { organization, organizersCount };
 	} catch (err) {

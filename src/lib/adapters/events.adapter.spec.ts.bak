@@ -12,6 +12,7 @@ describe('Events Adapter', () => {
 	describe('adaptEventFromDb', () => {
 		it('should transform DB event to domain Event', () => {
 			const dbEvent: EventDB = {
+				id: '123e4567-e89b-12d3-a456-426614174000',
 				id: '123e4567xe',
 				name: 'Gran Fondo Valencia',
 				description: 'Annual cycling event',
@@ -51,6 +52,7 @@ describe('Events Adapter', () => {
 		it('should handle null description', () => {
 			const dbEvent: EventDB = {
 				id: '123',
+				id: '123',
 				name: 'Test Event',
 				description: null,
 				date_time: '2024-01-01T00:00:00Z',
@@ -76,6 +78,7 @@ describe('Events Adapter', () => {
 
 			statuses.forEach((status) => {
 				const dbEvent: EventDB = {
+					id: '123',
 					id: '123',
 					name: 'Event',
 					description: null,

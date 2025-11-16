@@ -7,8 +7,8 @@ Complete reference for all Remote Procedure Call (RPC) functions used in the Ama
 ## Table of Contents
 
 1. [get_auth_user](#1-get_auth_user)
-2. [get_cyclist_by_user_id](#2-get_cyclist_by_user_id)
-3. [get_race_results_by_user_id](#3-get_race_results_by_user_id)
+2. [get_cyclist_by_user_short_id](#2-get_cyclist_by_user_short_id)
+3. [get_race_results_by_user_short_id](#3-get_race_results_by_user_short_id)
 4. [create_user_with_organizer_owner](#4-create_user_with_organizer_owner)
 5. [complete_organizer_owner_setup](#5-complete_organizer_owner_setup)
 
@@ -26,7 +26,7 @@ Complete reference for all Remote Procedure Call (RPC) functions used in the Ama
 
 ```typescript
 {
-  user_id?: string  // Optional - If provided, lookup by UUID; otherwise use current session
+  user_short_id?: string  // Optional - If provided, lookup by short_id; otherwise use current session
 }
 ```
 
@@ -207,7 +207,7 @@ const { data, error } = await supabase.rpc('get_auth_user');
 
 ---
 
-## 2. get_cyclist_by_user_id
+## 2. get_cyclist_by_user_short_id
 
 **Purpose**: Fetches cyclist profile data (optimized - no auth.users or race results)
 
@@ -219,7 +219,7 @@ const { data, error } = await supabase.rpc('get_auth_user');
 
 ```typescript
 {
-	p_user_id: string; // Required - User's UUID
+	p_user_short_id: string; // Required - User's public short_id
 }
 ```
 
@@ -227,8 +227,8 @@ const { data, error } = await supabase.rpc('get_auth_user');
 
 ```typescript
 // services/cyclists.ts -> getCyclistById()
-const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
-	p_user_id: 'abc123def4'
+const { data, error } = await supabase.rpc('get_cyclist_by_user_short_id', {
+	p_user_short_id: 'abc123def4'
 });
 ```
 
@@ -295,8 +295,8 @@ const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
            ▼
 ┌─────────────────────────────────────┐
 │  supabase                           │
-│  .rpc('get_cyclist_by_user_id'│
-│    { p_user_id: id })         │
+│  .rpc('get_cyclist_by_user_short_id'│
+│    { p_user_short_id: id })         │
 └──────────┬──────────────────────────┘
            │
            ▼
@@ -322,7 +322,7 @@ const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
 
 ---
 
-## 3. get_race_results_by_user_id
+## 3. get_race_results_by_user_short_id
 
 **Purpose**: Fetches race results array for a user (optimized parallel fetch)
 
@@ -334,7 +334,7 @@ const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
 
 ```typescript
 {
-	p_user_id: string; // Required - User's UUID
+	p_user_short_id: string; // Required - User's public short_id
 }
 ```
 
@@ -342,8 +342,8 @@ const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
 
 ```typescript
 // services/race-results.ts -> getRaceResultsByUserId()
-const { data, error } = await supabase.rpc('get_race_results_by_user_id', {
-	p_user_id: 'abc123def4'
+const { data, error } = await supabase.rpc('get_race_results_by_user_short_id', {
+	p_user_short_id: 'abc123def4'
 });
 ```
 
@@ -493,7 +493,7 @@ const { data, error } = await supabase.rpc('get_race_results_by_user_id', {
 │  supabase                            │
 │  .rpc('get_race_results_by_user_     │
 │    short_id',                        │
-│    { p_user_id: id })          │
+│    { p_user_short_id: id })          │
 └──────────┬───────────────────────────┘
            │
            ▼
@@ -688,7 +688,7 @@ const { data, error } = await supabase.rpc('complete_organizer_owner_setup', {
 ```json
 {
 	"success": true,
-	"organization_id": "org123abc45",
+	"organization_short_id": "org123abc45",
 	"user_id": "abc123def4",
 	"organization_id": "990i2844-i62f-85h8-e150-880099884444"
 }
@@ -803,14 +803,14 @@ const { data, error } = await supabase.rpc('complete_organizer_owner_setup', {
 │                                      │
 │  Step 6: Return Response             │
 │    - Return JSONB with               │
-│      organization_id           │
+│      organization_short_id           │
 └──────────┬───────────────────────────┘
            │
            ▼
 ┌──────────────────────────────────────┐
 │  3. Redirect to organization page    │
 │  /admin/organizations/               │
-│    {organization_id}           │
+│    {organization_short_id}           │
 └──────────────────────────────────────┘
 ```
 
@@ -839,8 +839,8 @@ If any step fails, the entire transaction is rolled back.
 ```typescript
 // ✅ OPTIMIZED - Parallel (2 queries, 1 round-trip)
 const [cyclist, raceResults] = await Promise.all([
-	getCyclistById(id), // get_cyclist_by_user_id
-	getRaceResultsByUserId(id) // get_race_results_by_user_id
+	getCyclistById(id), // get_cyclist_by_user_short_id
+	getRaceResultsByUserId(id) // get_race_results_by_user_short_id
 ]);
 
 // ❌ SLOW - Sequential (2 queries, 2 round-trips)
@@ -867,7 +867,7 @@ JOIN races r ON rr.race_id = r.id
 JOIN events e ON r.event_id = e.id
 JOIN race_categories rc ON r.category_id = rc.id
 JOIN race_rankings rr_sys ON rc.ranking_id = rr_sys.id
-WHERE rr.user_id = (SELECT id FROM users WHERE id = p_user_id)
+WHERE rr.user_id = (SELECT id FROM users WHERE short_id = p_user_short_id)
 ```
 
 ### 3. Conditional Joins
@@ -1014,7 +1014,7 @@ END IF;
 
 | Migration File                                  | RPC Functions Added/Modified                                         |
 | ----------------------------------------------- | -------------------------------------------------------------------- |
-| `20250115000001_core_foundation.sql`            | `get_race_results_by_user_id`, `get_cyclist_by_user_id`  |
+| `20250115000001_core_foundation.sql`            | `get_race_results_by_user_short_id`, `get_cyclist_by_user_short_id`  |
 | `20250115000002_organization_invitations.sql`   | Organization state management (no RPC changes)                       |
 | `20250115000003_invitation_enhancements.sql`    | `create_user_with_organizer_owner`, `complete_organizer_owner_setup` |
 | `20250115000004_session_email_improvements.sql` | `get_auth_user` (new session-aware version)                          |
@@ -1046,7 +1046,7 @@ TypeScript cannot infer JSONB structure - always type cast:
 const { data } = await supabase.rpc('complete_organizer_owner_setup', { ... });
 const result = data as {
   success: boolean;
-  organization_id: string;
+  organization_short_id: string;
 };
 
 // ❌ WRONG - No type cast
@@ -1110,12 +1110,12 @@ await supabase.rpc('complete_setup_with_password', { password, ... });
 ```typescript
 // get_auth_user
 type GetUserParams = {
-	user_id?: string; // Optional
+	user_short_id?: string; // Optional
 };
 
-// get_cyclist_by_user_id / get_race_results_by_user_id
-type GetByIdParams = {
-	p_user_id: string; // Required
+// get_cyclist_by_user_short_id / get_race_results_by_user_short_id
+type GetByShortIdParams = {
+	p_user_short_id: string; // Required
 };
 
 // create_user_with_organizer_owner
@@ -1141,7 +1141,7 @@ type CompleteSetupParams = {
 // get_auth_user (returns User union type after adapter)
 type User = AdminUser | OrganizerUser | CyclistUser;
 
-// get_cyclist_by_user_id (returns Cyclist after adapter)
+// get_cyclist_by_user_short_id (returns Cyclist after adapter)
 type Cyclist = {
 	id: string;
 	authUserId: string;
@@ -1154,7 +1154,7 @@ type Cyclist = {
 	updatedAt: string;
 };
 
-// get_race_results_by_user_id (returns RaceResultWithRelations[] after adapter)
+// get_race_results_by_user_short_id (returns RaceResultWithRelations[] after adapter)
 type RaceResultWithRelations = {
 	id: number;
 	raceId: string;
@@ -1172,7 +1172,7 @@ type CreateUserResponse = string; // user.id
 // complete_organizer_owner_setup (returns JSONB object)
 type CompleteSetupResponse = {
 	success: boolean;
-	organization_id: string;
+	organization_short_id: string;
 	user_id: string;
 	organization_id: string;
 };
@@ -1240,8 +1240,8 @@ if (error?.code === '28000') {
 The application uses **5 RPC functions** to handle:
 
 1. ✅ **Session Management** - `get_auth_user` (1 call per request)
-2. ✅ **User Data Fetching** - `get_cyclist_by_user_id`
-3. ✅ **Race Results** - `get_race_results_by_user_id`
+2. ✅ **User Data Fetching** - `get_cyclist_by_user_short_id`
+3. ✅ **Race Results** - `get_race_results_by_user_short_id`
 4. ✅ **User Creation** - `create_user_with_organizer_owner`
 5. ✅ **Invitation Flow** - `complete_organizer_owner_setup`
 

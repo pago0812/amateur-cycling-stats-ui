@@ -11,7 +11,7 @@ import { mapTimestamps } from './common.adapter';
  */
 export function adaptRaceCategoryFromDb(dbCategory: RaceCategoryDB): RaceCategory {
 	return {
-		id: dbCategory.short_id, // Translate: short_id → id
+		id: dbCategory.id,
 		name: dbCategory.name,
 		...mapTimestamps(dbCategory)
 	};
@@ -22,7 +22,7 @@ export function adaptRaceCategoryFromDb(dbCategory: RaceCategoryDB): RaceCategor
  */
 export function adaptRaceCategoryGenderFromDb(dbGender: RaceCategoryGenderDB): RaceCategoryGender {
 	return {
-		id: dbGender.short_id, // Translate: short_id → id
+		id: dbGender.id,
 		name: dbGender.name,
 		...mapTimestamps(dbGender)
 	};
@@ -33,8 +33,56 @@ export function adaptRaceCategoryGenderFromDb(dbGender: RaceCategoryGenderDB): R
  */
 export function adaptRaceCategoryLengthFromDb(dbLength: RaceCategoryLengthDB): RaceCategoryLength {
 	return {
-		id: dbLength.short_id, // Translate: short_id → id
+		id: dbLength.id,
 		name: dbLength.name,
 		...mapTimestamps(dbLength)
+	};
+}
+
+/**
+ * Adapts race category from RPC response.
+ * RPC returns flattened structure with name and id (no timestamps).
+ */
+export function adaptRaceCategoryFromRpc(rpcData: {
+	name: string;
+	id: string;
+}): RaceCategory {
+	return {
+		id: rpcData.id,
+		name: rpcData.name,
+		createdAt: '', // RPC doesn't return timestamps for supported arrays
+		updatedAt: ''
+	};
+}
+
+/**
+ * Adapts race category gender from RPC response.
+ * RPC returns flattened structure with name and id (no timestamps).
+ */
+export function adaptRaceCategoryGenderFromRpc(rpcData: {
+	name: string;
+	id: string;
+}): RaceCategoryGender {
+	return {
+		id: rpcData.id,
+		name: rpcData.name,
+		createdAt: '', // RPC doesn't return timestamps for supported arrays
+		updatedAt: ''
+	};
+}
+
+/**
+ * Adapts race category length from RPC response.
+ * RPC returns flattened structure with name and id (no timestamps).
+ */
+export function adaptRaceCategoryLengthFromRpc(rpcData: {
+	name: string;
+	id: string;
+}): RaceCategoryLength {
+	return {
+		id: rpcData.id,
+		name: rpcData.name,
+		createdAt: '', // RPC doesn't return timestamps for supported arrays
+		updatedAt: ''
 	};
 }

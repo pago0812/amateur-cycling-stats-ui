@@ -13,7 +13,7 @@ export function adaptAdminFromRpc(rpcResponse: AuthUserRpcResponse): Admin {
 	}
 
 	return {
-		id: rpcResponse.short_id,
+		id: rpcResponse.id,
 		firstName: rpcResponse.first_name,
 		lastName: rpcResponse.last_name ?? '',
 		email: rpcResponse.email ?? '',

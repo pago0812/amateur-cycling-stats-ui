@@ -3,6 +3,7 @@ import type { RaceCategory } from './race-category.domain';
 import type { RaceCategoryGender } from './race-category.domain';
 import type { RaceCategoryLength } from './race-category.domain';
 import type { RaceRanking } from './race-ranking.domain';
+import type { RaceDetailResult } from './race-result.domain';
 
 /**
  * Race domain type - individual race within an event.
@@ -44,4 +45,13 @@ export interface RaceWithRelations extends Race {
 	raceCategoryGender?: RaceCategoryGender;
 	raceCategoryLength?: RaceCategoryLength;
 	raceRanking?: RaceRanking;
+}
+
+/**
+ * Race with race results.
+ * Used when fetching race data with nested race results for race detail pages.
+ */
+export interface RaceWithRaceResults extends Race {
+	// Nested race results
+	raceResults: RaceDetailResult[];
 }

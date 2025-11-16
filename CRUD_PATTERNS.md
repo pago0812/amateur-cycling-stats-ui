@@ -857,7 +857,7 @@ export async function deleteResource(
 	const { error } = await supabase
 		.from('resources')
 		.update({ is_active: false })
-		.eq('short_id', params.id);
+		.eq('id', params.id);
 
 	if (error) {
 		throw new Error(`Error deleting resource: ${error.message}`);

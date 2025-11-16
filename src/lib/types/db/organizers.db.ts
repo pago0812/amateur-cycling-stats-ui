@@ -13,7 +13,6 @@ export type OrganizerDB = Tables<'organizers'>;
 export interface OrganizerWithUserResponse extends OrganizerDB {
 	users: {
 		id: string; // UUID
-		short_id: string; // NanoID
 		first_name: string;
 		last_name: string | null;
 		role_id: string;
@@ -21,7 +20,6 @@ export interface OrganizerWithUserResponse extends OrganizerDB {
 		updated_at: string;
 		roles: {
 			id: string; // UUID
-			short_id: string; // NanoID
 			name: string;
 			created_at: string;
 			updated_at: string;
