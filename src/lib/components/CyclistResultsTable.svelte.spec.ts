@@ -8,7 +8,7 @@ import { page } from '@vitest/browser/context';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import CyclistResultsTable from './CyclistResultsTable.svelte';
-import type { RaceResultWithRelations } from '$lib/types/domain';
+import type { RaceResult } from '$lib/types/domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => {
@@ -37,52 +37,37 @@ vi.mock('$lib/i18n/category-translations', () => ({
 }));
 
 describe('CyclistResultsTable Component', () => {
-	const mockRaceResults: RaceResultWithRelations[] = [
+	const mockRaceResults: RaceResult[] = [
 		{
+			// Race result fields
 			id: 'result-1',
 			place: 1,
 			time: '02:30:45',
 			points: 100,
-			raceId: 'race-1',
-			cyclistId: 'cyclist-1',
-			rankingPointId: 'rp-1',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			race: {
-				id: 'race-1',
-				name: 'Gran Fondo - LONG/MALE/ABS',
-				description: 'Long distance race',
-				dateTime: '2024-06-15T12:00:00Z',
-				isPublicVisible: true,
-				eventId: 'event-1',
-				raceCategoryId: 'cat-abs',
-				raceCategoryGenderId: 'gender-male',
-				raceCategoryLengthId: 'length-long',
-				raceRankingId: 'ranking-uci',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-				event: {
-					id: 'event-1',
-					name: 'Gran Fondo Valencia',
-					description: 'Annual event',
-					dateTime: '2024-06-15T12:00:00Z',
-					year: 2024,
-					city: 'Valencia',
-					state: 'Valencia',
-					country: 'Spain',
-					eventStatus: 'FINISHED',
-					isPublicVisible: true,
-					organizationId: 'org-1',
-					createdBy: 'user-1',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z'
-				},
-				raceCategory: undefined,
-				raceCategoryGender: undefined,
-				raceCategoryLength: undefined,
-				raceRanking: undefined
-			},
-			rankingPoint: undefined
+			// Event fields
+			eventId: 'event-1',
+			eventName: 'Gran Fondo Valencia',
+			eventDateTime: '2024-06-15T12:00:00Z',
+			eventYear: 2024,
+			eventCity: 'Valencia',
+			eventState: 'Valencia',
+			eventCountry: 'Spain',
+			eventStatus: 'FINISHED',
+			// Race fields
+			raceId: 'race-1',
+			raceName: 'Gran Fondo - LONG/MALE/ABS',
+			raceDateTime: '2024-06-15T12:00:00Z',
+			// Category IDs
+			raceCategoryId: 'cat-abs',
+			raceCategoryGenderId: 'gender-male',
+			raceCategoryLengthId: 'length-long',
+			// Category types
+			raceCategoryType: 'ABS',
+			raceCategoryGenderType: 'MALE',
+			raceCategoryLengthType: 'LONG',
+			raceRankingType: 'UCI'
 		}
 	];
 

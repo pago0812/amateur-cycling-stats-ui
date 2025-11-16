@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { RaceResultWithRelations } from '$lib/types/domain';
+	import type { RaceDetailResult } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
 
-	let { raceResults }: { raceResults: RaceResultWithRelations[] } = $props();
+	let { raceResults }: { raceResults: RaceDetailResult[] } = $props();
 </script>
 
 <div class="overflow-x-auto rounded-lg bg-white shadow-md">
@@ -45,7 +45,7 @@
 						{result.time || '-'}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{result.rankingPoint?.points || '-'}
+						{result.points || '-'}
 					</td>
 				</tr>
 			{/each}

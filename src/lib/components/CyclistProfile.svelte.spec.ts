@@ -9,7 +9,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import { writable } from 'svelte/store';
 import CyclistProfile from './CyclistProfile.svelte';
-import type { Cyclist, RaceResultWithRelations } from '$lib/types/domain';
+import type { Cyclist, RaceResult } from '$lib/types/domain';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 
 // Mock i18n
@@ -46,31 +46,37 @@ describe('CyclistProfile Component', () => {
 		updatedAt: '2024-01-01T00:00:00Z'
 	};
 
-	const mockRaceResults: RaceResultWithRelations[] = [
+	const mockRaceResults: RaceResult[] = [
 		{
+			// Race result fields
 			id: 'result-1',
 			place: 1,
 			time: '02:30:15',
 			points: 100,
-			raceId: 'race-1',
-			cyclistId: 'cyclist-1',
-			rankingPointId: 'rp-1',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			race: {
-				id: 'race-1',
-				name: 'Gran Fondo',
-				description: null,
-				dateTime: '2024-06-15T10:00:00Z',
-				isPublicVisible: true,
-				eventId: 'event-1',
-				raceCategoryId: 'cat-1',
-				raceCategoryGenderId: 'gender-1',
-				raceCategoryLengthId: 'length-1',
-				raceRankingId: 'ranking-1',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z'
-			}
+			// Event fields
+			eventId: 'event-1',
+			eventName: 'Gran Fondo Madrid',
+			eventDateTime: '2024-06-15T10:00:00Z',
+			eventYear: 2024,
+			eventCity: 'Madrid',
+			eventState: 'Madrid',
+			eventCountry: 'España',
+			eventStatus: 'FINISHED',
+			// Race fields
+			raceId: 'race-1',
+			raceName: 'Gran Fondo',
+			raceDateTime: '2024-06-15T10:00:00Z',
+			// Category IDs
+			raceCategoryId: 'cat-1',
+			raceCategoryGenderId: 'gender-1',
+			raceCategoryLengthId: 'length-1',
+			// Category types
+			raceCategoryType: 'ELITE',
+			raceCategoryGenderType: 'MALE',
+			raceCategoryLengthType: 'LONG',
+			raceRankingType: 'REGIONAL'
 		}
 	];
 

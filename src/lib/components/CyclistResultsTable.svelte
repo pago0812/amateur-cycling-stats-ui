@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { RaceResultWithRelations } from '$lib/types/domain';
+	import type { RaceResult } from '$lib/types/domain';
 	import { formatDateToMMDD } from '$lib/utils/dates';
 	import { t } from '$lib/i18n';
 	import { translateCategory, translateLength } from '$lib/i18n/category-translations';
 
-	let { raceResults }: { raceResults: RaceResultWithRelations[] } = $props();
+	let { raceResults }: { raceResults: RaceResult[] } = $props();
 
-	function getEventUrl(result: RaceResultWithRelations): string {
-		return `/results/${result?.race?.event?.id}?category=${result?.race?.raceCategory?.id}&gender=${result?.race?.raceCategoryGender?.id}&length=${result?.race?.raceCategoryLength?.id}`;
+	function getEventUrl(result: RaceResult): string {
+		// New navigation pattern: /results/{eventId}/{raceId}
+		return `/results/${result.eventId}/${result.raceId}`;
 	}
 </script>
 
@@ -42,31 +43,27 @@
 			{#each raceResults as result (result.id)}
 				<tr class="hover:bg-gray-50">
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{formatDateToMMDD(result.race?.dateTime)}
+						{formatDateToMMDD(result.raceDateTime)}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
 						{result.place}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
 						<a href={getEventUrl(result)} class="text-blue-600 hover:text-blue-800 hover:underline">
-							{result?.race?.event?.name}
+							{result.eventName}
 						</a>
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{result.race?.raceCategoryLength?.name
-							? translateLength(result.race.raceCategoryLength.name)
-							: '-'}
+						{result.raceCategoryLengthType ? translateLength(result.raceCategoryLengthType) : '-'}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{result.race?.raceRanking?.name || '-'}
+						{result.raceRankingType || '-'}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{result.race?.raceCategory?.name
-							? translateCategory(result.race.raceCategory.name)
-							: '-'}
+						{result.raceCategoryType ? translateCategory(result.raceCategoryType) : '-'}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						{result.rankingPoint?.points || '-'}
+						{result.points || '-'}
 					</td>
 				</tr>
 			{/each}

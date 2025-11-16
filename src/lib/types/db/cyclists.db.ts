@@ -1,12 +1,4 @@
 import type { Tables } from '../database.types';
-import type {
-	RaceCategoryDB,
-	RaceCategoryGenderDB,
-	RaceCategoryLengthDB,
-	RaceRankingDB
-} from './lookup-tables.db';
-import type { EventDB } from './events.db';
-import type { RankingPointDB } from './ranking-points.db';
 
 /**
  * Database type for cyclists table.
@@ -26,38 +18,42 @@ export type CyclistInsert = Omit<CyclistDB, 'id' | 'short_id' | 'created_at' | '
 };
 
 /**
- * Type for race result item in RPC responses.
+ * Type for race result item in RPC responses with flat structure.
  * Used by get_race_results_by_user_short_id RPC function.
+ * Includes flattened event, race, and category data (snake_case from DB).
  */
 export interface RaceResultRpcItem {
-	id: string; // UUID
-	short_id: string; // NanoID
+	// Race result fields
+	id: string; // Race result short_id (NanoID)
 	place: number;
 	time: string | null;
-	cyclist_id: string;
-	race_id: string;
-	ranking_point_id: string | null;
+	points: number | null;
 	created_at: string;
 	updated_at: string;
-	race: {
-		id: string; // UUID
-		short_id: string; // NanoID
-		name: string | null;
-		description: string | null;
-		date_time: string;
-		is_public_visible: boolean;
-		event_id: string;
-		race_category_id: string;
-		race_category_gender_id: string;
-		race_category_length_id: string;
-		race_ranking_id: string;
-		created_at: string;
-		updated_at: string;
-		event: EventDB;
-		race_category: RaceCategoryDB;
-		race_category_gender: RaceCategoryGenderDB;
-		race_category_length: RaceCategoryLengthDB;
-		race_ranking: RaceRankingDB;
-	};
-	ranking_point: RankingPointDB | null;
+
+	// Event fields
+	event_id: string; // Event short_id (NanoID)
+	event_name: string;
+	event_date_time: string;
+	event_year: number;
+	event_city: string;
+	event_state: string;
+	event_country: string;
+	event_status: string;
+
+	// Race fields
+	race_id: string; // Race short_id (NanoID)
+	race_name: string | null;
+	race_date_time: string;
+
+	// Category IDs (for interim navigation)
+	race_category_id: string; // Category short_id (NanoID)
+	race_category_gender_id: string; // Gender short_id (NanoID)
+	race_category_length_id: string; // Length short_id (NanoID)
+
+	// Category types
+	race_category_type: string;
+	race_category_gender_type: string;
+	race_category_length_type: string;
+	race_ranking_type: string;
 }

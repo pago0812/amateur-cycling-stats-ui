@@ -8,7 +8,7 @@ import { page } from '@vitest/browser/context';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import ResultsTable from './ResultsTable.svelte';
-import type { RaceResultWithRelations } from '$lib/types/domain';
+import type { RaceDetailResult } from '$lib/types/domain';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => {
@@ -31,25 +31,20 @@ vi.mock('$lib/i18n', () => {
 });
 
 describe('ResultsTable Component', () => {
-	const mockRaceResults: RaceResultWithRelations[] = [
+	const mockRaceResults: RaceDetailResult[] = [
 		{
 			id: 'result-1',
 			place: 1,
 			time: '02:30:45',
 			points: 100,
-			raceId: 'race-1',
 			cyclistId: 'cyclist-1',
-			rankingPointId: 'rp-1',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			race: undefined,
 			rankingPoint: {
 				id: 'rp-1',
 				place: 1,
 				points: 100,
-				raceRankingId: 'ranking-uci',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z'
+				raceRankingId: 'ranking-uci'
 			}
 		}
 	];
@@ -69,18 +64,15 @@ describe('ResultsTable Component', () => {
 	});
 
 	it('should handle missing cyclist data', async () => {
-		const resultsWithoutCyclist: RaceResultWithRelations[] = [
+		const resultsWithoutCyclist: RaceDetailResult[] = [
 			{
 				id: 'result-2',
 				place: 2,
 				time: null,
 				points: null,
-				raceId: 'race-1',
 				cyclistId: 'cyclist-id',
-				rankingPointId: 'rp-2',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
-				race: undefined,
 				rankingPoint: undefined
 			}
 		];

@@ -9,7 +9,7 @@
 // Core entities
 export type { Event, EventWithRelations, EventStatus } from './event.domain';
 export type { Race, RaceWithRelations } from './race.domain';
-export type { RaceResult, RaceResultWithRelations } from './race-result.domain';
+export type { RaceResult, RaceDetailResult } from './race-result.domain';
 export type { Cyclist } from './cyclist.domain';
 export type { User, UserOld, UserWithRelations } from './user.domain';
 export type {

@@ -1,10 +1,9 @@
 <script lang="ts">
 	import CyclistResultsTable from '$lib/components/CyclistResultsTable.svelte';
 	import { t } from '$lib/i18n';
-	import type { Cyclist, RaceResultWithRelations } from '$lib/types/domain';
+	import type { Cyclist, RaceResult } from '$lib/types/domain';
 
-	let { cyclist, raceResults }: { cyclist: Cyclist; raceResults: RaceResultWithRelations[] } =
-		$props();
+	let { cyclist, raceResults }: { cyclist: Cyclist; raceResults: RaceResult[] } = $props();
 </script>
 
 <div class="space-y-8">

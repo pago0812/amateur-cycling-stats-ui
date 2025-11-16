@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { RaceWithRelations } from '$lib/types/domain';
+import type { RaceWithRelations, RaceDetailResult } from '$lib/types/domain';
 import type { RaceWithResultsResponse } from '$lib/types/db';
 import { adaptRaceWithResultsFromDb } from '$lib/adapters';
 
@@ -14,6 +14,14 @@ interface GetRaceWithFiltersParams {
 }
 
 /**
+ * Race with results type - used for race detail pages.
+ * Extends RaceWithRelations with raceResults array.
+ */
+export type RaceWithResults = RaceWithRelations & {
+	raceResults: RaceDetailResult[];
+};
+
+/**
  * Get race with results filtered by event, category, gender, and length.
  *
  * Single PostgreSQL query with JOINs - much faster than Strapi's N+1 queries.
@@ -22,13 +30,13 @@ interface GetRaceWithFiltersParams {
  * All ID parameters are short_ids (public IDs), not UUIDs.
  * Function converts short_ids → UUIDs internally for database queries.
  *
- * @returns RaceWithRelations if found, null if no race matches the filters
+ * @returns RaceWithResults if found, null if no race matches the filters
  * @throws Error only for unexpected database errors (not for missing races)
  */
 export async function getRaceWithResultsWithFilters(
 	supabase: TypedSupabaseClient,
 	params: GetRaceWithFiltersParams
-): Promise<RaceWithRelations | null> {
+): Promise<RaceWithResults | null> {
 	// Look up all UUIDs from short_ids in parallel
 	const [eventResult, categoryResult, genderResult, lengthResult] = await Promise.all([
 		supabase.from('events').select('id').eq('short_id', params.eventId).single(),

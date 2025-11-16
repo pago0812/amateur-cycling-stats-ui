@@ -1,8 +1,7 @@
-import type { Race, RaceWithRelations } from '$lib/types/domain/race.domain';
-import type { RaceResultWithRelations } from '$lib/types/domain/race-result.domain';
+import type { Race, RaceWithRelations, RaceDetailResult } from '$lib/types/domain';
 import type { RaceDB, RaceWithResultsResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
-import { adaptRankingPointFromDb } from './ranking-points.adapter';
+import { adaptRaceResultFromNested } from './race-results.adapter';
 
 /**
  * Adapts a raw database race row to domain Race type.
@@ -25,31 +24,13 @@ export function adaptRaceFromDb(dbRace: RaceDB): Race {
 }
 
 /**
- * Adapts race result from nested response (used within race queries).
- */
-function adaptRaceResultFromNested(
-	dbResult: RaceWithResultsResponse['race_results'][0]
-): RaceResultWithRelations {
-	return {
-		id: dbResult.short_id, // Translate: short_id → id
-		place: dbResult.place,
-		time: dbResult.time,
-		points: dbResult.points,
-		raceId: dbResult.race_id,
-		cyclistId: dbResult.cyclist_id,
-		rankingPointId: dbResult.ranking_point_id,
-		...mapTimestamps(dbResult),
-		rankingPoint: dbResult.ranking_points
-			? adaptRankingPointFromDb(dbResult.ranking_points)
-			: undefined
-	};
-}
-
-/**
  * Adapts race with nested results, cyclists, and ranking points.
  * Handles complex Supabase response from getRaceWithResultsWithFilters().
+ * Returns race with raceResults array.
  */
-export function adaptRaceWithResultsFromDb(dbData: RaceWithResultsResponse): RaceWithRelations {
+export function adaptRaceWithResultsFromDb(
+	dbData: RaceWithResultsResponse
+): RaceWithRelations & { raceResults: RaceDetailResult[] } {
 	const baseRace = adaptRaceFromDb(dbData);
 
 	return {

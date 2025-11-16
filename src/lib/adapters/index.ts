@@ -16,9 +16,9 @@ export { adaptRaceFromDb, adaptRaceWithResultsFromDb } from './races.adapter';
 
 // Race Results
 export {
-	adaptRaceResultFromDb,
-	adaptRaceResultWithRelationsFromDb,
-	adaptRaceResultFromRpc
+	adaptRaceResultFromRpc,
+	adaptRaceResultsFromRpc,
+	adaptRaceResultFromNested
 } from './race-results.adapter';
 
 // Cyclists

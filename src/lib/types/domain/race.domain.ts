@@ -1,5 +1,4 @@
 import type { Event } from './event.domain';
-import type { RaceResultWithRelations } from './race-result.domain';
 import type { RaceCategory } from './race-category.domain';
 import type { RaceCategoryGender } from './race-category.domain';
 import type { RaceCategoryLength } from './race-category.domain';
@@ -35,7 +34,8 @@ export interface Race {
 
 /**
  * Race with populated relationships.
- * Used when fetching race data with event, results, and category info.
+ * Used when fetching race data with event and category info.
+ * Note: Race results now use a flat structure (RaceResult type) and are fetched separately.
  */
 export interface RaceWithRelations extends Race {
 	// Populated relationships
@@ -44,5 +44,4 @@ export interface RaceWithRelations extends Race {
 	raceCategoryGender?: RaceCategoryGender;
 	raceCategoryLength?: RaceCategoryLength;
 	raceRanking?: RaceRanking;
-	raceResults?: RaceResultWithRelations[];
 }
