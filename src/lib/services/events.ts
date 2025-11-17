@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { Event, EventWithRaces } from '$lib/types/domain';
+import type { Event } from '$lib/types/domain';
+import type { EventWithRaces } from '$lib/types/services/events';
 import type { EventWithRacesResponse } from '$lib/types/db';
 import { adaptEventFromDb, adaptEventWithRacesFromDb } from '$lib/adapters';
 
@@ -78,8 +79,6 @@ export async function getEventWithRacesById(
 	const { data, error } = await supabase.rpc('get_event_with_races_by_event_id', {
 		p_event_id: params.id
 	});
-
-	console.log(data);
 
 	if (error) {
 		throw new Error(`Error fetching event with races: ${error.message}`);

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { OrganizerWithRelations } from '$lib/types/domain';
+import type { OrganizerWithRelations } from '$lib/types/services/organizers';
 import type { OrganizerWithUserResponse } from '$lib/types/db';
 import { adaptOrganizerWithUserFromDb } from '$lib/adapters';
 

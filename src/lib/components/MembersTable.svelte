@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { OrganizerWithRelations } from '$lib/types/domain';
+	import type { OrganizerWithRelations } from '$lib/types/services/organizers';
 	import { t } from '$lib/i18n';
 
 	let { organizers }: { organizers: OrganizerWithRelations[] } = $props();

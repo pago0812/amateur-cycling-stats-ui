@@ -7,8 +7,6 @@ export const load: LayoutServerLoad = async ({ parent }) => {
 	// Get user from parent layout (already fetched in root layout)
 	const { user } = await parent();
 
-	console.log('user: ', user);
-
 	// Redirect unauthenticated users to login
 	if (!user) {
 		throw redirect(302, Urls.LOGIN);

@@ -1021,9 +1021,9 @@ BEGIN
   -- Combine all data
   result := event_data || jsonb_build_object(
     'races', races_data,
-    'supportedCategories', categories_data,
-    'supportedGenders', genders_data,
-    'supportedLengths', lengths_data
+    'supported_categories', categories_data,
+    'supported_genders', genders_data,
+    'supported_lengths', lengths_data
   );
 
   RETURN result;

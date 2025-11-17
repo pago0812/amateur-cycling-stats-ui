@@ -1,5 +1,3 @@
-import type { UserWithRelations } from './user.domain';
-import type { Organization } from './organization.domain';
 import { RoleTypeEnum } from './role-type.domain';
 
 /**
@@ -8,23 +6,27 @@ import { RoleTypeEnum } from './role-type.domain';
  * Combines data from users, auth.users, roles, and organizers tables.
  */
 export interface Organizer {
-	// From users table (public.users)
+	// Identity
 	id: string; // UUID from users table
+
+	// Basic Info
 	firstName: string;
 	lastName: string;
-	createdAt: string;
-	updatedAt: string;
 
-	// From auth.users table
+	// Auth Info
 	email: string;
 	displayName: string | null;
 	hasAuth: boolean; // Always true for Organizer
 
-	// From roles table
+	// Role
 	roleType: RoleTypeEnum.ORGANIZER_OWNER | RoleTypeEnum.ORGANIZER_STAFF;
 
-	// From organizers table
+	// Organizer-specific Data
 	organizationId: string;
+
+	// Timestamps
+	createdAt: string;
+	updatedAt: string;
 }
 
 /**
@@ -43,14 +45,4 @@ export interface OrganizerOld {
 	// Timestamps
 	createdAt: string;
 	updatedAt: string;
-}
-
-/**
- * Organizer with populated relationships.
- * Used when fetching organizer with user and organization info.
- */
-export interface OrganizerWithRelations extends OrganizerOld {
-	// Populated relationships
-	user?: UserWithRelations; // Changed from User to UserWithRelations to include role info
-	organization?: Organization;
 }

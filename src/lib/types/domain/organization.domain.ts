@@ -1,6 +1,3 @@
-import type { Event } from './event.domain';
-import type { Organizer } from './organizer.domain';
-
 /**
  * Organization state enum values
  */
@@ -27,14 +24,4 @@ export interface Organization {
 	// Timestamps
 	createdAt: string;
 	updatedAt: string;
-}
-
-/**
- * Organization with populated relationships.
- * Used when fetching organization with events and organizers.
- */
-export interface OrganizationWithRelations extends Organization {
-	// Populated relationships
-	events?: Event[];
-	organizers?: Organizer[];
 }

@@ -1,27 +1,21 @@
 /**
- * Service Types
+ * Service Response Types
  *
- * Request/Response types for the service layer.
- * These types represent API contracts and shouldn't be confused with domain types.
+ * These types represent structures returned by service methods and RPC functions.
+ * They are aggregated/nested structures optimized for specific use cases,
+ * not pure domain entities.
  */
 
-// Error types
-export type { ServerError } from './errors';
+// Event service response types
+export type { EventWithRaces } from './events';
 
-// User service types
-export type {
-	CreateAuthUserForInvitationParams,
-	CreateOrganizerOwnerUserParams,
-	CreateUserResult
-} from './users';
+// Race service response types
+export type { RaceWithRaceResults, RaceDetailResult } from './races';
 
-// User management service types
-export type { LoginRequest, SigninRequest, AuthResponse } from './users-management';
+// Organizer service response types (legacy - pending migration to flattened pattern)
+export type { OrganizerWithRelations, UserWithRelations } from './organizers';
 
-// Roles service types
-export type { RolesResponse } from './roles';
-
-// Organization service types
+// Organization service types (request/response)
 export type {
 	GetOrganizationByIdParams,
 	CreateOrganizationParams,
@@ -40,3 +34,19 @@ export type {
 	MailerSendEmailRequest,
 	MailerSendApiResponse
 } from './mailersend';
+
+// User management service types (authentication)
+export type { LoginRequest, SigninRequest, AuthResponse } from './users-management';
+
+// User service types (user creation and linking)
+export type {
+	CreateAuthUserForInvitationParams,
+	CreateOrganizerOwnerUserParams,
+	CreateUserResult
+} from './users';
+
+// Role service types
+export type { RolesResponse } from './roles';
+
+// Error service types
+export type { ServerError } from './errors';

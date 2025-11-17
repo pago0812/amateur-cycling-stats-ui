@@ -1,4 +1,5 @@
-import type { RaceResult, RaceDetailResult } from '$lib/types/domain/race-result.domain';
+import type { RaceResult } from '$lib/types/domain/race-result.domain';
+import type { RaceDetailResult } from '$lib/types/services/races';
 import type { RaceResultRpcItem, RaceWithResultsResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptRankingPointFromDb } from './ranking-points.adapter';

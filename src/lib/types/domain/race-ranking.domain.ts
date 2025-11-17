@@ -1,5 +1,3 @@
-import type { RankingPoint } from './ranking-point.domain';
-
 /**
  * Race ranking name enum
  */
@@ -20,13 +18,4 @@ export interface RaceRanking {
 	// Timestamps
 	createdAt: string;
 	updatedAt: string;
-}
-
-/**
- * Race ranking with populated relationships.
- * Used when fetching race ranking with its point structure.
- */
-export interface RaceRankingWithRelations extends RaceRanking {
-	// Populated relationships
-	rankingPoints?: RankingPoint[];
 }

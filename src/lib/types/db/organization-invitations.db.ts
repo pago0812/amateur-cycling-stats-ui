@@ -1,16 +1,7 @@
+import type { Tables } from '../database.types';
+
 /**
  * Database type for organization_invitations table.
- *
- * Note: Manually defined until database.types.ts is regenerated from updated schema.
+ * Use this instead of Tables<'organization_invitations'> throughout the codebase.
  */
-export interface OrganizationInvitationDB {
-	id: string;
-	organization_id: string;
-	email: string;
-	invited_owner_name: string;
-	retry_count: number;
-	last_invitation_sent_at: string | null;
-	status: 'pending' | 'accepted' | 'expired';
-	created_at: string;
-	updated_at: string;
-}
+export type OrganizationInvitationDB = Tables<'organization_invitations'>;

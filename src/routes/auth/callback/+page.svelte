@@ -33,12 +33,6 @@
 
 		// Handle authentication errors
 		if (error) {
-			console.error('[Auth Callback Client] ❌ Auth error received:', {
-				error,
-				errorCode,
-				errorDescription
-			});
-
 			// Map error codes to user-friendly error types
 			let errorType = 'invalid';
 			if (errorCode === 'otp_expired') {

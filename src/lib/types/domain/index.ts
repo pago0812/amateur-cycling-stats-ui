@@ -6,24 +6,40 @@
  * They are adapted from database types (snake_case) via adapters.
  */
 
-// Core entities
-export type { Event, EventWithRaces, EventStatus } from './event.domain';
-export type { Race, RaceWithRelations, RaceWithRaceResults } from './race.domain';
-export type { RaceResult, RaceDetailResult } from './race-result.domain';
-export type { Cyclist } from './cyclist.domain';
-export type { User, UserOld, UserWithRelations } from './user.domain';
-export type {
-	Organization,
-	OrganizationWithRelations,
-	OrganizationState
-} from './organization.domain';
-export type { Role, RoleName, RoleType } from './role.domain';
+// ============================================================================
+// Enums (require regular export, not export type)
+// ============================================================================
 export { RoleTypeEnum } from './role-type.domain';
-export type { Organizer, OrganizerOld, OrganizerWithRelations } from './organizer.domain';
-export type { Admin } from './admin.domain';
 
-// Lookup tables
-export type { RaceCategory, RaceCategoryGender, RaceCategoryLength } from './race-category.domain';
+// ============================================================================
+// User & Authentication
+// ============================================================================
+export type { User, UserOld } from './user.domain';
+export type { Role } from './role.domain';
+export type { Admin } from './admin.domain';
+export type { Cyclist } from './cyclist.domain';
 export type { CyclistGender } from './cyclist-gender.domain';
-export type { RaceRanking, RaceRankingName, RaceRankingWithRelations } from './race-ranking.domain';
-export type { RankingPoint, RankingPointWithRelations } from './ranking-point.domain';
+
+// ============================================================================
+// Organizations & Organizers
+// ============================================================================
+export type { Organization, OrganizationState } from './organization.domain';
+export type {
+	OrganizationInvitation,
+	OrganizationInvitationStatus
+} from './organization-invitation.domain';
+export type { Organizer, OrganizerOld } from './organizer.domain';
+
+// ============================================================================
+// Events & Races
+// ============================================================================
+export type { Event, EventStatus } from './event.domain';
+export type { Race, RaceWithRelations } from './race.domain';
+export type { RaceResult } from './race-result.domain';
+
+// ============================================================================
+// Reference Data & Lookup Tables
+// ============================================================================
+export type { RaceCategory, RaceCategoryGender, RaceCategoryLength } from './race-category.domain';
+export type { RaceRanking, RaceRankingName } from './race-ranking.domain';
+export type { RankingPoint } from './ranking-point.domain';

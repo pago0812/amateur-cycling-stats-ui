@@ -6,7 +6,7 @@
 		translateGender,
 		translateLength
 	} from '$lib/i18n/category-translations';
-	import type { EventWithRaces } from '$lib/types/domain';
+	import type { EventWithRaces } from '$lib/types/services/events';
 
 	let {
 		event,

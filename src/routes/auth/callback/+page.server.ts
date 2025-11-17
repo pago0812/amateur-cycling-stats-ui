@@ -3,26 +3,15 @@ import type { Actions } from './$types';
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		console.log('=== [Auth Callback Server Action] START ===');
-
 		const formData = await request.formData();
 		const accessToken = formData.get('access_token')?.toString();
 		const refreshToken = formData.get('refresh_token')?.toString();
-
-		console.log('[Auth Callback Server Action] Received tokens:', {
-			hasAccessToken: !!accessToken,
-			hasRefreshToken: !!refreshToken,
-			accessTokenLength: accessToken?.length,
-			refreshTokenLength: refreshToken?.length
-		});
 
 		// Validate that we have both tokens
 		if (!accessToken || !refreshToken) {
 			console.error('[Auth Callback Server Action] ❌ Missing tokens');
 			throw redirect(303, '/auth/setup-failed?error=invalid');
 		}
-
-		console.log('[Auth Callback Server Action] 🔄 Setting session with tokens');
 
 		// Use server-side Supabase client to set session
 		const { error, data } = await locals.supabase.auth.setSession({

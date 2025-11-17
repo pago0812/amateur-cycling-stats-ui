@@ -6,18 +6,22 @@ import { RoleTypeEnum } from './role-type.domain';
  * Flattened structure combining data from users, auth.users, and roles tables.
  */
 export interface Admin {
-	// From users table (public.users)
+	// Identity
 	id: string; // UUID from users table
+
+	// Basic Info
 	firstName: string;
 	lastName: string;
-	createdAt: string;
-	updatedAt: string;
 
-	// From auth.users table
+	// Auth Info
 	email: string;
 	displayName: string | null;
 	hasAuth: boolean; // Always true for Admin
 
-	// From roles table
+	// Role
 	roleType: RoleTypeEnum.ADMIN;
+
+	// Timestamps
+	createdAt: string;
+	updatedAt: string;
 }

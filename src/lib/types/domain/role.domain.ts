@@ -1,18 +1,9 @@
 /**
- * Role name type - user role names defining permissions.
- * Note: 'PUBLIC' role exists but public users are unauthenticated and don't have a role.
- */
-export type RoleName = 'CYCLIST' | 'ORGANIZER_STAFF' | 'ORGANIZER_OWNER' | 'ADMIN';
-
-/**
- * Role type for new flattened domain types.
- * Maps to role names in uppercase format.
- */
-export type RoleType = 'CYCLIST' | 'ORGANIZER_STAFF' | 'ORGANIZER_OWNER' | 'ADMIN';
-
-/**
  * Role domain type - user role defining permissions.
  * All fields use camelCase convention.
+ *
+ * Note: Use RoleTypeEnum from './role-type.domain' for role type values.
+ * The 'PUBLIC' role exists in the database but public users are unauthenticated and don't have a role.
  */
 export interface Role {
 	// Identity

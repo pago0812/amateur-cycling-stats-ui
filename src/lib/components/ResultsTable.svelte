@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RaceDetailResult } from '$lib/types/domain';
+	import type { RaceDetailResult } from '$lib/types/services/races';
 	import { t } from '$lib/i18n';
 
 	let { raceResults }: { raceResults: RaceDetailResult[] } = $props();

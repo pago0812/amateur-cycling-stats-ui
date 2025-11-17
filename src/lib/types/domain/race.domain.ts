@@ -3,7 +3,6 @@ import type { RaceCategory } from './race-category.domain';
 import type { RaceCategoryGender } from './race-category.domain';
 import type { RaceCategoryLength } from './race-category.domain';
 import type { RaceRanking } from './race-ranking.domain';
-import type { RaceDetailResult } from './race-result.domain';
 
 /**
  * Race domain type - individual race within an event.
@@ -18,15 +17,15 @@ export interface Race {
 	description: string | null;
 	dateTime: string; // ISO 8601 timestamp
 
-	// Visibility
-	isPublicVisible: boolean;
-
 	// Relationships (Foreign Keys)
 	eventId: string;
 	raceCategoryId: string;
 	raceCategoryGenderId: string;
 	raceCategoryLengthId: string;
 	raceRankingId: string;
+
+	// Flags
+	isPublicVisible: boolean;
 
 	// Timestamps
 	createdAt: string;
@@ -45,13 +44,4 @@ export interface RaceWithRelations extends Race {
 	raceCategoryGender?: RaceCategoryGender;
 	raceCategoryLength?: RaceCategoryLength;
 	raceRanking?: RaceRanking;
-}
-
-/**
- * Race with race results.
- * Used when fetching race data with nested race results for race detail pages.
- */
-export interface RaceWithRaceResults extends Race {
-	// Nested race results
-	raceResults: RaceDetailResult[];
 }

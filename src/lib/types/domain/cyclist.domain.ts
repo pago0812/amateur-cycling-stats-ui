@@ -8,22 +8,26 @@ import { RoleTypeEnum } from './role-type.domain';
  * Supports both authenticated cyclists (hasAuth=true) and anonymous cyclists (hasAuth=false).
  */
 export interface Cyclist {
-	// From users table (public.users)
+	// Identity
 	id: string; // UUID from users table
+
+	// Basic Info
 	firstName: string;
 	lastName: string;
-	createdAt: string;
-	updatedAt: string;
 
-	// From auth.users table (nullable for anonymous cyclists)
+	// Auth Info (nullable for anonymous cyclists)
 	email: string | null;
 	displayName: string | null;
 	hasAuth: boolean; // Can be false for anonymous cyclists
 
-	// From roles table (nullable for anonymous cyclists)
+	// Role (nullable for anonymous cyclists)
 	roleType: RoleTypeEnum.CYCLIST | null;
 
-	// From cyclists table
+	// Cyclist-specific Data
 	gender: CyclistGender | null;
 	bornYear: number | null;
+
+	// Timestamps
+	createdAt: string;
+	updatedAt: string;
 }

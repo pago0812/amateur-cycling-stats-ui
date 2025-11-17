@@ -8,7 +8,7 @@ import { page } from '@vitest/browser/context';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import ResultsTable from './ResultsTable.svelte';
-import type { RaceDetailResult } from '$lib/types/domain';
+import type { RaceDetailResult } from '$lib/types/services/races';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => {

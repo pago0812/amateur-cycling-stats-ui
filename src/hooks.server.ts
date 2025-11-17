@@ -53,8 +53,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 			// Check authentication status first (faster check)
 			const authenticated = await isAuthenticated(event.locals.supabase);
 
-			console.log('authenticated', authenticated);
-
 			if (!authenticated) {
 				return null;
 			}

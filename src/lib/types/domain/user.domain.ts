@@ -1,5 +1,3 @@
-import type { Role } from './role.domain';
-import type { OrganizerWithRelations } from './organizer.domain';
 import type { Admin } from './admin.domain';
 import type { Organizer } from './organizer.domain';
 import type { Cyclist } from './cyclist.domain';
@@ -31,23 +29,4 @@ export interface UserOld {
 	// Timestamps
 	createdAt: string;
 	updatedAt: string;
-}
-
-/**
- * User with populated relationships.
- * Used when fetching user profile with role, cyclist profile, and organizer info.
- */
-export interface UserWithRelations extends UserOld {
-	// Populated relationships
-	role?: Role;
-	cyclist?: {
-		// Minimal cyclist type for legacy UserWithRelations
-		id: string;
-		bornYear: number | null;
-		genderId: string | null;
-		userId: string;
-		createdAt: string;
-		updatedAt: string;
-	};
-	organizer?: OrganizerWithRelations; // Populated if user is an organizer (includes organization)
 }

@@ -1,4 +1,5 @@
-import type { Event, EventWithRaces } from '$lib/types/domain/event.domain';
+import type { Event } from '$lib/types/domain/event.domain';
+import type { EventWithRaces } from '$lib/types/services/events';
 import type { EventDB, EventWithRacesResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptRaceFromDb } from './races.adapter';
@@ -41,9 +42,9 @@ export function adaptEventWithRacesFromDb(dbData: EventWithRacesResponse): Event
 	return {
 		...baseEvent,
 		races: dbData.races?.map(adaptRaceFromDb) || [],
-		supportedRaceCategories: dbData.supportedCategories?.map(adaptRaceCategoryFromRpc) || [],
+		supportedRaceCategories: dbData.supported_categories?.map(adaptRaceCategoryFromRpc) || [],
 		supportedRaceCategoryGenders:
-			dbData.supportedGenders?.map(adaptRaceCategoryGenderFromRpc) || [],
-		supportedRaceCategoryLengths: dbData.supportedLengths?.map(adaptRaceCategoryLengthFromRpc) || []
+			dbData.supported_genders?.map(adaptRaceCategoryGenderFromRpc) || [],
+		supportedRaceCategoryLengths: dbData.supported_lengths?.map(adaptRaceCategoryLengthFromRpc) || []
 	};
 }
