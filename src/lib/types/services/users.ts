@@ -1,22 +1,28 @@
-// Requests
-export interface CreateAuthUserForInvitationParams {
+// ============================================================================
+// Request Types
+// ============================================================================
+
+export interface CreateAuthUserForInvitationRequest {
 	email: string;
 	metadata?: {
 		invitedOwnerName?: string;
 		organizationId?: string;
-		[key: string]: unknown;
+		skip_auto_create?: boolean;
 	};
 }
 
-export interface CreateOrganizerOwnerUserParams {
+export interface CreateOrganizerOwnerUserRequest {
 	authUserId: string;
 	firstName: string;
 	lastName: string;
 	organizationId: string;
 }
 
-// Responses
-export interface CreateUserResult {
+// ============================================================================
+// Response Types
+// ============================================================================
+
+export interface CreateUserResponse {
 	success: boolean;
 	userId?: string;
 	authUserId?: string;

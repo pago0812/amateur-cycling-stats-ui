@@ -1,6 +1,9 @@
 import type { ServerError } from './errors';
 
-// Requests
+// ============================================================================
+// Request Types
+// ============================================================================
+
 export interface LoginRequest {
 	email: string;
 	password: string;
@@ -13,7 +16,10 @@ export interface SigninRequest {
 	password: string;
 }
 
-// Responses
+// ============================================================================
+// Response Types
+// ============================================================================
+
 export interface AuthResponse {
 	success?: boolean;
 	error?: ServerError;

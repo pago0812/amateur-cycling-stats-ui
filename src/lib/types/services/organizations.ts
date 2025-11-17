@@ -1,40 +1,36 @@
-// Organization service request types
-
 import type { OrganizationState } from '../domain/organization.domain';
 
-export interface GetOrganizationByIdParams {
+// ============================================================================
+// Request Types
+// ============================================================================
+
+/**
+ * Identifies an organization by UUID.
+ * Used by: getById, delete, deactivate, activate, permanentlyDelete operations.
+ */
+export interface OrganizationIdRequest {
 	id: string;
 }
 
-export interface CreateOrganizationParams {
+export interface CreateOrganizationRequest {
 	name: string;
 	description?: string | null;
 	state?: OrganizationState;
 }
 
-export interface UpdateOrganizationParams {
+export interface UpdateOrganizationRequest {
 	id: string;
 	name?: string;
 	description?: string | null;
 }
 
-export interface UpdateOrganizationStateParams {
+export interface UpdateOrganizationStateRequest {
 	id: string;
 	state: OrganizationState;
 }
 
-export interface DeleteOrganizationParams {
-	id: string;
-}
+// ============================================================================
+// Response Types
+// ============================================================================
 
-export interface DeactivateOrganizationParams {
-	id: string;
-}
-
-export interface ActivateOrganizationParams {
-	id: string;
-}
-
-export interface PermanentlyDeleteOrganizationParams {
-	id: string;
-}
+// None needed - service returns domain Organization type directly
