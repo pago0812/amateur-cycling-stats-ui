@@ -6,7 +6,7 @@
 
 import type { OrganizerDB, OrganizerWithUserResponse, AuthUserRpcResponse } from '$lib/types/db';
 import type { Organizer, OrganizerOld } from '$lib/types/domain';
-import type { OrganizerWithRelations, UserWithRelations } from '$lib/types/services/organizers';
+import type { OrganizerWithRelations, UserWithRelations } from '$lib/types/services';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from './common.adapter';
 

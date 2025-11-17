@@ -1,5 +1,5 @@
 import type { RaceResult } from '$lib/types/domain/race-result.domain';
-import type { RaceDetailResult } from '$lib/types/services/races';
+import type { RaceDetailResult } from '$lib/types/services';
 import type { RaceResultRpcItem, RaceWithResultsResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptRankingPointFromDb } from './ranking-points.adapter';
@@ -60,7 +60,7 @@ export function adaptRaceResultsFromRpc(rpcResult: RaceResultRpcItem[]): RaceRes
 /**
  * Adapts race result from nested response (used within race queries).
  * Returns partial result data (only essential fields for race detail view).
- * Maps user_id to cyclistId (domain layer uses user.id as identifier).
+ * Maps cyclist.id to cyclistId (domain layer uses cyclist.id as identifier).
  */
 export function adaptRaceResultFromNested(
 	dbResult: RaceWithResultsResponse['race_results'][0]
@@ -70,7 +70,7 @@ export function adaptRaceResultFromNested(
 		place: dbResult.place,
 		time: dbResult.time,
 		points: dbResult.points,
-		cyclistId: dbResult.cyclists.user_id,
+		cyclistId: dbResult.cyclists.id,
 		cyclistFirstName: dbResult.cyclists.users?.first_name ?? '',
 		cyclistLastName: dbResult.cyclists.users?.last_name ?? '',
 		...mapTimestamps(dbResult),

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { RaceWithRaceResults } from '$lib/types/services/races';
+import type { RaceWithRaceResults } from '$lib/types/services';
 import type { RpcRaceWithResultsResponse } from '$lib/types/db';
 import { adaptRaceWithRaceResultsFromRpc } from '$lib/adapters';
 

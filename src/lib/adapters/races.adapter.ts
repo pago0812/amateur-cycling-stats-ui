@@ -1,5 +1,5 @@
 import type { Race, RaceWithRelations } from '$lib/types/domain';
-import type { RaceDetailResult, RaceWithRaceResults } from '$lib/types/services/races';
+import type { RaceDetailResult, RaceWithRaceResults } from '$lib/types/services';
 import type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptRaceResultFromNested } from './race-results.adapter';

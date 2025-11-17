@@ -2,14 +2,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
 import type { Organization } from '$lib/types/domain';
 import type {
-	GetOrganizationByIdParams,
-	CreateOrganizationParams,
-	UpdateOrganizationParams,
-	UpdateOrganizationStateParams,
-	DeleteOrganizationParams,
-	DeactivateOrganizationParams,
-	ActivateOrganizationParams,
-	PermanentlyDeleteOrganizationParams
+	OrganizationIdRequest,
+	CreateOrganizationRequest,
+	UpdateOrganizationRequest,
+	UpdateOrganizationStateRequest
 } from '$lib/types/services';
 import { adaptOrganizationFromDb } from '$lib/adapters';
 
@@ -58,7 +54,7 @@ export async function getAllOrganizations(supabase: TypedSupabaseClient): Promis
  */
 export async function getOrganizationById(
 	supabase: TypedSupabaseClient,
-	params: GetOrganizationByIdParams
+	params: OrganizationIdRequest
 ): Promise<Organization | null> {
 	const { data, error } = await supabase
 		.from('organizations')
@@ -97,7 +93,7 @@ export async function getOrganizationById(
  */
 export async function createOrganization(
 	supabase: TypedSupabaseClient,
-	params: CreateOrganizationParams
+	params: CreateOrganizationRequest
 ): Promise<Organization> {
 	const { data, error } = await supabase
 		.from('organizations')
@@ -127,7 +123,7 @@ export async function createOrganization(
  */
 export async function updateOrganization(
 	supabase: TypedSupabaseClient,
-	params: UpdateOrganizationParams
+	params: UpdateOrganizationRequest
 ): Promise<Organization> {
 	// Build update object with only provided fields
 	const updateData: Record<string, string | null> = {};
@@ -162,7 +158,7 @@ export async function updateOrganization(
  */
 export async function updateOrganizationState(
 	supabase: TypedSupabaseClient,
-	params: UpdateOrganizationStateParams
+	params: UpdateOrganizationStateRequest
 ): Promise<Organization> {
 	const { data, error } = await supabase
 		.from('organizations')
@@ -191,7 +187,7 @@ export async function updateOrganizationState(
  */
 export async function deleteOrganization(
 	supabase: TypedSupabaseClient,
-	params: DeleteOrganizationParams
+	params: OrganizationIdRequest
 ): Promise<void> {
 	const { error } = await supabase
 		.from('organizations')
@@ -210,7 +206,7 @@ export async function deleteOrganization(
  */
 export async function deactivateOrganization(
 	supabase: TypedSupabaseClient,
-	params: DeactivateOrganizationParams
+	params: OrganizationIdRequest
 ): Promise<void> {
 	const { error } = await supabase
 		.from('organizations')
@@ -228,7 +224,7 @@ export async function deactivateOrganization(
  */
 export async function activateOrganization(
 	supabase: TypedSupabaseClient,
-	params: ActivateOrganizationParams
+	params: OrganizationIdRequest
 ): Promise<void> {
 	const { error } = await supabase
 		.from('organizations')
@@ -250,7 +246,7 @@ export async function activateOrganization(
  */
 export async function permanentlyDeleteOrganization(
 	supabase: TypedSupabaseClient,
-	params: PermanentlyDeleteOrganizationParams
+	params: OrganizationIdRequest
 ): Promise<void> {
 	const { error } = await supabase.from('organizations').delete().eq('id', params.id);
 

@@ -1,5 +1,5 @@
 import type { Event } from '$lib/types/domain/event.domain';
-import type { EventWithRaces } from '$lib/types/services/events';
+import type { EventWithRaces } from '$lib/types/services';
 import type { EventDB, EventWithRacesResponse } from '$lib/types/db';
 import { mapTimestamps } from './common.adapter';
 import { adaptRaceFromDb } from './races.adapter';

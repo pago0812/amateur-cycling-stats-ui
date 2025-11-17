@@ -1119,7 +1119,7 @@ type GetByIdParams = {
 };
 
 // create_user_with_organizer_owner
-type CreateOrganizerOwnerUserParams = {
+type CreateOrganizerOwnerUserRequest = {
 	p_auth_user_id: string; // UUID
 	p_first_name: string;
 	p_last_name: string;

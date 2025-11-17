@@ -14,8 +14,8 @@ import {
 } from '$env/static/private';
 import { SITE_URL } from '$env/static/private';
 import type {
-	SendInvitationEmailParams,
-	SendEmailResult,
+	SendInvitationEmailRequest,
+	SendEmailResponse,
 	MailerSendEmailRequest,
 	MailerSendApiResponse
 } from '$lib/types/services';
@@ -77,7 +77,7 @@ function replaceTemplateVariables(template: string, variables: Record<string, st
 /**
  * Sends an email via MailerSend API
  */
-async function sendEmail(request: MailerSendEmailRequest): Promise<SendEmailResult> {
+async function sendEmail(request: MailerSendEmailRequest): Promise<SendEmailResponse> {
 	try {
 		validateMailerSendConfig();
 
@@ -127,11 +127,11 @@ async function sendEmail(request: MailerSendEmailRequest): Promise<SendEmailResu
  * Sends an organization invitation email
  *
  * @param params - Email parameters
- * @returns SendEmailResult with success status and optional error/messageId
+ * @returns SendEmailResponse with success status and optional error/messageId
  */
 export async function sendInvitationEmail(
-	params: SendInvitationEmailParams
-): Promise<SendEmailResult> {
+	params: SendInvitationEmailRequest
+): Promise<SendEmailResponse> {
 	try {
 		// Load templates
 		const htmlTemplate = loadTemplate('invitation.html');

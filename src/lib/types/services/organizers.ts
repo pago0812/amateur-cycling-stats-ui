@@ -1,11 +1,25 @@
 import type { OrganizerOld, Organization, Role } from '$lib/types/domain';
 
 /**
- * Service Response Types for Organizers
+ * ============================================================================
+ * DEPRECATION NOTICE - organizers.ts
+ * ============================================================================
  *
- * These types represent structures returned by organizer service methods.
- * They are legacy types with nested relationships pending migration to flattened pattern.
+ * These types represent the OLD nested relationship pattern and are being phased out.
+ *
+ * Migration timeline:
+ * - Current: Used only in MembersTable.svelte
+ * - Target: Migrate to new Organizer domain type + parallel fetching
+ * - Removal: After MembersTable migration (target: Q1 2025)
+ *
+ * For new code, use:
+ * - Domain types: Organizer, User (from $lib/types/domain)
+ * - Parallel fetching: Promise.all([getOrganizer(), getUser()])
  */
+
+// ============================================================================
+// Legacy Response Types (DO NOT USE - Pending Migration)
+// ============================================================================
 
 /**
  * @deprecated Legacy user type with relations - use new User union type instead.

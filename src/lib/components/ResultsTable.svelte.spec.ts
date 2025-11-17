@@ -8,7 +8,7 @@ import { page } from '@vitest/browser/context';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import ResultsTable from './ResultsTable.svelte';
-import type { RaceDetailResult } from '$lib/types/services/races';
+import type { RaceDetailResult } from '$lib/types/services';
 
 // Mock i18n
 vi.mock('$lib/i18n', () => {
@@ -61,7 +61,7 @@ describe('ResultsTable Component', () => {
 	it('should render cyclist link', async () => {
 		render(ResultsTable, { raceResults: mockRaceResults });
 
-		const cyclistLink = page.getByRole('link', { name: 'races.table.viewCyclist' });
+		const cyclistLink = page.getByRole('link', { name: 'John Doe' });
 		await expect.element(cyclistLink).toHaveAttribute('href', '/cyclists/cyclist-1');
 	});
 

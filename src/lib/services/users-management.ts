@@ -3,12 +3,10 @@ import type { Database } from '$lib/types/database.types';
 import type {
 	LoginRequest,
 	SigninRequest,
-	AuthResponse
-} from '$lib/types/services/users-management';
-import type {
-	CreateAuthUserForInvitationParams,
-	CreateOrganizerOwnerUserParams,
-	CreateUserResult
+	AuthResponse,
+	CreateAuthUserForInvitationRequest,
+	CreateOrganizerOwnerUserRequest,
+	CreateUserResponse
 } from '$lib/types/services';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
@@ -116,8 +114,8 @@ export const signin = async (
  * @returns CreateUserResult with auth user ID or error
  */
 export async function createAuthUserForInvitation(
-	params: CreateAuthUserForInvitationParams
-): Promise<CreateUserResult> {
+	params: CreateAuthUserForInvitationRequest
+): Promise<CreateUserResponse> {
 	try {
 		const adminClient = createSupabaseAdminClient();
 
@@ -170,8 +168,8 @@ export async function createAuthUserForInvitation(
  */
 export async function createOrganizerOwnerUser(
 	supabase: SupabaseClient<Database>,
-	params: CreateOrganizerOwnerUserParams
-): Promise<CreateUserResult> {
+	params: CreateOrganizerOwnerUserRequest
+): Promise<CreateUserResponse> {
 	try {
 		const { data, error } = await supabase.rpc('create_user_with_organizer_owner', {
 			p_auth_user_id: params.authUserId,

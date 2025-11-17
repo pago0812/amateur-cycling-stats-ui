@@ -1,18 +1,32 @@
-// MailerSend service types
+// ============================================================================
+// Request Types
+// ============================================================================
 
-export interface SendInvitationEmailParams {
+export interface SendInvitationEmailRequest {
 	to: string;
 	organizationName: string;
 	ownerName: string;
 	confirmationUrl: string;
 }
 
-export interface SendEmailResult {
+// ============================================================================
+// Response Types
+// ============================================================================
+
+export interface SendEmailResponse {
 	success: boolean;
 	error?: string;
 	messageId?: string;
 }
 
+// ============================================================================
+// Internal Types (not exported - MailerSend API-specific)
+// ============================================================================
+
+/**
+ * MailerSend API email request structure.
+ * Internal type used by sendEmail() function - not exposed to consumers.
+ */
 export interface MailerSendEmailRequest {
 	from: {
 		email: string;
@@ -27,6 +41,10 @@ export interface MailerSendEmailRequest {
 	html: string;
 }
 
+/**
+ * MailerSend API response structure.
+ * Internal type used for parsing API responses - not exposed to consumers.
+ */
 export interface MailerSendApiResponse {
 	message?: string;
 	errors?: Record<string, string[]>;
