@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -84,11 +84,11 @@
 
 		<!-- Actions -->
 		<div class="space-y-2">
-			<Button href="/" variant="filled" color="primary" fullWidth>
+			<Button href="/" variant="default" class="w-full">
 				{$t('auth.setupFailed.actions.returnHome')}
 			</Button>
 
-			<Button href="/contact" variant="outlined" color="secondary" fullWidth>
+			<Button href="/contact" variant="outline" class="w-full">
 				{$t('auth.setupFailed.actions.contactSupport')}
 			</Button>
 		</div>

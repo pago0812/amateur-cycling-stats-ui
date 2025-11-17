@@ -57,7 +57,7 @@
 			{
 				label: $t('admin.organizations.form.submitCreate'),
 				onClick: handleSubmit,
-				variant: 'primary'
+				variant: 'default'
 			}
 		]}
 	/>

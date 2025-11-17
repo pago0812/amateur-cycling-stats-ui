@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	interface ConfirmModalProps {
 		open: boolean;
@@ -23,17 +23,17 @@
 		onCancel
 	}: ConfirmModalProps = $props();
 
-	// Map variant to Button color
-	const confirmColor = $derived(() => {
+	// Map variant to Button variant
+	const confirmVariant = $derived(() => {
 		switch (variant) {
 			case 'danger':
-				return 'danger';
+				return 'destructive';
 			case 'warning':
 				return 'secondary';
 			case 'primary':
-				return 'primary';
+				return 'default';
 			default:
-				return 'primary';
+				return 'default';
 		}
 	});
 
@@ -81,10 +81,10 @@
 
 			<!-- Action Buttons -->
 			<div class="flex justify-end gap-3">
-				<Button variant="outlined" color="secondary" onclick={onCancel}>
+				<Button variant="outline" onclick={onCancel}>
 					{cancelText}
 				</Button>
-				<Button variant="filled" color={confirmColor()} onclick={onConfirm}>
+				<Button variant={confirmVariant()} onclick={onConfirm}>
 					{confirmText}
 				</Button>
 			</div>

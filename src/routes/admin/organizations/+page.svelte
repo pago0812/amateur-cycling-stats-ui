@@ -28,7 +28,7 @@
 			{
 				label: $t('admin.organizations.addButton'),
 				onClick: handleAddOrganization,
-				variant: 'primary'
+				variant: 'default'
 			}
 		]}
 	/>

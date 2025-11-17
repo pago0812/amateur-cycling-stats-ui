@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	interface Tab {
 		path: string;
@@ -15,7 +15,7 @@
 	interface ActionButton {
 		label: string;
 		onClick: () => void;
-		variant?: 'primary' | 'secondary' | 'danger';
+		variant?: 'default' | 'secondary' | 'destructive';
 		href?: string;
 	}
 
@@ -99,9 +99,8 @@
 				<div class="ml-auto flex shrink-0 gap-2">
 					{#each actions as actionItem}
 						<Button
-							variant="outlined"
-							color={actionItem.variant ?? 'primary'}
-							size="sm"
+							variant={actionItem.variant ?? 'outline'}
+									size="sm"
 							href={actionItem.href}
 							onclick={actionItem.href ? undefined : actionItem.onClick}
 						>

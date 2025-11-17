@@ -3,7 +3,7 @@
 	import type { User } from '$lib/types/domain';
 	import { RoleTypeEnum } from '$lib/types/domain';
 	import { t } from '$lib/i18n';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	let { user = null }: { user?: User | null } = $props();
 	let mobileMenuOpen = $state(false);
@@ -47,22 +47,22 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden sm:flex sm:gap-4">
-				<Button href={Urls.HOME} variant="filled" color="primary" size="md">
+				<Button href={Urls.HOME} variant="default">
 					{$t('common.navigation.home')}
 				</Button>
-				<Button href={Urls.RESULTS} variant="filled" color="primary" size="md">
+				<Button href={Urls.RESULTS} variant="default">
 					{$t('common.navigation.results')}
 				</Button>
 
 				{#if user}
-					<Button href={portalUrl} variant="filled" color="primary" size="md">
+					<Button href={portalUrl} variant="default">
 						{$t('common.navigation.account')}
 					</Button>
-					<Button variant="filled" color="primary" size="md" onclick={handleLogout}>
+					<Button variant="default" onclick={handleLogout}>
 						{$t('common.navigation.logout')}
 					</Button>
 				{:else}
-					<Button href={Urls.LOGIN} variant="filled" color="primary" size="md">
+					<Button href={Urls.LOGIN} variant="default">
 						{$t('common.navigation.login')}
 					</Button>
 				{/if}
@@ -71,12 +71,11 @@
 			<!-- Mobile menu button -->
 			<div class="sm:hidden">
 				<Button
-					variant="text"
-					color="primary"
-					size="sm"
+					variant="ghost"
+										size="sm"
 					onclick={toggleMobileMenu}
-					ariaLabel={$t('common.navigation.openMenu')}
-					ariaExpanded={mobileMenuOpen}
+					aria-label={$t('common.navigation.openMenu')}
+					aria-expanded={mobileMenuOpen}
 				>
 					<!-- Hamburger icon -->
 					<svg
