@@ -48,7 +48,9 @@ export interface RpcRaceWithResultsResponse {
 		place: number;
 		time: string | null;
 		points: number | null;
-		cyclist_id: string;
+		user_id: string;
+		cyclist_first_name: string;
+		cyclist_last_name: string;
 		created_at: string;
 		updated_at: string;
 		ranking_point?: {

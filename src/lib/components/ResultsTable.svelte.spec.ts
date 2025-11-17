@@ -38,6 +38,8 @@ describe('ResultsTable Component', () => {
 			time: '02:30:45',
 			points: 100,
 			cyclistId: 'cyclist-1',
+			cyclistFirstName: 'John',
+			cyclistLastName: 'Doe',
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
 			rankingPoint: {
@@ -71,6 +73,8 @@ describe('ResultsTable Component', () => {
 				time: null,
 				points: null,
 				cyclistId: 'cyclist-id',
+				cyclistFirstName: 'Jane',
+				cyclistLastName: 'Smith',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
 				rankingPoint: undefined

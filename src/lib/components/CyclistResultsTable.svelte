@@ -7,8 +7,7 @@
 	let { raceResults }: { raceResults: RaceResult[] } = $props();
 
 	function getEventUrl(result: RaceResult): string {
-		// New navigation pattern: /results/{eventId}/{raceId}
-		return `/results/${result.eventId}/${result.raceId}`;
+		return `/results/${result.eventId}?raceId=${result.raceId}`;
 	}
 </script>
 

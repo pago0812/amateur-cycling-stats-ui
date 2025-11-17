@@ -59,6 +59,7 @@ export function adaptRaceResultsFromRpc(rpcResult: RaceResultRpcItem[]): RaceRes
 /**
  * Adapts race result from nested response (used within race queries).
  * Returns partial result data (only essential fields for race detail view).
+ * Maps user_id to cyclistId (domain layer uses user.id as identifier).
  */
 export function adaptRaceResultFromNested(
 	dbResult: RaceWithResultsResponse['race_results'][0]
@@ -68,7 +69,9 @@ export function adaptRaceResultFromNested(
 		place: dbResult.place,
 		time: dbResult.time,
 		points: dbResult.points,
-		cyclistId: dbResult.cyclist_id,
+		cyclistId: dbResult.cyclists.user_id,
+		cyclistFirstName: dbResult.cyclists.users?.first_name ?? '',
+		cyclistLastName: dbResult.cyclists.users?.last_name ?? '',
 		...mapTimestamps(dbResult),
 		rankingPoint: dbResult.ranking_points
 			? adaptRankingPointFromDb(dbResult.ranking_points)

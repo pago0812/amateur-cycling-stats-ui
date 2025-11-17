@@ -8,31 +8,48 @@
 	} from '$lib/i18n/category-translations';
 	import type { EventWithRaces } from '$lib/types/domain';
 
-	let { event, currentRaceId }: { event: EventWithRaces; currentRaceId?: string } = $props();
+	let {
+		event,
+		currentRaceId,
+		filterState
+	}: {
+		event: EventWithRaces;
+		currentRaceId?: string;
+		filterState?: { categoryId: string; genderId: string; lengthId: string } | null;
+	} = $props();
 
-	// Find current race to initialize filters
-	const currentRace = $derived(
-		currentRaceId ? event.races.find((r) => r.id === currentRaceId) : undefined
-	);
-
-	// Filter state - empty strings represent "not selected" (placeholder state)
-	let selectedCategoryId = $state('');
-	let selectedGenderId = $state('');
-	let selectedLengthId = $state('');
-
-	// Initialize filter state from current race if provided
-	$effect(() => {
+	// Compute initial filter values synchronously (prevents render blink)
+	function getInitialFilterState() {
 		if (currentRaceId) {
 			const race = event.races.find((r) => r.id === currentRaceId);
-
 			if (race) {
-				selectedCategoryId = race.raceCategoryId;
-				selectedGenderId = race.raceCategoryGenderId;
-				selectedLengthId = race.raceCategoryLengthId;
+				return {
+					categoryId: race.raceCategoryId,
+					genderId: race.raceCategoryGenderId,
+					lengthId: race.raceCategoryLengthId
+				};
 			}
+		} else if (filterState) {
+			// Initialize from filterState (Mode B - no matching race)
+			return {
+				categoryId: filterState.categoryId,
+				genderId: filterState.genderId,
+				lengthId: filterState.lengthId
+			};
 		}
-		// If no currentRaceId, leave as empty (placeholders will show)
-	});
+		// Fallback: use first available option from each category
+		// (should never happen due to server-side redirect, but defensive)
+		return {
+			categoryId: event.supportedRaceCategories[0]?.id || '',
+			genderId: event.supportedRaceCategoryGenders[0]?.id || '',
+			lengthId: event.supportedRaceCategoryLengths[0]?.id || ''
+		};
+	}
+
+	const initialState = getInitialFilterState();
+	let selectedCategoryId = $state(initialState.categoryId);
+	let selectedGenderId = $state(initialState.genderId);
+	let selectedLengthId = $state(initialState.lengthId);
 
 	// Map categories to select options
 	const categoryOptions = $derived(
@@ -57,19 +74,11 @@
 	);
 
 	/**
-	 * Handle filter change and navigate to matching race.
-	 * Only navigates if all three filters are selected AND a matching race exists.
+	 * Handle filter change and navigate with appropriate query params.
+	 * - Mode A (match found): Navigate with ?raceId={uuid}
+	 * - Mode B (no match): Navigate with ?categoryId={uuid}&genderId={uuid}&lengthId={uuid}
 	 */
 	function handleFilterChange() {
-		// Only search if all three are selected (not placeholders)
-		if (!selectedCategoryId || !selectedGenderId || !selectedLengthId) {
-			return; // Don't navigate with incomplete selection
-		}
-
-		console.log(event.races);
-
-		console.log(selectedCategoryId, selectedGenderId, selectedLengthId);
-
 		// Find exact matching race
 		const matchingRace = event.races.find(
 			(r) =>
@@ -78,14 +87,20 @@
 				r.raceCategoryLengthId === selectedLengthId
 		);
 
-		console.log('matchingRace :', matchingRace);
-
-		// Only navigate if match found AND different from current race
-		if (matchingRace && matchingRace.id !== currentRaceId) {
-			goto(`/results/${event.id}?raceId=${matchingRace.id}`);
+		if (matchingRace) {
+			// Mode A: Match found - navigate with raceId
+			if (matchingRace.id !== currentRaceId) {
+				goto(`/results/${event.id}?raceId=${matchingRace.id}`, { invalidateAll: true });
+			}
+		} else {
+			// Mode B: No match - navigate with individual filter params
+			const params = new URLSearchParams({
+				categoryId: selectedCategoryId,
+				genderId: selectedGenderId,
+				lengthId: selectedLengthId
+			});
+			goto(`/results/${event.id}?${params.toString()}`, { invalidateAll: true });
 		}
-
-		// If no match found: stay put, keep selections, let page show "no results"
 	}
 </script>
 
@@ -100,7 +115,6 @@
 			onchange={handleFilterChange}
 			class="block rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
 		>
-			<option value="">{$t('races.filters.selectCategory')}</option>
 			{#each categoryOptions as option}
 				<option value={option.value}>{option.label}</option>
 			{/each}
@@ -117,7 +131,6 @@
 			onchange={handleFilterChange}
 			class="block rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
 		>
-			<option value="">{$t('races.filters.selectGender')}</option>
 			{#each genderOptions as option}
 				<option value={option.value}>{option.label}</option>
 			{/each}
@@ -134,7 +147,6 @@
 			onchange={handleFilterChange}
 			class="block rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
 		>
-			<option value="">{$t('races.filters.selectDistance')}</option>
 			{#each lengthOptions as option}
 				<option value={option.value}>{option.label}</option>
 			{/each}

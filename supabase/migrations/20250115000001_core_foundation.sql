@@ -1087,7 +1087,9 @@ BEGIN
       'place', rres.place,
       'time', rres.time,
       'points', rp.points,
-      'cyclist_id', c.id,
+      'user_id', u.id,
+      'cyclist_first_name', u.first_name,
+      'cyclist_last_name', u.last_name,
       'created_at', rres.created_at,
       'updated_at', rres.updated_at,
       'ranking_point', CASE
@@ -1104,6 +1106,7 @@ BEGIN
   ), '[]'::jsonb) INTO race_results_data
   FROM public.race_results rres
   LEFT JOIN public.cyclists c ON rres.cyclist_id = c.id
+  LEFT JOIN public.users u ON c.user_id = u.id
   LEFT JOIN public.ranking_points rp ON rres.ranking_point_id = rp.id
   WHERE rres.race_id = race_uuid;
 
@@ -1114,7 +1117,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_race_with_results_by_id(UUID) IS 'Returns race data with nested race_results array by race UUID. Each result includes cyclist_id, ranking_point data. Results ordered by place ASC. Returns NULL if race does not exist. Useful for race detail pages.';
+COMMENT ON FUNCTION public.get_race_with_results_by_id(UUID) IS 'Returns race data with nested race_results array by race UUID. Each result includes user_id (domain cyclistId), ranking_point data. Results ordered by place ASC. Returns NULL if race does not exist. Useful for race detail pages.';
 
 -- =====================================================
 -- SECTION 24: Enable RLS on All Tables

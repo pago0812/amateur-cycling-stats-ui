@@ -35,7 +35,7 @@
 								href="/cyclists/{result.cyclistId}"
 								class="text-blue-600 hover:text-blue-800 hover:underline"
 							>
-								{$t('races.table.viewCyclist')}
+								{result.cyclistFirstName} {result.cyclistLastName}
 							</a>
 						{:else}
 							-

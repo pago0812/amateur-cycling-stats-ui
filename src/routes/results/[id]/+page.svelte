@@ -15,7 +15,7 @@
 	<h2 class="mb-8 text-3xl font-bold">{data.event.name}</h2>
 
 	{#if data.event.races.length > 0}
-		<RaceFilterSelect event={data.event} currentRaceId={data.race?.id} />
+		<RaceFilterSelect event={data.event} currentRaceId={data.race?.id} filterState={data.filterState} />
 	{/if}
 
 	{#if data.race?.raceResults && data.race.raceResults.length > 0}

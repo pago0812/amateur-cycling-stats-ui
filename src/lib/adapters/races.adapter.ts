@@ -67,7 +67,9 @@ export function adaptRaceWithRaceResultsFromRpc(
 			place: result.place,
 			time: result.time,
 			points: result.points,
-			cyclistId: result.cyclist_id,
+			cyclistId: result.user_id,
+			cyclistFirstName: result.cyclist_first_name,
+			cyclistLastName: result.cyclist_last_name,
 			createdAt: result.created_at,
 			updatedAt: result.updated_at,
 			rankingPoint: result.ranking_point

@@ -43,7 +43,7 @@ export interface RaceResult {
 /**
  * Race detail result type - used for displaying results on race detail pages.
  * Partial result data (only essential fields) since event/race context is already known.
- * Includes cyclistId for linking to cyclist profiles.
+ * Includes cyclistId for linking to cyclist profiles and cyclist name for display.
  */
 export interface RaceDetailResult {
 	id: string;
@@ -51,6 +51,8 @@ export interface RaceDetailResult {
 	time: string | null;
 	points: number | null;
 	cyclistId: string;
+	cyclistFirstName: string;
+	cyclistLastName: string;
 	createdAt: string;
 	updatedAt: string;
 	rankingPoint?: {
