@@ -33,7 +33,7 @@
 			{
 				label: $t('admin.organizations.actions.addMember'),
 				onClick: handleAddMember,
-				variant: 'primary'
+				variant: 'default'
 			}
 		]}
 	/>

@@ -213,12 +213,12 @@
 					{
 						label: $t('admin.organizations.editButton'),
 						onClick: handleEditOrganization,
-						variant: 'primary' as const
+						variant: 'default' as const
 					},
 					{
 						label: $t('admin.organizations.actions.deactivateOrganization'),
 						onClick: handleDeactivateOrganization,
-						variant: 'danger' as const
+						variant: 'destructive' as const
 					}
 				];
 			}
@@ -234,12 +234,12 @@
 					{
 						label: $t('admin.organizations.editButton'),
 						onClick: handleEditOrganization,
-						variant: 'primary' as const
+						variant: 'default' as const
 					},
 					{
 						label: $t('admin.organizations.actions.deactivateOrganization'),
 						onClick: handleDeactivateOrganization,
-						variant: 'danger' as const
+						variant: 'destructive' as const
 					}
 				];
 			}
@@ -250,7 +250,7 @@
 					{
 						label: $t('admin.organizations.actions.activateOrganization'),
 						onClick: handleActivateOrganization,
-						variant: 'primary' as const
+						variant: 'default' as const
 					}
 				];
 			}
@@ -261,12 +261,12 @@
 					{
 						label: $t('admin.organizations.actions.activateOrganization'),
 						onClick: handleActivateOrganization,
-						variant: 'primary' as const
+						variant: 'default' as const
 					},
 					{
 						label: $t('admin.organizations.actions.deletePermanently'),
 						onClick: handlePermanentDelete,
-						variant: 'danger' as const
+						variant: 'destructive' as const
 					}
 				];
 			}

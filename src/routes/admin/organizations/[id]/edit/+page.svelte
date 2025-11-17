@@ -61,7 +61,7 @@
 			{
 				label: $t('admin.organizations.form.submitUpdate'),
 				onClick: handleSubmit,
-				variant: 'primary'
+				variant: 'default'
 			}
 		]}
 	/>

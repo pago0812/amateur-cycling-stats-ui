@@ -4,7 +4,7 @@
 	import { alertStore } from '$lib/stores/alert-store';
 	import { t } from '$lib/i18n';
 	import type { ActionData } from './$types';
-	import Button from '$lib/components/Button.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -53,7 +53,7 @@
 			</div>
 
 			<div class="mt-4 flex flex-col items-center gap-4">
-				<Button type="submit" variant="filled" color="primary" fullWidth>
+				<Button type="submit" variant="default" class="w-full">
 					{$t('auth.login.submit')}
 				</Button>
 
