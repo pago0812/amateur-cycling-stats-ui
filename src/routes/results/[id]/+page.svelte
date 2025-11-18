@@ -21,11 +21,11 @@
 	{#if data.race?.raceResults && data.race.raceResults.length > 0}
 		<ResultsTable raceResults={data.race.raceResults} />
 	{:else}
-		<div class="rounded-lg border border-gray-200 bg-gray-50 py-12 text-center">
-			<p class="mb-2 text-lg text-gray-600">
+		<div class="rounded-lg border border-border bg-muted py-12 text-center">
+			<p class="mb-2 text-lg text-muted-foreground">
 				{$t('races.noResults.title')}
 			</p>
-			<p class="text-sm text-gray-500">
+			<p class="text-sm text-muted-foreground">
 				{$t('races.noResults.suggestion')}
 			</p>
 		</div>

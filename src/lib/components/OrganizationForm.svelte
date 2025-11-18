@@ -40,7 +40,7 @@
 >
 	<!-- Name Field -->
 	<div class="flex flex-col gap-2">
-		<label for="name" class="text-sm font-medium text-gray-700">
+		<label for="name" class="text-sm font-medium text-foreground">
 			{$t('admin.organizations.form.nameLabel')}
 			<span class="text-red-500">*</span>
 		</label>
@@ -53,14 +53,14 @@
 			maxlength="255"
 			value={(form?.name as string) || initialData?.name || ''}
 			placeholder={$t('admin.organizations.form.namePlaceholder')}
-			class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+			class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 			disabled={isSubmitting}
 		/>
 	</div>
 
 	<!-- Description Field -->
 	<div class="flex flex-col gap-2">
-		<label for="description" class="text-sm font-medium text-gray-700">
+		<label for="description" class="text-sm font-medium text-foreground">
 			{$t('admin.organizations.form.descriptionLabel')}
 		</label>
 		<textarea
@@ -70,7 +70,7 @@
 			maxlength="1000"
 			value={(form?.description as string) || initialData?.description || ''}
 			placeholder={$t('admin.organizations.form.descriptionPlaceholder')}
-			class="resize-vertical rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+			class="resize-vertical rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 			disabled={isSubmitting}
 		></textarea>
 	</div>
@@ -79,7 +79,7 @@
 	{#if mode === 'create'}
 		<!-- Owner Email Field -->
 		<div class="flex flex-col gap-2">
-			<label for="ownerEmail" class="text-sm font-medium text-gray-700">
+			<label for="ownerEmail" class="text-sm font-medium text-foreground">
 				{$t('admin.organizations.form.ownerEmailLabel')}
 				<span class="text-red-500">*</span>
 			</label>
@@ -90,14 +90,14 @@
 				required
 				value={(form?.ownerEmail as string) || ''}
 				placeholder={$t('admin.organizations.form.ownerEmailPlaceholder')}
-				class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+				class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				disabled={isSubmitting}
 			/>
 		</div>
 
 		<!-- Owner Name Field -->
 		<div class="flex flex-col gap-2">
-			<label for="ownerName" class="text-sm font-medium text-gray-700">
+			<label for="ownerName" class="text-sm font-medium text-foreground">
 				{$t('admin.organizations.form.ownerNameLabel')}
 				<span class="text-red-500">*</span>
 			</label>
@@ -110,7 +110,7 @@
 				maxlength="255"
 				value={(form?.ownerName as string) || ''}
 				placeholder={$t('admin.organizations.form.ownerNamePlaceholder')}
-				class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+				class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				disabled={isSubmitting}
 			/>
 		</div>

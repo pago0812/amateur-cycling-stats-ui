@@ -26,7 +26,7 @@
 
 		<form method="POST" use:enhance class="flex w-full max-w-md flex-col gap-4">
 			<div class="flex flex-col gap-2">
-				<label for="email" class="text-sm font-medium text-gray-700">
+				<label for="email" class="text-sm font-medium text-foreground">
 					{$t('auth.login.email')}
 				</label>
 				<input
@@ -35,12 +35,12 @@
 					name="email"
 					required
 					value={form?.email || ''}
-					class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 
 			<div class="flex flex-col gap-2">
-				<label for="password" class="text-sm font-medium text-gray-700">
+				<label for="password" class="text-sm font-medium text-foreground">
 					{$t('auth.login.password')}
 				</label>
 				<input
@@ -48,7 +48,7 @@
 					id="password"
 					name="password"
 					required
-					class="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 

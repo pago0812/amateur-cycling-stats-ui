@@ -20,17 +20,17 @@
 		</div>
 	{:else if data.events.length === 0}
 		<div class="py-8 text-center">
-			<p class="text-gray-600">{$t('events.home.noResults')}</p>
+			<p class="text-muted-foreground">{$t('events.home.noResults')}</p>
 		</div>
 	{:else}
 		<div class="grid gap-4">
 			{#each data.events as event (event.id)}
-				<div class="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
-					<h3 class="text-lg font-semibold text-gray-900">{event.name}</h3>
+				<div class="rounded-lg border border-border p-4 transition-shadow hover:shadow-md">
+					<h3 class="text-lg font-semibold text-foreground">{event.name}</h3>
 					{#if event.description}
-						<p class="mt-2 text-gray-600">{event.description}</p>
+						<p class="mt-2 text-muted-foreground">{event.description}</p>
 					{/if}
-					<div class="mt-3 text-sm text-gray-500">
+					<div class="mt-3 text-sm text-muted-foreground">
 						<p>{$t('events.home.date')}: {new Date(event.dateTime).toLocaleDateString('es-ES')}</p>
 						<p>
 							{$t('events.home.location')}: {event.city ? `${event.city}, ` : ''}{event.state}, {event.country}

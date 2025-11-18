@@ -28,7 +28,7 @@
 	<title>{$t('auth.setupFailed.title')}</title>
 </svelte:head>
 
-<div class="flex items-center justify-center bg-gray-50 px-4 py-8">
+<div class="flex items-center justify-center bg-muted px-4 py-8">
 	<div class="w-full max-w-md space-y-4">
 		<!-- Error Icon + Header -->
 		<div class="text-center">
@@ -42,10 +42,10 @@
 					/>
 				</svg>
 			</div>
-			<h1 class="mt-3 text-2xl font-bold text-gray-900">
+			<h1 class="mt-3 text-2xl font-bold text-foreground">
 				{$t('auth.setupFailed.title')}
 			</h1>
-			<p class="mt-1 text-sm text-gray-600">
+			<p class="mt-1 text-sm text-muted-foreground">
 				{$t('auth.setupFailed.subtitle')}
 			</p>
 		</div>

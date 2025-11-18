@@ -34,7 +34,7 @@
 			{data.error}
 		</div>
 	{:else if data.events.length === 0}
-		<div class="py-8 text-center text-gray-500">{$t('events.results.noEvents')}</div>
+		<div class="py-8 text-center text-muted-foreground">{$t('events.results.noEvents')}</div>
 	{:else}
 		<EventResultsTable events={data.events} />
 	{/if}

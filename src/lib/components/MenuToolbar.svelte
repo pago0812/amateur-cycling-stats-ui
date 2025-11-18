@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb';
 
 	interface Tab {
 		path: string;
 		label: string;
 	}
 
-	interface Breadcrumb {
+	interface BreadcrumbItem {
 		label: string;
 		href?: string; // undefined for current page (last item)
 	}
@@ -24,7 +25,7 @@
 		tabs,
 		actions
 	}: {
-		breadcrumbs: Breadcrumb[];
+		breadcrumbs: BreadcrumbItem[];
 		tabs?: Tab[];
 		actions?: ActionButton[];
 	} = $props();
@@ -46,32 +47,38 @@
 </script>
 
 <!-- Menu Navigation Toolbar -->
-<nav class="bg-gray-50 p-4">
+<nav class="bg-muted p-4">
 	<div class="flex h-full flex-col gap-2">
 		<!-- Row 1: Breadcrumbs + Action Button -->
 		<div class="flex h-9 items-center gap-4">
-			<!-- Breadcrumb navigation -->
-			<nav class="flex shrink-0 items-center gap-2">
-				{#each breadcrumbs as breadcrumb, index}
-					{#if index > 0}
-						<span class="text-gray-400">/</span>
-					{/if}
-					{#if breadcrumb.href}
-						<!-- Clickable breadcrumb (not current page) -->
-						<a
-							href={breadcrumb.href}
-							class="px-1 text-base leading-none text-gray-500 transition-colors hover:text-gray-800 hover:underline"
-						>
-							{breadcrumb.label}
-						</a>
-					{:else}
-						<!-- Current page (last breadcrumb) -->
-						<span class="px-1 text-base leading-none text-gray-800">
-							{breadcrumb.label}
-						</span>
-					{/if}
-				{/each}
-			</nav>
+			<!-- Breadcrumb navigation using shadcn-svelte -->
+			<Breadcrumb.Root class="shrink-0">
+				<Breadcrumb.List>
+					{#each breadcrumbs as breadcrumb, index}
+						{#if index > 0}
+							<Breadcrumb.Separator>
+								<span class="text-muted-foreground">/</span>
+							</Breadcrumb.Separator>
+						{/if}
+						<Breadcrumb.Item>
+							{#if breadcrumb.href}
+								<!-- Clickable breadcrumb (not current page) -->
+								<Breadcrumb.Link
+									href={breadcrumb.href}
+									class="px-1 text-base leading-none text-muted-foreground transition-colors hover:text-foreground hover:underline"
+								>
+									{breadcrumb.label}
+								</Breadcrumb.Link>
+							{:else}
+								<!-- Current page (last breadcrumb) -->
+								<Breadcrumb.Page class="px-1 text-base leading-none text-foreground">
+									{breadcrumb.label}
+								</Breadcrumb.Page>
+							{/if}
+						</Breadcrumb.Item>
+					{/each}
+				</Breadcrumb.List>
+			</Breadcrumb.Root>
 		</div>
 
 		<!-- Row 2: Navigation Tabs -->
@@ -85,8 +92,8 @@
 								class="inline-block border-b px-1 pb-2 text-base leading-none whitespace-nowrap transition-colors {isActive(
 									tab.path
 								)
-									? 'border-gray-800  text-gray-800'
-									: 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800'}"
+									? 'border-foreground text-foreground'
+									: 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'}"
 							>
 								{tab.label}
 							</a>

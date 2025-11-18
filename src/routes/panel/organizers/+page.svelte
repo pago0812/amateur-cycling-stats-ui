@@ -16,9 +16,9 @@
 />
 
 <div class="mt-8">
-	<div class="rounded-lg bg-gray-50 p-8 text-center">
-		<p class="mb-2 text-lg text-gray-600">{$t('panel.organizers.comingSoon')}</p>
-		<p class="text-sm text-gray-500">
+	<div class="rounded-lg bg-muted p-8 text-center">
+		<p class="mb-2 text-lg text-muted-foreground">{$t('panel.organizers.comingSoon')}</p>
+		<p class="text-sm text-muted-foreground">
 			{$t('panel.organizers.description')}
 		</p>
 	</div>

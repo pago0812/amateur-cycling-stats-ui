@@ -70,12 +70,12 @@
 			aria-describedby="modal-description"
 		>
 			<!-- Title -->
-			<h2 id="modal-title" class="mb-4 text-xl font-bold text-gray-900">
+			<h2 id="modal-title" class="mb-4 text-xl font-bold text-foreground">
 				{title}
 			</h2>
 
 			<!-- Message -->
-			<p id="modal-description" class="mb-6 text-gray-600">
+			<p id="modal-description" class="mb-6 text-muted-foreground">
 				{message}
 			</p>
 

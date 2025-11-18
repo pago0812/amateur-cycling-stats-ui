@@ -114,7 +114,7 @@
 			</div>
 			<button
 				onclick={handleClose}
-				class="ml-4 text-white hover:text-gray-200 focus:outline-none"
+				class="ml-4 text-white hover:text-white/80 focus:outline-none"
 				aria-label="Cerrar"
 			>
 				<svg

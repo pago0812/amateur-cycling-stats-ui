@@ -12,20 +12,20 @@
 	<title>{$t('auth.completeSetup.title')}</title>
 </svelte:head>
 
-<div class="flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+<div class="flex items-center justify-center bg-muted px-4 py-12 sm:px-6 lg:px-8">
 	<div class="w-full max-w-md space-y-8">
 		<!-- Header -->
 		<div class="text-center">
-			<h1 class="text-3xl font-bold tracking-tight text-gray-900">
+			<h1 class="text-3xl font-bold tracking-tight text-foreground">
 				{$t('auth.completeSetup.title')}
 			</h1>
-			<p class="mt-2 text-lg text-gray-600">
+			<p class="mt-2 text-lg text-muted-foreground">
 				{$t('auth.completeSetup.welcome', { organizationName: data.organizationName } as Record<
 					string,
 					unknown
 				>)}
 			</p>
-			<p class="mt-2 text-sm text-gray-500">
+			<p class="mt-2 text-sm text-muted-foreground">
 				{$t('auth.completeSetup.instruction')}
 			</p>
 		</div>
@@ -51,7 +51,7 @@
 		>
 			<!-- Email (read-only) -->
 			<div>
-				<label for="email" class="block text-sm font-medium text-gray-700">
+				<label for="email" class="block text-sm font-medium text-foreground">
 					{$t('auth.login.email')}
 				</label>
 				<input
@@ -59,13 +59,13 @@
 					id="email"
 					value={data.email}
 					disabled
-					class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-600"
+					class="mt-1 block w-full rounded-md border border-border bg-muted px-3 py-2 text-muted-foreground"
 				/>
 			</div>
 
 			<!-- First Name -->
 			<div>
-				<label for="firstName" class="block text-sm font-medium text-gray-700">
+				<label for="firstName" class="block text-sm font-medium text-foreground">
 					{$t('auth.completeSetup.firstName')}
 					<span class="text-red-500">*</span>
 				</label>
@@ -79,13 +79,13 @@
 					value={(form?.firstName as string) || data.invitation.invitedOwnerName || ''}
 					placeholder={$t('auth.completeSetup.firstNamePlaceholder')}
 					disabled={isSubmitting}
-					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="mt-1 block w-full rounded-md border border-border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 
 			<!-- Last Name -->
 			<div>
-				<label for="lastName" class="block text-sm font-medium text-gray-700">
+				<label for="lastName" class="block text-sm font-medium text-foreground">
 					{$t('auth.completeSetup.lastName')}
 					<span class="text-red-500">*</span>
 				</label>
@@ -99,13 +99,13 @@
 					value={(form?.lastName as string) || ''}
 					placeholder={$t('auth.completeSetup.lastNamePlaceholder')}
 					disabled={isSubmitting}
-					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="mt-1 block w-full rounded-md border border-border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 
 			<!-- Password -->
 			<div>
-				<label for="password" class="block text-sm font-medium text-gray-700">
+				<label for="password" class="block text-sm font-medium text-foreground">
 					{$t('auth.completeSetup.password')}
 					<span class="text-red-500">*</span>
 				</label>
@@ -117,13 +117,13 @@
 					minlength="6"
 					placeholder={$t('auth.completeSetup.passwordPlaceholder')}
 					disabled={isSubmitting}
-					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="mt-1 block w-full rounded-md border border-border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 
 			<!-- Confirm Password -->
 			<div>
-				<label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+				<label for="confirmPassword" class="block text-sm font-medium text-foreground">
 					{$t('auth.completeSetup.confirmPassword')}
 					<span class="text-red-500">*</span>
 				</label>
@@ -135,7 +135,7 @@
 					minlength="6"
 					placeholder={$t('auth.completeSetup.confirmPasswordPlaceholder')}
 					disabled={isSubmitting}
-					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="mt-1 block w-full rounded-md border border-border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 

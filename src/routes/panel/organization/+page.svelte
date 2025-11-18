@@ -37,7 +37,7 @@
 	</div>
 {:else}
 	<!-- Fallback if organization not loaded -->
-	<div class="mt-8 rounded-lg bg-gray-50 p-8 text-center">
-		<p class="text-lg text-gray-600">{$t('panel.organization.errors.notFound')}</p>
+	<div class="mt-8 rounded-lg bg-muted p-8 text-center">
+		<p class="text-lg text-muted-foreground">{$t('panel.organization.errors.notFound')}</p>
 	</div>
 {/if}

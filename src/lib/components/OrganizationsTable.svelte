@@ -27,9 +27,9 @@
 			case 'WAITING_OWNER':
 				return 'bg-yellow-100 text-yellow-800';
 			case 'DISABLED':
-				return 'bg-gray-100 text-gray-800';
+				return 'bg-muted text-foreground';
 			default:
-				return 'bg-gray-100 text-gray-800';
+				return 'bg-muted text-foreground';
 		}
 	}
 
@@ -49,49 +49,49 @@
 </script>
 
 <div class="overflow-x-auto rounded-lg bg-white shadow-md">
-	<table class="min-w-full divide-y divide-gray-200">
-		<thead class="bg-gray-50">
+	<table class="min-w-full divide-y divide-border">
+		<thead class="bg-muted">
 			<tr>
 				<!-- Name - always visible -->
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
 					{$t('admin.organizations.table.name')}
 				</th>
 				<!-- State - always visible -->
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
 					{$t('admin.organizations.table.state')}
 				</th>
 				<!-- Description - hidden on mobile, visible on md+ -->
 				<th
-					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell"
+					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase md:table-cell"
 				>
 					{$t('admin.organizations.table.description')}
 				</th>
 				<!-- Event Count - hidden on mobile, visible on sm+ -->
 				<th
-					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
+					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase sm:table-cell"
 				>
 					{$t('admin.organizations.table.eventCount')}
 				</th>
 				<!-- Created Date - hidden on mobile and tablet, visible on lg+ -->
 				<th
-					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell"
+					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase lg:table-cell"
 				>
 					{$t('admin.organizations.table.createdAt')}
 				</th>
 			</tr>
 		</thead>
-		<tbody class="divide-y divide-gray-200 bg-white">
+		<tbody class="divide-y divide-border bg-white">
 			{#if organizations.length === 0}
 				<tr>
-					<td colspan="5" class="px-6 py-8 text-center text-gray-500">
+					<td colspan="5" class="px-6 py-8 text-center text-muted-foreground">
 						{$t('admin.organizations.table.noResults')}
 					</td>
 				</tr>
 			{:else}
 				{#each organizations as org (org.id)}
-					<tr class="cursor-pointer transition-colors hover:bg-gray-50">
+					<tr class="cursor-pointer transition-colors hover:bg-muted">
 						<!-- Make entire row clickable by wrapping in a link -->
-						<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+						<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
 							<a
 								href="/admin/organizations/{org.id}"
 								class="block font-medium text-blue-600 hover:text-blue-800"
@@ -112,19 +112,19 @@
 							</a>
 						</td>
 						<!-- Description - hidden on mobile -->
-						<td class="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">
+						<td class="hidden px-6 py-4 text-sm text-muted-foreground md:table-cell">
 							<a href="/admin/organizations/{org.id}" class="block" title={org.description || ''}>
 								{truncate(org.description, 50)}
 							</a>
 						</td>
 						<!-- Event Count - hidden on mobile -->
-						<td class="hidden px-6 py-4 text-sm text-gray-900 sm:table-cell">
+						<td class="hidden px-6 py-4 text-sm text-foreground sm:table-cell">
 							<a href="/admin/organizations/{org.id}" class="block">
 								{org.eventCount ?? 0}
 							</a>
 						</td>
 						<!-- Created Date - hidden on mobile and tablet -->
-						<td class="hidden px-6 py-4 text-sm whitespace-nowrap text-gray-600 lg:table-cell">
+						<td class="hidden px-6 py-4 text-sm whitespace-nowrap text-muted-foreground lg:table-cell">
 							<a href="/admin/organizations/{org.id}" class="block">
 								{formatDate(org.createdAt)}
 							</a>
