@@ -106,14 +106,14 @@
 
 <div class="mb-4 flex flex-wrap gap-3">
 	<div>
-		<label for="category-filter" class="mb-1 block text-sm font-medium text-gray-700">
+		<label for="category-filter" class="mb-1 block text-sm font-medium text-foreground/90">
 			{$t('races.filters.category')}
 		</label>
 		<select
 			id="category-filter"
 			bind:value={selectedCategoryId}
 			onchange={handleFilterChange}
-			class="block rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+			class="block rounded-md border-border bg-card px-3 py-2 shadow-sm focus:border-primary focus:ring-ring"
 		>
 			{#each categoryOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -122,14 +122,14 @@
 	</div>
 
 	<div>
-		<label for="gender-filter" class="mb-1 block text-sm font-medium text-gray-700">
+		<label for="gender-filter" class="mb-1 block text-sm font-medium text-foreground/90">
 			{$t('races.filters.gender')}
 		</label>
 		<select
 			id="gender-filter"
 			bind:value={selectedGenderId}
 			onchange={handleFilterChange}
-			class="block rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+			class="block rounded-md border-border bg-card px-3 py-2 shadow-sm focus:border-primary focus:ring-ring"
 		>
 			{#each genderOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -138,14 +138,14 @@
 	</div>
 
 	<div>
-		<label for="length-filter" class="mb-1 block text-sm font-medium text-gray-700">
+		<label for="length-filter" class="mb-1 block text-sm font-medium text-foreground/90">
 			{$t('races.filters.distance')}
 		</label>
 		<select
 			id="length-filter"
 			bind:value={selectedLengthId}
 			onchange={handleFilterChange}
-			class="block rounded-md border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+			class="block rounded-md border-border bg-card px-3 py-2 shadow-sm focus:border-primary focus:ring-ring"
 		>
 			{#each lengthOptions as option}
 				<option value={option.value}>{option.label}</option>

@@ -28,12 +28,14 @@
 	<title>{$t('auth.setupFailed.title')}</title>
 </svelte:head>
 
-<div class="flex items-center justify-center bg-gray-50 px-4 py-8">
+<div class="flex items-center justify-center bg-muted/50 px-4 py-8">
 	<div class="w-full max-w-md space-y-4">
 		<!-- Error Icon + Header -->
 		<div class="text-center">
-			<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-				<svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div
+				class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10"
+			>
+				<svg class="h-8 w-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -42,26 +44,26 @@
 					/>
 				</svg>
 			</div>
-			<h1 class="mt-3 text-2xl font-bold text-gray-900">
+			<h1 class="mt-3 text-2xl font-bold text-foreground">
 				{$t('auth.setupFailed.title')}
 			</h1>
-			<p class="mt-1 text-sm text-gray-600">
+			<p class="mt-1 text-sm text-muted-foreground">
 				{$t('auth.setupFailed.subtitle')}
 			</p>
 		</div>
 
 		<!-- Error Message -->
-		<div class="rounded-md bg-red-50 p-3">
-			<p class="text-sm text-red-800">
+		<div class="rounded-md bg-destructive/10 p-3">
+			<p class="text-sm text-destructive">
 				{$t(errorMessageKey())}
 			</p>
 		</div>
 
 		<!-- Help Text -->
-		<div class="rounded-md bg-blue-50 p-3">
+		<div class="rounded-md bg-info/10 p-3">
 			<div class="flex">
 				<div class="flex-shrink-0">
-					<svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+					<svg class="h-5 w-5 text-info" fill="currentColor" viewBox="0 0 20 20">
 						<path
 							fill-rule="evenodd"
 							d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -70,10 +72,10 @@
 					</svg>
 				</div>
 				<div class="ml-3">
-					<h3 class="text-sm font-medium text-blue-800">
+					<h3 class="text-sm font-medium text-info">
 						{$t('auth.setupFailed.whatToDo.title')}
 					</h3>
-					<ul class="mt-1 list-disc space-y-0.5 pl-5 text-sm text-blue-700">
+					<ul class="mt-1 list-disc space-y-0.5 pl-5 text-sm text-info">
 						<li>{$t('auth.setupFailed.whatToDo.contactAdmin')}</li>
 						<li>{$t('auth.setupFailed.whatToDo.requestNewInvitation')}</li>
 						<li>{$t('auth.setupFailed.whatToDo.checkEmail')}</li>

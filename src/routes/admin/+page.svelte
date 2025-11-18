@@ -17,11 +17,11 @@
 <MenuToolbar breadcrumbs={[{ label: $t('admin.title') }]} {tabs} />
 
 <div class="mt-8">
-	<div class="rounded-lg bg-gray-50 py-12 text-center">
-		<p class="mb-2 text-xl font-semibold text-gray-700">
+	<div class="rounded-lg bg-muted/50 py-12 text-center">
+		<p class="mb-2 text-xl font-semibold text-foreground">
 			{$t('admin.generalConfig.comingSoon')}
 		</p>
-		<p class="text-gray-600">
+		<p class="text-muted-foreground">
 			{$t('admin.generalConfig.description')}
 		</p>
 	</div>

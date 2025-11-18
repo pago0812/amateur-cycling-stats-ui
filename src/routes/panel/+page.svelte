@@ -17,10 +17,10 @@
 <MenuToolbar breadcrumbs={[{ label: $t('panel.title') }]} {tabs} />
 
 <!-- Summary/Dashboard placeholder -->
-<div class="mt-8 rounded-lg bg-gray-50 p-8 text-center">
+<div class="mt-8 rounded-lg bg-muted/50 p-8 text-center">
 	<h2 class="mb-4 text-2xl font-bold">{$t('panel.summary.title')}</h2>
-	<p class="mb-2 text-lg text-gray-600">{$t('panel.summary.comingSoon')}</p>
-	<p class="text-sm text-gray-500">
+	<p class="mb-2 text-lg text-muted-foreground">{$t('panel.summary.comingSoon')}</p>
+	<p class="text-sm text-muted-foreground">
 		{$t('panel.summary.description')}
 	</p>
 </div>

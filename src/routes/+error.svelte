@@ -9,24 +9,24 @@
 
 <section class="py-6 sm:py-8 md:py-10 lg:py-12">
 	<div>
-		<div class="rounded-lg border border-gray-200 bg-gray-50 px-8 py-12 text-center">
+		<div class="rounded-lg border border-border bg-muted/50 px-8 py-12 text-center">
 			<!-- Error Status Code -->
-			<h1 class="mb-4 text-6xl font-bold text-gray-800">
+			<h1 class="mb-4 text-6xl font-bold text-foreground">
 				{$page.status}
 			</h1>
 
 			<!-- Error Message -->
-			<p class="mb-6 text-xl text-gray-600">
+			<p class="mb-6 text-xl text-muted-foreground">
 				{$page.error?.message || $t('common.general.error')}
 			</p>
 
 			<!-- Helpful Suggestion -->
 			{#if $page.status === 404}
-				<p class="text-sm text-gray-500">
+				<p class="text-sm text-muted-foreground">
 					{$t('common.errors.notFoundSuggestion')}
 				</p>
 			{:else if $page.status >= 500}
-				<p class="text-sm text-gray-500">
+				<p class="text-sm text-muted-foreground">
 					{$t('common.errors.serverErrorSuggestion')}
 				</p>
 			{/if}

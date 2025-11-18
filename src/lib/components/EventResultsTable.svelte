@@ -5,33 +5,42 @@
 	let { events }: { events: Event[] } = $props();
 </script>
 
-<div class="overflow-x-auto rounded-lg bg-white shadow-md">
-	<table class="min-w-full divide-y divide-gray-200">
-		<thead class="bg-gray-50">
+<div class="overflow-x-auto rounded-lg bg-card shadow-md">
+	<table class="min-w-full divide-y divide-border">
+		<thead class="bg-muted/50">
 			<tr>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					Fecha
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					Evento
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					Lugar
 				</th>
 			</tr>
 		</thead>
-		<tbody class="divide-y divide-gray-200 bg-white">
+		<tbody class="divide-y divide-border bg-card">
 			{#each events as event (event.id)}
-				<tr class="hover:bg-gray-50">
-					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+				<tr class="hover:bg-muted/30">
+					<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
 						{formatDateToMMDD(event.dateTime)}
 					</td>
-					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-						<a href="/results/{event.id}" class="text-blue-600 hover:text-blue-800 hover:underline">
+					<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
+						<a
+							href="/results/{event.id}"
+							class="text-primary hover:text-primary/80 hover:underline"
+						>
 							{event.name}
 						</a>
 					</td>
-					<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+					<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
 						{event.state}
 					</td>
 				</tr>

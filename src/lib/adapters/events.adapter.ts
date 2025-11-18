@@ -45,6 +45,7 @@ export function adaptEventWithRacesFromDb(dbData: EventWithRacesResponse): Event
 		supportedRaceCategories: dbData.supported_categories?.map(adaptRaceCategoryFromRpc) || [],
 		supportedRaceCategoryGenders:
 			dbData.supported_genders?.map(adaptRaceCategoryGenderFromRpc) || [],
-		supportedRaceCategoryLengths: dbData.supported_lengths?.map(adaptRaceCategoryLengthFromRpc) || []
+		supportedRaceCategoryLengths:
+			dbData.supported_lengths?.map(adaptRaceCategoryLengthFromRpc) || []
 	};
 }

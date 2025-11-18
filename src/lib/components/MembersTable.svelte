@@ -14,32 +14,34 @@
 	}
 </script>
 
-<div class="overflow-x-auto rounded-lg bg-white shadow-md">
-	<table class="min-w-full divide-y divide-gray-200">
-		<thead class="bg-gray-50">
+<div class="overflow-x-auto rounded-lg bg-card shadow-md">
+	<table class="min-w-full divide-y divide-border">
+		<thead class="bg-muted/50">
 			<tr>
 				<!-- Name - always visible -->
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('common.members.table.name')}
 				</th>
 				<!-- Role - hidden on mobile, visible on sm+ -->
 				<th
-					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
+					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase sm:table-cell"
 				>
 					{$t('common.members.table.role')}
 				</th>
 				<!-- Date Added - hidden on mobile, visible on md+ -->
 				<th
-					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell"
+					class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase md:table-cell"
 				>
 					{$t('common.members.table.dateAdded')}
 				</th>
 			</tr>
 		</thead>
-		<tbody class="divide-y divide-gray-200 bg-white">
+		<tbody class="divide-y divide-border bg-card">
 			{#if organizers.length === 0}
 				<tr>
-					<td colspan="3" class="px-6 py-8 text-center text-gray-500">
+					<td colspan="3" class="px-6 py-8 text-center text-muted-foreground">
 						{$t('common.members.table.noResults')}
 					</td>
 				</tr>
@@ -47,18 +49,20 @@
 				{#each organizers as organizer (organizer.id)}
 					<tr>
 						<!-- Name -->
-						<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+						<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
 							<span class="font-medium">
 								{organizer.user?.firstName ?? ''}
 								{organizer.user?.lastName ?? ''}
 							</span>
 						</td>
 						<!-- Role - hidden on mobile -->
-						<td class="hidden px-6 py-4 text-sm text-gray-600 sm:table-cell">
+						<td class="hidden px-6 py-4 text-sm text-muted-foreground sm:table-cell">
 							{organizer.user?.role?.name ?? '-'}
 						</td>
 						<!-- Date Added - hidden on mobile -->
-						<td class="hidden px-6 py-4 text-sm whitespace-nowrap text-gray-600 md:table-cell">
+						<td
+							class="hidden px-6 py-4 text-sm whitespace-nowrap text-muted-foreground md:table-cell"
+						>
 							{formatDate(organizer.createdAt)}
 						</td>
 					</tr>
