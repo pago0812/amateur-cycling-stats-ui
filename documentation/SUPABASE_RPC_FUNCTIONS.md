@@ -1014,7 +1014,7 @@ END IF;
 
 | Migration File                                  | RPC Functions Added/Modified                                         |
 | ----------------------------------------------- | -------------------------------------------------------------------- |
-| `20250115000001_core_foundation.sql`            | `get_race_results_by_user_id`, `get_cyclist_by_user_id`  |
+| `20250115000001_core_foundation.sql`            | `get_race_results_by_user_id`, `get_cyclist_by_user_id`              |
 | `20250115000002_organization_invitations.sql`   | Organization state management (no RPC changes)                       |
 | `20250115000003_invitation_enhancements.sql`    | `create_user_with_organizer_owner`, `complete_organizer_owner_setup` |
 | `20250115000004_session_email_improvements.sql` | `get_auth_user` (new session-aware version)                          |

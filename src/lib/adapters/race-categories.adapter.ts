@@ -43,10 +43,7 @@ export function adaptRaceCategoryLengthFromDb(dbLength: RaceCategoryLengthDB): R
  * Adapts race category from RPC response.
  * RPC returns flattened structure with name and id (no timestamps).
  */
-export function adaptRaceCategoryFromRpc(rpcData: {
-	name: string;
-	id: string;
-}): RaceCategory {
+export function adaptRaceCategoryFromRpc(rpcData: { name: string; id: string }): RaceCategory {
 	return {
 		id: rpcData.id,
 		name: rpcData.name,

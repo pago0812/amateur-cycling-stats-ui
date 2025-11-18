@@ -46,7 +46,7 @@
 </script>
 
 <!-- Menu Navigation Toolbar -->
-<nav class="bg-gray-50 p-4">
+<nav class="bg-muted/50 p-4">
 	<div class="flex h-full flex-col gap-2">
 		<!-- Row 1: Breadcrumbs + Action Button -->
 		<div class="flex h-9 items-center gap-4">
@@ -54,19 +54,19 @@
 			<nav class="flex shrink-0 items-center gap-2">
 				{#each breadcrumbs as breadcrumb, index}
 					{#if index > 0}
-						<span class="text-gray-400">/</span>
+						<span class="text-muted-foreground/60">/</span>
 					{/if}
 					{#if breadcrumb.href}
 						<!-- Clickable breadcrumb (not current page) -->
 						<a
 							href={breadcrumb.href}
-							class="px-1 text-base leading-none text-gray-500 transition-colors hover:text-gray-800 hover:underline"
+							class="px-1 text-base leading-none text-muted-foreground transition-colors hover:text-foreground hover:underline"
 						>
 							{breadcrumb.label}
 						</a>
 					{:else}
 						<!-- Current page (last breadcrumb) -->
-						<span class="px-1 text-base leading-none text-gray-800">
+						<span class="px-1 text-base leading-none text-foreground">
 							{breadcrumb.label}
 						</span>
 					{/if}
@@ -85,8 +85,8 @@
 								class="inline-block border-b px-1 pb-2 text-base leading-none whitespace-nowrap transition-colors {isActive(
 									tab.path
 								)
-									? 'border-gray-800  text-gray-800'
-									: 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800'}"
+									? 'border-foreground text-foreground'
+									: 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'}"
 							>
 								{tab.label}
 							</a>
@@ -100,7 +100,7 @@
 					{#each actions as actionItem}
 						<Button
 							variant={actionItem.variant ?? 'outline'}
-									size="sm"
+							size="sm"
 							href={actionItem.href}
 							onclick={actionItem.href ? undefined : actionItem.onClick}
 						>

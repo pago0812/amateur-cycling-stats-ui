@@ -8,11 +8,11 @@
 
 <div class="space-y-8">
 	<!-- Profile Header -->
-	<div class="rounded-lg bg-white p-6 shadow">
+	<div class="rounded-lg bg-card p-6 shadow">
 		<div class="flex items-center gap-6">
 			<!-- Profile Photo Placeholder -->
 			<div
-				class="flex h-24 w-24 items-center justify-center rounded-full bg-gray-200 text-3xl font-bold text-gray-600"
+				class="flex h-24 w-24 items-center justify-center rounded-full bg-muted text-3xl font-bold text-muted-foreground"
 			>
 				{cyclist.firstName.charAt(0)}{cyclist.lastName?.charAt(0) || ''}
 			</div>
@@ -24,7 +24,7 @@
 					{cyclist.lastName || ''}
 				</h2>
 
-				<div class="space-y-1 text-gray-600">
+				<div class="space-y-1 text-muted-foreground">
 					{#if cyclist.bornYear}
 						<p>{$t('cyclists.profile.bornYear')}: {cyclist.bornYear}</p>
 					{/if}
@@ -43,7 +43,7 @@
 		{#if raceResults && raceResults.length > 0}
 			<CyclistResultsTable {raceResults} />
 		{:else}
-			<div class="rounded-lg bg-gray-50 py-8 text-center text-gray-500">
+			<div class="rounded-lg bg-muted/50 py-8 text-center text-muted-foreground">
 				{$t('cyclists.profile.noResults')}
 			</div>
 		{/if}

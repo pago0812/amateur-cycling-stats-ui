@@ -34,8 +34,8 @@
 	/>
 	<!-- Error message if organizations failed to load -->
 	{#if data.error}
-		<div class="mb-6 rounded-md border border-red-300 bg-red-50 p-4">
-			<p class="text-sm text-red-800">
+		<div class="mb-6 rounded-md border border-destructive/50 bg-destructive/10 p-4">
+			<p class="text-sm text-destructive">
 				{$t('admin.organizations.errors.loadFailed')}: {data.error}
 			</p>
 		</div>

@@ -16,6 +16,7 @@ This document tracks the migration of custom UI components to shadcn-svelte comp
 **Components Installed:** `button`
 
 #### What Was Done:
+
 - ✅ Installed shadcn-svelte `button` component
 - ✅ Replaced all instances of custom `Button.svelte` with shadcn Button
 - ✅ Updated 6 components: Header, MenuToolbar, ConfirmModal
@@ -24,17 +25,18 @@ This document tracks the migration of custom UI components to shadcn-svelte comp
 - ✅ Fixed MenuToolbar to use dynamic variants instead of hardcoded `outline`
 
 #### Variant Mapping Applied:
-| Old Props | New Props |
-|-----------|-----------|
-| `variant="filled" color="primary"` | `variant="default"` |
-| `variant="filled" color="secondary"` | `variant="secondary"` |
-| `variant="filled" color="danger"` | `variant="destructive"` |
-| `variant="outlined"` | `variant="outline"` |
-| `variant="text"` | `variant="ghost"` |
-| `size="md"` | `size="default"` (or omit) |
-| `fullWidth` | `class="w-full"` |
-| `ariaLabel` | `aria-label` |
-| `ariaExpanded` | `aria-expanded` |
+
+| Old Props                            | New Props                  |
+| ------------------------------------ | -------------------------- |
+| `variant="filled" color="primary"`   | `variant="default"`        |
+| `variant="filled" color="secondary"` | `variant="secondary"`      |
+| `variant="filled" color="danger"`    | `variant="destructive"`    |
+| `variant="outlined"`                 | `variant="outline"`        |
+| `variant="text"`                     | `variant="ghost"`          |
+| `size="md"`                          | `size="default"` (or omit) |
+| `fullWidth`                          | `class="w-full"`           |
+| `ariaLabel`                          | `aria-label`               |
+| `ariaExpanded`                       | `aria-expanded`            |
 
 ---
 
@@ -49,6 +51,7 @@ This document tracks the migration of custom UI components to shadcn-svelte comp
 **Package Used:** svelte-sonner (instead of shadcn-svelte toast)
 
 #### What Was Done:
+
 - ✅ Installed `svelte-sonner` package
 - ✅ Refactored `alert-store.ts` to use Sonner toast API internally
 - ✅ Maintained backward compatibility - same public API (`openAlert`, `closeAlert`)
@@ -60,33 +63,38 @@ This document tracks the migration of custom UI components to shadcn-svelte comp
 - ✅ Enabled `richColors` prop for colored backgrounds (matches previous GlobalAlert style)
 
 #### Toaster Configuration:
+
 ```svelte
 <Toaster position="top-center" closeButton duration={5000} richColors />
 ```
 
 **Props Explained:**
+
 - `position="top-center"` - Matches previous GlobalAlert placement
 - `closeButton` - Enables manual dismiss button
 - `duration={5000}` - 5 second auto-dismiss (matches previous behavior)
 - `richColors` - **Critical**: Enables colored backgrounds instead of white backgrounds
 
 #### Alert Type Mapping:
-| Alert Type | Sonner Method | Background Color | Previous Color |
-|------------|---------------|------------------|----------------|
-| `'success'` | `toast.success()` | Green | `bg-green-600` |
-| `'error'` | `toast.error()` | Red | `bg-red-600` |
-| `'warning'` | `toast.warning()` | Yellow | `bg-yellow-600` |
-| `'info'` | `toast.info()` | Blue | `bg-blue-600` |
+
+| Alert Type  | Sonner Method     | Background Color | Previous Color  |
+| ----------- | ----------------- | ---------------- | --------------- |
+| `'success'` | `toast.success()` | Green            | `bg-green-600`  |
+| `'error'`   | `toast.error()`   | Red              | `bg-red-600`    |
+| `'warning'` | `toast.warning()` | Yellow           | `bg-yellow-600` |
+| `'info'`    | `toast.info()`    | Blue             | `bg-blue-600`   |
 
 **Note:** The `richColors` prop is essential to match the previous GlobalAlert appearance. Without it, toasts have white backgrounds with only colored icons.
 
 #### Files Modified:
+
 - `src/lib/stores/alert-store.ts` - Refactored to wrapper around Sonner
 - `src/lib/stores/alert-store.spec.ts` - Updated tests with Sonner mocks
 - `src/routes/+layout.svelte` - Replaced GlobalAlert with Toaster
 - `src/lib/components/GlobalAlert.svelte` - **DELETED**
 
 #### Benefits Achieved:
+
 - ✅ Better animations and transitions out of the box
 - ✅ Toast stacking - multiple toasts can now appear simultaneously
 - ✅ Better mobile experience with swipe-to-dismiss
@@ -95,7 +103,9 @@ This document tracks the migration of custom UI components to shadcn-svelte comp
 - ✅ **Zero breaking changes** - all consumer code works unchanged
 
 #### Consumer Code (No Changes Required):
+
 All 5 files using `alertStore.openAlert()` continue to work without modification:
+
 - `/src/routes/login/+page.svelte`
 - `/src/routes/signin/+page.svelte`
 - `/src/routes/admin/organizations/new/+page.svelte`
@@ -114,6 +124,7 @@ All 5 files using `alertStore.openAlert()` continue to work without modification
 ~~**Impact:** Better UX, modern notification system~~
 
 #### ~~Current Implementation:~~
+
 - **File:** `src/lib/components/GlobalAlert.svelte`
 - **Pattern:** Fixed top-center alerts with auto-dismiss
 - **Store:** `src/lib/stores/alert-store.ts`
@@ -124,7 +135,9 @@ All 5 files using `alertStore.openAlert()` continue to work without modification
   - Type-specific icons
 
 #### Migration Plan:
+
 1. **Install shadcn-svelte toast component:**
+
    ```bash
    npx shadcn-svelte@latest add toast
    # OR
@@ -147,11 +160,13 @@ All 5 files using `alertStore.openAlert()` continue to work without modification
    - Organization invitation flows
 
 #### Files to Update:
+
 - `src/lib/stores/alert-store.ts` (refactor)
 - `src/routes/+layout.svelte` (replace GlobalAlert with Toaster)
 - `src/lib/components/GlobalAlert.svelte` (delete after migration)
 
 #### Benefits:
+
 - ✅ Better animations and transitions
 - ✅ Stack multiple toasts
 - ✅ Better mobile experience
@@ -168,12 +183,15 @@ All 5 files using `alertStore.openAlert()` continue to work without modification
 **Impact:** Enhanced UX, consistent design
 
 #### Current Implementation:
+
 - **File:** `src/lib/components/SelectQueryParam.svelte`
 - **Pattern:** Native `<select>` with URL query parameter binding
 - **Used in:** Results page, race filters
 
 #### Migration Plan:
+
 1. **Install shadcn-svelte select component:**
+
    ```bash
    npx shadcn-svelte@latest add select
    ```
@@ -191,9 +209,11 @@ All 5 files using `alertStore.openAlert()` continue to work without modification
    - **Decision needed:** Discuss with team
 
 #### Files to Update:
+
 - `src/lib/components/SelectQueryParam.svelte` (refactor or keep native)
 
 #### Considerations:
+
 - Native `<select>` works better on mobile
 - shadcn Select provides richer desktop experience
 - May want responsive implementation (native on mobile, shadcn on desktop)
@@ -208,20 +228,24 @@ All 5 files using `alertStore.openAlert()` continue to work without modification
 **Impact:** Visual consistency (optional enhancement)
 
 #### Current Implementation:
+
 - **File:** `src/lib/components/RaceFilterSelect.svelte`
 - **Pattern:** 3 native `<select>` dropdowns (Category, Gender, Distance)
 - **Used in:** Race results filtering
 
 #### Migration Plan:
+
 1. Use shadcn Select components installed in Phase 2.2
 2. Replace native selects with shadcn Select
 3. Maintain dual-mode navigation logic
 4. Test filter state management
 
 #### Files to Update:
+
 - `src/lib/components/RaceFilterSelect.svelte`
 
 #### Note:
+
 This is an **optional enhancement**. Current native selects work well. Only migrate if you want visual consistency with other selects.
 
 ---
@@ -234,17 +258,21 @@ This is an **optional enhancement**. Current native selects work well. Only migr
 **Impact:** Component consistency
 
 #### Current Implementation:
+
 - **File:** `src/lib/components/MenuToolbar.svelte`
 - **Pattern:** Custom breadcrumbs + tabs + action buttons
 - **Status:** Partially migrated (uses shadcn Button now)
 
 #### Migration Plan:
+
 1. **Install shadcn breadcrumb component:**
+
    ```bash
    npx shadcn-svelte@latest add breadcrumb
    ```
 
 2. **Install shadcn tabs component:**
+
    ```bash
    npx shadcn-svelte@latest add tabs
    ```
@@ -255,9 +283,11 @@ This is an **optional enhancement**. Current native selects work well. Only migr
    - Keep action buttons (already using shadcn Button)
 
 #### Files to Update:
+
 - `src/lib/components/MenuToolbar.svelte`
 
 #### Considerations:
+
 - Current implementation works well
 - shadcn Tabs has different API (may require adaptation)
 - Test tab active state detection
@@ -275,6 +305,7 @@ This is an **optional enhancement**. Current native selects work well. Only migr
 **Impact:** Consistent form styling
 
 #### Potential Additions:
+
 1. **Input Component**
    - Replace native inputs in login/signup forms
    - `npx shadcn-svelte@latest add input`
@@ -292,11 +323,13 @@ This is an **optional enhancement**. Current native selects work well. Only migr
    - `npx shadcn-svelte@latest add textarea`
 
 #### Forms to Consider:
+
 - Login form (`src/routes/login/+page.svelte`)
 - Signup form (`src/routes/signin/+page.svelte`)
 - Organization form (`src/lib/components/OrganizationForm.svelte`)
 
 #### Note:
+
 This is a **large effort** with **minimal functional benefit**. Current forms work well. Only consider if you want complete design system consistency.
 
 ---
@@ -326,16 +359,19 @@ Use this checklist when migrating each component:
 ## 🎨 Theme Customization
 
 ### Current Theme:
+
 - **Base Color:** Slate
 - **Location:** `src/app.css`
 - **Theme System:** CSS custom properties (supports dark mode)
 
 ### Customization Tools:
+
 - **shadcn-svelte Themes:** https://www.shadcn-svelte.com/themes
 - **shadcn/ui Themes:** https://ui.shadcn.com/themes
 - **UI Colors Generator:** https://uicolors.app/create
 
 ### How to Update Theme:
+
 1. Visit https://www.shadcn-svelte.com/themes
 2. Choose or customize colors
 3. Copy generated CSS
@@ -345,14 +381,14 @@ Use this checklist when migrating each component:
 
 ## 📊 Migration Progress
 
-| Phase | Component | Status | Priority | Files Affected |
-|-------|-----------|--------|----------|----------------|
-| 1 | Button | ✅ Complete | High | 14 |
-| 2.1 | GlobalAlert → Sonner Toast | ✅ Complete | Medium | 4 |
-| 2.2 | SelectQueryParam → Select | ⏳ Pending | Medium | 1 |
-| 2.3 | RaceFilterSelect → Select | ⏳ Pending | Low | 1 |
-| 2.4 | MenuToolbar → Breadcrumb + Tabs | ⏳ Pending | Low | 1 |
-| 3 | Form Components | ⏳ Pending | Low | 5+ |
+| Phase | Component                       | Status      | Priority | Files Affected |
+| ----- | ------------------------------- | ----------- | -------- | -------------- |
+| 1     | Button                          | ✅ Complete | High     | 14             |
+| 2.1   | GlobalAlert → Sonner Toast      | ✅ Complete | Medium   | 4              |
+| 2.2   | SelectQueryParam → Select       | ⏳ Pending  | Medium   | 1              |
+| 2.3   | RaceFilterSelect → Select       | ⏳ Pending  | Low      | 1              |
+| 2.4   | MenuToolbar → Breadcrumb + Tabs | ⏳ Pending  | Low      | 1              |
+| 3     | Form Components                 | ⏳ Pending  | Low      | 5+             |
 
 **Overall Progress:** 2/6 phases complete (Phase 1 & 2.1) - **33% Complete**
 
@@ -363,6 +399,7 @@ Use this checklist when migrating each component:
 These components are **domain-specific** and should remain custom:
 
 ### Domain Tables:
+
 - ❌ `EventResultsTable.svelte` - Event-specific layout
 - ❌ `ResultsTable.svelte` - Race results format
 - ❌ `CyclistResultsTable.svelte` - Cyclist history display
@@ -370,16 +407,19 @@ These components are **domain-specific** and should remain custom:
 - ❌ `MembersTable.svelte` - Organization members table
 
 ### Profile Components:
+
 - ❌ `CyclistProfile.svelte` - Cyclist entity display
 - ❌ `OrganizationProfile.svelte` - Organization entity display
 
 ### Navigation:
+
 - ❌ `Header.svelte` - Site-specific navigation and auth logic
 
 ### Forms:
+
 - ❌ `OrganizationForm.svelte` - Domain-specific form logic
 
-**Reason:** These components contain business logic and domain-specific layouts that don't benefit from shadcn migration. They may *use* shadcn components internally (like Button), but the overall component structure should remain custom.
+**Reason:** These components contain business logic and domain-specific layouts that don't benefit from shadcn migration. They may _use_ shadcn components internally (like Button), but the overall component structure should remain custom.
 
 ---
 
@@ -451,6 +491,7 @@ To continue the migration:
 5. **Update this document** when complete
 
 **Completed Migrations:**
+
 - ✅ Phase 1: Button Component (14 files)
 - ✅ Phase 2.1: GlobalAlert → Sonner Toast (4 files)
 

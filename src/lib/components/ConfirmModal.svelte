@@ -57,25 +57,25 @@
 {#if open}
 	<!-- Backdrop with transition -->
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 backdrop-blur-sm transition-opacity"
 		onclick={handleBackdropClick}
 		role="presentation"
 	>
 		<!-- Modal Dialog -->
 		<div
-			class="relative mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl transition-transform"
+			class="relative mx-4 w-full max-w-md rounded-lg bg-card p-6 shadow-xl transition-transform"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="modal-title"
 			aria-describedby="modal-description"
 		>
 			<!-- Title -->
-			<h2 id="modal-title" class="mb-4 text-xl font-bold text-gray-900">
+			<h2 id="modal-title" class="mb-4 text-xl font-bold text-foreground">
 				{title}
 			</h2>
 
 			<!-- Message -->
-			<p id="modal-description" class="mb-6 text-gray-600">
+			<p id="modal-description" class="mb-6 text-muted-foreground">
 				{message}
 			</p>
 
