@@ -3,7 +3,7 @@
 This document tracks the migration of custom UI components to shadcn-svelte components.
 
 **Last Updated:** 2025-11-17
-**Status:** Phase 1 Complete ✅
+**Status:** Phase 1 Complete ✅ | Phase 2.1 Complete ✅
 
 ---
 
@@ -38,16 +38,82 @@ This document tracks the migration of custom UI components to shadcn-svelte comp
 
 ---
 
-## 🔄 Phase 2: Medium Priority (Pending)
+## ✅ Phase 2.1: Completed (2025-11-17)
 
-### 1. GlobalAlert → Toast/Sonner Component
+### GlobalAlert → Sonner Toast Component
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 **Priority:** Medium
 **Effort:** Medium
 **Impact:** Better UX, modern notification system
+**Package Used:** svelte-sonner (instead of shadcn-svelte toast)
 
-#### Current Implementation:
+#### What Was Done:
+- ✅ Installed `svelte-sonner` package
+- ✅ Refactored `alert-store.ts` to use Sonner toast API internally
+- ✅ Maintained backward compatibility - same public API (`openAlert`, `closeAlert`)
+- ✅ Updated root layout to use `<Toaster />` component from svelte-sonner
+- ✅ Updated all 16 unit tests with mocking for Sonner functions
+- ✅ Deleted old `src/lib/components/GlobalAlert.svelte`
+- ✅ Configured 5000ms auto-dismiss to match previous behavior
+- ✅ Set position to `top-center` to match previous placement
+- ✅ Enabled `richColors` prop for colored backgrounds (matches previous GlobalAlert style)
+
+#### Toaster Configuration:
+```svelte
+<Toaster position="top-center" closeButton duration={5000} richColors />
+```
+
+**Props Explained:**
+- `position="top-center"` - Matches previous GlobalAlert placement
+- `closeButton` - Enables manual dismiss button
+- `duration={5000}` - 5 second auto-dismiss (matches previous behavior)
+- `richColors` - **Critical**: Enables colored backgrounds instead of white backgrounds
+
+#### Alert Type Mapping:
+| Alert Type | Sonner Method | Background Color | Previous Color |
+|------------|---------------|------------------|----------------|
+| `'success'` | `toast.success()` | Green | `bg-green-600` |
+| `'error'` | `toast.error()` | Red | `bg-red-600` |
+| `'warning'` | `toast.warning()` | Yellow | `bg-yellow-600` |
+| `'info'` | `toast.info()` | Blue | `bg-blue-600` |
+
+**Note:** The `richColors` prop is essential to match the previous GlobalAlert appearance. Without it, toasts have white backgrounds with only colored icons.
+
+#### Files Modified:
+- `src/lib/stores/alert-store.ts` - Refactored to wrapper around Sonner
+- `src/lib/stores/alert-store.spec.ts` - Updated tests with Sonner mocks
+- `src/routes/+layout.svelte` - Replaced GlobalAlert with Toaster
+- `src/lib/components/GlobalAlert.svelte` - **DELETED**
+
+#### Benefits Achieved:
+- ✅ Better animations and transitions out of the box
+- ✅ Toast stacking - multiple toasts can now appear simultaneously
+- ✅ Better mobile experience with swipe-to-dismiss
+- ✅ Portal-based rendering for proper z-index handling
+- ✅ Smaller implementation (~40 lines vs 150+ lines)
+- ✅ **Zero breaking changes** - all consumer code works unchanged
+
+#### Consumer Code (No Changes Required):
+All 5 files using `alertStore.openAlert()` continue to work without modification:
+- `/src/routes/login/+page.svelte`
+- `/src/routes/signin/+page.svelte`
+- `/src/routes/admin/organizations/new/+page.svelte`
+- `/src/routes/admin/organizations/[id]/edit/+page.svelte`
+- `/src/routes/admin/organizations/[id]/+page.svelte`
+
+---
+
+## 🔄 Phase 2: Medium Priority (Remaining)
+
+### ~~1. GlobalAlert → Toast/Sonner Component~~ ✅ COMPLETE
+
+~~**Status:** ⏳ Pending~~
+~~**Priority:** Medium~~
+~~**Effort:** Medium~~
+~~**Impact:** Better UX, modern notification system~~
+
+#### ~~Current Implementation:~~
 - **File:** `src/lib/components/GlobalAlert.svelte`
 - **Pattern:** Fixed top-center alerts with auto-dismiss
 - **Store:** `src/lib/stores/alert-store.ts`
@@ -282,13 +348,13 @@ Use this checklist when migrating each component:
 | Phase | Component | Status | Priority | Files Affected |
 |-------|-----------|--------|----------|----------------|
 | 1 | Button | ✅ Complete | High | 14 |
-| 2 | GlobalAlert → Toast | ⏳ Pending | Medium | 3 |
-| 2 | SelectQueryParam → Select | ⏳ Pending | Medium | 1 |
-| 2 | RaceFilterSelect → Select | ⏳ Pending | Low | 1 |
-| 2 | MenuToolbar → Breadcrumb + Tabs | ⏳ Pending | Low | 1 |
+| 2.1 | GlobalAlert → Sonner Toast | ✅ Complete | Medium | 4 |
+| 2.2 | SelectQueryParam → Select | ⏳ Pending | Medium | 1 |
+| 2.3 | RaceFilterSelect → Select | ⏳ Pending | Low | 1 |
+| 2.4 | MenuToolbar → Breadcrumb + Tabs | ⏳ Pending | Low | 1 |
 | 3 | Form Components | ⏳ Pending | Low | 5+ |
 
-**Overall Progress:** 1/6 phases complete (Phase 1)
+**Overall Progress:** 2/6 phases complete (Phase 1 & 2.1) - **33% Complete**
 
 ---
 
@@ -378,13 +444,17 @@ npx shadcn-svelte@latest add [component-name]  # Re-run to update
 
 To continue the migration:
 
-1. **Choose a component** from Phase 2
+1. **Choose a component** from Phase 2 (remaining items: 2.2, 2.3, 2.4)
 2. **Follow the migration plan** outlined above
 3. **Use the checklist template** to track progress
 4. **Test thoroughly** before moving to the next component
 5. **Update this document** when complete
 
-**Recommended Next Migration:** GlobalAlert → Toast (High impact, clear improvement)
+**Completed Migrations:**
+- ✅ Phase 1: Button Component (14 files)
+- ✅ Phase 2.1: GlobalAlert → Sonner Toast (4 files)
+
+**Recommended Next Migration:** SelectQueryParam → Select (Phase 2.2) - Medium priority, improves user experience for filtering
 
 ---
 
