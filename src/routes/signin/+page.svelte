@@ -26,7 +26,7 @@
 
 		<form method="POST" use:enhance class="flex w-full max-w-md flex-col gap-4">
 			<div class="flex flex-col gap-2">
-				<label for="name" class="text-sm font-medium text-foreground">
+				<label for="name" class="text-sm font-medium text-foreground/90">
 					{$t('auth.signin.name')}
 				</label>
 				<input
@@ -35,12 +35,12 @@
 					name="name"
 					required
 					value={form?.name || ''}
-					class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="rounded-md border border-border px-4 py-2 focus:border-primary focus:ring-2 focus:ring-ring focus:outline-none"
 				/>
 			</div>
 
 			<div class="flex flex-col gap-2">
-				<label for="email" class="text-sm font-medium text-foreground">
+				<label for="email" class="text-sm font-medium text-foreground/90">
 					{$t('auth.signin.email')}
 				</label>
 				<input
@@ -49,12 +49,12 @@
 					name="email"
 					required
 					value={form?.email || ''}
-					class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="rounded-md border border-border px-4 py-2 focus:border-primary focus:ring-2 focus:ring-ring focus:outline-none"
 				/>
 			</div>
 
 			<div class="flex flex-col gap-2">
-				<label for="password" class="text-sm font-medium text-foreground">
+				<label for="password" class="text-sm font-medium text-foreground/90">
 					{$t('auth.signin.password')}
 				</label>
 				<input
@@ -62,7 +62,7 @@
 					id="password"
 					name="password"
 					required
-					class="rounded-md border border-border px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					class="rounded-md border border-border px-4 py-2 focus:border-primary focus:ring-2 focus:ring-ring focus:outline-none"
 				/>
 			</div>
 
@@ -71,7 +71,7 @@
 					{$t('auth.signin.submit')}
 				</Button>
 
-				<a href={Urls.LOGIN} class="text-blue-600 hover:text-blue-800 hover:underline">
+				<a href={Urls.LOGIN} class="text-primary hover:text-primary/80 hover:underline">
 					{$t('auth.signin.hasAccount')}
 				</a>
 			</div>

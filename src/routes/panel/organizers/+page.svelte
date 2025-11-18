@@ -16,7 +16,7 @@
 />
 
 <div class="mt-8">
-	<div class="rounded-lg bg-muted p-8 text-center">
+	<div class="rounded-lg bg-muted/50 p-8 text-center">
 		<p class="mb-2 text-lg text-muted-foreground">{$t('panel.organizers.comingSoon')}</p>
 		<p class="text-sm text-muted-foreground">
 			{$t('panel.organizers.description')}

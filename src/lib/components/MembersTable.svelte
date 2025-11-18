@@ -14,12 +14,14 @@
 	}
 </script>
 
-<div class="overflow-x-auto rounded-lg bg-white shadow-md">
+<div class="overflow-x-auto rounded-lg bg-card shadow-md">
 	<table class="min-w-full divide-y divide-border">
-		<thead class="bg-muted">
+		<thead class="bg-muted/50">
 			<tr>
 				<!-- Name - always visible -->
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('common.members.table.name')}
 				</th>
 				<!-- Role - hidden on mobile, visible on sm+ -->
@@ -36,7 +38,7 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody class="divide-y divide-border bg-white">
+		<tbody class="divide-y divide-border bg-card">
 			{#if organizers.length === 0}
 				<tr>
 					<td colspan="3" class="px-6 py-8 text-center text-muted-foreground">
@@ -58,7 +60,9 @@
 							{organizer.user?.role?.name ?? '-'}
 						</td>
 						<!-- Date Added - hidden on mobile -->
-						<td class="hidden px-6 py-4 text-sm whitespace-nowrap text-muted-foreground md:table-cell">
+						<td
+							class="hidden px-6 py-4 text-sm whitespace-nowrap text-muted-foreground md:table-cell"
+						>
 							{formatDate(organizer.createdAt)}
 						</td>
 					</tr>

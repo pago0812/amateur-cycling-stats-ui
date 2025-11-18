@@ -11,36 +11,50 @@
 	}
 </script>
 
-<div class="overflow-x-auto rounded-lg bg-white shadow-md">
+<div class="overflow-x-auto rounded-lg bg-card shadow-md">
 	<table class="min-w-full divide-y divide-border">
-		<thead class="bg-muted">
+		<thead class="bg-muted/50">
 			<tr>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.date')}
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.position')}
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.race')}
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.distance')}
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.ranking')}
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.category')}
 				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase">
+				<th
+					class="px-6 py-3 text-left text-xs font-medium tracking-wider text-muted-foreground uppercase"
+				>
 					{$t('cyclists.table.points')}
 				</th>
 			</tr>
 		</thead>
-		<tbody class="divide-y divide-border bg-white">
+		<tbody class="divide-y divide-border bg-card">
 			{#each raceResults as result (result.id)}
-				<tr class="hover:bg-muted">
+				<tr class="hover:bg-muted/30">
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
 						{formatDateToMMDD(result.raceDateTime)}
 					</td>
@@ -48,7 +62,10 @@
 						{result.place}
 					</td>
 					<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
-						<a href={getEventUrl(result)} class="text-blue-600 hover:text-blue-800 hover:underline">
+						<a
+							href={getEventUrl(result)}
+							class="text-primary hover:text-primary/80 hover:underline"
+						>
 							{result.eventName}
 						</a>
 					</td>

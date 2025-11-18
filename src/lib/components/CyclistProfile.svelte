@@ -8,7 +8,7 @@
 
 <div class="space-y-8">
 	<!-- Profile Header -->
-	<div class="rounded-lg bg-white p-6 shadow">
+	<div class="rounded-lg bg-card p-6 shadow">
 		<div class="flex items-center gap-6">
 			<!-- Profile Photo Placeholder -->
 			<div
@@ -43,7 +43,7 @@
 		{#if raceResults && raceResults.length > 0}
 			<CyclistResultsTable {raceResults} />
 		{:else}
-			<div class="rounded-lg bg-muted py-8 text-center text-muted-foreground">
+			<div class="rounded-lg bg-muted/50 py-8 text-center text-muted-foreground">
 				{$t('cyclists.profile.noResults')}
 			</div>
 		{/if}

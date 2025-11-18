@@ -16,7 +16,7 @@
 
 	{#if data.error}
 		<div class="py-8 text-center">
-			<p class="text-red-600">{$t('common.general.error')}: {data.error}</p>
+			<p class="text-destructive">{$t('common.general.error')}: {data.error}</p>
 		</div>
 	{:else if data.events.length === 0}
 		<div class="py-8 text-center">

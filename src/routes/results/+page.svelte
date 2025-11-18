@@ -30,7 +30,7 @@
 	</div>
 
 	{#if data.error}
-		<div class="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+		<div class="rounded border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive">
 			{data.error}
 		</div>
 	{:else if data.events.length === 0}

@@ -19,13 +19,13 @@
 	function getStateBadgeClasses(state: OrganizationState): string {
 		switch (state) {
 			case 'ACTIVE':
-				return 'bg-green-100 text-green-800';
+				return 'bg-success/10 text-success';
 			case 'WAITING_OWNER':
-				return 'bg-yellow-100 text-yellow-800';
+				return 'bg-warning/10 text-warning';
 			case 'DISABLED':
-				return 'bg-muted text-foreground';
+				return 'bg-muted text-muted-foreground';
 			default:
-				return 'bg-muted text-foreground';
+				return 'bg-muted text-muted-foreground';
 		}
 	}
 
@@ -48,19 +48,25 @@
 <dl class="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2">
 	<!-- Name -->
 	<div>
-		<dt class="text-sm font-medium text-muted-foreground">{$t('admin.organizations.table.name')}</dt>
+		<dt class="text-sm font-medium text-muted-foreground">
+			{$t('admin.organizations.table.name')}
+		</dt>
 		<dd class="mt-1 text-lg text-foreground">{organization.name}</dd>
 	</div>
 
 	<!-- Description -->
 	<div>
-		<dt class="text-sm font-medium text-muted-foreground">{$t('admin.organizations.table.description')}</dt>
+		<dt class="text-sm font-medium text-muted-foreground">
+			{$t('admin.organizations.table.description')}
+		</dt>
 		<dd class="mt-1 text-foreground">{organization.description || '-'}</dd>
 	</div>
 
 	<!-- Created Date -->
 	<div>
-		<dt class="text-sm font-medium text-muted-foreground">{$t('admin.organizations.table.createdAt')}</dt>
+		<dt class="text-sm font-medium text-muted-foreground">
+			{$t('admin.organizations.table.createdAt')}
+		</dt>
 		<dd class="mt-1 text-foreground">{formatDate(organization.createdAt)}</dd>
 	</div>
 
@@ -82,7 +88,9 @@
 
 	<!-- Status -->
 	<div>
-		<dt class="text-sm font-medium text-muted-foreground">{$t('admin.organizations.state.label')}</dt>
+		<dt class="text-sm font-medium text-muted-foreground">
+			{$t('admin.organizations.state.label')}
+		</dt>
 		<dd class="mt-1">
 			<span
 				class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {getStateBadgeClasses(

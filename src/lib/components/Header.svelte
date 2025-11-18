@@ -37,7 +37,7 @@
 <!-- Hidden logout form -->
 <form method="POST" action="/?/logout" bind:this={logoutForm} class="hidden"></form>
 
-<nav class="bg-blue-600 text-white">
+<nav class="bg-primary text-primary-foreground">
 	<div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 		<div class="flex h-16 items-center justify-between">
 			<!-- Logo -->
@@ -72,7 +72,7 @@
 			<div class="sm:hidden">
 				<Button
 					variant="ghost"
-										size="sm"
+					size="sm"
 					onclick={toggleMobileMenu}
 					aria-label={$t('common.navigation.openMenu')}
 					aria-expanded={mobileMenuOpen}
@@ -109,28 +109,40 @@
 		></div>
 
 		<!-- Drawer -->
-		<div class="fixed top-0 right-0 z-50 h-full w-64 bg-blue-600 shadow-lg">
+		<div class="fixed top-0 right-0 z-50 h-full w-64 bg-primary shadow-lg">
 			<nav class="flex flex-col gap-4 p-10 text-right">
-				<a href={Urls.HOME} class="text-white hover:text-blue-200" onclick={closeMobileMenu}>
+				<a
+					href={Urls.HOME}
+					class="text-primary-foreground hover:text-primary-foreground/80"
+					onclick={closeMobileMenu}
+				>
 					{$t('common.navigation.home')}
 				</a>
-				<a href={Urls.RESULTS} class="text-white hover:text-blue-200" onclick={closeMobileMenu}>
+				<a
+					href={Urls.RESULTS}
+					class="text-primary-foreground hover:text-primary-foreground/80"
+					onclick={closeMobileMenu}
+				>
 					{$t('common.navigation.results')}
 				</a>
-				<a href={Urls.TEAMS} class="text-white hover:text-blue-200" onclick={closeMobileMenu}>
+				<a
+					href={Urls.TEAMS}
+					class="text-primary-foreground hover:text-primary-foreground/80"
+					onclick={closeMobileMenu}
+				>
 					{$t('common.navigation.teams')}
 				</a>
 
 				{#if user}
 					<a
 						href={portalUrl}
-						class="font-bold text-white hover:text-blue-200"
+						class="font-bold text-primary-foreground hover:text-primary-foreground/80"
 						onclick={closeMobileMenu}
 					>
 						{$t('common.navigation.account')}
 					</a>
 					<button
-						class="text-white hover:text-blue-200"
+						class="text-primary-foreground hover:text-primary-foreground/80"
 						onclick={() => {
 							handleLogout();
 							closeMobileMenu();
@@ -141,7 +153,7 @@
 				{:else}
 					<a
 						href={Urls.LOGIN}
-						class="font-bold text-white hover:text-blue-200"
+						class="font-bold text-primary-foreground hover:text-primary-foreground/80"
 						onclick={closeMobileMenu}
 					>
 						{$t('common.navigation.login')}

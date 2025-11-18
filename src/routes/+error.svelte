@@ -9,7 +9,7 @@
 
 <section class="py-6 sm:py-8 md:py-10 lg:py-12">
 	<div>
-		<div class="rounded-lg border border-border bg-muted px-8 py-12 text-center">
+		<div class="rounded-lg border border-border bg-muted/50 px-8 py-12 text-center">
 			<!-- Error Status Code -->
 			<h1 class="mb-4 text-6xl font-bold text-foreground">
 				{$page.status}

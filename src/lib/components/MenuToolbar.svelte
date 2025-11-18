@@ -47,7 +47,7 @@
 </script>
 
 <!-- Menu Navigation Toolbar -->
-<nav class="bg-muted p-4">
+<nav class="bg-muted/50 p-4">
 	<div class="flex h-full flex-col gap-2">
 		<!-- Row 1: Breadcrumbs + Action Button -->
 		<div class="flex h-9 items-center gap-4">
@@ -107,7 +107,7 @@
 					{#each actions as actionItem}
 						<Button
 							variant={actionItem.variant ?? 'outline'}
-									size="sm"
+							size="sm"
 							href={actionItem.href}
 							onclick={actionItem.href ? undefined : actionItem.onClick}
 						>

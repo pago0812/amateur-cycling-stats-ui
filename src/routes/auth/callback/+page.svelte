@@ -61,10 +61,10 @@
 	});
 </script>
 
-<div class="flex items-center justify-center bg-muted px-4 py-8">
+<div class="flex items-center justify-center bg-muted/50 px-4 py-8">
 	<div class="text-center">
 		<div
-			class="mb-4 inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"
+			class="mb-4 inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-primary"
 		></div>
 		<p class="text-muted-foreground">Processing authentication...</p>
 

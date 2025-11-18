@@ -15,13 +15,17 @@
 	<h2 class="mb-8 text-3xl font-bold">{data.event.name}</h2>
 
 	{#if data.event.races.length > 0}
-		<RaceFilterSelect event={data.event} currentRaceId={data.race?.id} filterState={data.filterState} />
+		<RaceFilterSelect
+			event={data.event}
+			currentRaceId={data.race?.id}
+			filterState={data.filterState}
+		/>
 	{/if}
 
 	{#if data.race?.raceResults && data.race.raceResults.length > 0}
 		<ResultsTable raceResults={data.race.raceResults} />
 	{:else}
-		<div class="rounded-lg border border-border bg-muted py-12 text-center">
+		<div class="rounded-lg border border-border bg-muted/50 py-12 text-center">
 			<p class="mb-2 text-lg text-muted-foreground">
 				{$t('races.noResults.title')}
 			</p>
