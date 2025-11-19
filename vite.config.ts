@@ -1,13 +1,17 @@
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, loadEnv } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 
-export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
-	server: {
-		host: '127.0.0.1'
-	},
-	test: {
+export default defineConfig(({ mode }) => {
+	const env = loadEnv(mode, process.cwd(), '');
+
+	return {
+		plugins: [tailwindcss(), sveltekit()],
+		server: {
+			host: '127.0.0.1',
+			port: parseInt(env.DEV_SERVER_PORT || '5173')
+		},
+		test: {
 		expect: { requireAssertions: true },
 		projects: [
 			{
@@ -34,6 +38,7 @@ export default defineConfig({
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}
 			}
-		]
-	}
+			]
+		}
+	};
 });

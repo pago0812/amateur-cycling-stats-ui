@@ -126,6 +126,157 @@ npm run test         # Run all tests (unit + e2e)
 npm run seed:users   # Seed test users (run after supabase db reset)
 ```
 
+## Multi-Worktree Development Setup
+
+This project supports **multiple git worktrees** with independent Supabase instances, allowing parallel development across different branches without conflicts.
+
+### Port Allocation
+
+Each location (main + worktrees) uses unique ports for both Supabase and dev server:
+
+| Location | Dev Server | Supabase API | DB Port | Studio | Project ID |
+|----------|-----------|--------------|---------|---------|-----------|
+| **Main (develop)** | 5173 | 54321 | 54322 | 54323 | `main-develop` |
+| **worktree-one** | 5174 | 55321 | 55322 | 55323 | `worktree-one` |
+| **worktree-two** | 5175 | 56321 | 56322 | 56323 | `worktree-two` |
+| **worktree-three** | 5176 | 57321 | 57322 | 57323 | `worktree-three` |
+
+### Configuration Files Per Location
+
+Each location has its own configuration:
+
+**1. `.env`** - Port configuration (single source of truth for all ports)
+**2. `supabase/config.toml`** - Uses `env()` to read ports from `.env`, unique `project_id`
+**3. `vite.config.ts`** - Dev server port configuration
+**4. `package.json`** - Supabase management scripts
+
+### Environment-Based Port Configuration
+
+All ports are configured via environment variables in each `.env` file:
+
+```env
+# Application Configuration
+SITE_URL=http://127.0.0.1:5173
+DEV_SERVER_PORT=5173
+
+# Supabase Configuration (Local Development)
+SUPABASE_URL=http://127.0.0.1:54321
+
+# Supabase Local Instance Ports
+SUPABASE_API_PORT=54321
+SUPABASE_DB_PORT=54322
+SUPABASE_DB_SHADOW_PORT=54320
+SUPABASE_STUDIO_PORT=54323
+SUPABASE_INBUCKET_PORT=54324
+SUPABASE_POOLER_PORT=54329
+SUPABASE_ANALYTICS_PORT=54327
+```
+
+The `supabase/config.toml` file reads these values using the `env()` function:
+```toml
+[api]
+port = "env(SUPABASE_API_PORT)"
+
+[db]
+port = "env(SUPABASE_DB_PORT)"
+shadow_port = "env(SUPABASE_DB_SHADOW_PORT)"
+
+[studio]
+port = "env(SUPABASE_STUDIO_PORT)"
+```
+
+**Benefits:**
+- ✅ **Single source of truth** - All ports in one `.env` file
+- ✅ **Easy to modify** - Change ports without editing TOML
+- ✅ **No hardcoded values** - Flexible configuration
+- ✅ **Simple worktree creation** - Copy `.env` template and update ports
+
+### Working with Multiple Instances
+
+**Starting a Worktree Instance:**
+```bash
+cd worktree/worktree-one
+npm run supabase:start  # Starts Supabase on ports 55321-55329
+npm run dev             # Starts dev server on port 5174
+# OR combine both:
+npm run dev:full
+```
+
+**Access Points:**
+- **App**: http://localhost:5174 (worktree-one example)
+- **Supabase Studio**: http://localhost:55323
+- **API**: http://localhost:55321
+
+**Managing Instances:**
+```bash
+npm run supabase:status  # Check instance status
+npm run supabase:stop    # Stop instance
+npm run supabase:reset   # Reset database with migrations
+npm run supabase:types   # Regenerate types from local DB
+```
+
+**Running Multiple Instances Simultaneously:**
+All 4 instances can run at the same time without port conflicts. Each has independent:
+- Database state
+- User sessions
+- Migration history
+- Seed data
+
+### Creating New Worktrees
+
+To create a new worktree with its own Supabase instance:
+
+1. **Create worktree:**
+   ```bash
+   git worktree add worktree/worktree-four feature-branch
+   cd worktree/worktree-four
+   ```
+
+2. **Copy configuration from existing worktree:**
+   ```bash
+   cp ../worktree-one/supabase/config.toml supabase/
+   cp ../worktree-one/.env .
+   ```
+
+3. **Update `.env` with new ports** (use next sequential range):
+   ```env
+   DEV_SERVER_PORT=5177
+   SUPABASE_API_PORT=58321
+   SUPABASE_DB_PORT=58322
+   SUPABASE_DB_SHADOW_PORT=58320
+   SUPABASE_STUDIO_PORT=58323
+   SUPABASE_INBUCKET_PORT=58324
+   SUPABASE_POOLER_PORT=58329
+   SUPABASE_ANALYTICS_PORT=58327
+   SITE_URL=http://127.0.0.1:5177
+   SUPABASE_URL=http://127.0.0.1:58321
+   ```
+
+4. **Update `supabase/config.toml` project_id:**
+   ```toml
+   project_id = "worktree-four"
+   ```
+
+5. **Update `vite.config.ts` port:**
+   ```typescript
+   server: {
+     host: '127.0.0.1',
+     port: 5177
+   }
+   ```
+
+6. **Update port allocation table** in this document
+
+**Note:** The `config.toml` uses `env()` to read ports, so you only need to change the project_id!
+
+### Best Practices
+
+- **One Supabase instance per worktree** - Keeps data isolated
+- **Stop unused instances** - Free up system resources
+- **Use consistent port ranges** - Easy to remember (54xxx, 55xxx, 56xxx, 57xxx)
+- **Document port allocation** - Prevent conflicts when adding worktrees
+- **Independent `.env` files** - Each worktree configured separately
+
 ## Architecture
 
 ### Directory Structure
@@ -226,7 +377,7 @@ All services located in `src/lib/services/`:
 3. **race-results.ts** - Race results operations (getRaceResultsByRaceId)
 4. **cyclists.ts** - Cyclist operations (getCyclistById - fetches cyclist without race results, pair with getRaceResultsByUserId for parallel fetching)
 5. **users.ts** - User operations (getAuthUser, isAuthenticated)
-6. **users-management.ts** - User creation & authentication (login, signin)
+6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser)
 7. **roles.ts** - Role management (getRoles)
 8. **organizations.ts** - Organization operations (getAllOrganizations, getOrganizationById, createOrganization, updateOrganization, updateOrganizationState, deleteOrganization, deactivateOrganization, activateOrganization, permanentlyDeleteOrganization)
 9. **organization-invitations.ts** - Invitation operations (createInvitation, getInvitationByEmail, getInvitationByOrganizationId, updateInvitationStatus, incrementRetryCount, deleteInvitationByOrganizationId)
