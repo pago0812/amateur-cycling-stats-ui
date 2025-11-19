@@ -30,12 +30,12 @@ The project uses a **two-stage deployment** approach:
 
 ### Infrastructure
 
-| Service | URL | Managed By |
-|---------|-----|------------|
-| **Dev Application** | https://dev.amateurcyclingstats.com | Coolify |
-| **Admin Board** | https://admin.amateurcyclingstats.com | Coolify |
-| **Supabase Instance** | Self-hosted via Coolify | Coolify |
-| **PostgreSQL Database** | Internal (port 5432) | Coolify |
+| Service                 | URL                                   | Managed By |
+| ----------------------- | ------------------------------------- | ---------- |
+| **Dev Application**     | https://dev.amateurcyclingstats.com   | Coolify    |
+| **Admin Board**         | https://admin.amateurcyclingstats.com | Coolify    |
+| **Supabase Instance**   | Self-hosted via Coolify               | Coolify    |
+| **PostgreSQL Database** | Internal (port 5432)                  | Coolify    |
 
 ---
 
@@ -46,10 +46,12 @@ The project uses a **two-stage deployment** approach:
 #### 1. Automatic Dev Deployment (`.github/workflows/deploy-dev.yml`)
 
 **Triggers:**
+
 - Push to `develop` branch
 - Manual trigger via GitHub UI (Actions tab)
 
 **What it does:**
+
 1. Installs Node.js and dependencies
 2. Installs Supabase CLI
 3. Runs `supabase db reset --db-url` (migrations + seed.sql via direct PostgreSQL connection)
@@ -63,13 +65,16 @@ The project uses a **two-stage deployment** approach:
 #### 2. Manual Migration (`.github/workflows/manual-migration.yml`)
 
 **Triggers:**
+
 - Manual trigger only (Actions tab)
 
 **Options:**
+
 - **Reset Database**: Full reset with migrations and seed.sql (destructive)
 - **Include Seeding**: Whether to run user-dependent seeding
 
 **Use cases:**
+
 - Run migrations without deploying code
 - Refresh seed data without code changes
 - Quick database reset during development
@@ -85,14 +90,24 @@ The project uses a **two-stage deployment** approach:
 3. ✅ Coolify configured and listening to repository
 4. ✅ MailerSend account with verified sender
 
-### Step 1: Configure GitHub Secrets
+### Step 1: Create GitHub Environment with Secrets and Variables
 
-Navigate to your GitHub repository:
-**Settings → Secrets and variables → Actions → New repository secret**
+GitHub Environments provide environment-specific configuration with deployment protection rules.
 
-Add the following **3 secrets** (for self-hosted Supabase):
+**Navigate to:** Settings → Environments → New environment
 
-#### `DATABASE_URL`
+#### Create "dev" Environment
+
+1. **Name**: `dev`
+2. **Deployment branches**: Select "Selected branches" → Add rule: `develop`
+3. Click "Configure environment"
+
+#### Add Environment Secrets (Sensitive Data)
+
+**Settings → Environments → dev → Add secret**
+
+##### `DATABASE_URL`
+
 - **What**: PostgreSQL connection string for direct database access
 - **Format**: `postgresql://postgres:PASSWORD@HOST:PORT/postgres`
 - **Where to get it**:
@@ -104,32 +119,74 @@ Add the following **3 secrets** (for self-hosted Supabase):
 - **Example**: `postgresql://postgres:mypassword@db.example.com:5432/postgres`
 - **⚠️ Warning**: Keep this secret! Contains database password
 
-#### `SUPABASE_URL`
-- **What**: Your self-hosted Supabase API URL
-- **Where to get it**: Your Supabase instance URL or Coolify app domain
-- **Example**: `https://supabase.yourdomain.com`
-- **Note**: This is the API endpoint, NOT the database URL
+##### `SUPABASE_SERVICE_ROLE_KEY`
 
-#### `SUPABASE_SERVICE_ROLE_KEY`
 - **What**: Service role key with admin privileges for seeding operations
 - **Where to get it**:
   - Coolify → Supabase service → Environment variables → `SERVICE_ROLE_KEY`
   - Or Supabase Studio → Settings → API → service_role key
 - **⚠️ Warning**: Keep this secret! It bypasses Row Level Security
 
-### Step 2: Configure Environment Variables
+**Note:** Only 2 secrets needed for CI/CD workflows. MAILERSEND credentials are configured in Coolify, not GitHub Actions.
+
+#### Add Environment Variables (Non-Sensitive Configuration)
+
+**Settings → Environments → dev → Add variable**
+
+##### `SUPABASE_URL`
+
+- **What**: Your self-hosted Supabase API URL
+- **Value**: `https://supabase.yourdomain.com` (your actual Supabase instance URL)
+- **Note**: This is the API endpoint, NOT the database URL
+
+##### `SITE_URL`
+
+- **What**: Your application's public URL
+- **Value**: `https://dev.amateurcyclingstats.com`
+- **Used for**: Auth redirects, config.toml parsing, deployment summaries
+
+**Why use Environment Variables instead of Secrets?**
+
+- Non-sensitive values (URLs are public)
+- Visible in workflow logs for easier debugging
+- Can be referenced in deployment summaries
+- Easy to update without re-entering secrets
+
+#### Future Environments (Optional)
+
+When ready to add staging or production:
+
+1. Create new environment (e.g., `staging`, `production`)
+2. Set deployment branch rules (e.g., `staging` branch, `main` branch)
+3. Add same secrets/variables with environment-specific values
+4. For production, add protection rules:
+   - Required reviewers: 2+
+   - Wait timer: 5-10 minutes
+   - Prevent self-review
+
+**Environment Comparison:**
+
+| Environment    | Branch  | Secrets Required                        | Variables Required     | Protection   |
+| -------------- | ------- | --------------------------------------- | ---------------------- | ------------ |
+| **dev**        | develop | DATABASE_URL, SUPABASE_SERVICE_ROLE_KEY | SUPABASE_URL, SITE_URL | None         |
+| **staging**    | staging | (same secrets)                          | (staging URLs)         | 1 reviewer   |
+| **production** | main    | (same secrets)                          | (prod URLs)            | 2+ reviewers |
+
+### Step 2: Configure Local Environment Variables
 
 1. Copy `.env.example` to `.env`:
+
    ```bash
    cp .env.example .env
    ```
 
 2. Fill in your environment-specific values:
+
    ```env
-   SITE_URL=https://dev.amateurcyclingstats.com
-   SUPABASE_URL=https://supabase.yourdomain.com  # Your self-hosted Supabase API URL
-   SUPABASE_ANON_KEY=your-anon-key  # From Coolify env vars or Supabase Studio
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key  # From Coolify env vars
+   SITE_URL=http://127.0.0.1:5173
+   SUPABASE_URL=http://127.0.0.1:54321
+   SUPABASE_ANON_KEY=your-local-anon-key  # From `npm run supabase:start`
+   SUPABASE_SERVICE_ROLE_KEY=your-local-service-role-key
    MAILERSEND_API_KEY=mlsn.your-key
    MAILERSEND_FROM_EMAIL=noreply@dev.amateurcyclingstats.com
    MAILERSEND_FROM_NAME=Amateur Cycling Stats
@@ -169,6 +226,7 @@ graph LR
 ### Step-by-Step Process
 
 1. **Developer makes changes**
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -196,6 +254,7 @@ graph LR
 When you add or modify migrations:
 
 1. **Edit existing migration** (recommended for active development):
+
    ```bash
    # Edit the migration file
    vim supabase/migrations/20250115000001_core_foundation.sql
@@ -211,6 +270,7 @@ When you add or modify migrations:
    ```
 
 2. **Create new migration** (when ready for production):
+
    ```bash
    supabase migration new add_feature_x
    # Edit the generated file
@@ -229,6 +289,7 @@ When you add or modify migrations:
 ### Running Migrations Without Code Deployment
 
 Use the manual migration workflow when you need to:
+
 - Fix database issues quickly
 - Refresh seed data
 - Test migrations without deploying code
@@ -263,18 +324,21 @@ To run migrations against production (future use):
 #### ❌ **"Database connection failed"**
 
 **Symptoms:**
+
 ```
 Error: could not connect to server
 Error: FATAL: password authentication failed
 ```
 
 **Solutions:**
+
 1. Verify `DATABASE_URL` secret is correct
 2. Check database host is accessible from GitHub Actions
 3. Ensure database port is correct (default: 5432)
 4. Verify PostgreSQL password is correct
 
 **How to fix:**
+
 - Double-check the `DATABASE_URL` format: `postgresql://postgres:PASSWORD@HOST:PORT/postgres`
 - Verify the database host is publicly accessible or use VPN/tunnel if internal
 - Update the GitHub secret with correct connection string
@@ -285,17 +349,20 @@ Error: FATAL: password authentication failed
 #### ❌ **"Database reset failed"**
 
 **Symptoms:**
+
 ```
 Error: Failed to run migrations
 Error: migration xxx failed
 ```
 
 **Solutions:**
+
 1. Verify migration files have no syntax errors
 2. Check for conflicts with existing data
 3. Ensure database has correct permissions
 
 **How to fix:**
+
 ```bash
 # Test migrations locally first
 supabase db reset
@@ -309,17 +376,20 @@ supabase db reset
 #### ❌ **"User seeding failed"**
 
 **Symptoms:**
+
 ```
 Error: Failed to create user
 Error: User already exists
 ```
 
 **Solutions:**
+
 1. Check if users already exist in the database
 2. Verify `SUPABASE_SERVICE_ROLE_KEY` is correct
 3. Ensure the seed script handles existing users gracefully
 
 **How to fix:**
+
 - Use `supabase db reset` for clean slate
 - Or modify `seed-users.ts` to check for existing users before creating
 
@@ -328,15 +398,18 @@ Error: User already exists
 #### ❌ **"Coolify not deploying after successful migration"**
 
 **Symptoms:**
+
 - GitHub Actions workflow succeeds
 - But Coolify doesn't deploy the app
 
 **Solutions:**
+
 1. Check Coolify dashboard for deployment logs
 2. Verify Coolify is watching the correct branch (`develop`)
 3. Check if Coolify has access to the repository
 
 **How to fix:**
+
 - Log into Coolify admin at https://admin.amateurcyclingstats.com
 - Check deployment settings and logs
 - Manually trigger deployment if needed
@@ -346,18 +419,21 @@ Error: User already exists
 ### Viewing Logs
 
 **GitHub Actions Logs:**
+
 1. Go to GitHub → Actions tab
 2. Click on the workflow run
 3. Click on the job name to see detailed logs
 4. Expand each step to see full output
 
 **Coolify Logs:**
+
 1. Log into https://admin.amateurcyclingstats.com
 2. Navigate to your project
 3. Click on "Deployments" tab
 4. View real-time logs for current deployment
 
 **Supabase Logs:**
+
 1. Go to Supabase Dashboard
 2. Select your project
 3. Navigate to "Logs" section
@@ -368,17 +444,20 @@ Error: User already exists
 ### Getting Help
 
 **Documentation:**
+
 - Supabase CLI: https://supabase.com/docs/guides/cli
 - GitHub Actions: https://docs.github.com/en/actions
 - Coolify: https://coolify.io/docs
 - SvelteKit: https://kit.svelte.dev/docs
 
 **Project-Specific:**
+
 - `CLAUDE.md` - Project architecture and patterns
 - `README.md` - Quick start guide
 - `documentation/` - Detailed implementation guides
 
 **Contact:**
+
 - Create an issue in the GitHub repository
 - Check Coolify dashboard status
 - Review Supabase project health
@@ -390,6 +469,7 @@ Error: User already exists
 ### Development
 
 1. **Always test locally first**
+
    ```bash
    supabase db reset
    npm run seed:users
@@ -397,6 +477,7 @@ Error: User already exists
    ```
 
 2. **Use descriptive commit messages**
+
    ```bash
    git commit -m "feat: add user profile page"
    git commit -m "fix: resolve authentication redirect loop"
@@ -460,10 +541,10 @@ When ready for production:
 
 ## Changelog
 
-| Date | Change | Author |
-|------|--------|--------|
+| Date       | Change                                                                | Author      |
+| ---------- | --------------------------------------------------------------------- | ----------- |
 | 2025-01-19 | Updated CI/CD for self-hosted Supabase with simplified 3-secret setup | Claude Code |
-| 2025-01-19 | Initial CI/CD setup for dev environment | Claude Code |
+| 2025-01-19 | Initial CI/CD setup for dev environment                               | Claude Code |
 
 ---
 
