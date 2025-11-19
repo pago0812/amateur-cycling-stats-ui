@@ -9,8 +9,7 @@ export {
 	checkUserExists,
 	deleteAuthUserById,
 	generateInvitationLink,
-	createAuthUserForInvitation,
-	createOrganizerOwnerUser,
+	createOnBehalfOrganizerOwner,
 	type DeleteUserResult,
 	type GenerateInvitationLinkParams,
 	type GenerateInvitationLinkResult
