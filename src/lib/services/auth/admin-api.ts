@@ -11,7 +11,7 @@ import type {
 	CreateOnBehalfOrganizerOwnerResponse
 } from '$lib/types/services';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
-import { adaptOrganizerFromRpc } from '$lib/adapters';
+import { adaptOrganizerFromAuthUserRpc } from '$lib/adapters';
 
 /**
  * Checks if a user exists by email address.
@@ -182,7 +182,8 @@ export async function createOnBehalfOrganizerOwner(
 		const authUserId = authData.user.id;
 
 		// Step 2: Create public user with organizer_owner role and link to organization
-		const { data: userId, error: rpcError } = await adminClient.rpc(
+		// RPC returns complete AuthUserRpcResponse structure
+		const { data: organizerData, error: rpcError } = await adminClient.rpc(
 			'create_user_with_organizer_owner',
 			{
 				p_auth_user_id: authUserId,
@@ -201,35 +202,17 @@ export async function createOnBehalfOrganizerOwner(
 			};
 		}
 
-		if (!userId) {
-			return {
-				success: false,
-				error: 'No user ID returned from RPC'
-			};
-		}
-
-		// Step 3: Fetch complete organizer data using get_auth_user RPC
-		const { data: organizerData, error: fetchError } = await adminClient.rpc('get_auth_user', {
-			user_id: userId
-		});
-
-		if (fetchError) {
-			console.error('[Auth] Failed to fetch organizer data:', fetchError);
-			return {
-				success: false,
-				error: fetchError.message
-			};
-		}
-
 		if (!organizerData) {
 			return {
 				success: false,
-				error: 'No organizer data returned from get_auth_user'
+				error: 'No organizer data returned from RPC'
 			};
 		}
 
-		// Step 4: Adapt to Organizer domain type
-		const organizer = adaptOrganizerFromRpc(organizerData as unknown as AuthUserRpcResponse);
+		// Adapt RPC response to Organizer domain type
+		const organizer = adaptOrganizerFromAuthUserRpc(
+			organizerData as unknown as AuthUserRpcResponse
+		);
 
 		return {
 			success: true,
@@ -244,4 +227,3 @@ export async function createOnBehalfOrganizerOwner(
 		};
 	}
 }
-

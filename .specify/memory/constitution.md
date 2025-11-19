@@ -28,6 +28,7 @@ Follow-up TODOs:
 This project uses **Svelte 5 ONLY** - never Svelte 4 syntax.
 
 **Rules:**
+
 - ✅ MUST use `$props()` for component props
 - ✅ MUST use `$state()` for reactive state
 - ✅ MUST use `$derived()` for computed values
@@ -45,6 +46,7 @@ This project uses **Svelte 5 ONLY** - never Svelte 4 syntax.
 **NEVER** use `any` type in the codebase. All types must be explicit and type-safe.
 
 **Rules:**
+
 - ✅ MUST use explicit Supabase response types for complex queries
 - ✅ MUST use explicit DB type aliases (e.g., `EventDB`, `RaceDB`)
 - ✅ MUST use type casting for JSONB RPC responses
@@ -58,6 +60,7 @@ This project uses **Svelte 5 ONLY** - never Svelte 4 syntax.
 All domain entities use **camelCase** properties. Database types (snake_case) are ONLY used in services and adapters.
 
 **Rules:**
+
 - ✅ MUST use domain types (camelCase) throughout components, pages, and stores
 - ✅ MUST use `id` field ONLY for all domain entities (no `documentId`, no dual naming)
 - ✅ MUST use DB type aliases (`TableNameDB`) instead of `Tables<'table_name'>`
@@ -72,6 +75,7 @@ All domain entities use **camelCase** properties. Database types (snake_case) ar
 All IDs use PostgreSQL UUIDs (generated via `gen_random_uuid()`).
 
 **Rules:**
+
 - ✅ Database stores single `id` field: UUID as primary key
 - ✅ Domain layer uses `id: string` (receives UUID value from adapters)
 - ✅ Adapters translate at DB boundary: `db.id` → `domain.id`
@@ -85,6 +89,7 @@ All IDs use PostgreSQL UUIDs (generated via `gen_random_uuid()`).
 **Root layout ONLY** calls `getSessionUser()`. All nested layouts/pages use `parent()` to access user from root layout.
 
 **Rules:**
+
 - ✅ Root layout (`/src/routes/+layout.server.ts`) MUST call `getSessionUser()`
 - ✅ Nested layouts/pages MUST use `parent()` to access user data
 - ✅ Form actions MAY call `getSessionUser()` when state changes (e.g., after login)
@@ -98,6 +103,7 @@ All IDs use PostgreSQL UUIDs (generated via `gen_random_uuid()`).
 **NEVER** use hardcoded strings in user-facing components or error messages.
 
 **Rules:**
+
 - ✅ MUST use `$t()` (client) or `t(locale, key)` (server) for all user-facing text
 - ✅ Error messages in SvelteKit `error()` MUST use i18n: `error(404, t(locale, 'feature.errors.notFound'))`
 - ✅ MUST organize translations by feature: `src/lib/i18n/locales/{locale}/{feature}.json`
@@ -112,6 +118,7 @@ All IDs use PostgreSQL UUIDs (generated via `gen_random_uuid()`).
 ALWAYS use explicit DB type aliases and adapters for all Supabase service methods.
 
 **Rules:**
+
 - ✅ MUST use DB type aliases: `TableNameDB` (e.g., `CyclistDB`, `EventDB`)
 - ✅ MUST use adapters to transform snake_case → camelCase at service boundary
 - ✅ MUST return domain types (camelCase) to consumers
@@ -126,6 +133,7 @@ ALWAYS use explicit DB type aliases and adapters for all Supabase service method
 All CRUD operations follow consistent patterns based on Organizations feature implementation.
 
 **Rules:**
+
 - ✅ MUST use MenuToolbar with breadcrumbs and actions
 - ✅ MUST use progressive enhancement: forms work without JavaScript
 - ✅ MUST use GlobalAlert with auto-close (5 seconds) for user feedback
@@ -142,6 +150,7 @@ All CRUD operations follow consistent patterns based on Organizations feature im
 All tables have RLS enabled with role-based policies.
 
 **Rules:**
+
 - ✅ MUST enable RLS on all tables
 - ✅ MUST use role-based policies: `PUBLIC`, `CYCLIST`, `ORGANIZER_STAFF`, `ORGANIZER_OWNER`, `ADMIN`
 - ✅ MUST use helper functions: `is_admin()`, `is_organizer()`, `is_in_event_organization()`
@@ -156,6 +165,7 @@ All tables have RLS enabled with role-based policies.
 Complex multi-step operations MUST use PostgreSQL RPC functions for atomicity.
 
 **Rules:**
+
 - ✅ MUST use RPC functions for operations requiring multiple steps
 - ✅ MUST use `SECURITY DEFINER` for functions that bypass RLS
 - ✅ MUST validate inputs within RPC functions
@@ -183,6 +193,7 @@ All code MUST pass these quality gates before merge:
 **CRITICAL:** Always work with **LOCAL** database during development.
 
 **Rules:**
+
 - ✅ MUST edit existing migration files during active development (DEFAULT mode)
 - ✅ MUST run `supabase db reset` after editing migrations
 - ✅ MUST regenerate types: `supabase gen types typescript --local > src/lib/types/database.types.ts`
@@ -197,6 +208,7 @@ All code MUST pass these quality gates before merge:
 All forms use SvelteKit form actions with progressive enhancement.
 
 **Rules:**
+
 - ✅ MUST use `use:enhance` directive for progressive enhancement
 - ✅ MUST handle both success and error states
 - ✅ MUST show success alerts before redirects
@@ -212,6 +224,7 @@ All forms use SvelteKit form actions with progressive enhancement.
 **ALWAYS** use the `Button` component for interactive buttons and button-like links.
 
 **Rules:**
+
 - ✅ MUST use Button component with appropriate variant: `filled`, `outlined`, `text`
 - ✅ MUST choose correct color: `primary` (blue), `secondary` (gray), `danger` (red), `success` (green)
 - ✅ MUST select proper size: `sm` (navigation), `md` (forms/default), `lg` (hero sections)
