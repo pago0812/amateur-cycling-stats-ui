@@ -3,9 +3,12 @@ import { fail } from '@sveltejs/kit';
 import { SITE_URL } from '$env/static/private';
 import { createOrganization } from '$lib/services/organizations';
 import { createInvitation } from '$lib/services/organization-invitations';
-import { checkUserExists, generateInvitationLink } from '$lib/services/auth-admin';
-import { createAuthUserForInvitation } from '$lib/services/users-management';
-import { createOrganizerOwnerUser } from '$lib/services/organizers';
+import {
+	checkUserExists,
+	generateInvitationLink,
+	createAuthUserForInvitation,
+	createOrganizerOwnerUser
+} from '$lib/services/auth';
 import { sendInvitationEmail } from '$lib/services/mailersend';
 import { t } from '$lib/i18n/server';
 

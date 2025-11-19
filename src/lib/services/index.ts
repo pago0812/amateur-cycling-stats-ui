@@ -5,8 +5,16 @@
  * All services are type-safe with no 'any' types.
  */
 
-// Auth Admin
-export { checkUserExists, deleteAuthUserById, generateInvitationLink } from './auth-admin';
+// Auth (unified auth service)
+export {
+	checkUserExists,
+	deleteAuthUserById,
+	generateInvitationLink,
+	createAuthUserForInvitation,
+	createOrganizerOwnerUser,
+	login,
+	signin
+} from './auth';
 
 // Cyclists
 export { getCyclistById } from './cyclists';
@@ -55,6 +63,3 @@ export { getRoles } from './roles';
 
 // Users
 export { getAuthUser, isAuthenticated } from './users';
-
-// Users Management
-export { login, signin, createAuthUserForInvitation } from './users-management';
