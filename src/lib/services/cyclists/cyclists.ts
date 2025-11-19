@@ -1,10 +1,6 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
 import type { Cyclist } from '$lib/types/domain';
-import type { AuthUserRpcResponse } from '$lib/types/db';
+import type { AuthUserRpcResponse, TypedSupabaseClient } from '$lib/types/db';
 import { adaptCyclistFromRpc } from '$lib/adapters';
-
-type TypedSupabaseClient = SupabaseClient<Database>;
 
 interface GetCyclistByIdParams {
 	id: string;

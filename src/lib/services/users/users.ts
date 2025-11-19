@@ -1,6 +1,5 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { AuthUserRpcResponse } from '$lib/types/db';
+import type { AuthUserRpcResponse, TypedSupabaseClient } from '$lib/types/db';
 import type { User } from '$lib/types/domain';
 import { adaptAuthUserFromRpc } from '$lib/adapters';
 
@@ -13,7 +12,7 @@ type RoleNameEnum = Database['public']['Enums']['role_name_enum'];
  * @returns User (Admin | Organizer | Cyclist) or null if not authenticated
  * @throws Error if RPC fails (excluding authentication errors)
  */
-export const getAuthUser = async (supabase: SupabaseClient<Database>): Promise<User | null> => {
+export const getAuthUser = async (supabase: TypedSupabaseClient): Promise<User | null> => {
 	try {
 		// Call RPC without parameters (validates session internally)
 		const { data: rpcResponse, error } = await supabase.rpc('get_auth_user');
@@ -44,7 +43,7 @@ export const getAuthUser = async (supabase: SupabaseClient<Database>): Promise<U
  * @param supabase - Supabase client instance
  * @returns true if authenticated, false otherwise
  */
-export const isAuthenticated = async (supabase: SupabaseClient<Database>): Promise<boolean> => {
+export const isAuthenticated = async (supabase: TypedSupabaseClient): Promise<boolean> => {
 	try {
 		const { data, error } = await supabase.auth.getUser();
 		return !error && data.user !== null;
@@ -68,7 +67,7 @@ export interface CreateUserWithRoleParams {
  * @returns Created user's UUID
  */
 export const createUserWithRole = async (
-	supabase: SupabaseClient<Database>,
+	supabase: TypedSupabaseClient,
 	params: CreateUserWithRoleParams
 ): Promise<string> => {
 	// First, get the role ID by role name
@@ -114,7 +113,7 @@ export interface LinkUserToOrganizationParams {
  * @returns Created organizer record's UUID
  */
 export const linkUserToOrganization = async (
-	supabase: SupabaseClient<Database>,
+	supabase: TypedSupabaseClient,
 	params: LinkUserToOrganizationParams
 ): Promise<string> => {
 	const { data, error } = await supabase

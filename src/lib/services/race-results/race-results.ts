@@ -1,10 +1,6 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
 import type { RaceResult } from '$lib/types/domain';
-import type { RaceResultRpcItem } from '$lib/types/db';
+import type { RaceResultRpcItem, TypedSupabaseClient } from '$lib/types/db';
 import { adaptRaceResultsFromRpc } from '$lib/adapters';
-
-type TypedSupabaseClient = SupabaseClient<Database>;
 
 interface GetRaceResultsByUserIdParams {
 	userId: string;

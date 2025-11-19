@@ -1,5 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
+import type { TypedSupabaseClient } from '$lib/types/db';
 import type { GetRolesResponse } from '$lib/types/services';
 import { adaptRoleFromDb, adaptArray } from '$lib/adapters';
 
@@ -8,7 +7,7 @@ import { adaptRoleFromDb, adaptArray } from '$lib/adapters';
  * @param supabase - Supabase client instance
  * @returns RolesResponse with roles array or error
  */
-export const getRoles = async (supabase: SupabaseClient<Database>): Promise<GetRolesResponse> => {
+export const getRoles = async (supabase: TypedSupabaseClient): Promise<GetRolesResponse> => {
 	try {
 		const { data: dbRoles, error } = await supabase.from('roles').select('*').order('name');
 
