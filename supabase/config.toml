@@ -2,6 +2,10 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
+#
+# IMPORTANT: All env() values in this file must be set as environment variables, even when
+# using --db-url flag in CI/CD. The Supabase CLI parses this config file before connecting,
+# so missing environment variables will cause parsing errors. See .env.example for required values.
 project_id = "env(SUPABASE_ID_PROJECT)"
 
 [api]
