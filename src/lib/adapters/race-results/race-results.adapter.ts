@@ -1,8 +1,8 @@
 import type { RaceResult } from '$lib/types/domain/race-result.domain';
 import type { RaceDetailResult } from '$lib/types/services';
 import type { RaceResultRpcItem, RaceWithResultsResponse } from '$lib/types/db';
-import { mapTimestamps } from './common.adapter';
-import { adaptRankingPointFromDb } from './ranking-points.adapter';
+import { mapTimestamps } from '../common/common.adapter';
+import { adaptRankingPointFromDb } from '../ranking-points/ranking-points.adapter';
 
 /**
  * Adapts a single race result item from RPC response with flat structure.

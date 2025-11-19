@@ -9,7 +9,7 @@ import type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus
 } from '$lib/types/domain/organization-invitation.domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Transform OrganizationInvitationDB (database type) to OrganizationInvitation (domain type).
