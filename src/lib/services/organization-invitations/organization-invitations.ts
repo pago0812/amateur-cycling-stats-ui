@@ -4,16 +4,12 @@
  * Provides CRUD operations for organization owner invitations.
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
 import type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus
 } from '$lib/types/domain/organization-invitation.domain';
-import type { OrganizationInvitationDB } from '$lib/types/db';
+import type { OrganizationInvitationDB, TypedSupabaseClient } from '$lib/types/db';
 import { adaptOrganizationInvitationFromDb } from '$lib/adapters';
-
-type TypedSupabaseClient = SupabaseClient<Database>;
 
 export interface CreateInvitationParams {
 	organizationId: string; // UUID

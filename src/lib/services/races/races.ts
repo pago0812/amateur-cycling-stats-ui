@@ -1,10 +1,6 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
 import type { RaceWithRaceResults } from '$lib/types/services';
-import type { RpcRaceWithResultsResponse } from '$lib/types/db';
+import type { RpcRaceWithResultsResponse, TypedSupabaseClient } from '$lib/types/db';
 import { adaptRaceWithRaceResultsFromRpc } from '$lib/adapters';
-
-type TypedSupabaseClient = SupabaseClient<Database>;
 
 /**
  * Get race with race results by race ID using RPC function.

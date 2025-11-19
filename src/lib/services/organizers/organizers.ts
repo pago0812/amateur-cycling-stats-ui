@@ -1,10 +1,6 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
 import type { OrganizerWithRelations } from '$lib/types/services';
-import type { OrganizerWithUserResponse } from '$lib/types/db';
+import type { OrganizerWithUserResponse, TypedSupabaseClient } from '$lib/types/db';
 import { adaptOrganizerWithUserFromDb } from '$lib/adapters';
-
-type TypedSupabaseClient = SupabaseClient<Database>;
 
 interface GetOrganizersByOrganizationIdParams {
 	organizationId: string;
@@ -78,4 +74,3 @@ export async function getOrganizersCountByOrganizationId(
 
 	return count ?? 0;
 }
-

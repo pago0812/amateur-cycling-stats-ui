@@ -16,6 +16,9 @@
  * ```
  */
 
+// Common database types
+export type { TypedSupabaseClient } from './common.db';
+
 // Main entity types
 export type { CyclistDB, CyclistInsert, RaceResultRpcItem } from './cyclists.db';
 export type { EventDB, EventWithRacesResponse } from './events.db';

@@ -5,8 +5,7 @@
  * These operations respect Row Level Security (RLS).
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
+import type { TypedSupabaseClient } from '$lib/types/db';
 import type { LoginRequest, SigninRequest, AuthResponse } from '$lib/types/services';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
 
@@ -18,7 +17,7 @@ import { getAuthErrorMessage, t } from '$lib/i18n/server';
  * @returns AuthResponse with success flag or error
  */
 export const login = async (
-	supabase: SupabaseClient<Database>,
+	supabase: TypedSupabaseClient,
 	{ email, password }: LoginRequest,
 	locale: string = 'es'
 ): Promise<AuthResponse> => {
@@ -63,7 +62,7 @@ export const login = async (
  * @returns AuthResponse with success flag or error
  */
 export const signin = async (
-	supabase: SupabaseClient<Database>,
+	supabase: TypedSupabaseClient,
 	{ firstName, lastName, email, password }: SigninRequest,
 	locale: string = 'es'
 ): Promise<AuthResponse> => {
