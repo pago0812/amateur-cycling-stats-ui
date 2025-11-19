@@ -1,0 +1,76 @@
+name: Manual Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      include_seeding:
+        description: 'Include user-dependent seeding?'
+        required: true
+        type: boolean
+        default: true
+      reset_database:
+        description: 'Reset database (runs migrations + seed.sql)?'
+        required: true
+        type: boolean
+        default: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  manual-migration:
+    name: Manual Database Operations
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run database reset
+        if: ${{ inputs.reset_database }}
+        run: |
+          echo "🔄 Resetting database (migrations + seed.sql)..."
+          supabase db reset --db-url "$DATABASE_URL"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Push migrations only
+        if: ${{ !inputs.reset_database }}
+        run: |
+          echo "📤 Pushing migrations without reset..."
+          supabase db push --db-url "$DATABASE_URL"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Seed user-dependent data
+        if: ${{ inputs.include_seeding }}
+        run: |
+          echo "🌱 Seeding user-dependent data..."
+          npm run seed:users
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Operation Summary
+        run: |
+          echo "==================================="
+          echo "📊 Manual Database Operation Summary"
+          echo "==================================="
+          echo "Reset Database: ${{ inputs.reset_database }}"
+          echo "Include Seeding: ${{ inputs.include_seeding }}"
+          echo "✅ Operations completed successfully"
+          echo "==================================="

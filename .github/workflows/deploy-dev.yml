@@ -1,0 +1,51 @@
+name: Deploy to Dev Environment
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  migrate-and-seed:
+    name: Run Migrations and Seeding
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run database migrations and seed.sql
+        run: |
+          supabase db reset --db-url "$DATABASE_URL"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Seed user-dependent data
+        run: npm run seed:users
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Database migrations completed successfully"
+          echo "✅ Seed data applied successfully"
+          echo "🚀 Coolify will now deploy the application to dev.amateurcyclingstats.com"
