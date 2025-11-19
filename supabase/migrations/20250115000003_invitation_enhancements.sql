@@ -78,7 +78,7 @@ CREATE OR REPLACE FUNCTION public.create_user_with_organizer_owner(
   p_last_name TEXT,
   p_organization_id UUID
 )
-RETURNS UUID
+RETURNS JSONB
 SECURITY DEFINER
 SET search_path = public
 LANGUAGE plpgsql
@@ -121,11 +121,12 @@ BEGIN
   VALUES (v_user_id, p_organization_id, NOW(), NOW())
   ON CONFLICT (user_id, organization_id) DO NOTHING;
 
-  RETURN v_user_id;
+  -- Return complete user data with relations
+  RETURN public.get_auth_user(v_user_id);
 END;
 $$;
 
-COMMENT ON FUNCTION public.create_user_with_organizer_owner IS 'Creates or updates a user with organizer_owner role and links them to an organization';
+COMMENT ON FUNCTION public.create_user_with_organizer_owner IS 'Creates or updates a user with organizer_owner role and links them to an organization. Returns complete AuthUserRpcResponse structure.';
 
 -- Create RPC function for completing organizer owner setup atomically
 CREATE OR REPLACE FUNCTION public.complete_organizer_owner_setup(
