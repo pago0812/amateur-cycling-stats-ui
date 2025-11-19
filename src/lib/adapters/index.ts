@@ -59,8 +59,8 @@ export { adaptOrganizationInvitationFromDb } from './organization-invitations/or
 // Organizers
 export {
 	adaptOrganizerFromDb,
-	adaptOrganizerFromRpc,
-	adaptOrganizerWithUserFromDb
+	adaptOrganizerFromAuthUserRpc,
+	adaptOrganizerFromRpc
 } from './organizers/organizers.adapter';
 
 // Race Rankings

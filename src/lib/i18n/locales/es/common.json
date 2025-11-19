@@ -27,6 +27,13 @@
 		"signin": "Registrarse - ACS",
 		"portal": "Cuenta - ACS"
 	},
+	"roles": {
+		"PUBLIC": "Público",
+		"CYCLIST": "Ciclista",
+		"ORGANIZER_STAFF": "Personal",
+		"ORGANIZER_OWNER": "Propietario",
+		"ADMIN": "Administrador"
+	},
 	"members": {
 		"table": {
 			"name": "Nombre",

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { OrganizerWithRelations } from '$lib/types/services/organizers';
+	import type { Organizer } from '$lib/types/domain/organizer.domain';
 	import { t } from '$lib/i18n';
 
-	let { organizers }: { organizers: OrganizerWithRelations[] } = $props();
+	let { organizers }: { organizers: Organizer[] } = $props();
 
 	// Format date to locale string
 	function formatDate(dateString: string): string {
@@ -51,13 +51,13 @@
 						<!-- Name -->
 						<td class="px-6 py-4 text-sm whitespace-nowrap text-foreground">
 							<span class="font-medium">
-								{organizer.user?.firstName ?? ''}
-								{organizer.user?.lastName ?? ''}
+								{organizer.firstName}
+								{organizer.lastName}
 							</span>
 						</td>
-						<!-- Role - hidden on mobile -->
+						<!-- Role - hidden on mobile, translated -->
 						<td class="hidden px-6 py-4 text-sm text-muted-foreground sm:table-cell">
-							{organizer.user?.role?.name ?? '-'}
+							{$t('common.roles.' + organizer.roleType)}
 						</td>
 						<!-- Date Added - hidden on mobile -->
 						<td

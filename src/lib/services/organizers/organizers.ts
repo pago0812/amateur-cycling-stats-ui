@@ -1,53 +1,31 @@
-import type { OrganizerWithRelations } from '$lib/types/services';
-import type { OrganizerWithUserResponse, TypedSupabaseClient } from '$lib/types/db';
-import { adaptOrganizerWithUserFromDb } from '$lib/adapters';
+import type { TypedSupabaseClient, OrganizerRpcItem } from '$lib/types/db';
+import type { Organizer } from '$lib/types/domain/organizer.domain';
+import { adaptOrganizerFromRpc } from '$lib/adapters';
 
 interface GetOrganizersByOrganizationIdParams {
 	organizationId: string;
 }
 
 /**
- * Get all organizers for a specific organization with user and role information.
- * Returns domain OrganizerWithRelations types with camelCase fields.
- * Includes user details and role names for members table display.
+ * Get all organizers for a specific organization.
+ * Returns domain Organizer types with flattened structure.
+ * Used for members table display.
  */
 export async function getOrganizersByOrganizationId(
 	supabase: TypedSupabaseClient,
 	params: GetOrganizersByOrganizationIdParams
-): Promise<OrganizerWithRelations[]> {
-	// Query organizers with user and role relations
-	const { data, error } = await supabase
-		.from('organizers')
-		.select(
-			`
-			*,
-			users:user_id (
-				id,
-				first_name,
-				last_name,
-				role_id,
-				created_at,
-				updated_at,
-				roles:role_id (
-					id,
-					name,
-					created_at,
-					updated_at
-				)
-			)
-		`
-		)
-		.eq('organization_id', params.organizationId)
-		.order('created_at', { ascending: false });
+): Promise<Organizer[]> {
+	const { data, error } = await supabase.rpc('get_organizers_by_organization_id', {
+		p_organization_id: params.organizationId
+	});
 
 	if (error) {
 		throw new Error(`Error fetching organizers: ${error.message}`);
 	}
 
-	// Transform DB types → Domain types
-	return (data || []).map((organizer) =>
-		adaptOrganizerWithUserFromDb(organizer as OrganizerWithUserResponse)
-	);
+	// Type cast JSONB and adapt to domain type
+	const rpcItems = (data || []) as unknown as OrganizerRpcItem[];
+	return rpcItems.map(adaptOrganizerFromRpc);
 }
 
 /**

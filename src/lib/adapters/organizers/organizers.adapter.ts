@@ -4,9 +4,8 @@
  * Transforms database types (snake_case) to domain types (camelCase) for organizers.
  */
 
-import type { OrganizerDB, OrganizerWithUserResponse, AuthUserRpcResponse } from '$lib/types/db';
+import type { OrganizerDB, OrganizerRpcItem, AuthUserRpcResponse } from '$lib/types/db';
 import type { Organizer, OrganizerOld } from '$lib/types/domain';
-import type { OrganizerWithRelations, UserWithRelations } from '$lib/types/services';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from '../common/common.adapter';
 
@@ -14,7 +13,7 @@ import { mapTimestamps } from '../common/common.adapter';
  * Adapts the RPC response from get_auth_user to domain Organizer type (flattened).
  * Transforms snake_case → camelCase.
  */
-export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organizer {
+export function adaptOrganizerFromAuthUserRpc(rpcResponse: AuthUserRpcResponse): Organizer {
 	if (
 		rpcResponse.role.name !== RoleTypeEnum.ORGANIZER_STAFF &&
 		rpcResponse.role.name !== RoleTypeEnum.ORGANIZER_OWNER
@@ -46,6 +45,34 @@ export function adaptOrganizerFromRpc(rpcResponse: AuthUserRpcResponse): Organiz
 }
 
 /**
+ * Adapt RPC response item from get_organizers_by_organization_id to Organizer domain type.
+ * Transforms snake_case → camelCase for flattened organizer data.
+ */
+export function adaptOrganizerFromRpc(rpcItem: OrganizerRpcItem): Organizer {
+	// Validate role type
+	if (
+		rpcItem.role_type !== RoleTypeEnum.ORGANIZER_STAFF &&
+		rpcItem.role_type !== RoleTypeEnum.ORGANIZER_OWNER
+	) {
+		throw new Error(
+			`Invalid role type for organizer: ${rpcItem.role_type}. Expected ORGANIZER_STAFF or ORGANIZER_OWNER.`
+		);
+	}
+
+	return {
+		id: rpcItem.id,
+		firstName: rpcItem.first_name,
+		lastName: rpcItem.last_name,
+		email: rpcItem.email,
+		displayName: rpcItem.display_name,
+		hasAuth: rpcItem.has_auth,
+		roleType: rpcItem.role_type as RoleTypeEnum.ORGANIZER_OWNER | RoleTypeEnum.ORGANIZER_STAFF,
+		organizationId: rpcItem.organization_id,
+		...mapTimestamps(rpcItem)
+	};
+}
+
+/**
  * @deprecated Use adaptOrganizerFromRpc for new flattened Organizer type.
  * Legacy adapter for old Organizer domain type.
  * Transform OrganizerDB (database type) to OrganizerOld (domain type).
@@ -70,32 +97,3 @@ export function adaptOrganizerFromDbOld(dbOrganizer: OrganizerDB): OrganizerOld 
  * @deprecated Use adaptOrganizerFromDbOld instead.
  */
 export const adaptOrganizerFromDb = adaptOrganizerFromDbOld;
-
-/**
- * Transform OrganizerWithUserResponse (database type with user relations)
- * to OrganizerWithRelations (domain type with populated user and role).
- */
-export function adaptOrganizerWithUserFromDb(
-	dbOrganizer: OrganizerWithUserResponse
-): OrganizerWithRelations {
-	const baseOrganizer = adaptOrganizerFromDbOld(dbOrganizer);
-
-	// Transform user with role
-	const user: UserWithRelations = {
-		id: dbOrganizer.users.id,
-		firstName: dbOrganizer.users.first_name,
-		lastName: dbOrganizer.users.last_name,
-		roleId: dbOrganizer.users.role_id,
-		...mapTimestamps(dbOrganizer.users),
-		role: {
-			id: dbOrganizer.users.roles.id,
-			name: dbOrganizer.users.roles.name,
-			...mapTimestamps(dbOrganizer.users.roles)
-		}
-	};
-
-	return {
-		...baseOrganizer,
-		user
-	};
-}
