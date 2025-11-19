@@ -1,13 +1,13 @@
+/**
+ * Auth Client API Service
+ *
+ * Provides authentication flows using Supabase client API.
+ * These operations respect Row Level Security (RLS).
+ */
+
 import type { TypedSupabaseClient } from '$lib/types/db';
-import type {
-	LoginRequest,
-	SigninRequest,
-	AuthResponse,
-	CreateAuthUserForInvitationRequest,
-	CreateUserResponse
-} from '$lib/types/services';
+import type { LoginRequest, SigninRequest, AuthResponse } from '$lib/types/services';
 import { getAuthErrorMessage, t } from '$lib/i18n/server';
-import { createSupabaseAdminClient } from '$lib/server/supabase';
 
 /**
  * Login with email and password using Supabase Auth.
@@ -103,55 +103,3 @@ export const signin = async (
 	// Session created successfully - hooks.server.ts will fetch user data on next request
 	return { success: true };
 };
-
-/**
- * Creates an auth user for invitation purposes (no password, email not confirmed).
- * Uses skip_auto_create flag to prevent automatic public.users creation.
- *
- * @param params - Email and optional metadata
- * @returns CreateUserResult with auth user ID or error
- */
-export async function createAuthUserForInvitation(
-	params: CreateAuthUserForInvitationRequest
-): Promise<CreateUserResponse> {
-	try {
-		const adminClient = createSupabaseAdminClient();
-
-		// Create auth user with skip_auto_create flag
-		const { data, error } = await adminClient.auth.admin.createUser({
-			email: params.email,
-			email_confirm: false,
-			user_metadata: {
-				...params.metadata,
-				skip_auto_create: true // Prevent automatic public.users creation
-			}
-		});
-
-		if (error) {
-			console.error('[Auth] Failed to create auth user for invitation:', error);
-			return {
-				success: false,
-				error: error.message
-			};
-		}
-
-		if (!data.user) {
-			return {
-				success: false,
-				error: 'No user returned from auth.createUser'
-			};
-		}
-
-		return {
-			success: true,
-			authUserId: data.user.id
-		};
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		console.error('[Auth] Error creating auth user for invitation:', errorMessage);
-		return {
-			success: false,
-			error: errorMessage
-		};
-	}
-}

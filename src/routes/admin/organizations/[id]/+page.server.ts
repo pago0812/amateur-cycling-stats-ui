@@ -12,7 +12,7 @@ import {
 	incrementRetryCount,
 	deleteInvitationByOrganizationId
 } from '$lib/services/organization-invitations';
-import { generateInvitationLink, deleteAuthUserById } from '$lib/services/auth-admin';
+import { generateInvitationLink, deleteAuthUserById } from '$lib/services/auth';
 import { sendInvitationEmail } from '$lib/services/mailersend';
 import { t } from '$lib/i18n/server';
 

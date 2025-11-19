@@ -3,8 +3,6 @@ import type { AuthUserRpcResponse, TypedSupabaseClient } from '$lib/types/db';
 import type { User } from '$lib/types/domain';
 import { adaptAuthUserFromRpc } from '$lib/adapters';
 
-type RoleNameEnum = Database['public']['Enums']['role_name_enum'];
-
 /**
  * Get the authenticated user's data (flattened domain type).
  * This function validates the session and returns enriched user data.
@@ -50,84 +48,4 @@ export const isAuthenticated = async (supabase: TypedSupabaseClient): Promise<bo
 	} catch {
 		return false;
 	}
-};
-
-export interface CreateUserWithRoleParams {
-	authUserId: string;
-	firstName: string;
-	lastName: string;
-	roleName: RoleNameEnum; // Role name like 'ORGANIZER_OWNER', 'CYCLIST', etc.
-}
-
-/**
- * Creates a new user record in the public.users table with a specific role.
- * Used during invitation acceptance flow to create the user's profile.
- * @param supabase - Supabase client instance
- * @param params - User creation parameters
- * @returns Created user's UUID
- */
-export const createUserWithRole = async (
-	supabase: TypedSupabaseClient,
-	params: CreateUserWithRoleParams
-): Promise<string> => {
-	// First, get the role ID by role name
-	const { data: roleData, error: roleError } = await supabase
-		.from('roles')
-		.select('id')
-		.eq('name', params.roleName)
-		.single();
-
-	if (roleError || !roleData) {
-		throw new Error(`Failed to find role: ${params.roleName}`);
-	}
-
-	// Create the user record
-	const { data: userData, error: userError } = await supabase
-		.from('users')
-		.insert({
-			auth_user_id: params.authUserId,
-			first_name: params.firstName,
-			last_name: params.lastName,
-			role_id: roleData.id
-		})
-		.select('id')
-		.single();
-
-	if (userError || !userData) {
-		throw new Error(`Failed to create user: ${userError?.message || 'Unknown error'}`);
-	}
-
-	return userData.id;
-};
-
-export interface LinkUserToOrganizationParams {
-	userId: string; // User UUID
-	organizationId: string; // Organization UUID
-}
-
-/**
- * Creates an organizer record linking a user to an organization.
- * Used during invitation acceptance to make the user an owner of the organization.
- * @param supabase - Supabase client instance
- * @param params - Link parameters
- * @returns Created organizer record's UUID
- */
-export const linkUserToOrganization = async (
-	supabase: TypedSupabaseClient,
-	params: LinkUserToOrganizationParams
-): Promise<string> => {
-	const { data, error } = await supabase
-		.from('organizers')
-		.insert({
-			user_id: params.userId,
-			organization_id: params.organizationId
-		})
-		.select('id')
-		.single();
-
-	if (error || !data) {
-		throw new Error(`Failed to link user to organization: ${error?.message || 'Unknown error'}`);
-	}
-
-	return data.id;
 };

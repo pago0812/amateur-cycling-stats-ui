@@ -1,10 +1,17 @@
 /**
- * Auth Admin Service
+ * Auth Admin API Service
  *
  * Provides administrative authentication operations using Supabase Admin API.
  * WARNING: These operations bypass Row Level Security (RLS).
  */
 
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/database.types';
+import type {
+	CreateAuthUserForInvitationRequest,
+	CreateOrganizerOwnerUserRequest,
+	CreateUserResponse
+} from '$lib/types/services';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
 
 /**
@@ -129,6 +136,101 @@ export async function generateInvitationLink(
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : 'Unknown error'
+		};
+	}
+}
+
+/**
+ * Creates an auth user for invitation purposes (no password, email not confirmed).
+ * Uses skip_auto_create flag to prevent automatic public.users creation.
+ *
+ * @param params - Email and optional metadata
+ * @returns CreateUserResult with auth user ID or error
+ */
+export async function createAuthUserForInvitation(
+	params: CreateAuthUserForInvitationRequest
+): Promise<CreateUserResponse> {
+	try {
+		const adminClient = createSupabaseAdminClient();
+
+		// Create auth user with skip_auto_create flag
+		const { data, error } = await adminClient.auth.admin.createUser({
+			email: params.email,
+			email_confirm: false,
+			user_metadata: {
+				...params.metadata,
+				skip_auto_create: true // Prevent automatic public.users creation
+			}
+		});
+
+		if (error) {
+			console.error('[Auth] Failed to create auth user for invitation:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		if (!data.user) {
+			return {
+				success: false,
+				error: 'No user returned from auth.createUser'
+			};
+		}
+
+		return {
+			success: true,
+			authUserId: data.user.id
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Auth] Error creating auth user for invitation:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
+		};
+	}
+}
+
+/**
+ * Creates or updates a user with organizer_owner role and links to organization.
+ * Calls the Supabase RPC function create_user_with_organizer_owner.
+ *
+ * @param supabase - Supabase client instance
+ * @param params - Auth user ID, names, and organization ID
+ * @returns CreateUserResult with user ID or error
+ */
+export async function createOrganizerOwnerUser(
+	supabase: SupabaseClient<Database>,
+	params: CreateOrganizerOwnerUserRequest
+): Promise<CreateUserResponse> {
+	try {
+		const { data, error } = await supabase.rpc('create_user_with_organizer_owner', {
+			p_auth_user_id: params.authUserId,
+			p_first_name: params.firstName,
+			p_last_name: params.lastName,
+			p_organization_id: params.organizationId
+		});
+
+		if (error) {
+			console.error('[Auth Admin] Failed to create organizer owner user:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		return {
+			success: true,
+			userId: data,
+			authUserId: params.authUserId
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Auth Admin] Error creating organizer owner user:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
 		};
 	}
 }

@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { signin } from '$lib/services/users-management';
+import { signin } from '$lib/services/auth';
 import { Urls } from '$lib/constants/urls';
 import { t } from '$lib/i18n/server';
 import type { Actions, PageServerLoad } from './$types';
