@@ -62,4 +62,4 @@ export { getRaceWithRaceResultsById } from './races';
 export { getRoles } from './roles';
 
 // Users
-export { getAuthUser, isAuthenticated, createUserWithRole, linkUserToOrganization } from './users';
+export { getAuthUser, isAuthenticated } from './users';
