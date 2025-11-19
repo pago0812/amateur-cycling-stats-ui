@@ -1,20 +1,12 @@
+import type { Organizer } from '$lib/types/domain';
+
 // ============================================================================
 // Request Types
 // ============================================================================
 
-export interface CreateAuthUserForInvitationRequest {
+export interface CreateOnBehalfOrganizerOwnerRequest {
 	email: string;
-	metadata?: {
-		invitedOwnerName?: string;
-		organizationId?: string;
-		skip_auto_create?: boolean;
-	};
-}
-
-export interface CreateOrganizerOwnerUserRequest {
-	authUserId: string;
 	firstName: string;
-	lastName: string;
 	organizationId: string;
 }
 
@@ -22,9 +14,8 @@ export interface CreateOrganizerOwnerUserRequest {
 // Response Types
 // ============================================================================
 
-export interface CreateUserResponse {
+export interface CreateOnBehalfOrganizerOwnerResponse {
 	success: boolean;
-	userId?: string;
-	authUserId?: string;
+	organizer?: Organizer;
 	error?: string;
 }

@@ -5,14 +5,13 @@
  * WARNING: These operations bypass Row Level Security (RLS).
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/database.types';
+import type { AuthUserRpcResponse } from '$lib/types/db';
 import type {
-	CreateAuthUserForInvitationRequest,
-	CreateOrganizerOwnerUserRequest,
-	CreateUserResponse
+	CreateOnBehalfOrganizerOwnerRequest,
+	CreateOnBehalfOrganizerOwnerResponse
 } from '$lib/types/services';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
+import { adaptOrganizerFromRpc } from '$lib/adapters';
 
 /**
  * Checks if a user exists by email address.
@@ -141,96 +140,108 @@ export async function generateInvitationLink(
 }
 
 /**
- * Creates an auth user for invitation purposes (no password, email not confirmed).
- * Uses skip_auto_create flag to prevent automatic public.users creation.
+ * Creates an organizer owner user on behalf of admin (unified operation).
+ * Combines auth user creation and public user/organizer creation in one function.
+ * Returns the complete Organizer domain object.
  *
- * @param params - Email and optional metadata
- * @returns CreateUserResult with auth user ID or error
+ * @param params - Email, first name, and organization ID
+ * @returns Response with Organizer domain object or error
  */
-export async function createAuthUserForInvitation(
-	params: CreateAuthUserForInvitationRequest
-): Promise<CreateUserResponse> {
-	try {
-		const adminClient = createSupabaseAdminClient();
+export async function createOnBehalfOrganizerOwner(
+	params: CreateOnBehalfOrganizerOwnerRequest
+): Promise<CreateOnBehalfOrganizerOwnerResponse> {
+	const adminClient = createSupabaseAdminClient();
 
-		// Create auth user with skip_auto_create flag
-		const { data, error } = await adminClient.auth.admin.createUser({
+	try {
+		// Step 1: Create auth user with skip_auto_create flag
+		const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
 			email: params.email,
 			email_confirm: false,
 			user_metadata: {
-				...params.metadata,
-				skip_auto_create: true // Prevent automatic public.users creation
+				invitedOwnerName: params.firstName,
+				organizationId: params.organizationId,
+				skip_auto_create: true
 			}
 		});
 
-		if (error) {
-			console.error('[Auth] Failed to create auth user for invitation:', error);
+		if (authError) {
+			console.error('[Auth] Failed to create auth user for organizer owner:', authError);
 			return {
 				success: false,
-				error: error.message
+				error: authError.message
 			};
 		}
 
-		if (!data.user) {
+		if (!authData.user) {
 			return {
 				success: false,
 				error: 'No user returned from auth.createUser'
 			};
 		}
 
-		return {
-			success: true,
-			authUserId: data.user.id
-		};
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		console.error('[Auth] Error creating auth user for invitation:', errorMessage);
-		return {
-			success: false,
-			error: errorMessage
-		};
-	}
-}
+		const authUserId = authData.user.id;
 
-/**
- * Creates or updates a user with organizer_owner role and links to organization.
- * Calls the Supabase RPC function create_user_with_organizer_owner.
- *
- * @param supabase - Supabase client instance
- * @param params - Auth user ID, names, and organization ID
- * @returns CreateUserResult with user ID or error
- */
-export async function createOrganizerOwnerUser(
-	supabase: SupabaseClient<Database>,
-	params: CreateOrganizerOwnerUserRequest
-): Promise<CreateUserResponse> {
-	try {
-		const { data, error } = await supabase.rpc('create_user_with_organizer_owner', {
-			p_auth_user_id: params.authUserId,
-			p_first_name: params.firstName,
-			p_last_name: params.lastName,
-			p_organization_id: params.organizationId
-		});
+		// Step 2: Create public user with organizer_owner role and link to organization
+		const { data: userId, error: rpcError } = await adminClient.rpc(
+			'create_user_with_organizer_owner',
+			{
+				p_auth_user_id: authUserId,
+				p_first_name: params.firstName,
+				p_last_name: params.firstName, // Use firstName for both names
+				p_organization_id: params.organizationId
+			}
+		);
 
-		if (error) {
-			console.error('[Auth Admin] Failed to create organizer owner user:', error);
+		if (rpcError) {
+			console.error('[Auth] Failed to create organizer owner user via RPC:', rpcError);
+			// TODO: Consider cleanup - delete auth user if RPC fails
 			return {
 				success: false,
-				error: error.message
+				error: rpcError.message
 			};
 		}
 
+		if (!userId) {
+			return {
+				success: false,
+				error: 'No user ID returned from RPC'
+			};
+		}
+
+		// Step 3: Fetch complete organizer data using get_auth_user RPC
+		const { data: organizerData, error: fetchError } = await adminClient.rpc('get_auth_user', {
+			user_id: userId
+		});
+
+		if (fetchError) {
+			console.error('[Auth] Failed to fetch organizer data:', fetchError);
+			return {
+				success: false,
+				error: fetchError.message
+			};
+		}
+
+		if (!organizerData) {
+			return {
+				success: false,
+				error: 'No organizer data returned from get_auth_user'
+			};
+		}
+
+		// Step 4: Adapt to Organizer domain type
+		const organizer = adaptOrganizerFromRpc(organizerData as unknown as AuthUserRpcResponse);
+
 		return {
 			success: true,
-			userId: data,
-			authUserId: params.authUserId
+			organizer
 		};
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		console.error('[Auth Admin] Error creating organizer owner user:', errorMessage);
+		console.error('[Auth] Error creating organizer owner on behalf of admin:', errorMessage);
 		return {
 			success: false,
 			error: errorMessage
 		};
 	}
 }
+

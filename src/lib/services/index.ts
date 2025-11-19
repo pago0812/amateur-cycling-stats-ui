@@ -10,8 +10,7 @@ export {
 	checkUserExists,
 	deleteAuthUserById,
 	generateInvitationLink,
-	createAuthUserForInvitation,
-	createOrganizerOwnerUser,
+	createOnBehalfOrganizerOwner,
 	login,
 	signin
 } from './auth';

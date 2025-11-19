@@ -6,8 +6,7 @@ import { createInvitation } from '$lib/services/organization-invitations';
 import {
 	checkUserExists,
 	generateInvitationLink,
-	createAuthUserForInvitation,
-	createOrganizerOwnerUser
+	createOnBehalfOrganizerOwner
 } from '$lib/services/auth';
 import { sendInvitationEmail } from '$lib/services/mailersend';
 import { t } from '$lib/i18n/server';
@@ -98,36 +97,15 @@ export const actions: Actions = {
 			// Use organization UUID directly
 			const organizationId = organization.id;
 
-			// Step 1: Create auth user with skip_auto_create flag
-			const authUserResult = await createAuthUserForInvitation({
+			// Step 1: Create organizer owner user (auth + public user + organizer link)
+			const organizerResult = await createOnBehalfOrganizerOwner({
 				email: ownerEmail.trim(),
-				metadata: {
-					invitedOwnerName: ownerName.trim(),
-					organizationId
-				}
-			});
-
-			if (!authUserResult.success || !authUserResult.authUserId) {
-				console.error('Failed to create auth user:', authUserResult.error);
-				return fail(500, {
-					error: t(locals.locale, 'admin.organizations.errors.invitationFailed'),
-					name,
-					description,
-					ownerEmail,
-					ownerName
-				});
-			}
-
-			// Step 2: Create public user with organizer_owner role and link to organization
-			const userResult = await createOrganizerOwnerUser(locals.supabase, {
-				authUserId: authUserResult.authUserId,
 				firstName: ownerName.trim(),
-				lastName: '', // We only have full name from the form
 				organizationId
 			});
 
-			if (!userResult.success) {
-				console.error('Failed to create organizer owner user:', userResult.error);
+			if (!organizerResult.success || !organizerResult.organizer) {
+				console.error('Failed to create organizer owner:', organizerResult.error);
 				return fail(500, {
 					error: t(locals.locale, 'admin.organizations.errors.invitationFailed'),
 					name,
@@ -137,14 +115,14 @@ export const actions: Actions = {
 				});
 			}
 
-			// Step 3: Create invitation record
+			// Step 2: Create invitation record
 			await createInvitation(locals.supabase, {
 				organizationId,
 				email: ownerEmail.trim(),
 				invitedOwnerName: ownerName.trim()
 			});
 
-			// Step 4: Generate invitation link
+			// Step 3: Generate invitation link
 			const callbackUrl = `${SITE_URL}/auth/callback`;
 			const linkResult = await generateInvitationLink({
 				email: ownerEmail.trim(),
@@ -162,7 +140,7 @@ export const actions: Actions = {
 				});
 			}
 
-			// Step 5: Send invitation email via MailerSend
+			// Step 4: Send invitation email via MailerSend
 			const emailResult = await sendInvitationEmail({
 				to: ownerEmail.trim(),
 				organizationName: organization.name,

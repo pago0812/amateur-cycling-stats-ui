@@ -36,9 +36,8 @@ export type {
 // User Service Types
 // ============================================================================
 export type {
-	CreateAuthUserForInvitationRequest,
-	CreateOrganizerOwnerUserRequest,
-	CreateUserResponse
+	CreateOnBehalfOrganizerOwnerRequest,
+	CreateOnBehalfOrganizerOwnerResponse
 } from './users';
 
 // ============================================================================
