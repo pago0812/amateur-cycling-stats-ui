@@ -1,0 +1,19 @@
+# Nixpacks Configuration for Coolify Deployment
+# This file customizes the build process to include Supabase CLI for database migrations
+
+[phases.setup]
+# Install required packages
+nixPkgs = ['nodejs_22', 'npm-9_x', 'supabase-cli']
+aptPkgs = ['curl', 'wget']
+
+[phases.install]
+# Install Node.js dependencies
+cmds = ['npm ci']
+
+[phases.build]
+# Build the SvelteKit application
+cmds = ['npm run build']
+
+[start]
+# Start the production server
+cmd = 'node build'
