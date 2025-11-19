@@ -1,6 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
-import type { OrganizerWithRelations } from '$lib/types/services';
+import type {
+	OrganizerWithRelations,
+	CreateOrganizerOwnerUserRequest,
+	CreateUserResponse
+} from '$lib/types/services';
 import type { OrganizerWithUserResponse } from '$lib/types/db';
 import { adaptOrganizerWithUserFromDb } from '$lib/adapters';
 
@@ -77,4 +81,47 @@ export async function getOrganizersCountByOrganizationId(
 	}
 
 	return count ?? 0;
+}
+
+/**
+ * Creates or updates a user with organizer_owner role and links to organization.
+ * Calls the Supabase RPC function create_user_with_organizer_owner.
+ *
+ * @param supabase - Supabase client instance
+ * @param params - Auth user ID, names, and organization ID
+ * @returns CreateUserResult with user ID or error
+ */
+export async function createOrganizerOwnerUser(
+	supabase: SupabaseClient<Database>,
+	params: CreateOrganizerOwnerUserRequest
+): Promise<CreateUserResponse> {
+	try {
+		const { data, error } = await supabase.rpc('create_user_with_organizer_owner', {
+			p_auth_user_id: params.authUserId,
+			p_first_name: params.firstName,
+			p_last_name: params.lastName,
+			p_organization_id: params.organizationId
+		});
+
+		if (error) {
+			console.error('[Organizers] Failed to create organizer owner user:', error);
+			return {
+				success: false,
+				error: error.message
+			};
+		}
+
+		return {
+			success: true,
+			userId: data,
+			authUserId: params.authUserId
+		};
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		console.error('[Organizers] Error creating organizer owner user:', errorMessage);
+		return {
+			success: false,
+			error: errorMessage
+		};
+	}
 }

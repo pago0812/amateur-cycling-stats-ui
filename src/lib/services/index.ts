@@ -57,9 +57,4 @@ export { getRoles } from './roles';
 export { getAuthUser, isAuthenticated, createUserWithRole, linkUserToOrganization } from './users';
 
 // Users Management
-export {
-	login,
-	signin,
-	createAuthUserForInvitation,
-	createOrganizerOwnerUser
-} from './users-management';
+export { login, signin, createAuthUserForInvitation } from './users-management';
