@@ -11,7 +11,7 @@ import type {
 	OrganizationInvitationStatus
 } from '$lib/types/domain/organization-invitation.domain';
 import type { OrganizationInvitationDB } from '$lib/types/db';
-import { adaptOrganizationInvitationFromDb } from '$lib/adapters/organization-invitations.adapter';
+import { adaptOrganizationInvitationFromDb } from '$lib/adapters';
 
 type TypedSupabaseClient = SupabaseClient<Database>;
 

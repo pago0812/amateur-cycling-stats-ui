@@ -6,7 +6,7 @@
 
 import type { OrganizationDB } from '$lib/types/db';
 import type { Organization, OrganizationState } from '$lib/types/domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Transform OrganizationDB (database type) to Organization (domain type).

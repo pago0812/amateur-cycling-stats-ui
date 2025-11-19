@@ -1,9 +1,9 @@
 import type { User } from '$lib/types/domain';
 import type { AuthUserRpcResponse } from '$lib/types/db';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
-import { adaptAdminFromRpc } from './admin.adapter';
-import { adaptOrganizerFromRpc } from './organizers.adapter';
-import { adaptCyclistFromRpc } from './cyclists.adapter';
+import { adaptAdminFromRpc } from '../admin/admin.adapter';
+import { adaptOrganizerFromRpc } from '../organizers/organizers.adapter';
+import { adaptCyclistFromRpc } from '../cyclists/cyclists.adapter';
 
 /**
  * Adapts the RPC response from get_auth_user to domain User union type.

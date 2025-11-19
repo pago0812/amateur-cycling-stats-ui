@@ -1,6 +1,6 @@
 import type { RankingPointDB } from '$lib/types/db';
 import type { RankingPoint } from '$lib/types/domain/ranking-point.domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Adapts a raw database ranking point row to domain RankingPoint type.

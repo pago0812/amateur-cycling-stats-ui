@@ -6,7 +6,7 @@
 
 import type { RoleDB } from '$lib/types/db';
 import type { Role } from '$lib/types/domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Transform RoleDB (database type) to Role (domain type).

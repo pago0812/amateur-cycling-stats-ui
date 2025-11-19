@@ -6,27 +6,27 @@
  */
 
 // Common utilities
-export { mapTimestamps, adaptArray, isDefined } from './common.adapter';
+export { mapTimestamps, adaptArray, isDefined } from './common/common.adapter';
 
 // Events
-export { adaptEventFromDb, adaptEventWithRacesFromDb } from './events.adapter';
+export { adaptEventFromDb, adaptEventWithRacesFromDb } from './events/events.adapter';
 
 // Races
 export {
 	adaptRaceFromDb,
 	adaptRaceWithResultsFromDb,
 	adaptRaceWithRaceResultsFromRpc
-} from './races.adapter';
+} from './races/races.adapter';
 
 // Race Results
 export {
 	adaptRaceResultFromRpc,
 	adaptRaceResultsFromRpc,
 	adaptRaceResultFromNested
-} from './race-results.adapter';
+} from './race-results/race-results.adapter';
 
 // Cyclists
-export { adaptCyclistFromRpc } from './cyclists.adapter';
+export { adaptCyclistFromRpc } from './cyclists/cyclists.adapter';
 
 // Race Categories
 export {
@@ -36,32 +36,35 @@ export {
 	adaptRaceCategoryFromRpc,
 	adaptRaceCategoryGenderFromRpc,
 	adaptRaceCategoryLengthFromRpc
-} from './race-categories.adapter';
+} from './race-categories/race-categories.adapter';
 
 // Ranking Points
-export { adaptRankingPointFromDb } from './ranking-points.adapter';
+export { adaptRankingPointFromDb } from './ranking-points/ranking-points.adapter';
 
 // Users
-export { adaptAuthUserFromRpc } from './users.adapter';
+export { adaptAuthUserFromRpc } from './users/users.adapter';
 
 // Admin
-export { adaptAdminFromRpc } from './admin.adapter';
+export { adaptAdminFromRpc } from './admin/admin.adapter';
 
 // Roles
-export { adaptRoleFromDb } from './roles.adapter';
+export { adaptRoleFromDb } from './roles/roles.adapter';
 
 // Organizations
-export { adaptOrganizationFromDb } from './organizations.adapter';
+export { adaptOrganizationFromDb } from './organizations/organizations.adapter';
+
+// Organization Invitations
+export { adaptOrganizationInvitationFromDb } from './organization-invitations/organization-invitations.adapter';
 
 // Organizers
 export {
 	adaptOrganizerFromDb,
 	adaptOrganizerFromRpc,
 	adaptOrganizerWithUserFromDb
-} from './organizers.adapter';
+} from './organizers/organizers.adapter';
 
 // Race Rankings
-export { adaptRaceRankingFromDb } from './race-rankings.adapter';
+export { adaptRaceRankingFromDb } from './race-rankings/race-rankings.adapter';
 
 // Cyclist Genders
-export { adaptCyclistGenderFromDb } from './cyclist-genders.adapter';
+export { adaptCyclistGenderFromDb } from './cyclist-genders/cyclist-genders.adapter';
