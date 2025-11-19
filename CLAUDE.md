@@ -225,7 +225,7 @@ All services located in `src/lib/services/`:
 2. **races.ts** - Race operations (getRaceWithResultsWithFilters)
 3. **race-results.ts** - Race results operations (getRaceResultsByRaceId)
 4. **cyclists.ts** - Cyclist operations (getCyclistById - fetches cyclist without race results, pair with getRaceResultsByUserId for parallel fetching)
-5. **users.ts** - User operations (getMyself, updateUser, createUserWithRole, linkUserToOrganization)
+5. **users.ts** - User operations (getAuthUser, isAuthenticated)
 6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser)
 7. **roles.ts** - Role management (getRoles)
 8. **organizations.ts** - Organization operations (getAllOrganizations, getOrganizationById, createOrganization, updateOrganization, updateOrganizationState, deleteOrganization, deactivateOrganization, activateOrganization, permanentlyDeleteOrganization)
