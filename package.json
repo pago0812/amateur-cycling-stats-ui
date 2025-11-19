@@ -16,7 +16,13 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
-		"seed:users": "npx tsx supabase/seed-users.ts"
+		"seed:users": "npx tsx supabase/seed-users.ts",
+		"supabase:start": "supabase start",
+		"supabase:stop": "supabase stop",
+		"supabase:status": "supabase status",
+		"supabase:reset": "supabase db reset",
+		"supabase:types": "supabase gen types typescript --local > src/lib/types/database.types.ts",
+		"dev:full": "npm run supabase:start && npm run dev"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
