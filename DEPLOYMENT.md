@@ -72,14 +72,29 @@ Application Running ✓
 
 **Required in Coolify:**
 ```bash
+# Database & Supabase API
 DATABASE_URL=postgresql://postgres:PASSWORD@supabase-db:5432/postgres
 SUPABASE_URL=https://your-instance.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-key
+
+# Application
 SITE_URL=https://dev.amateurcyclingstats.com/
+
+# Email
 MAILERSEND_API_KEY=mlsn.your-key
 MAILERSEND_FROM_EMAIL=noreply@yourdomain.com
 MAILERSEND_FROM_NAME=Amateur Cycling Stats
+
+# Supabase CLI Port Configuration (REQUIRED)
+SUPABASE_ID_PROJECT=coolify-dev
+SUPABASE_API_PORT=54321
+SUPABASE_DB_PORT=54322
+SUPABASE_DB_SHADOW_PORT=54320
+SUPABASE_STUDIO_PORT=54323
+SUPABASE_INBUCKET_PORT=54324
+SUPABASE_POOLER_PORT=54329
+SUPABASE_ANALYTICS_PORT=54327
 ```
 
 **See full configuration:** [COOLIFY.md - Environment Variables](./COOLIFY.md#environment-variables-configuration)

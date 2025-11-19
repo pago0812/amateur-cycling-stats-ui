@@ -116,13 +116,15 @@ MAILERSEND_FROM_NAME=Amateur Cycling Stats
 - API Keys → Create API Token
 - Verify your sending domain in MailerSend dashboard
 
-### Optional Environment Variables
+### Required Supabase Port Configuration
 
-These have default values in `supabase/config.toml` and are only needed for worktree overrides:
+These environment variables are REQUIRED for Supabase CLI to function correctly:
 
 ```bash
-# Only set these if you need custom port configurations
-SUPABASE_ID_PROJECT=coolify-production
+# Project identifier - use descriptive name for your environment
+SUPABASE_ID_PROJECT=coolify-dev
+
+# Supabase service ports (use standard defaults unless you have conflicts)
 SUPABASE_API_PORT=54321
 SUPABASE_DB_PORT=54322
 SUPABASE_DB_SHADOW_PORT=54320
@@ -132,7 +134,7 @@ SUPABASE_POOLER_PORT=54329
 SUPABASE_ANALYTICS_PORT=54327
 ```
 
-**Note:** For standard dev/production deployments, these are NOT required.
+**Note:** These values configure the `supabase/config.toml` file via `env()` function calls. If not set, the Supabase CLI will fail to parse the configuration.
 
 ---
 
