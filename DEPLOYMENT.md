@@ -19,9 +19,9 @@ The project uses a **two-stage deployment** approach:
 
 1. **Stage 1: Database Migration & Seeding** (GitHub Actions)
    - Runs automatically on push to `develop` branch
-   - Applies database migrations
-   - Seeds data to Supabase dev instance
-   - Triggers: `https://db-dev.amateurcyclingstats.com`
+   - Applies database migrations via direct PostgreSQL connection
+   - Seeds data to self-hosted Supabase instance
+   - Uses Supabase CLI with `--db-url` flag
 
 2. **Stage 2: Application Deployment** (Coolify)
    - Coolify detects push to `develop` branch
@@ -34,7 +34,8 @@ The project uses a **two-stage deployment** approach:
 |---------|-----|------------|
 | **Dev Application** | https://dev.amateurcyclingstats.com | Coolify |
 | **Admin Board** | https://admin.amateurcyclingstats.com | Coolify |
-| **Dev Database (Supabase)** | https://db-dev.amateurcyclingstats.com | Supabase Cloud |
+| **Supabase Instance** | Self-hosted via Coolify | Coolify |
+| **PostgreSQL Database** | Internal (port 5432) | Coolify |
 
 ---
 
@@ -51,12 +52,13 @@ The project uses a **two-stage deployment** approach:
 **What it does:**
 1. Installs Node.js and dependencies
 2. Installs Supabase CLI
-3. Links to Supabase dev project
-4. Runs `supabase db reset --linked` (migrations + seed.sql)
-5. Runs `npm run seed:users` (user-dependent data)
-6. Coolify automatically deploys the app after workflow completes
+3. Runs `supabase db reset --db-url` (migrations + seed.sql via direct PostgreSQL connection)
+4. Runs `npm run seed:users` (user-dependent data)
+5. Coolify automatically deploys the app after workflow completes
 
 **Duration:** ~2-3 minutes
+
+**Note:** Uses direct database connection (`--db-url`) instead of project linking for self-hosted Supabase.
 
 #### 2. Manual Migration (`.github/workflows/manual-migration.yml`)
 
@@ -88,40 +90,34 @@ The project uses a **two-stage deployment** approach:
 Navigate to your GitHub repository:
 **Settings → Secrets and variables → Actions → New repository secret**
 
-Add the following secrets:
+Add the following **3 secrets** (for self-hosted Supabase):
 
-#### `SUPABASE_ACCESS_TOKEN`
-- **What**: Your personal Supabase access token
-- **Where to get it**: https://supabase.com/dashboard/account/tokens
-- **How to create**:
-  1. Go to Supabase Dashboard
-  2. Click your profile → Account Settings
-  3. Navigate to "Access Tokens"
-  4. Click "Generate new token"
-  5. Name it "GitHub Actions - Dev" and copy the token
+#### `DATABASE_URL`
+- **What**: PostgreSQL connection string for direct database access
+- **Format**: `postgresql://postgres:PASSWORD@HOST:PORT/postgres`
+- **Where to get it**:
+  - **Option 1**: Coolify → Database service → Connection string
+  - **Option 2**: Construct manually from Coolify environment variables:
+    - `POSTGRES_PASSWORD` (from Coolify env vars)
+    - Database host/IP (internal Docker network name or domain)
+    - Port (default: 5432)
+- **Example**: `postgresql://postgres:mypassword@db.example.com:5432/postgres`
+- **⚠️ Warning**: Keep this secret! Contains database password
 
-#### `SUPABASE_DB_PASSWORD`
-- **What**: Database password for your Supabase dev project
-- **Where to get it**: Supabase Dashboard → Project Settings → Database
-- **Note**: This is the database password, not your account password
+#### `SUPABASE_URL`
+- **What**: Your self-hosted Supabase API URL
+- **Where to get it**: Your Supabase instance URL or Coolify app domain
+- **Example**: `https://supabase.yourdomain.com`
+- **Note**: This is the API endpoint, NOT the database URL
 
 #### `SUPABASE_SERVICE_ROLE_KEY`
-- **What**: Service role key with admin privileges
-- **Where to get it**: Supabase Dashboard → Project Settings → API
-- **Location**: Under "Project API keys" section, copy the `service_role` key
+- **What**: Service role key with admin privileges for seeding operations
+- **Where to get it**:
+  - Coolify → Supabase service → Environment variables → `SERVICE_ROLE_KEY`
+  - Or Supabase Studio → Settings → API → service_role key
 - **⚠️ Warning**: Keep this secret! It bypasses Row Level Security
 
-### Step 2: Verify Supabase Project Configuration
-
-Update the workflow files if your project ID is different:
-
-```yaml
-# .github/workflows/deploy-dev.yml
-env:
-  SUPABASE_PROJECT_ID: 'huqhstmwvqoefcojaflg'  # Update if needed
-```
-
-### Step 3: Configure Environment Variables
+### Step 2: Configure Environment Variables
 
 1. Copy `.env.example` to `.env`:
    ```bash
@@ -131,9 +127,9 @@ env:
 2. Fill in your environment-specific values:
    ```env
    SITE_URL=https://dev.amateurcyclingstats.com
-   SUPABASE_URL=https://huqhstmwvqoefcojaflg.supabase.co
-   SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   SUPABASE_URL=https://supabase.yourdomain.com  # Your self-hosted Supabase API URL
+   SUPABASE_ANON_KEY=your-anon-key  # From Coolify env vars or Supabase Studio
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key  # From Coolify env vars
    MAILERSEND_API_KEY=mlsn.your-key
    MAILERSEND_FROM_EMAIL=noreply@dev.amateurcyclingstats.com
    MAILERSEND_FROM_NAME=Amateur Cycling Stats
@@ -141,7 +137,7 @@ env:
 
 3. **⚠️ Important**: Add `.env` to `.gitignore` (already configured)
 
-### Step 4: Test the Setup
+### Step 3: Test the Setup
 
 Trigger a manual workflow run:
 
@@ -264,21 +260,24 @@ To run migrations against production (future use):
 
 ### Common Issues
 
-#### ❌ **"Supabase link failed"**
+#### ❌ **"Database connection failed"**
 
 **Symptoms:**
 ```
-Error: Failed to link project
+Error: could not connect to server
+Error: FATAL: password authentication failed
 ```
 
 **Solutions:**
-1. Verify `SUPABASE_ACCESS_TOKEN` is correct and not expired
-2. Check that the project ID matches your Supabase project
-3. Ensure the token has sufficient permissions
+1. Verify `DATABASE_URL` secret is correct
+2. Check database host is accessible from GitHub Actions
+3. Ensure database port is correct (default: 5432)
+4. Verify PostgreSQL password is correct
 
 **How to fix:**
-- Regenerate access token in Supabase Dashboard
-- Update the GitHub secret
+- Double-check the `DATABASE_URL` format: `postgresql://postgres:PASSWORD@HOST:PORT/postgres`
+- Verify the database host is publicly accessible or use VPN/tunnel if internal
+- Update the GitHub secret with correct connection string
 - Re-run the workflow
 
 ---
@@ -288,20 +287,20 @@ Error: Failed to link project
 **Symptoms:**
 ```
 Error: Failed to run migrations
-Error: PGRST301
+Error: migration xxx failed
 ```
 
 **Solutions:**
-1. Check `SUPABASE_DB_PASSWORD` is correct
-2. Verify migration files have no syntax errors
-3. Check for conflicts with existing data
+1. Verify migration files have no syntax errors
+2. Check for conflicts with existing data
+3. Ensure database has correct permissions
 
 **How to fix:**
 ```bash
 # Test migrations locally first
 supabase db reset
 
-# If it works locally, check GitHub secrets
+# If it works locally, check DATABASE_URL secret
 # If it fails locally, fix the migration file
 ```
 
@@ -434,9 +433,10 @@ Error: User already exists
    - Use Coolify environment variables for production
 
 2. **Rotate credentials regularly**
-   - Update Supabase access tokens every 90 days
+   - Update database passwords every 90 days
    - Rotate API keys if compromised
    - Review access logs periodically
+   - Update `DATABASE_URL` secret when password changes
 
 3. **Use appropriate secret scope**
    - `SUPABASE_ANON_KEY`: Client-side safe
@@ -462,6 +462,7 @@ When ready for production:
 
 | Date | Change | Author |
 |------|--------|--------|
+| 2025-01-19 | Updated CI/CD for self-hosted Supabase with simplified 3-secret setup | Claude Code |
 | 2025-01-19 | Initial CI/CD setup for dev environment | Claude Code |
 
 ---
