@@ -1,7 +1,7 @@
 import type { Cyclist } from '$lib/types/domain/cyclist.domain';
 import type { AuthUserRpcResponse } from '$lib/types/db';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Adapts the RPC response from get_auth_user to domain Cyclist type (flattened).

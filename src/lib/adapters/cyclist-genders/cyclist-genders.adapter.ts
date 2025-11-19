@@ -6,7 +6,7 @@
 
 import type { CyclistGenderDB } from '$lib/types/db';
 import type { CyclistGender } from '$lib/types/domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Transform CyclistGenderDB (database type) to CyclistGender (domain type).

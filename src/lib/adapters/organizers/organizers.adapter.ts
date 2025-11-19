@@ -8,7 +8,7 @@ import type { OrganizerDB, OrganizerWithUserResponse, AuthUserRpcResponse } from
 import type { Organizer, OrganizerOld } from '$lib/types/domain';
 import type { OrganizerWithRelations, UserWithRelations } from '$lib/types/services';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Adapts the RPC response from get_auth_user to domain Organizer type (flattened).

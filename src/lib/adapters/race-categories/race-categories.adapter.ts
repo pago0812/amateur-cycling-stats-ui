@@ -4,7 +4,7 @@ import type {
 	RaceCategoryGender,
 	RaceCategoryLength
 } from '$lib/types/domain/race-category.domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Adapts a raw database race category row to domain RaceCategory type.

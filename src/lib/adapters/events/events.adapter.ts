@@ -1,13 +1,13 @@
 import type { Event } from '$lib/types/domain/event.domain';
 import type { EventWithRaces } from '$lib/types/services';
 import type { EventDB, EventWithRacesResponse } from '$lib/types/db';
-import { mapTimestamps } from './common.adapter';
-import { adaptRaceFromDb } from './races.adapter';
+import { mapTimestamps } from '../common/common.adapter';
+import { adaptRaceFromDb } from '../races/races.adapter';
 import {
 	adaptRaceCategoryFromRpc,
 	adaptRaceCategoryGenderFromRpc,
 	adaptRaceCategoryLengthFromRpc
-} from './race-categories.adapter';
+} from '../race-categories/race-categories.adapter';
 
 /**
  * Adapts a raw database event row to domain Event type.

@@ -6,7 +6,7 @@
 
 import type { RaceRankingDB } from '$lib/types/db';
 import type { RaceRanking } from '$lib/types/domain';
-import { mapTimestamps } from './common.adapter';
+import { mapTimestamps } from '../common/common.adapter';
 
 /**
  * Transform RaceRankingDB (database type) to RaceRanking (domain type).
