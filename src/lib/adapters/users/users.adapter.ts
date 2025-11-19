@@ -2,7 +2,7 @@ import type { User } from '$lib/types/domain';
 import type { AuthUserRpcResponse } from '$lib/types/db';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { adaptAdminFromRpc } from '../admin/admin.adapter';
-import { adaptOrganizerFromRpc } from '../organizers/organizers.adapter';
+import { adaptOrganizerFromAuthUserRpc } from '../organizers/organizers.adapter';
 import { adaptCyclistFromRpc } from '../cyclists/cyclists.adapter';
 
 /**
@@ -18,7 +18,7 @@ export function adaptAuthUserFromRpc(rpcResponse: AuthUserRpcResponse): User {
 			return adaptAdminFromRpc(rpcResponse);
 		case RoleTypeEnum.ORGANIZER_STAFF:
 		case RoleTypeEnum.ORGANIZER_OWNER:
-			return adaptOrganizerFromRpc(rpcResponse);
+			return adaptOrganizerFromAuthUserRpc(rpcResponse);
 		case RoleTypeEnum.CYCLIST:
 			return adaptCyclistFromRpc(rpcResponse);
 		default:

@@ -1119,6 +1119,55 @@ $$;
 
 COMMENT ON FUNCTION public.get_race_with_results_by_id(UUID) IS 'Returns race data with nested race_results array by race UUID. Each result includes user_id (domain cyclistId), ranking_point data. Results ordered by place ASC. Returns NULL if race does not exist. Useful for race detail pages.';
 
+-- Get organizers (members) by organization UUID
+-- This function fetches all organizers for an organization with flattened user and role data
+-- Returns array matching Organizer domain structure (user-centric, not junction table)
+-- Useful for organization members table display
+CREATE OR REPLACE FUNCTION public.get_organizers_by_organization_id(
+  p_organization_id UUID
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  result JSONB;
+BEGIN
+  -- Build organizers array with flattened structure matching Organizer domain type
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      -- Identity (user's ID, not organizers.id)
+      'id', u.id,
+      -- Basic Info
+      'first_name', u.first_name,
+      'last_name', u.last_name,
+      -- Auth Info
+      'email', au.email,
+      'display_name', au.raw_user_meta_data->>'display_name',
+      'has_auth', true,
+      -- Role (enum value)
+      'role_type', r.name,
+      -- Organization
+      'organization_id', o.organization_id,
+      -- Timestamps (from users table)
+      'created_at', u.created_at,
+      'updated_at', u.updated_at
+    )
+    ORDER BY u.created_at DESC  -- Most recent members first
+  ), '[]'::jsonb) INTO result
+  FROM public.organizers o
+  JOIN public.users u ON o.user_id = u.id
+  JOIN public.roles r ON u.role_id = r.id
+  LEFT JOIN auth.users au ON u.auth_user_id = au.id
+  WHERE o.organization_id = p_organization_id;
+
+  RETURN result;
+END;
+$$;
+
+COMMENT ON FUNCTION public.get_organizers_by_organization_id(UUID) IS 'Returns array of organizers (members) for an organization with flattened user and role data. Returns user-centric data (id = user.id) matching Organizer domain type. Results ordered by user creation date DESC. Used for members table display.';
+
 -- =====================================================
 -- SECTION 24: Enable RLS on All Tables
 -- =====================================================

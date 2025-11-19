@@ -62,13 +62,6 @@ export type {
 export type { GetRolesResponse } from './roles';
 
 // ============================================================================
-// Organizer Service Types (Legacy - Pending Migration)
-// ============================================================================
-// These types use nested relationships and will be migrated to flattened pattern.
-// DO NOT use in new code - use domain types + parallel fetching instead.
-export type { OrganizerWithRelations, UserWithRelations } from './organizers';
-
-// ============================================================================
 // Error Types
 // ============================================================================
 export type { ServerError, ValidationError, ApiError } from './errors';

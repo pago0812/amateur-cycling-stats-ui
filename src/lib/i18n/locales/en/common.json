@@ -27,6 +27,13 @@
 		"signin": "Sign up - ACS",
 		"portal": "Account - ACS"
 	},
+	"roles": {
+		"PUBLIC": "Public",
+		"CYCLIST": "Cyclist",
+		"ORGANIZER_STAFF": "Staff",
+		"ORGANIZER_OWNER": "Owner",
+		"ADMIN": "Admin"
+	},
 	"members": {
 		"table": {
 			"name": "Name",

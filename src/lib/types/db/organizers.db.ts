@@ -1,4 +1,4 @@
-import type { Tables } from '../database.types';
+import type { Tables, Database } from '../database.types';
 
 /**
  * Database type for organizers table.
@@ -7,22 +7,25 @@ import type { Tables } from '../database.types';
 export type OrganizerDB = Tables<'organizers'>;
 
 /**
- * Response type for organizer with user and role relations.
- * Used by getOrganizersByOrganizationId service.
+ * RPC response item from get_organizers_by_organization_id.
+ * Matches Organizer domain structure but in snake_case.
+ * Returns user-centric data (id = user.id, not organizers.id).
  */
-export interface OrganizerWithUserResponse extends OrganizerDB {
-	users: {
-		id: string; // UUID
-		first_name: string;
-		last_name: string | null;
-		role_id: string;
-		created_at: string;
-		updated_at: string;
-		roles: {
-			id: string; // UUID
-			name: string;
-			created_at: string;
-			updated_at: string;
-		};
-	};
+export interface OrganizerRpcItem {
+	// Identity (user's ID, not organizers.id)
+	id: string;
+	// Basic Info
+	first_name: string;
+	last_name: string;
+	// Auth Info
+	email: string;
+	display_name: string | null;
+	has_auth: boolean;
+	// Role (enum value)
+	role_type: Database['public']['Enums']['role_name_enum'];
+	// Organization
+	organization_id: string;
+	// Timestamps (from users table)
+	created_at: string;
+	updated_at: string;
 }
