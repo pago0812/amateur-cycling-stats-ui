@@ -45,7 +45,7 @@ jobs:
         if: ${{ inputs.reset_database }}
         run: |
           echo "🔄 Resetting database (migrations + seed.sql)..."
-          supabase db reset --db-url "$DATABASE_URL"
+          supabase db reset --db-url "$DATABASE_URL" --yes
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           # Required by config.toml env() functions (even with --db-url)
