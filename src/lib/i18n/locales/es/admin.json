@@ -68,12 +68,6 @@
 			"submitUpdate": "Actualizar Organización",
 			"cancel": "Cancelar"
 		},
-		"deleteConfirm": {
-			"title": "Eliminar Organización",
-			"message": "¿Estás seguro de que deseas eliminar {name}? Esta acción la marcará como deshabilitada pero preservará todos los datos.",
-			"confirm": "Eliminar",
-			"cancel": "Cancelar"
-		},
 		"deactivateConfirm": {
 			"title": "Desactivar Organización",
 			"message": "¿Estás seguro de que deseas desactivar {name}? Esta acción marcará la organización como deshabilitada. Si hay una invitación pendiente, se eliminará junto con el usuario invitado.",
@@ -95,7 +89,6 @@
 		"success": {
 			"created": "Organización creada e invitación enviada exitosamente",
 			"updated": "Organización actualizada exitosamente",
-			"deleted": "Organización marcada como deshabilitada",
 			"deactivated": "Organización desactivada exitosamente",
 			"activated": "Organización activada exitosamente",
 			"permanentlyDeleted": "Organización eliminada permanentemente",
@@ -105,7 +98,6 @@
 			"loadFailed": "Error al cargar las organizaciones",
 			"createFailed": "Error al crear la organización",
 			"updateFailed": "Error al actualizar la organización",
-			"deleteFailed": "Error al eliminar la organización",
 			"deactivateFailed": "Error al desactivar la organización",
 			"activateFailed": "Error al activar la organización",
 			"deletePermanentlyFailed": "Error al eliminar permanentemente la organización",

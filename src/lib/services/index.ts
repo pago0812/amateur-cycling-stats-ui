@@ -41,10 +41,6 @@ export {
 	getOrganizationById,
 	createOrganization,
 	updateOrganization,
-	updateOrganizationState,
-	deleteOrganization,
-	deactivateOrganization,
-	activateOrganization,
 	permanentlyDeleteOrganization
 } from './organizations';
 

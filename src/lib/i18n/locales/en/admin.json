@@ -68,12 +68,6 @@
 			"submitUpdate": "Update Organization",
 			"cancel": "Cancel"
 		},
-		"deleteConfirm": {
-			"title": "Delete Organization",
-			"message": "Are you sure you want to delete {name}? This will mark it as disabled but preserve all data.",
-			"confirm": "Delete",
-			"cancel": "Cancel"
-		},
 		"deactivateConfirm": {
 			"title": "Deactivate Organization",
 			"message": "Are you sure you want to deactivate {name}? This will mark the organization as disabled. If there is a pending invitation, it will be deleted along with the invited user.",
@@ -95,7 +89,6 @@
 		"success": {
 			"created": "Organization created and invitation sent successfully",
 			"updated": "Organization updated successfully",
-			"deleted": "Organization marked as disabled",
 			"deactivated": "Organization deactivated successfully",
 			"activated": "Organization activated successfully",
 			"permanentlyDeleted": "Organization permanently deleted",
@@ -105,7 +98,6 @@
 			"loadFailed": "Failed to load organizations",
 			"createFailed": "Failed to create organization",
 			"updateFailed": "Failed to update organization",
-			"deleteFailed": "Failed to delete organization",
 			"deactivateFailed": "Failed to deactivate organization",
 			"activateFailed": "Failed to activate organization",
 			"deletePermanentlyFailed": "Failed to permanently delete organization",

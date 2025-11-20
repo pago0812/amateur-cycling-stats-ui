@@ -25,12 +25,7 @@ export type { RaceWithRaceResults, RaceDetailResult } from './races';
 // ============================================================================
 // Organization Service Types
 // ============================================================================
-export type {
-	OrganizationIdRequest,
-	CreateOrganizationRequest,
-	UpdateOrganizationRequest,
-	UpdateOrganizationStateRequest
-} from './organizations';
+export type { OrganizationIdRequest, CreateOrganizationRequest } from './organizations';
 
 // ============================================================================
 // User Service Types
