@@ -2,9 +2,7 @@ import { redirect, fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { SITE_URL } from '$env/static/private';
 import {
-	deleteOrganization,
-	deactivateOrganization,
-	activateOrganization,
+	updateOrganization,
 	permanentlyDeleteOrganization
 } from '$lib/services/organizations';
 import {
@@ -17,23 +15,6 @@ import { sendInvitationEmail } from '$lib/services/mailersend';
 import { t } from '$lib/i18n/server';
 
 export const actions: Actions = {
-	delete: async ({ params, locals }) => {
-		// Layout already ensures user is authenticated and has ADMIN role
-		try {
-			// Soft delete organization (sets state = DISABLED)
-			await deleteOrganization(locals.supabase, { id: params.id });
-		} catch (err) {
-			// Log error and return user-friendly message
-			console.error('Error deleting organization:', err);
-			return fail(500, {
-				error: t(locals.locale, 'admin.organizations.errors.deleteFailed')
-			});
-		}
-
-		// Redirect to organizations list (outside try-catch so it's not caught as error)
-		throw redirect(303, '/admin/organizations');
-	},
-
 	resendInvite: async ({ params, locals }) => {
 		// Get organization state and name
 		const { data: orgData, error: orgError } = await locals.supabase
@@ -147,7 +128,7 @@ export const actions: Actions = {
 			}
 
 			// Deactivate organization (set state = DISABLED)
-			await deactivateOrganization(locals.supabase, { id: params.id });
+			await updateOrganization(locals.supabase, params.id, { state: 'DISABLED' });
 		} catch (err) {
 			console.error('Error deactivating organization:', err);
 			return fail(500, {
@@ -163,7 +144,7 @@ export const actions: Actions = {
 		// Layout already ensures user is authenticated and has ADMIN role
 		try {
 			// Activate organization (set state = ACTIVE)
-			await activateOrganization(locals.supabase, { id: params.id });
+			await updateOrganization(locals.supabase, params.id, { state: 'ACTIVE' });
 		} catch (err) {
 			console.error('Error activating organization:', err);
 			return fail(500, {

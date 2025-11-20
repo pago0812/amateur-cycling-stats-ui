@@ -421,5 +421,55 @@ COMMENT ON POLICY "Linked owner: Delete organization invitations"
   'Allows linked organizer owners (State B: active owners) to delete invitations for their organization.';
 
 -- =====================================================
+-- SECTION 6: Organization Update RPC
+-- =====================================================
+
+-- Unified organization update function supporting partial updates
+CREATE OR REPLACE FUNCTION public.update_organization(
+  p_organization_id UUID,
+  p_updates JSONB
+)
+RETURNS JSONB
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_updated_org public.organizations;
+BEGIN
+  -- Validate organization exists
+  IF NOT EXISTS (SELECT 1 FROM public.organizations WHERE id = p_organization_id) THEN
+    RAISE EXCEPTION 'Organization with ID % not found', p_organization_id
+      USING ERRCODE = 'P0002';
+  END IF;
+
+  -- Build and execute dynamic UPDATE query with only provided fields
+  UPDATE public.organizations
+  SET
+    name = COALESCE((p_updates->>'name')::TEXT, name),
+    description = CASE
+      WHEN p_updates ? 'description' THEN (p_updates->>'description')::TEXT
+      ELSE description
+    END,
+    state = COALESCE((p_updates->>'state')::TEXT, state),
+    updated_at = NOW()
+  WHERE id = p_organization_id
+  RETURNING * INTO v_updated_org;
+
+  -- Return updated organization as JSONB
+  RETURN jsonb_build_object(
+    'id', v_updated_org.id,
+    'name', v_updated_org.name,
+    'description', v_updated_org.description,
+    'state', v_updated_org.state,
+    'created_at', v_updated_org.created_at,
+    'updated_at', v_updated_org.updated_at
+  );
+END;
+$$;
+
+COMMENT ON FUNCTION public.update_organization IS 'Updates an organization with partial data. Only fields present in p_updates JSONB are modified. Returns updated organization as JSONB. Throws exception if organization not found.';
+
+-- =====================================================
 -- END OF CONSOLIDATED MIGRATION 03
 -- =====================================================

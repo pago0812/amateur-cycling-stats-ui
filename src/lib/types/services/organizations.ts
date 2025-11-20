@@ -6,7 +6,7 @@ import type { OrganizationState } from '../domain/organization.domain';
 
 /**
  * Identifies an organization by UUID.
- * Used by: getById, delete, deactivate, activate, permanentlyDelete operations.
+ * Used by: getById, delete, permanentlyDelete operations.
  */
 export interface OrganizationIdRequest {
 	id: string;
@@ -16,17 +16,6 @@ export interface CreateOrganizationRequest {
 	name: string;
 	description?: string | null;
 	state?: OrganizationState;
-}
-
-export interface UpdateOrganizationRequest {
-	id: string;
-	name?: string;
-	description?: string | null;
-}
-
-export interface UpdateOrganizationStateRequest {
-	id: string;
-	state: OrganizationState;
 }
 
 // ============================================================================

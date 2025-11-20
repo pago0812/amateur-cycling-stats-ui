@@ -28,8 +28,7 @@ export const actions: Actions = {
 
 		// Update organization
 		try {
-			await updateOrganization(locals.supabase, {
-				id: params.id,
+			await updateOrganization(locals.supabase, params.id, {
 				name: name.trim(),
 				description: description?.trim() || null
 			});

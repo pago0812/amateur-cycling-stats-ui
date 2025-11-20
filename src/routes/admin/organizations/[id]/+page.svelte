@@ -11,13 +11,11 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	// Modal states
-	let isDeleteModalOpen = $state(false);
 	let isDeactivateModalOpen = $state(false);
 	let isActivateModalOpen = $state(false);
 	let isPermanentDeleteModalOpen = $state(false);
 
 	// Form references
-	let deleteForm: HTMLFormElement = $state()!;
 	let deactivateForm: HTMLFormElement = $state()!;
 	let activateForm: HTMLFormElement = $state()!;
 	let permanentDeleteForm: HTMLFormElement = $state()!;
@@ -46,17 +44,6 @@
 	// Resend invite handler
 	const handleResendInvite = () => {
 		resendForm.requestSubmit();
-	};
-
-	// Confirm deletion - submit form
-	const handleConfirmDelete = () => {
-		deleteForm.requestSubmit();
-		isDeleteModalOpen = false;
-	};
-
-	// Cancel deletion
-	const handleCancelDelete = () => {
-		isDeleteModalOpen = false;
 	};
 
 	// Confirm deactivation - submit form
@@ -106,23 +93,6 @@
 <svelte:head>
 	<title>{data.organization.name} - {$t('admin.organizations.title')} - ACS</title>
 </svelte:head>
-
-<!-- Hidden delete form -->
-<form
-	method="POST"
-	action="?/delete"
-	bind:this={deleteForm}
-	class="hidden"
-	use:enhance={() => {
-		return async ({ result, update }) => {
-			// Only show success alert if redirect happened (successful deletion)
-			if (result.type === 'redirect') {
-				alertStore.openAlert($t('admin.organizations.success.deleted'), 'success');
-			}
-			await update();
-		};
-	}}
-></form>
 
 <!-- Hidden resend invite form -->
 <form
@@ -281,18 +251,6 @@
 		<OrganizationProfile organization={data.organization} />
 	</div>
 </section>
-
-<!-- Delete Confirmation Modal -->
-<ConfirmModal
-	open={isDeleteModalOpen}
-	title={$t('admin.organizations.deleteConfirm.title')}
-	message={`${$t('admin.organizations.deleteConfirm.message').replace('{name}', data.organization.name)}`}
-	confirmText={$t('admin.organizations.deleteConfirm.confirm')}
-	cancelText={$t('admin.organizations.deleteConfirm.cancel')}
-	variant="danger"
-	onConfirm={handleConfirmDelete}
-	onCancel={handleCancelDelete}
-/>
 
 <!-- Deactivate Confirmation Modal -->
 <ConfirmModal
