@@ -9,7 +9,7 @@
 export { mapTimestamps, adaptArray, isDefined } from './common/common.adapter';
 
 // Events
-export { adaptEventFromDb, adaptEventWithRacesFromDb } from './events/events.adapter';
+export { adaptEventFromDb, adaptEventWithRacesFromRpc } from './events/events.adapter';
 
 // Races
 export {
@@ -46,9 +46,6 @@ export { adaptAuthUserFromRpc } from './users/users.adapter';
 
 // Admin
 export { adaptAdminFromRpc } from './admin/admin.adapter';
-
-// Roles
-export { adaptRoleFromDb } from './roles/roles.adapter';
 
 // Organizations
 export {

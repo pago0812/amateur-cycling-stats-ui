@@ -1,4 +1,3 @@
-import type { Database } from '$lib/types/database.types';
 import type { AuthUserRpcResponse, TypedSupabaseClient } from '$lib/types/db';
 import type { User } from '$lib/types/domain';
 import { adaptAuthUserFromRpc } from '$lib/adapters';

@@ -25,7 +25,6 @@ export type { RaceResultDB, RaceResultTableDB } from './race-results.db';
 export type { EventDB, EventWithRacesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from './races.db';
 export type { UserDB, AuthUserRpcResponse } from './users.db';
-export type { RoleDB } from './roles.db';
 export type { OrganizationDB, OrganizationTableDB } from './organizations.db';
 export type { OrganizationInvitationDB } from './organization-invitations.db';
 export type { OrganizerDB, OrganizerTableDB } from './organizers.db';

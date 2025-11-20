@@ -15,7 +15,6 @@ export { RoleTypeEnum } from './role-type.domain';
 // User & Authentication
 // ============================================================================
 export type { User, UserOld } from './user.domain';
-export type { Role } from './role.domain';
 export type { Admin } from './admin.domain';
 export type { Cyclist } from './cyclist.domain';
 export type { CyclistGender } from './cyclist-gender.domain';
