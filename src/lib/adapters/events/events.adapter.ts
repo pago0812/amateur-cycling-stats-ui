@@ -36,7 +36,7 @@ export function adaptEventFromDb(dbEvent: EventDB): Event {
  * Handles RPC response from get_event_with_races_by_event_id().
  * Transforms all snake_case → camelCase.
  */
-export function adaptEventWithRacesFromDb(dbData: EventWithRacesResponse): EventWithRaces {
+export function adaptEventWithRacesFromRpc(dbData: EventWithRacesResponse): EventWithRaces {
 	const baseEvent = adaptEventFromDb(dbData);
 
 	return {
