@@ -1,6 +1,6 @@
 import type { Organization, PartialOrganization } from '$lib/types/domain';
 import type { OrganizationIdRequest, CreateOrganizationRequest } from '$lib/types/services';
-import type { TypedSupabaseClient, OrganizationDB } from '$lib/types/db';
+import type { TypedSupabaseClient, OrganizationTableDB } from '$lib/types/db';
 import { adaptOrganizationFromDb, adaptOrganizationFromDomain } from '$lib/adapters';
 
 /**
@@ -136,13 +136,14 @@ export async function updateOrganization(
 		throw new Error(`Error updating organization: ${error.message}`);
 	}
 
-	if (!data) {
+	// RPC returns array from RETURNS TABLE, extract first element
+	const updatedOrg = data?.[0];
+	if (!updatedOrg) {
 		throw new Error('No data returned after updating organization');
 	}
 
-	// Type cast JSONB result (Supabase doesn't auto-infer JSONB structures)
-	// and adapt to domain type
-	return adaptOrganizationFromDb(data as OrganizationDB);
+	// Adapt auto-typed result to domain type (cast to OrganizationTableDB for adapter compatibility)
+	return adaptOrganizationFromDb(updatedOrg as OrganizationTableDB);
 }
 
 /**

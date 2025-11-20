@@ -31,7 +31,7 @@ export type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus
 } from './organization-invitation.domain';
-export type { Organizer, OrganizerOld } from './organizer.domain';
+export type { Organizer } from './organizer.domain';
 
 // ============================================================================
 // Events & Races

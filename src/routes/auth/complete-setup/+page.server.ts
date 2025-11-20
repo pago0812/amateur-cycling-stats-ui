@@ -1,6 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getInvitationByEmail } from '$lib/services/organization-invitations';
+import { getOrganizationById, completeOrganizerOwnerSetup } from '$lib/services';
 import { t } from '$lib/i18n/server';
 
 export const load: PageServerLoad = async ({ parent, locals }) => {
@@ -45,20 +46,17 @@ export const load: PageServerLoad = async ({ parent, locals }) => {
 		invitation.organizationId
 	);
 
-	// Get organization name from invitation
-	const { data: orgData, error: orgError } = await locals.supabase
-		.from('organizations')
-		.select('name')
-		.eq('id', invitation.organizationId)
-		.single();
-
-	console.log('[Complete Setup Load] Organization lookup result:', {
-		error: orgError?.message,
-		hasOrgData: !!orgData,
-		name: orgData?.name
+	// Get organization using service
+	const organization = await getOrganizationById(locals.supabase, {
+		id: invitation.organizationId
 	});
 
-	if (!orgData) {
+	console.log('[Complete Setup Load] Organization lookup result:', {
+		hasOrganization: !!organization,
+		name: organization?.name
+	});
+
+	if (!organization) {
 		console.error(
 			'[Complete Setup Load] ❌ Organization not found for ID:',
 			invitation.organizationId
@@ -70,7 +68,7 @@ export const load: PageServerLoad = async ({ parent, locals }) => {
 
 	return {
 		invitation,
-		organizationName: orgData.name,
+		organizationName: organization.name,
 		email: user.email
 	};
 };
@@ -163,18 +161,15 @@ export const actions: Actions = {
 			}
 
 			// 3. Complete setup atomically (all database operations in one transaction)
-			const { data: setupResult, error: setupError } = await locals.supabase.rpc(
-				'complete_organizer_owner_setup',
-				{
-					p_auth_user_id: authUser.id,
-					p_first_name: firstName.trim(),
-					p_last_name: lastName.trim(),
-					p_invitation_email: user.email
-				}
-			);
+			const setupResult = await completeOrganizerOwnerSetup(locals.supabase, {
+				authUserId: authUser.id,
+				firstName: firstName.trim(),
+				lastName: lastName.trim(),
+				email: user.email
+			});
 
-			if (setupError || !setupResult) {
-				console.error('[Complete Setup] Setup failed:', setupError);
+			if (!setupResult.success) {
+				console.error('[Complete Setup] Setup failed');
 				return fail(500, {
 					error: t(locals.locale, 'auth.completeSetup.errors.setupFailed'),
 					firstName,
@@ -184,15 +179,8 @@ export const actions: Actions = {
 
 			console.log('[Complete Setup] ✅ Setup completed successfully:', setupResult);
 
-			// Type cast the JSONB result (Supabase doesn't auto-infer JSONB structure)
-			const result = setupResult as {
-				success: boolean;
-				organization_id: string;
-				user_id: string;
-			};
-
 			// Success! Redirect to organization page
-			throw redirect(303, `/admin/organizations/${result.organization_id}`);
+			throw redirect(303, `/admin/organizations/${setupResult.organizationId}`);
 		} catch (err) {
 			// Re-throw redirects (SvelteKit redirect() throws a Redirect object, not Response)
 			if (err && typeof err === 'object' && 'status' in err && 'location' in err) {

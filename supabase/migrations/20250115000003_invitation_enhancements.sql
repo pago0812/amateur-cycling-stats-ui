@@ -135,7 +135,11 @@ CREATE OR REPLACE FUNCTION public.complete_organizer_owner_setup(
   p_last_name TEXT,
   p_invitation_email TEXT
 )
-RETURNS JSONB
+RETURNS TABLE (
+  success BOOLEAN,
+  organization_id UUID,
+  user_id UUID
+)
 SECURITY DEFINER
 SET search_path = public
 LANGUAGE plpgsql
@@ -195,11 +199,7 @@ BEGIN
   WHERE id = v_organization_id;
 
   -- Return success with organization_id for redirect
-  RETURN jsonb_build_object(
-    'success', true,
-    'organization_id', v_organization_id,
-    'user_id', v_user_id
-  );
+  RETURN QUERY SELECT true, v_organization_id, v_user_id;
 END;
 $$;
 
@@ -429,13 +429,18 @@ CREATE OR REPLACE FUNCTION public.update_organization(
   p_organization_id UUID,
   p_updates JSONB
 )
-RETURNS JSONB
+RETURNS TABLE (
+  id UUID,
+  name TEXT,
+  description TEXT,
+  state TEXT,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+)
 SECURITY DEFINER
 SET search_path = public
 LANGUAGE plpgsql
 AS $$
-DECLARE
-  v_updated_org public.organizations;
 BEGIN
   -- Validate organization exists
   IF NOT EXISTS (SELECT 1 FROM public.organizations WHERE id = p_organization_id) THEN
@@ -443,7 +448,8 @@ BEGIN
       USING ERRCODE = 'P0002';
   END IF;
 
-  -- Build and execute dynamic UPDATE query with only provided fields
+  -- Return updated organization
+  RETURN QUERY
   UPDATE public.organizations
   SET
     name = COALESCE((p_updates->>'name')::TEXT, name),
@@ -454,17 +460,13 @@ BEGIN
     state = COALESCE((p_updates->>'state')::TEXT, state),
     updated_at = NOW()
   WHERE id = p_organization_id
-  RETURNING * INTO v_updated_org;
-
-  -- Return updated organization as JSONB
-  RETURN jsonb_build_object(
-    'id', v_updated_org.id,
-    'name', v_updated_org.name,
-    'description', v_updated_org.description,
-    'state', v_updated_org.state,
-    'created_at', v_updated_org.created_at,
-    'updated_at', v_updated_org.updated_at
-  );
+  RETURNING
+    organizations.id,
+    organizations.name,
+    organizations.description,
+    organizations.state,
+    organizations.created_at,
+    organizations.updated_at;
 END;
 $$;
 

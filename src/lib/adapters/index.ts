@@ -58,7 +58,6 @@ export { adaptOrganizationInvitationFromDb } from './organization-invitations/or
 
 // Organizers
 export {
-	adaptOrganizerFromDb,
 	adaptOrganizerFromAuthUserRpc,
 	adaptOrganizerFromRpc
 } from './organizers/organizers.adapter';

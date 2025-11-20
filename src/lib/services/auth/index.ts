@@ -10,6 +10,7 @@ export {
 	deleteAuthUserById,
 	generateInvitationLink,
 	createOnBehalfOrganizerOwner,
+	completeOrganizerOwnerSetup,
 	type DeleteUserResult,
 	type GenerateInvitationLinkParams,
 	type GenerateInvitationLinkResult

@@ -4,15 +4,15 @@
  * Transforms database types (snake_case) to domain types (camelCase) for organizations.
  */
 
-import type { OrganizationDB } from '$lib/types/db';
+import type { OrganizationTableDB } from '$lib/types/db';
 import type { Organization, OrganizationState, PartialOrganization } from '$lib/types/domain';
 import { mapTimestamps } from '../common/common.adapter';
 
 /**
- * Transform OrganizationDB (database type) to Organization (domain type).
+ * Transform OrganizationTableDB (database table type) to Organization (domain type).
  * Maps snake_case fields to camelCase.
  */
-export function adaptOrganizationFromDb(dbOrganization: OrganizationDB): Organization {
+export function adaptOrganizationFromDb(dbOrganization: OrganizationTableDB): Organization {
 	return {
 		// Identity
 		id: dbOrganization.id,

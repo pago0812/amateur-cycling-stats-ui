@@ -1,5 +1,5 @@
 import type { RaceResult } from '$lib/types/domain';
-import type { RaceResultRpcItem, TypedSupabaseClient } from '$lib/types/db';
+import type { TypedSupabaseClient } from '$lib/types/db';
 import { adaptRaceResultsFromRpc } from '$lib/adapters';
 
 interface GetRaceResultsByUserIdParams {
@@ -29,6 +29,6 @@ export async function getRaceResultsByUserId(
 		throw new Error(`Error fetching race results: ${error.message}`);
 	}
 
-	// RPC returns JSONB array, cast to proper type and handle null
-	return adaptRaceResultsFromRpc((data as unknown as RaceResultRpcItem[]) ?? []);
+	// RPC returns auto-typed array from RETURNS TABLE
+	return adaptRaceResultsFromRpc(data ?? []);
 }

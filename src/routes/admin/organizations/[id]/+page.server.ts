@@ -2,6 +2,7 @@ import { redirect, fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { SITE_URL } from '$env/static/private';
 import {
+	getOrganizationById,
 	updateOrganization,
 	permanentlyDeleteOrganization
 } from '$lib/services/organizations';
@@ -16,21 +17,17 @@ import { t } from '$lib/i18n/server';
 
 export const actions: Actions = {
 	resendInvite: async ({ params, locals }) => {
-		// Get organization state and name
-		const { data: orgData, error: orgError } = await locals.supabase
-			.from('organizations')
-			.select('id, state, name')
-			.eq('id', params.id)
-			.single();
+		// Get organization using service
+		const organization = await getOrganizationById(locals.supabase, { id: params.id });
 
-		if (orgError || !orgData) {
+		if (!organization) {
 			return fail(404, {
 				error: t(locals.locale, 'admin.organizations.errors.notFound')
 			});
 		}
 
 		// Verify organization is in WAITING_OWNER state
-		if (orgData.state !== 'WAITING_OWNER') {
+		if (organization.state !== 'WAITING_OWNER') {
 			return fail(400, {
 				error: 'Organization is not waiting for owner invitation'
 			});
@@ -38,7 +35,7 @@ export const actions: Actions = {
 
 		try {
 			// Get pending invitation
-			const invitation = await getInvitationByOrganizationId(locals.supabase, orgData.id);
+			const invitation = await getInvitationByOrganizationId(locals.supabase, organization.id);
 
 			if (!invitation) {
 				return fail(404, {
@@ -63,7 +60,7 @@ export const actions: Actions = {
 			// Send invitation email via MailerSend
 			const emailResult = await sendInvitationEmail({
 				to: invitation.email,
-				organizationName: orgData.name,
+				organizationName: organization.name,
 				ownerName: invitation.invitedOwnerName,
 				confirmationUrl: linkResult.actionLink
 			});
@@ -93,21 +90,17 @@ export const actions: Actions = {
 	deactivate: async ({ params, locals }) => {
 		// Layout already ensures user is authenticated and has ADMIN role
 		try {
-			// Get organization state
-			const { data: orgData, error: orgError } = await locals.supabase
-				.from('organizations')
-				.select('id, state')
-				.eq('id', params.id)
-				.single();
+			// Get organization using service
+			const organization = await getOrganizationById(locals.supabase, { id: params.id });
 
-			if (orgError || !orgData) {
+			if (!organization) {
 				return fail(404, {
 					error: t(locals.locale, 'admin.organizations.errors.notFound')
 				});
 			}
 
 			// Get pending invitation if exists
-			const invitation = await getInvitationByOrganizationId(locals.supabase, orgData.id);
+			const invitation = await getInvitationByOrganizationId(locals.supabase, organization.id);
 
 			// If there's a pending invitation, clean it up
 			if (invitation) {
@@ -124,7 +117,7 @@ export const actions: Actions = {
 				}
 
 				// Delete invitation record
-				await deleteInvitationByOrganizationId(locals.supabase, orgData.id);
+				await deleteInvitationByOrganizationId(locals.supabase, organization.id);
 			}
 
 			// Deactivate organization (set state = DISABLED)

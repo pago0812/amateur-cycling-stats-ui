@@ -1,4 +1,4 @@
-import type { TypedSupabaseClient, OrganizerRpcItem } from '$lib/types/db';
+import type { TypedSupabaseClient } from '$lib/types/db';
 import type { Organizer } from '$lib/types/domain/organizer.domain';
 import { adaptOrganizerFromRpc } from '$lib/adapters';
 
@@ -23,9 +23,8 @@ export async function getOrganizersByOrganizationId(
 		throw new Error(`Error fetching organizers: ${error.message}`);
 	}
 
-	// Type cast JSONB and adapt to domain type
-	const rpcItems = (data || []) as unknown as OrganizerRpcItem[];
-	return rpcItems.map(adaptOrganizerFromRpc);
+	// RPC returns auto-typed array from RETURNS TABLE
+	return (data || []).map(adaptOrganizerFromRpc);
 }
 
 /**
