@@ -51,7 +51,10 @@ export { adaptAdminFromRpc } from './admin/admin.adapter';
 export { adaptRoleFromDb } from './roles/roles.adapter';
 
 // Organizations
-export { adaptOrganizationFromDb } from './organizations/organizations.adapter';
+export {
+	adaptOrganizationFromDb,
+	adaptOrganizationFromDomain
+} from './organizations/organizations.adapter';
 
 // Organization Invitations
 export { adaptOrganizationInvitationFromDb } from './organization-invitations/organization-invitations.adapter';

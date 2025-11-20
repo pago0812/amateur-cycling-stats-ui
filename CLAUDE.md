@@ -804,17 +804,42 @@ The `handle_new_user()` trigger supports skipping auto-creation via `skip_auto_c
 
 **Update Function Pattern:**
 
-All update functions should use `Partial<Pick<DomainType, ...>>` for type-safe partial updates:
+All update functions should use a typed `PartialEntity` type and reverse adapters for type-safe partial updates:
 
 ```typescript
-// ✅ CORRECT - Update function with Partial<Pick<...>>
+// 1. Define PartialEntity type (in domain types)
+export type PartialOrganization = Partial<Pick<Organization, 'name' | 'description' | 'state'>>;
+
+// 2. Create reverse adapter (domain → database format)
+export function adaptOrganizationFromDomain(
+	partial: PartialOrganization
+): Record<string, string | null> {
+	const dbData: Record<string, string | null> = {};
+	if (partial.name !== undefined) dbData.name = partial.name;
+	if (partial.description !== undefined) dbData.description = partial.description;
+	if (partial.state !== undefined) dbData.state = partial.state;
+	return dbData;
+}
+
+// 3. Update function using adapter
+// ✅ CORRECT - Update function with PartialEntity and adapter
 export async function updateOrganization(
 	supabase: TypedSupabaseClient,
 	organizationId: string,
-	updates: Partial<Pick<Organization, 'name' | 'description' | 'state'>>
+	updates: PartialOrganization
 ): Promise<Organization> {
-	// Only updateable fields are allowed
-	// Excludes: id, createdAt, updatedAt, computed fields
+	// Use reverse adapter: domain → database format
+	const rpcUpdates = adaptOrganizationFromDomain(updates);
+
+	const { data, error } = await supabase.rpc('update_organization', {
+		p_organization_id: organizationId,
+		p_updates: rpcUpdates
+	});
+
+	if (error) throw new Error(`Error updating: ${error.message}`);
+
+	// Use forward adapter: database → domain format
+	return adaptOrganizationFromDb(data as OrganizationDB);
 }
 
 // Usage examples:
@@ -832,16 +857,19 @@ export async function updateOrganization(
 **Benefits:**
 - **Type-safe**: Only allows updateable fields at compile time
 - **Flexible**: Supports partial updates without custom request types
-- **Consistent**: Same pattern across all update functions
-- **Explicit**: `Pick<...>` clearly documents which fields are updateable
+- **Consistent**: Same pattern across all update functions (forward + reverse adapters)
+- **Explicit**: `PartialEntity` type clearly documents which fields are updateable
 - **DRY**: Reuses domain types instead of duplicating field definitions
+- **Separation of concerns**: Adapters handle transformation, services handle business logic
 
 **Implementation Pattern:**
-1. Use RPC functions for database updates (atomic operations)
-2. Accept `entityId: string` and `updates: Partial<Pick<Entity, ...>>` parameters
-3. Transform updates to snake_case for RPC JSONB parameter
-4. Cast JSONB result to DB type before passing to adapter
-5. Return adapted domain type
+1. **Define PartialEntity type**: `Partial<Pick<Entity, 'field1' | 'field2'>>`
+2. **Create reverse adapter**: `adaptEntityFromDomain(partial: PartialEntity)` → `Record<string, ...>`
+3. **Use RPC functions** for database updates (atomic operations)
+4. **Accept typed parameters**: `entityId: string` and `updates: PartialEntity`
+5. **Transform with adapter**: `adaptEntityFromDomain(updates)` for RPC JSONB parameter
+6. **Cast JSONB result** to DB type before passing to forward adapter
+7. **Return adapted domain type**: `adaptEntityFromDb(data as EntityDB)`
 
 **Session Management Pattern:**
 

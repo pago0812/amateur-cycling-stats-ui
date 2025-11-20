@@ -1,7 +1,7 @@
-import type { Organization } from '$lib/types/domain';
+import type { Organization, PartialOrganization } from '$lib/types/domain';
 import type { OrganizationIdRequest, CreateOrganizationRequest } from '$lib/types/services';
 import type { TypedSupabaseClient, OrganizationDB } from '$lib/types/db';
-import { adaptOrganizationFromDb } from '$lib/adapters';
+import { adaptOrganizationFromDb, adaptOrganizationFromDomain } from '$lib/adapters';
 
 /**
  * Get all organizations with event count.
@@ -117,13 +117,10 @@ export async function createOrganization(
 export async function updateOrganization(
 	supabase: TypedSupabaseClient,
 	organizationId: string,
-	updates: Partial<Pick<Organization, 'name' | 'description' | 'state'>>
+	updates: PartialOrganization
 ): Promise<Organization> {
-	// Build updates object in snake_case for RPC (JSONB parameter)
-	const rpcUpdates: Record<string, string | null> = {};
-	if (updates.name !== undefined) rpcUpdates.name = updates.name;
-	if (updates.description !== undefined) rpcUpdates.description = updates.description;
-	if (updates.state !== undefined) rpcUpdates.state = updates.state;
+	// Use adapter to transform domain type to database format
+	const rpcUpdates = adaptOrganizationFromDomain(updates);
 
 	// Call RPC function with organization ID and updates
 	const { data, error } = await supabase.rpc('update_organization', {
