@@ -1,4 +1,4 @@
-import type { AuthUserRpcResponse, TypedSupabaseClient } from '$lib/types/db';
+import type { TypedSupabaseClient } from '$lib/types/db';
 import type { User } from '$lib/types/domain';
 import { adaptAuthUserFromRpc } from '$lib/adapters';
 
@@ -22,12 +22,13 @@ export const getAuthUser = async (supabase: TypedSupabaseClient): Promise<User |
 			throw new Error(`RPC error: ${error.message}`);
 		}
 
-		if (!rpcResponse) {
+		// RPC returns array (RETURNS TABLE), check if empty
+		if (!rpcResponse || rpcResponse.length === 0) {
 			return null;
 		}
 
-		// Transform to domain type
-		return adaptAuthUserFromRpc(rpcResponse as unknown as AuthUserRpcResponse);
+		// Transform first row to domain type (auto-typed by Supabase!)
+		return adaptAuthUserFromRpc(rpcResponse[0]);
 	} catch (error) {
 		console.error('Failed to get authenticated user:', error);
 		throw error;

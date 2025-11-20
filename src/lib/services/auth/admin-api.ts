@@ -5,7 +5,7 @@
  * WARNING: These operations bypass Row Level Security (RLS).
  */
 
-import type { AuthUserRpcResponse } from '$lib/types/db';
+import type { AuthUserDB } from '$lib/types/db';
 import type {
 	CreateOnBehalfOrganizerOwnerRequest,
 	CreateOnBehalfOrganizerOwnerResponse
@@ -182,7 +182,7 @@ export async function createOnBehalfOrganizerOwner(
 		const authUserId = authData.user.id;
 
 		// Step 2: Create public user with organizer_owner role and link to organization
-		// RPC returns complete AuthUserRpcResponse structure
+		// RPC returns complete AuthUserDB structure (flattened)
 		const { data: organizerData, error: rpcError } = await adminClient.rpc(
 			'create_user_with_organizer_owner',
 			{
@@ -211,7 +211,7 @@ export async function createOnBehalfOrganizerOwner(
 
 		// Adapt RPC response to Organizer domain type
 		const organizer = adaptOrganizerFromAuthUserRpc(
-			organizerData as unknown as AuthUserRpcResponse
+			organizerData as unknown as AuthUserDB
 		);
 
 		return {
