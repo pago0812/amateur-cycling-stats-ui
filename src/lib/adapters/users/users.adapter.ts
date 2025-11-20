@@ -1,5 +1,5 @@
 import type { User } from '$lib/types/domain';
-import type { AuthUserRpcResponse } from '$lib/types/db';
+import type { AuthUserDB } from '$lib/types/db';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { adaptAdminFromRpc } from '../admin/admin.adapter';
 import { adaptOrganizerFromAuthUserRpc } from '../organizers/organizers.adapter';
@@ -10,8 +10,8 @@ import { adaptCyclistFromRpc } from '../cyclists/cyclists.adapter';
  * Routes to the appropriate adapter based on the user's role.
  * Returns Admin | Organizer | Cyclist based on role type.
  */
-export function adaptAuthUserFromRpc(rpcResponse: AuthUserRpcResponse): User {
-	const roleName = rpcResponse.role.name;
+export function adaptAuthUserFromRpc(rpcResponse: AuthUserDB): User {
+	const roleName = rpcResponse.role_name;
 
 	switch (roleName) {
 		case RoleTypeEnum.ADMIN:

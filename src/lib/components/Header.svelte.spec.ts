@@ -55,7 +55,7 @@ describe('Header Component', () => {
 			displayName: null,
 			hasAuth: true,
 			roleType: RoleTypeEnum.CYCLIST,
-			gender: null,
+			genderName: null,
 			bornYear: 1990,
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z'

@@ -1,5 +1,5 @@
 import type { Cyclist } from '$lib/types/domain';
-import type { AuthUserRpcResponse, TypedSupabaseClient } from '$lib/types/db';
+import type { AuthUserDB, TypedSupabaseClient } from '$lib/types/db';
 import { adaptCyclistFromRpc } from '$lib/adapters';
 
 interface GetCyclistByIdParams {
@@ -38,8 +38,8 @@ export async function getCyclistById(
 	}
 
 	// Ensure it's a cyclist (has cyclist profile)
-	const typedResponse = data as unknown as AuthUserRpcResponse;
-	if (!typedResponse.cyclist) {
+	const typedResponse = data as unknown as AuthUserDB;
+	if (!typedResponse.cyclist_id) {
 		return null;
 	}
 

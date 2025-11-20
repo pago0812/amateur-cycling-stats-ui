@@ -6,7 +6,7 @@
  */
 
 import type {
-	AuthUserRpcResponse,
+	AuthUserDB,
 	TypedSupabaseClient,
 	OrganizerSetupResponseDB
 } from '$lib/types/db';
@@ -188,7 +188,7 @@ export async function createOnBehalfOrganizerOwner(
 		const authUserId = authData.user.id;
 
 		// Step 2: Create public user with organizer_owner role and link to organization
-		// RPC returns complete AuthUserRpcResponse structure
+		// RPC returns complete AuthUserDB structure (flattened)
 		const { data: organizerData, error: rpcError } = await adminClient.rpc(
 			'create_user_with_organizer_owner',
 			{
@@ -217,7 +217,7 @@ export async function createOnBehalfOrganizerOwner(
 
 		// Adapt RPC response to Organizer domain type
 		const organizer = adaptOrganizerFromAuthUserRpc(
-			organizerData as unknown as AuthUserRpcResponse
+			organizerData as unknown as AuthUserDB
 		);
 
 		return {

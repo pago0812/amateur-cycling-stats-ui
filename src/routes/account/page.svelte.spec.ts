@@ -51,7 +51,7 @@ describe('Account Page Component', () => {
 		hasAuth: true,
 		roleType: RoleTypeEnum.CYCLIST,
 		bornYear: 1990,
-		gender: null,
+		genderName: null,
 		createdAt: '2024-01-01T00:00:00Z',
 		updatedAt: '2024-01-01T00:00:00Z'
 	};
