@@ -865,67 +865,73 @@ COMMENT ON FUNCTION public.get_race_results_by_user_id(UUID) IS 'Returns race re
 -- Does NOT join auth.users or race results
 -- Useful for parallel fetching with race results
 CREATE OR REPLACE FUNCTION public.get_cyclist_by_user_id(p_user_id UUID)
-RETURNS JSONB
+RETURNS TABLE (
+  -- User fields
+  id UUID,
+  first_name TEXT,
+  last_name TEXT,
+
+  -- Auth fields (from auth.users)
+  email TEXT,
+  display_name TEXT,
+
+  -- Role fields (flattened)
+  role_id UUID,
+  role_name role_name_enum,
+
+  -- Cyclist fields (flattened)
+  cyclist_id UUID,
+  cyclist_born_year INT,
+  cyclist_gender_id UUID,
+  cyclist_gender_name TEXT,
+
+  -- Timestamps
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  result JSONB;
   target_user_id UUID;
 BEGIN
   -- Find user by UUID
-  SELECT id INTO target_user_id
-  FROM public.users
-  WHERE id = p_user_id;
+  SELECT u.id INTO target_user_id
+  FROM public.users u
+  WHERE u.id = p_user_id;
 
-  -- Return NULL if user doesn't exist
+  -- Return empty set if user doesn't exist
   IF target_user_id IS NULL THEN
-    RETURN NULL;
+    RETURN;
   END IF;
 
-  -- Build cyclist object (users + roles + cyclists, NO auth.users)
-  SELECT jsonb_build_object(
-    'id', u.id,
-    'first_name', u.first_name,
-    'last_name', u.last_name,
-    'role_id', u.role_id,
-    'created_at', u.created_at,
-    'updated_at', u.updated_at,
-    'role', jsonb_build_object(
-      'id', r.id,
-      'name', r.name,
-      'created_at', r.created_at,
-      'updated_at', r.updated_at
-    ),
-    'cyclist', CASE
-      WHEN c.id IS NOT NULL THEN jsonb_build_object(
-        'id', c.id,
-        'born_year', c.born_year,
-        'gender_id', c.gender_id,
-        'created_at', c.created_at,
-        'updated_at', c.updated_at,
-        'gender', CASE WHEN cg.id IS NOT NULL THEN jsonb_build_object(
-          'id', cg.id,
-          'name', cg.name,
-          'created_at', cg.created_at,
-          'updated_at', cg.updated_at
-        ) ELSE NULL END
-      )
-      ELSE NULL
-    END
-  ) INTO result
+  -- Return flat user object with all fields at top level
+  RETURN QUERY
+  SELECT
+    u.id,
+    u.first_name,
+    u.last_name,
+    au.email,
+    au.raw_user_meta_data->>'display_name' AS display_name,
+    u.role_id,
+    r.name AS role_name,
+    c.id AS cyclist_id,
+    c.born_year AS cyclist_born_year,
+    c.gender_id AS cyclist_gender_id,
+    cg.name AS cyclist_gender_name,
+    u.created_at,
+    u.updated_at
   FROM public.users u
   JOIN public.roles r ON u.role_id = r.id
   LEFT JOIN public.cyclists c ON c.user_id = u.id
   LEFT JOIN public.cyclist_genders cg ON c.gender_id = cg.id
+  LEFT JOIN auth.users au ON u.auth_user_id = au.id
   WHERE u.id = target_user_id;
-
-  RETURN result;
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_cyclist_by_user_id(UUID) IS 'Returns cyclist profile data (users + roles + cyclists) by user UUID. Does NOT join auth.users or race results. Returns NULL if user does not exist. Optimized for parallel fetching with race results.';
+COMMENT ON FUNCTION public.get_cyclist_by_user_id(UUID) IS 'Returns cyclist profile data (users + roles + cyclists + auth) by user UUID. Returns flattened structure with auto-generated TypeScript types. Returns empty set if user does not exist. Optimized for parallel fetching with race results.';
 
 -- Get event with races by event UUID
 -- This function fetches event data with nested races array and supported categories/genders/lengths

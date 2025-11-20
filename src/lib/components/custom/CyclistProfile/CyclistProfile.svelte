@@ -28,8 +28,8 @@
 					{#if cyclist.bornYear}
 						<p>{$t('cyclists.profile.bornYear')}: {cyclist.bornYear}</p>
 					{/if}
-					{#if cyclist.gender}
-						<p>{$t('cyclists.profile.gender')}: {cyclist.gender.name}</p>
+					{#if cyclist.genderName}
+						<p>{$t('cyclists.profile.gender')}: {cyclist.genderName}</p>
 					{/if}
 				</div>
 			</div>

@@ -1,4 +1,3 @@
-import type { CyclistGender } from './cyclist-gender.domain';
 import { RoleTypeEnum } from './role-type.domain';
 
 /**
@@ -24,7 +23,7 @@ export interface Cyclist {
 	roleType: RoleTypeEnum.CYCLIST | null;
 
 	// Cyclist-specific Data
-	gender: CyclistGender | null;
+	genderName: string | null; // Gender name (e.g., "M", "F") from cyclist_genders table
 	bornYear: number | null;
 
 	// Timestamps

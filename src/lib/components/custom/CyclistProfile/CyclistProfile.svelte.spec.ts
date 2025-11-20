@@ -36,12 +36,7 @@ describe('CyclistProfile Component', () => {
 		hasAuth: true,
 		roleType: RoleTypeEnum.CYCLIST,
 		bornYear: 1990,
-		gender: {
-			id: 'gender-1',
-			name: 'Masculino',
-			createdAt: '2024-01-01T00:00:00Z',
-			updatedAt: '2024-01-01T00:00:00Z'
-		},
+		genderName: 'Masculino',
 		createdAt: '2024-01-01T00:00:00Z',
 		updatedAt: '2024-01-01T00:00:00Z'
 	};
@@ -141,7 +136,7 @@ describe('CyclistProfile Component', () => {
 	it('should not render gender section when not provided', async () => {
 		const cyclistWithoutGender: Cyclist = {
 			...mockCyclist,
-			gender: null
+			genderName: null
 		};
 
 		render(CyclistProfile, { cyclist: cyclistWithoutGender, raceResults: mockRaceResults });

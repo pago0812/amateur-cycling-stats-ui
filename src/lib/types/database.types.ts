@@ -711,8 +711,44 @@ export type Database = {
         Args: { check_email: string }
         Returns: boolean
       }
-      get_auth_user: { Args: { user_id?: string }; Returns: Json }
-      get_cyclist_by_user_id: { Args: { p_user_id: string }; Returns: Json }
+      get_auth_user: {
+        Args: { user_id?: string }
+        Returns: {
+          created_at: string
+          cyclist_born_year: number
+          cyclist_gender_id: string
+          cyclist_gender_name: string
+          cyclist_id: string
+          display_name: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          organization_id: string
+          organizer_id: string
+          role_id: string
+          role_name: Database["public"]["Enums"]["role_name_enum"]
+          updated_at: string
+        }[]
+      }
+      get_cyclist_by_user_id: {
+        Args: { p_user_id: string }
+        Returns: {
+          created_at: string
+          cyclist_born_year: number
+          cyclist_gender_id: string
+          cyclist_gender_name: string
+          cyclist_id: string
+          display_name: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          role_id: string
+          role_name: Database["public"]["Enums"]["role_name_enum"]
+          updated_at: string
+        }[]
+      }
       get_event_with_races_by_event_id: {
         Args: { p_event_id: string }
         Returns: Json

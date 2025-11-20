@@ -1,23 +1,20 @@
 import type { Cyclist } from '$lib/types/domain/cyclist.domain';
-import type { AuthUserRpcResponse } from '$lib/types/db';
+import type { CyclistDB } from '$lib/types/db';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from '../common/common.adapter';
 
 /**
- * Adapts the RPC response from get_auth_user to domain Cyclist type (flattened).
+ * Adapts the RPC response from get_cyclist_by_user_id to domain Cyclist type (flattened).
  * Transforms snake_case → camelCase.
- * Note: gender field is null - full gender object would need separate fetch.
  */
-export function adaptCyclistFromRpc(rpcResponse: AuthUserRpcResponse): Cyclist {
-	if (rpcResponse.role.name !== RoleTypeEnum.CYCLIST) {
+export function adaptCyclistFromRpc(rpcResponse: CyclistDB): Cyclist {
+	if (rpcResponse.role_name !== RoleTypeEnum.CYCLIST) {
 		throw new Error('Invalid role: expected CYCLIST');
 	}
 
-	if (!rpcResponse.cyclist) {
+	if (!rpcResponse.cyclist_id) {
 		throw new Error('Cyclist data missing in RPC response');
 	}
-
-	const cyclistData = rpcResponse.cyclist;
 
 	return {
 		id: rpcResponse.id,
@@ -27,8 +24,8 @@ export function adaptCyclistFromRpc(rpcResponse: AuthUserRpcResponse): Cyclist {
 		displayName: rpcResponse.display_name ?? null,
 		hasAuth: rpcResponse.email != null,
 		roleType: RoleTypeEnum.CYCLIST,
-		gender: null, // Gender object not included in RPC response, only gender_id
-		bornYear: cyclistData.born_year,
+		genderName: rpcResponse.cyclist_gender_name ?? null,
+		bornYear: rpcResponse.cyclist_born_year,
 		...mapTimestamps(rpcResponse)
 	};
 }
