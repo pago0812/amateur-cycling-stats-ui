@@ -1,11 +1,6 @@
 import type { Organization } from '$lib/types/domain';
-import type {
-	OrganizationIdRequest,
-	CreateOrganizationRequest,
-	UpdateOrganizationRequest,
-	UpdateOrganizationStateRequest
-} from '$lib/types/services';
-import type { TypedSupabaseClient } from '$lib/types/db';
+import type { OrganizationIdRequest, CreateOrganizationRequest } from '$lib/types/services';
+import type { TypedSupabaseClient, OrganizationDB } from '$lib/types/db';
 import { adaptOrganizationFromDb } from '$lib/adapters';
 
 /**
@@ -117,27 +112,29 @@ export async function createOrganization(
  * Update an existing organization by ID (UUID).
  * Returns domain Organization type with camelCase fields.
  * Only provided fields will be updated (partial update).
+ * Supports updating: name, description, and state.
  */
 export async function updateOrganization(
 	supabase: TypedSupabaseClient,
-	params: UpdateOrganizationRequest
+	organizationId: string,
+	updates: Partial<Pick<Organization, 'name' | 'description' | 'state'>>
 ): Promise<Organization> {
-	// Build update object with only provided fields
-	const updateData: Record<string, string | null> = {};
-	if (params.name !== undefined) updateData.name = params.name;
-	if (params.description !== undefined) updateData.description = params.description;
+	// Build updates object in snake_case for RPC (JSONB parameter)
+	const rpcUpdates: Record<string, string | null> = {};
+	if (updates.name !== undefined) rpcUpdates.name = updates.name;
+	if (updates.description !== undefined) rpcUpdates.description = updates.description;
+	if (updates.state !== undefined) rpcUpdates.state = updates.state;
 
-	const { data, error } = await supabase
-		.from('organizations')
-		.update(updateData)
-		.eq('id', params.id)
-		.select()
-		.single();
+	// Call RPC function with organization ID and updates
+	const { data, error } = await supabase.rpc('update_organization', {
+		p_organization_id: organizationId,
+		p_updates: rpcUpdates
+	});
 
 	if (error) {
-		// PGRST116 = no rows found - organization doesn't exist
-		if (error.code === 'PGRST116') {
-			throw new Error(`Organization with ID ${params.id} not found`);
+		// P0002 = no_data_found - organization doesn't exist
+		if (error.code === 'P0002') {
+			throw new Error(`Organization with ID ${organizationId} not found`);
 		}
 		throw new Error(`Error updating organization: ${error.message}`);
 	}
@@ -146,91 +143,9 @@ export async function updateOrganization(
 		throw new Error('No data returned after updating organization');
 	}
 
-	return adaptOrganizationFromDb(data);
-}
-
-/**
- * Updates the state of an organization.
- * Used to transition between WAITING_OWNER, ACTIVE, and DISABLED states.
- */
-export async function updateOrganizationState(
-	supabase: TypedSupabaseClient,
-	params: UpdateOrganizationStateRequest
-): Promise<Organization> {
-	const { data, error } = await supabase
-		.from('organizations')
-		.update({ state: params.state })
-		.eq('id', params.id)
-		.select()
-		.single();
-
-	if (error) {
-		if (error.code === 'PGRST116') {
-			throw new Error(`Organization with ID ${params.id} not found`);
-		}
-		throw new Error(`Error updating organization state: ${error.message}`);
-	}
-
-	if (!data) {
-		throw new Error('No data returned after updating organization state');
-	}
-
-	return adaptOrganizationFromDb(data);
-}
-
-/**
- * Soft delete an organization by ID (UUID).
- * Sets state to DISABLED instead of deleting the record.
- */
-export async function deleteOrganization(
-	supabase: TypedSupabaseClient,
-	params: OrganizationIdRequest
-): Promise<void> {
-	const { error } = await supabase
-		.from('organizations')
-		.update({ state: 'DISABLED' })
-		.eq('id', params.id);
-
-	if (error) {
-		throw new Error(`Error deleting organization: ${error.message}`);
-	}
-}
-
-/**
- * Deactivates an organization by ID (UUID).
- * Sets state to DISABLED. This is similar to deleteOrganization but intended
- * for use with cleanup logic in the server action.
- */
-export async function deactivateOrganization(
-	supabase: TypedSupabaseClient,
-	params: OrganizationIdRequest
-): Promise<void> {
-	const { error } = await supabase
-		.from('organizations')
-		.update({ state: 'DISABLED' })
-		.eq('id', params.id);
-
-	if (error) {
-		throw new Error(`Error deactivating organization: ${error.message}`);
-	}
-}
-
-/**
- * Activates a DISABLED organization by ID (UUID).
- * Sets state to ACTIVE.
- */
-export async function activateOrganization(
-	supabase: TypedSupabaseClient,
-	params: OrganizationIdRequest
-): Promise<void> {
-	const { error } = await supabase
-		.from('organizations')
-		.update({ state: 'ACTIVE' })
-		.eq('id', params.id);
-
-	if (error) {
-		throw new Error(`Error activating organization: ${error.message}`);
-	}
+	// Type cast JSONB result (Supabase doesn't auto-infer JSONB structures)
+	// and adapt to domain type
+	return adaptOrganizationFromDb(data as OrganizationDB);
 }
 
 /**

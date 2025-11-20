@@ -802,6 +802,47 @@ The `handle_new_user()` trigger supports skipping auto-creation via `skip_auto_c
 4. Handle errors appropriately
 5. Import DB types from `$lib/types/db`
 
+**Update Function Pattern:**
+
+All update functions should use `Partial<Pick<DomainType, ...>>` for type-safe partial updates:
+
+```typescript
+// ✅ CORRECT - Update function with Partial<Pick<...>>
+export async function updateOrganization(
+	supabase: TypedSupabaseClient,
+	organizationId: string,
+	updates: Partial<Pick<Organization, 'name' | 'description' | 'state'>>
+): Promise<Organization> {
+	// Only updateable fields are allowed
+	// Excludes: id, createdAt, updatedAt, computed fields
+}
+
+// Usage examples:
+await updateOrganization(supabase, orgId, { name: 'New Name' });
+await updateOrganization(supabase, orgId, { state: 'DISABLED' });
+await updateOrganization(supabase, orgId, { name: 'Name', description: null });
+
+// ❌ WRONG - Old pattern with custom request types
+export async function updateOrganization(
+	supabase: TypedSupabaseClient,
+	params: UpdateOrganizationRequest  // Don't create custom request types
+): Promise<Organization> { ... }
+```
+
+**Benefits:**
+- **Type-safe**: Only allows updateable fields at compile time
+- **Flexible**: Supports partial updates without custom request types
+- **Consistent**: Same pattern across all update functions
+- **Explicit**: `Pick<...>` clearly documents which fields are updateable
+- **DRY**: Reuses domain types instead of duplicating field definitions
+
+**Implementation Pattern:**
+1. Use RPC functions for database updates (atomic operations)
+2. Accept `entityId: string` and `updates: Partial<Pick<Entity, ...>>` parameters
+3. Transform updates to snake_case for RPC JSONB parameter
+4. Cast JSONB result to DB type before passing to adapter
+5. Return adapted domain type
+
 **Session Management Pattern:**
 
 ```typescript
