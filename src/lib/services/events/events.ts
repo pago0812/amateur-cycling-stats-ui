@@ -1,7 +1,7 @@
 import type { Event } from '$lib/types/domain';
 import type { EventWithRaces } from '$lib/types/services';
 import type { EventWithRacesResponse, TypedSupabaseClient } from '$lib/types/db';
-import { adaptEventFromDb, adaptEventWithRacesFromDb } from '$lib/adapters';
+import { adaptEventFromDb, adaptEventWithRacesFromRpc } from '$lib/adapters';
 
 interface GetPastEventsParams {
 	year?: string;
@@ -88,6 +88,6 @@ export async function getEventWithRacesById(
 	// Type cast JSONB result (Supabase doesn't auto-infer JSONB structures)
 	const typedData = data as unknown as EventWithRacesResponse;
 
-	// Use adapter to transform DB response → Domain type
-	return adaptEventWithRacesFromDb(typedData);
+	// Use adapter to transform RPC response → Domain type
+	return adaptEventWithRacesFromRpc(typedData);
 }
