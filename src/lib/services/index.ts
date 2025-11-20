@@ -57,8 +57,5 @@ export { getRaceResultsByUserId } from './race-results';
 // Races
 export { getRaceWithRaceResultsById } from './races';
 
-// Roles
-export { getRoles } from './roles';
-
 // Users
 export { getAuthUser, isAuthenticated } from './users';

@@ -378,11 +378,10 @@ All services located in `src/lib/services/`:
 4. **cyclists.ts** - Cyclist operations (getCyclistById - fetches cyclist without race results, pair with getRaceResultsByUserId for parallel fetching)
 5. **users.ts** - User operations (getAuthUser, isAuthenticated)
 6. **users-management.ts** - User creation & authentication (login, signin, createAuthUserForInvitation, createOrganizerOwnerUser)
-7. **roles.ts** - Role management (getRoles)
-8. **organizations.ts** - Organization operations (getAllOrganizations, getOrganizationById, createOrganization, updateOrganization, updateOrganizationState, deleteOrganization, deactivateOrganization, activateOrganization, permanentlyDeleteOrganization)
-9. **organization-invitations.ts** - Invitation operations (createInvitation, getInvitationByEmail, getInvitationByOrganizationId, updateInvitationStatus, incrementRetryCount, deleteInvitationByOrganizationId)
-10. **auth-admin.ts** - Supabase Admin API operations (checkUserExists, generateInvitationLink, deleteAuthUserById, createOnBehalfOrganizerOwner)
-11. **mailersend.ts** - Email sending via MailerSend API (sendInvitationEmail)
+7. **organizations.ts** - Organization operations (getAllOrganizations, getOrganizationById, createOrganization, updateOrganization, updateOrganizationState, deleteOrganization, deactivateOrganization, activateOrganization, permanentlyDeleteOrganization)
+8. **organization-invitations.ts** - Invitation operations (createInvitation, getInvitationByEmail, getInvitationByOrganizationId, updateInvitationStatus, incrementRetryCount, deleteInvitationByOrganizationId)
+9. **auth-admin.ts** - Supabase Admin API operations (checkUserExists, generateInvitationLink, deleteAuthUserById, createOnBehalfOrganizerOwner)
+10. **mailersend.ts** - Email sending via MailerSend API (sendInvitationEmail)
 
 ### Key Patterns
 

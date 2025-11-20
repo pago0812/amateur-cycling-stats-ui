@@ -24,7 +24,6 @@ export type { CyclistDB, CyclistInsert, RaceResultRpcItem } from './cyclists.db'
 export type { EventDB, EventWithRacesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from './races.db';
 export type { UserDB, AuthUserRpcResponse } from './users.db';
-export type { RoleDB } from './roles.db';
 export type { OrganizationDB } from './organizations.db';
 export type { OrganizationInvitationDB } from './organization-invitations.db';
 export type { OrganizerDB, OrganizerRpcItem } from './organizers.db';

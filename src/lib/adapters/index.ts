@@ -47,9 +47,6 @@ export { adaptAuthUserFromRpc } from './users/users.adapter';
 // Admin
 export { adaptAdminFromRpc } from './admin/admin.adapter';
 
-// Roles
-export { adaptRoleFromDb } from './roles/roles.adapter';
-
 // Organizations
 export { adaptOrganizationFromDb } from './organizations/organizations.adapter';
 
