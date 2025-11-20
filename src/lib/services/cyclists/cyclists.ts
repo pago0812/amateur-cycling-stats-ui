@@ -1,5 +1,5 @@
 import type { Cyclist } from '$lib/types/domain';
-import type { AuthUserDB, TypedSupabaseClient } from '$lib/types/db';
+import type { TypedSupabaseClient } from '$lib/types/db';
 import { adaptCyclistFromRpc } from '$lib/adapters';
 
 interface GetCyclistByIdParams {
@@ -11,7 +11,7 @@ interface GetCyclistByIdParams {
  * Returns domain Cyclist type with camelCase fields, or null if not found.
  *
  * Uses optimized RPC function get_cyclist_by_user_id() for better performance.
- * Queries users + roles + cyclists tables (does NOT join auth.users).
+ * Queries users + roles + cyclists + auth.users tables with flattened structure.
  * Use this when you need cyclist data and will fetch race results separately.
  *
  * ID parameter is the user's UUID.
@@ -33,15 +33,18 @@ export async function getCyclistById(
 		throw new Error(`Error fetching cyclist: ${error.message}`);
 	}
 
-	if (!data) {
+	// RETURNS TABLE returns array, extract first item
+	const cyclistData = data?.[0];
+
+	if (!cyclistData) {
 		return null;
 	}
 
 	// Ensure it's a cyclist (has cyclist profile)
-	const typedResponse = data as unknown as AuthUserDB;
-	if (!typedResponse.cyclist_id) {
+	if (!cyclistData.cyclist_id) {
 		return null;
 	}
 
-	return adaptCyclistFromRpc(typedResponse);
+	// No type casting needed - auto-typed as CyclistDB[]
+	return adaptCyclistFromRpc(cyclistData);
 }

@@ -1,13 +1,13 @@
 import type { Cyclist } from '$lib/types/domain/cyclist.domain';
-import type { AuthUserDB } from '$lib/types/db';
+import type { CyclistDB } from '$lib/types/db';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from '../common/common.adapter';
 
 /**
- * Adapts the RPC response from get_auth_user to domain Cyclist type (flattened).
+ * Adapts the RPC response from get_cyclist_by_user_id to domain Cyclist type (flattened).
  * Transforms snake_case → camelCase.
  */
-export function adaptCyclistFromRpc(rpcResponse: AuthUserDB): Cyclist {
+export function adaptCyclistFromRpc(rpcResponse: CyclistDB): Cyclist {
 	if (rpcResponse.role_name !== RoleTypeEnum.CYCLIST) {
 		throw new Error('Invalid role: expected CYCLIST');
 	}
