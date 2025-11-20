@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CyclistResultsTable from '$lib/components/CyclistResultsTable.svelte';
+	import { CyclistResultsTable } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { Cyclist, RaceResult } from '$lib/types/domain';
 

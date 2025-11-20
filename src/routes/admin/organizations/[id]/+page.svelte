@@ -1,7 +1,5 @@
 <script lang="ts">
-	import OrganizationProfile from '$lib/components/OrganizationProfile.svelte';
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
-	import ConfirmModal from '$lib/components/ConfirmModal.svelte';
+	import { OrganizationProfile, MenuToolbar, ConfirmModal } from '$lib/components';
 	import { enhance } from '$app/forms';
 	import { t } from '$lib/i18n';
 	import { goto } from '$app/navigation';

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import ResultsTable from '$lib/components/ResultsTable.svelte';
-	import RaceFilterSelect from '$lib/components/RaceFilterSelect.svelte';
+	import { ResultsTable, RaceFilterSelect } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 

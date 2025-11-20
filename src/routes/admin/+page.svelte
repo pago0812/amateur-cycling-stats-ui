@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+	import { MenuToolbar } from '$lib/components';
 
 	// Define navigation tabs for admin section
 	const tabs = [
