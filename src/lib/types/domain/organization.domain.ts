@@ -25,3 +25,9 @@ export interface Organization {
 	createdAt: string;
 	updatedAt: string;
 }
+
+/**
+ * Partial organization for update operations.
+ * Only includes updateable fields (excludes id, timestamps, computed fields).
+ */
+export type PartialOrganization = Partial<Pick<Organization, 'name' | 'description' | 'state'>>;

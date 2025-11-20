@@ -20,13 +20,15 @@
 export type { TypedSupabaseClient } from './common.db';
 
 // Main entity types
-export type { CyclistDB, CyclistInsert, RaceResultRpcItem } from './cyclists.db';
+export type { CyclistDB, CyclistInsertDB } from './cyclists.db';
+export type { RaceResultDB, RaceResultTableDB } from './race-results.db';
 export type { EventDB, EventWithRacesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from './races.db';
 export type { UserDB, AuthUserDB } from './users.db';
-export type { OrganizationDB } from './organizations.db';
+export type { OrganizationDB, OrganizationTableDB } from './organizations.db';
 export type { OrganizationInvitationDB } from './organization-invitations.db';
-export type { OrganizerDB, OrganizerRpcItem } from './organizers.db';
+export type { OrganizerDB, OrganizerTableDB } from './organizers.db';
+export type { OrganizerSetupResponseDB } from './organizer-setup.db';
 export type { RankingPointDB } from './ranking-points.db';
 
 // Lookup/reference table types

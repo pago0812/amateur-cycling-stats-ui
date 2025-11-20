@@ -1,0 +1,114 @@
+export const meta = {
+  title: 'Introduction'
+};
+
+# Amateur Cycling Stats - Design System
+
+Welcome to the **Amateur Cycling Stats Design System**, built with [shadcn-svelte](https://shadcn-svelte.com) and [Tailwind CSS 4](https://tailwindcss.com).
+
+## Overview
+
+This design system provides a comprehensive set of reusable components for building consistent, accessible, and beautiful user interfaces in the Amateur Cycling Stats application.
+
+### Key Features
+
+- ✅ **21 shadcn-svelte Components** - Production-ready UI primitives
+- ✅ **Svelte 5 Compatible** - Uses latest runes syntax ($props, $state, $derived, $effect)
+- ✅ **Tailwind CSS 4** - Modern utility-first CSS with OKLCH color space
+- ✅ **Dark Mode Support** - Complete dark theme with seamless toggling
+- ✅ **Fully Typed** - TypeScript strict mode throughout
+- ✅ **Accessible** - WCAG 2.1 compliant components with proper ARIA attributes
+- ✅ **Internationalized** - i18n-ready with sveltekit-i18n integration
+
+## Component Categories
+
+### Form Components (7)
+Input, Label, Textarea, Select, Checkbox, Radio Group, Switch
+
+### Layout Components (6)
+Card, Dialog, Alert Dialog, Separator, Badge, Sheet
+
+### Navigation & Interaction (5)
+Breadcrumb, Dropdown Menu, Tabs, Tooltip, Popover
+
+### Feedback (1)
+Alert
+
+### Data Display (1)
+Table
+
+### Actions (1)
+Button
+
+## Design Tokens
+
+Our design system uses CSS custom properties (variables) for theming:
+
+- **Colors** - Semantic color palette with light/dark mode support
+- **Typography** - Consistent font scales and weights
+- **Spacing** - Harmonious spacing system
+- **Border Radius** - Smooth, consistent corner radii
+
+## Getting Started
+
+### Installation
+
+All shadcn-svelte components are already installed. To use a component:
+
+```typescript
+import { Button } from '$lib/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
+```
+
+### Usage Example
+
+```svelte
+<script lang="ts">
+  import { Button } from '$lib/components/ui/button';
+  import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
+
+  let count = $state(0);
+</script>
+
+<Card>
+  <CardHeader>
+    <CardTitle>Counter Example</CardTitle>
+  </CardHeader>
+  <CardContent class="flex flex-col gap-4">
+    <p>Count: {count}</p>
+    <Button onclick={() => count++}>
+      Increment
+    </Button>
+  </CardContent>
+</Card>
+```
+
+## Svelte 5 Runes
+
+All components follow Svelte 5 best practices:
+
+- ✅ Use `$props()` for component props
+- ✅ Use `$state()` for reactive state
+- ✅ Use `$derived()` for computed values
+- ✅ Use `$effect()` for side effects
+- ✅ Use `{@render children()}` for slot content
+- ❌ Never use `export let` (Svelte 4 syntax)
+- ❌ Never use `<slot />` (deprecated)
+- ❌ Never use `$:` reactive statements
+
+## Resources
+
+- [shadcn-svelte Documentation](https://shadcn-svelte.com)
+- [Svelte 5 Documentation](https://svelte.dev)
+- [Tailwind CSS 4 Documentation](https://tailwindcss.com)
+- [Project CLAUDE.md](/Users/oscar/projects/amateur-cycling-stats-ui/CLAUDE.md)
+
+## Browse the Design System
+
+Use the sidebar to explore:
+
+1. **Design Tokens** - Colors, Typography, Spacing
+2. **Components** - All 21 shadcn-svelte components with examples
+3. **Compositions** - Real-world usage patterns (Forms, Tables, Layouts)
+
+Toggle between light and dark modes using the theme switcher in the toolbar above!

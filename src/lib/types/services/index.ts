@@ -25,12 +25,7 @@ export type { RaceWithRaceResults, RaceDetailResult } from './races';
 // ============================================================================
 // Organization Service Types
 // ============================================================================
-export type {
-	OrganizationIdRequest,
-	CreateOrganizationRequest,
-	UpdateOrganizationRequest,
-	UpdateOrganizationStateRequest
-} from './organizations';
+export type { OrganizationIdRequest, CreateOrganizationRequest } from './organizations';
 
 // ============================================================================
 // User Service Types
@@ -44,6 +39,10 @@ export type {
 // User Management Service Types (Authentication)
 // ============================================================================
 export type { LoginRequest, SigninRequest, AuthResponse } from './users-management';
+export type {
+	CompleteOrganizerOwnerSetupRequest,
+	SetupCompletionResponse
+} from './auth';
 
 // ============================================================================
 // MailerSend Service Types

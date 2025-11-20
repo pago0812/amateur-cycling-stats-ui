@@ -22,12 +22,16 @@ export type { CyclistGender } from './cyclist-gender.domain';
 // ============================================================================
 // Organizations & Organizers
 // ============================================================================
-export type { Organization, OrganizationState } from './organization.domain';
+export type {
+	Organization,
+	OrganizationState,
+	PartialOrganization
+} from './organization.domain';
 export type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus
 } from './organization-invitation.domain';
-export type { Organizer, OrganizerOld } from './organizer.domain';
+export type { Organizer } from './organizer.domain';
 
 // ============================================================================
 // Events & Races

@@ -28,21 +28,3 @@ export interface Organizer {
 	createdAt: string;
 	updatedAt: string;
 }
-
-/**
- * @deprecated Legacy organizer type - use new Organizer interface instead.
- * Old organizer domain type - junction table linking users to organizations.
- * All fields use camelCase convention.
- */
-export interface OrganizerOld {
-	// Identity
-	id: string;
-
-	// Relationships (Foreign Keys)
-	userId: string;
-	organizationId: string;
-
-	// Timestamps
-	createdAt: string;
-	updatedAt: string;
-}

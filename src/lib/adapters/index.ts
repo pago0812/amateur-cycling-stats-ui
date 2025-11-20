@@ -48,14 +48,16 @@ export { adaptAuthUserFromRpc } from './users/users.adapter';
 export { adaptAdminFromRpc } from './admin/admin.adapter';
 
 // Organizations
-export { adaptOrganizationFromDb } from './organizations/organizations.adapter';
+export {
+	adaptOrganizationFromDb,
+	adaptOrganizationFromDomain
+} from './organizations/organizations.adapter';
 
 // Organization Invitations
 export { adaptOrganizationInvitationFromDb } from './organization-invitations/organization-invitations.adapter';
 
 // Organizers
 export {
-	adaptOrganizerFromDb,
 	adaptOrganizerFromAuthUserRpc,
 	adaptOrganizerFromRpc
 } from './organizers/organizers.adapter';

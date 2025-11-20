@@ -771,13 +771,37 @@ COMMENT ON FUNCTION public.is_cyclist_created_by_org(UUID) IS 'Returns TRUE if c
 -- This function fetches ONLY race results for a user (not the cyclist profile)
 -- Useful when you already have user/cyclist data and only need their race history
 CREATE OR REPLACE FUNCTION public.get_race_results_by_user_id(p_user_id UUID)
-RETURNS JSONB
+RETURNS TABLE (
+  id UUID,
+  place INTEGER,
+  "time" TEXT,
+  points INTEGER,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ,
+  event_id UUID,
+  event_name TEXT,
+  event_date_time TIMESTAMPTZ,
+  event_year INTEGER,
+  event_city TEXT,
+  event_state TEXT,
+  event_country TEXT,
+  event_status TEXT,
+  race_id UUID,
+  race_name TEXT,
+  race_date_time TIMESTAMPTZ,
+  race_category_id UUID,
+  race_category_type TEXT,
+  race_category_gender_id UUID,
+  race_category_gender_type TEXT,
+  race_category_length_id UUID,
+  race_category_length_type TEXT,
+  race_ranking_type TEXT
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  result JSONB;
   target_cyclist_id UUID;
 BEGIN
   -- Find cyclist by user's UUID
@@ -786,50 +810,42 @@ BEGIN
   JOIN public.users u ON c.user_id = u.id
   WHERE u.id = p_user_id;
 
-  -- Return empty array if cyclist doesn't exist or has no results
+  -- Return empty set if cyclist doesn't exist
   IF target_cyclist_id IS NULL THEN
-    RETURN '[]'::jsonb;
+    RETURN;
   END IF;
 
-  -- Build race_results array with flat structure
-  SELECT COALESCE(jsonb_agg(
-    jsonb_build_object(
-      -- Race result fields
-      'id', rr.id,
-      'place', rr.place,
-      'time', rr.time,
-      'points', (
-        SELECT rp.points
-        FROM public.ranking_points rp
-        WHERE rp.id = rr.ranking_point_id
-      ),
-      'created_at', rr.created_at,
-      'updated_at', rr.updated_at,
-      -- Event fields
-      'event_id', e.id,
-      'event_name', e.name,
-      'event_date_time', e.date_time,
-      'event_year', e.year,
-      'event_city', e.city,
-      'event_state', e.state,
-      'event_country', e.country,
-      'event_status', e.event_status,
-      -- Race fields
-      'race_id', r.id,
-      'race_name', r.name,
-      'race_date_time', r.date_time,
-      -- Category IDs (for interim navigation)
-      'race_category_id', rc.id,
-      'race_category_gender_id', rcg.id,
-      'race_category_length_id', rcl.id,
-      -- Category types
-      'race_category_type', rc.name,
-      'race_category_gender_type', rcg.name,
-      'race_category_length_type', rcl.name,
-      'race_ranking_type', rrank.name
-    )
-    ORDER BY e.date_time DESC  -- Most recent events first
-  ), '[]'::jsonb) INTO result
+  -- Return race_results with flat structure
+  RETURN QUERY
+  SELECT
+    rr.id,
+    rr.place,
+    rr.time,
+    (
+      SELECT rp.points
+      FROM public.ranking_points rp
+      WHERE rp.id = rr.ranking_point_id
+    ),
+    rr.created_at,
+    rr.updated_at,
+    e.id AS event_id,
+    e.name AS event_name,
+    e.date_time AS event_date_time,
+    e.year AS event_year,
+    e.city AS event_city,
+    e.state AS event_state,
+    e.country AS event_country,
+    e.event_status,
+    r.id AS race_id,
+    r.name AS race_name,
+    r.date_time AS race_date_time,
+    rc.id AS race_category_id,
+    rc.name AS race_category_type,
+    rcg.id AS race_category_gender_id,
+    rcg.name AS race_category_gender_type,
+    rcl.id AS race_category_length_id,
+    rcl.name AS race_category_length_type,
+    rrank.name AS race_ranking_type
   FROM public.race_results rr
   JOIN public.races r ON rr.race_id = r.id
   JOIN public.events e ON r.event_id = e.id
@@ -837,9 +853,8 @@ BEGIN
   JOIN public.race_category_genders rcg ON r.race_category_gender_id = rcg.id
   JOIN public.race_category_lengths rcl ON r.race_category_length_id = rcl.id
   JOIN public.race_rankings rrank ON r.race_ranking_id = rrank.id
-  WHERE rr.cyclist_id = target_cyclist_id;
-
-  RETURN result;
+  WHERE rr.cyclist_id = target_cyclist_id
+  ORDER BY e.date_time DESC;  -- Most recent events first
 END;
 $$;
 
@@ -1126,43 +1141,42 @@ COMMENT ON FUNCTION public.get_race_with_results_by_id(UUID) IS 'Returns race da
 CREATE OR REPLACE FUNCTION public.get_organizers_by_organization_id(
   p_organization_id UUID
 )
-RETURNS JSONB
+RETURNS TABLE (
+  id UUID,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT,
+  display_name TEXT,
+  has_auth BOOLEAN,
+  role_type TEXT,
+  organization_id UUID,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
-DECLARE
-  result JSONB;
 BEGIN
-  -- Build organizers array with flattened structure matching Organizer domain type
-  SELECT COALESCE(jsonb_agg(
-    jsonb_build_object(
-      -- Identity (user's ID, not organizers.id)
-      'id', u.id,
-      -- Basic Info
-      'first_name', u.first_name,
-      'last_name', u.last_name,
-      -- Auth Info
-      'email', au.email,
-      'display_name', au.raw_user_meta_data->>'display_name',
-      'has_auth', true,
-      -- Role (enum value)
-      'role_type', r.name,
-      -- Organization
-      'organization_id', o.organization_id,
-      -- Timestamps (from users table)
-      'created_at', u.created_at,
-      'updated_at', u.updated_at
-    )
-    ORDER BY u.created_at DESC  -- Most recent members first
-  ), '[]'::jsonb) INTO result
+  -- Return organizers with flattened structure matching Organizer domain type
+  RETURN QUERY
+  SELECT
+    u.id,
+    u.first_name,
+    u.last_name,
+    au.email,
+    au.raw_user_meta_data->>'display_name' AS display_name,
+    true AS has_auth,
+    r.name AS role_type,
+    o.organization_id,
+    u.created_at,
+    u.updated_at
   FROM public.organizers o
   JOIN public.users u ON o.user_id = u.id
   JOIN public.roles r ON u.role_id = r.id
   LEFT JOIN auth.users au ON u.auth_user_id = au.id
-  WHERE o.organization_id = p_organization_id;
-
-  RETURN result;
+  WHERE o.organization_id = p_organization_id
+  ORDER BY u.created_at DESC;  -- Most recent members first
 END;
 $$;
 

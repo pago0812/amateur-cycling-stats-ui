@@ -135,7 +135,11 @@ CREATE OR REPLACE FUNCTION public.complete_organizer_owner_setup(
   p_last_name TEXT,
   p_invitation_email TEXT
 )
-RETURNS JSONB
+RETURNS TABLE (
+  success BOOLEAN,
+  organization_id UUID,
+  user_id UUID
+)
 SECURITY DEFINER
 SET search_path = public
 LANGUAGE plpgsql
@@ -195,11 +199,7 @@ BEGIN
   WHERE id = v_organization_id;
 
   -- Return success with organization_id for redirect
-  RETURN jsonb_build_object(
-    'success', true,
-    'organization_id', v_organization_id,
-    'user_id', v_user_id
-  );
+  RETURN QUERY SELECT true, v_organization_id, v_user_id;
 END;
 $$;
 
@@ -419,6 +419,58 @@ CREATE POLICY "Linked owner: Delete organization invitations"
 COMMENT ON POLICY "Linked owner: Delete organization invitations"
   ON public.organization_invitations IS
   'Allows linked organizer owners (State B: active owners) to delete invitations for their organization.';
+
+-- =====================================================
+-- SECTION 6: Organization Update RPC
+-- =====================================================
+
+-- Unified organization update function supporting partial updates
+CREATE OR REPLACE FUNCTION public.update_organization(
+  p_organization_id UUID,
+  p_updates JSONB
+)
+RETURNS TABLE (
+  id UUID,
+  name TEXT,
+  description TEXT,
+  state TEXT,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+)
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Validate organization exists
+  IF NOT EXISTS (SELECT 1 FROM public.organizations WHERE id = p_organization_id) THEN
+    RAISE EXCEPTION 'Organization with ID % not found', p_organization_id
+      USING ERRCODE = 'P0002';
+  END IF;
+
+  -- Return updated organization
+  RETURN QUERY
+  UPDATE public.organizations
+  SET
+    name = COALESCE((p_updates->>'name')::TEXT, name),
+    description = CASE
+      WHEN p_updates ? 'description' THEN (p_updates->>'description')::TEXT
+      ELSE description
+    END,
+    state = COALESCE((p_updates->>'state')::TEXT, state),
+    updated_at = NOW()
+  WHERE id = p_organization_id
+  RETURNING
+    organizations.id,
+    organizations.name,
+    organizations.description,
+    organizations.state,
+    organizations.created_at,
+    organizations.updated_at;
+END;
+$$;
+
+COMMENT ON FUNCTION public.update_organization IS 'Updates an organization with partial data. Only fields present in p_updates JSONB are modified. Returns updated organization as JSONB. Throws exception if organization not found.';
 
 -- =====================================================
 -- END OF CONSOLIDATED MIGRATION 03

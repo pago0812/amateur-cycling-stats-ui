@@ -100,6 +100,72 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    WHERE r.name = 'cyclist'
    ```
 
+8. **Service Layer Architecture (CRITICAL RULE)**
+   - **NEVER** call `supabase.rpc()` or `supabase.from()` directly from page.server.ts or layout.server.ts files
+   - **ALWAYS** use service layer functions that encapsulate database operations
+   - Page/layout files should only work with domain types (camelCase)
+   - Service layer handles: RPC calls, array extraction, DB→Domain adaptation, error handling
+
+   **Architecture Pattern:**
+   ```
+   Page/Layout Server Files (routes/)
+            ↓ calls service (domain types)
+   Service Layer (src/lib/services/)
+            ↓ calls supabase.rpc/from (DB types)
+            ↓ extracts data?.[0] (if RETURNS TABLE)
+            ↓ uses adapters (DB → Domain)
+            ↓ returns domain entities
+   Page/Layout Server Files
+            ← receives clean domain objects
+   ```
+
+   **Examples:**
+
+   ```typescript
+   // ❌ WRONG - Direct RPC call in page.server.ts
+   export const actions: Actions = {
+     default: async ({ locals }) => {
+       const { data, error } = await locals.supabase.rpc('update_organization', {...});
+       const result = data?.[0]; // Manual array extraction
+       // Uses snake_case DB types...
+     }
+   };
+
+   // ✅ CORRECT - Use service function
+   export const actions: Actions = {
+     default: async ({ locals }) => {
+       const organization = await updateOrganization(locals.supabase, orgId, updates);
+       // Returns single camelCase domain object, no array handling needed
+     }
+   };
+   ```
+
+   ```typescript
+   // ❌ WRONG - Direct database query in page.server.ts
+   export const load: PageServerLoad = async ({ locals, params }) => {
+     const { data } = await locals.supabase
+       .from('organizations')
+       .select('name')
+       .eq('id', params.id)
+       .single();
+     return { name: data.name };
+   };
+
+   // ✅ CORRECT - Use service function
+   export const load: PageServerLoad = async ({ locals, params }) => {
+     const organization = await getOrganizationById(locals.supabase, { id: params.id });
+     return { organization };
+   };
+   ```
+
+   **Benefits:**
+   - ✅ Type-safe domain objects throughout pages
+   - ✅ Consistent error handling
+   - ✅ Reusable business logic
+   - ✅ Testable services
+   - ✅ No array extraction or type casting in pages
+   - ✅ Clear separation of concerns
+
 ## Development Commands
 
 ```bash
@@ -801,6 +867,75 @@ The `handle_new_user()` trigger supports skipping auto-creation via `skip_auto_c
 4. Handle errors appropriately
 5. Import DB types from `$lib/types/db`
 
+**Update Function Pattern:**
+
+All update functions should use a typed `PartialEntity` type and reverse adapters for type-safe partial updates:
+
+```typescript
+// 1. Define PartialEntity type (in domain types)
+export type PartialOrganization = Partial<Pick<Organization, 'name' | 'description' | 'state'>>;
+
+// 2. Create reverse adapter (domain → database format)
+export function adaptOrganizationFromDomain(
+	partial: PartialOrganization
+): Record<string, string | null> {
+	const dbData: Record<string, string | null> = {};
+	if (partial.name !== undefined) dbData.name = partial.name;
+	if (partial.description !== undefined) dbData.description = partial.description;
+	if (partial.state !== undefined) dbData.state = partial.state;
+	return dbData;
+}
+
+// 3. Update function using adapter
+// ✅ CORRECT - Update function with PartialEntity and adapter
+export async function updateOrganization(
+	supabase: TypedSupabaseClient,
+	organizationId: string,
+	updates: PartialOrganization
+): Promise<Organization> {
+	// Use reverse adapter: domain → database format
+	const rpcUpdates = adaptOrganizationFromDomain(updates);
+
+	const { data, error } = await supabase.rpc('update_organization', {
+		p_organization_id: organizationId,
+		p_updates: rpcUpdates
+	});
+
+	if (error) throw new Error(`Error updating: ${error.message}`);
+
+	// Use forward adapter: database → domain format
+	return adaptOrganizationFromDb(data as OrganizationDB);
+}
+
+// Usage examples:
+await updateOrganization(supabase, orgId, { name: 'New Name' });
+await updateOrganization(supabase, orgId, { state: 'DISABLED' });
+await updateOrganization(supabase, orgId, { name: 'Name', description: null });
+
+// ❌ WRONG - Old pattern with custom request types
+export async function updateOrganization(
+	supabase: TypedSupabaseClient,
+	params: UpdateOrganizationRequest  // Don't create custom request types
+): Promise<Organization> { ... }
+```
+
+**Benefits:**
+- **Type-safe**: Only allows updateable fields at compile time
+- **Flexible**: Supports partial updates without custom request types
+- **Consistent**: Same pattern across all update functions (forward + reverse adapters)
+- **Explicit**: `PartialEntity` type clearly documents which fields are updateable
+- **DRY**: Reuses domain types instead of duplicating field definitions
+- **Separation of concerns**: Adapters handle transformation, services handle business logic
+
+**Implementation Pattern:**
+1. **Define PartialEntity type**: `Partial<Pick<Entity, 'field1' | 'field2'>>`
+2. **Create reverse adapter**: `adaptEntityFromDomain(partial: PartialEntity)` → `Record<string, ...>`
+3. **Use RPC functions** for database updates (atomic operations)
+4. **Accept typed parameters**: `entityId: string` and `updates: PartialEntity`
+5. **Transform with adapter**: `adaptEntityFromDomain(updates)` for RPC JSONB parameter
+6. **Cast JSONB result** to DB type before passing to forward adapter
+7. **Return adapted domain type**: `adaptEntityFromDb(data as EntityDB)`
+
 **Session Management Pattern:**
 
 ```typescript
@@ -866,6 +1001,111 @@ The root layout provides centralized horizontal padding and max-width:
 6. **Use `goto()` for client-side navigation** - Use `redirect()` for server-side
 
 ## Advanced Patterns
+
+### RPC Function Return Type Guidelines
+
+**When to Use RETURNS TABLE vs RETURNS JSONB**
+
+Use the decision matrix below when creating new RPC functions to ensure optimal TypeScript type generation:
+
+| Return Structure | Use RETURNS... | Auto-Generated Types? | Example Use Cases |
+|-----------------|----------------|----------------------|-------------------|
+| **Flat array of records** | `RETURNS TABLE(...)` | ✅ Yes | Race results, user lists, organizer members |
+| **Single flat record** | `RETURNS TABLE(...)` | ✅ Yes | Updated record, simple response |
+| **Array with 1 nested object** | `RETURNS TABLE(...)` (flatten it) | ✅ Yes | Result with category details (flatten to columns) |
+| **Multiple nested objects** | `RETURNS JSONB` | ❌ No (manual types needed) | Auth user with role + cyclist + organization |
+| **Nested arrays** | `RETURNS JSONB` or split queries | ❌ No (manual types needed) | Event with races array |
+| **Dynamic/flexible structure** | `RETURNS JSONB` | ❌ No (manual types needed) | Flexible metadata, plugin systems |
+
+**Benefits of RETURNS TABLE:**
+
+- ✅ **Auto-generated TypeScript types** - No manual interface definitions needed
+- ✅ **Compile-time type safety** - Catches type mismatches immediately
+- ✅ **Better IDE autocomplete** - Full IntelliSense support
+- ✅ **Self-documenting** - Function signature shows exact return structure
+- ✅ **No type casting** - Eliminates `as Type` assertions
+
+**Migration Example: JSONB → RETURNS TABLE**
+
+```sql
+-- ❌ Before (JSONB - requires manual type definitions)
+CREATE OR REPLACE FUNCTION get_race_results_by_user_id(p_user_id UUID)
+RETURNS JSONB AS $$
+BEGIN
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'id', rr.id,
+      'place', rr.place,
+      'time', rr.time,
+      -- ... 20 more fields
+    )
+  ), '[]'::jsonb) INTO result FROM ...
+  RETURN result;
+END;
+$$;
+
+-- ✅ After (RETURNS TABLE - auto-generated types)
+CREATE OR REPLACE FUNCTION get_race_results_by_user_id(p_user_id UUID)
+RETURNS TABLE (
+  id UUID,
+  place INTEGER,
+  "time" TEXT,  -- Quote reserved keywords
+  points INTEGER,
+  -- ... all columns explicitly defined
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    rr.id,
+    rr.place,
+    rr.time,
+    rp.points,
+    -- ... all columns
+  FROM race_results rr
+  -- ... joins
+  ORDER BY e.date_time DESC;
+END;
+$$;
+```
+
+**TypeScript Usage:**
+
+```typescript
+// ❌ Before: Manual type definition required
+export interface RaceResultRpcItem {
+  id: string;
+  place: number;
+  time: string | null;
+  // ... 20 more fields manually defined
+}
+
+const { data } = await supabase.rpc('get_race_results_by_user_id', { p_user_id: userId });
+return adaptResults((data as RaceResultRpcItem[]) ?? []);
+
+// ✅ After: Auto-generated type from database.types.ts
+export type RaceResultDB =
+  Database['public']['Functions']['get_race_results_by_user_id']['Returns'][number];
+
+const { data } = await supabase.rpc('get_race_results_by_user_id', { p_user_id: userId });
+return adaptResults(data ?? []);  // No casting needed, fully typed!
+```
+
+**Implementation Checklist:**
+
+1. ✅ Define `RETURNS TABLE(...)` with all columns explicitly typed
+2. ✅ Use `RETURN QUERY SELECT ...` to return rows
+3. ✅ Quote SQL reserved keywords in column names (e.g., `"time"`)
+4. ✅ Run `npm run supabase:types` to regenerate types
+5. ✅ Create type alias: `export type EntityDB = Database['public']['Functions']['function_name']['Returns'][number]`
+6. ✅ Update adapters to accept auto-generated type
+7. ✅ Remove manual type casts in service layer
+
+**Converted Functions (Examples):**
+
+- `get_race_results_by_user_id` → Returns 24 columns (race results with flattened event/race/category data)
+- `get_organizers_by_organization_id` → Returns 10 columns (organizers with flattened user/role data)
+- `update_organization` → Returns 6 columns (updated organization record)
+- `complete_organizer_owner_setup` → Returns 3 columns (success response)
 
 ### Atomic Database Operations Pattern
 

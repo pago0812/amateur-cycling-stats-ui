@@ -5,10 +5,16 @@
  * WARNING: These operations bypass Row Level Security (RLS).
  */
 
-import type { AuthUserDB } from '$lib/types/db';
+import type {
+	AuthUserDB,
+	TypedSupabaseClient,
+	OrganizerSetupResponseDB
+} from '$lib/types/db';
 import type {
 	CreateOnBehalfOrganizerOwnerRequest,
-	CreateOnBehalfOrganizerOwnerResponse
+	CreateOnBehalfOrganizerOwnerResponse,
+	CompleteOrganizerOwnerSetupRequest,
+	SetupCompletionResponse
 } from '$lib/types/services';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
 import { adaptOrganizerFromAuthUserRpc } from '$lib/adapters';
@@ -226,4 +232,60 @@ export async function createOnBehalfOrganizerOwner(
 			error: errorMessage
 		};
 	}
+}
+
+/**
+ * Complete organizer owner setup after invitation acceptance.
+ * Atomically updates user profile, links to organization, accepts invitation,
+ * and activates organization. Password must be updated separately via Auth API.
+ *
+ * This function uses the authenticated user's session (not admin API) to ensure
+ * proper RLS policy enforcement during setup.
+ *
+ * @param supabase - TypedSupabaseClient with user session
+ * @param params - Setup completion parameters (authUserId, firstName, lastName, email)
+ * @returns SetupCompletionResponse with organization and user IDs
+ * @throws Error if setup fails or invitation not found
+ */
+export async function completeOrganizerOwnerSetup(
+	supabase: TypedSupabaseClient,
+	params: CompleteOrganizerOwnerSetupRequest
+): Promise<SetupCompletionResponse> {
+	const { data, error } = await supabase.rpc('complete_organizer_owner_setup', {
+		p_auth_user_id: params.authUserId,
+		p_first_name: params.firstName,
+		p_last_name: params.lastName,
+		p_invitation_email: params.email
+	});
+
+	if (error) {
+		console.error('[Auth] Error completing organizer owner setup:', error);
+
+		// P0002 = no_data_found - invitation not found
+		if (error.code === 'P0002') {
+			throw new Error(`No pending invitation found for email: ${params.email}`);
+		}
+
+		// 28000 = invalid_authorization_specification - organization not found
+		if (error.code === '28000') {
+			throw new Error('Organization not found for invitation');
+		}
+
+		throw new Error(`Error completing setup: ${error.message}`);
+	}
+
+	// RPC returns array from RETURNS TABLE, extract first element
+	const result = data?.[0];
+	if (!result) {
+		throw new Error('No data returned after completing setup');
+	}
+
+	// Type cast to OrganizerSetupResponseDB and adapt to domain response type
+	const setupResponse = result as OrganizerSetupResponseDB;
+
+	return {
+		success: setupResponse.success,
+		organizationId: setupResponse.organization_id,
+		userId: setupResponse.user_id
+	};
 }

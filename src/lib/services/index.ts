@@ -11,6 +11,7 @@ export {
 	deleteAuthUserById,
 	generateInvitationLink,
 	createOnBehalfOrganizerOwner,
+	completeOrganizerOwnerSetup,
 	login,
 	signin
 } from './auth';
@@ -41,10 +42,6 @@ export {
 	getOrganizationById,
 	createOrganization,
 	updateOrganization,
-	updateOrganizationState,
-	deleteOrganization,
-	deactivateOrganization,
-	activateOrganization,
 	permanentlyDeleteOrganization
 } from './organizations';
 
