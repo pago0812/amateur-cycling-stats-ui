@@ -2,6 +2,10 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
+#
+# IMPORTANT: All env() values MUST be set via environment variables.
+# - Worktrees: Set custom ports in .env to avoid conflicts between instances
+# - Coolify/Production: Set these variables in the deployment environment
 project_id = "env(SUPABASE_ID_PROJECT)"
 
 [api]
