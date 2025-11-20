@@ -1,6 +1,5 @@
 <script lang="ts">
-	import EventResultsTable from '$lib/components/EventResultsTable.svelte';
-	import SelectQueryParam from '$lib/components/SelectQueryParam.svelte';
+	import { EventResultsTable, SelectQueryParam } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 

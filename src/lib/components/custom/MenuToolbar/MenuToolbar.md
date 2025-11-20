@@ -250,7 +250,7 @@ The toolbar supports multiple action buttons displayed side-by-side with consist
 
 ```svelte
 <script lang="ts">
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+	import { MenuToolbar } from '$lib/components';
 	import { goto } from '$app/navigation';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';

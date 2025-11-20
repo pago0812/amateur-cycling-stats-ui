@@ -1,6 +1,5 @@
 <script lang="ts">
-	import CyclistProfile from '$lib/components/CyclistProfile.svelte';
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+	import { CyclistProfile, MenuToolbar } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 

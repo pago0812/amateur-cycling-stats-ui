@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import Header from '$lib/components/Header.svelte';
+	import { Header } from '$lib/components';
 	import { Toaster } from 'svelte-sonner';
 	import type { LayoutData } from './$types';
 	import type { Snippet } from 'svelte';

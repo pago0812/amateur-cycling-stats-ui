@@ -1,6 +1,5 @@
 <script lang="ts">
-	import OrganizationProfile from '$lib/components/OrganizationProfile.svelte';
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+	import { OrganizationProfile, MenuToolbar } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 

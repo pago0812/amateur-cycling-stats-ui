@@ -1,6 +1,5 @@
 <script lang="ts">
-	import OrganizationsTable from '$lib/components/OrganizationsTable.svelte';
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+	import { OrganizationsTable, MenuToolbar } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';

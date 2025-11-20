@@ -1,6 +1,5 @@
 <script lang="ts">
-	import MembersTable from '$lib/components/MembersTable.svelte';
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
+	import { MembersTable, MenuToolbar } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 

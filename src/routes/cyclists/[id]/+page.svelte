@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CyclistProfile from '$lib/components/CyclistProfile.svelte';
+	import { CyclistProfile } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import type { PageData } from './$types';
 

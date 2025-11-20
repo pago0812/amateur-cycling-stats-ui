@@ -1,6 +1,5 @@
 <script lang="ts">
-	import MenuToolbar from '$lib/components/MenuToolbar.svelte';
-	import OrganizationForm from '$lib/components/OrganizationForm.svelte';
+	import { MenuToolbar, OrganizationForm } from '$lib/components';
 	import { t } from '$lib/i18n';
 	import { goto } from '$app/navigation';
 	import { alertStore } from '$lib/stores/alert-store';
