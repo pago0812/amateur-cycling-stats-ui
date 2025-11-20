@@ -4,8 +4,8 @@
  * Transforms database types (snake_case) to domain types (camelCase) for organizers.
  */
 
-import type { OrganizerDB, OrganizerRpcItem, AuthUserRpcResponse } from '$lib/types/db';
-import type { Organizer, OrganizerOld } from '$lib/types/domain';
+import type { OrganizerDB, AuthUserRpcResponse } from '$lib/types/db';
+import type { Organizer } from '$lib/types/domain';
 import { RoleTypeEnum } from '$lib/types/domain/role-type.domain';
 import { mapTimestamps } from '../common/common.adapter';
 
@@ -45,10 +45,10 @@ export function adaptOrganizerFromAuthUserRpc(rpcResponse: AuthUserRpcResponse):
 }
 
 /**
- * Adapt RPC response item from get_organizers_by_organization_id to Organizer domain type.
+ * Adapt auto-typed RPC response from get_organizers_by_organization_id to Organizer domain type.
  * Transforms snake_case → camelCase for flattened organizer data.
  */
-export function adaptOrganizerFromRpc(rpcItem: OrganizerRpcItem): Organizer {
+export function adaptOrganizerFromRpc(rpcItem: OrganizerDB): Organizer {
 	// Validate role type
 	if (
 		rpcItem.role_type !== RoleTypeEnum.ORGANIZER_STAFF &&
@@ -71,29 +71,3 @@ export function adaptOrganizerFromRpc(rpcItem: OrganizerRpcItem): Organizer {
 		...mapTimestamps(rpcItem)
 	};
 }
-
-/**
- * @deprecated Use adaptOrganizerFromRpc for new flattened Organizer type.
- * Legacy adapter for old Organizer domain type.
- * Transform OrganizerDB (database type) to OrganizerOld (domain type).
- * Maps snake_case fields to camelCase.
- */
-export function adaptOrganizerFromDbOld(dbOrganizer: OrganizerDB): OrganizerOld {
-	return {
-		// Identity
-		id: dbOrganizer.id,
-
-		// Relationships (Foreign Keys)
-		userId: dbOrganizer.user_id,
-		organizationId: dbOrganizer.organization_id,
-
-		// Timestamps
-		...mapTimestamps(dbOrganizer)
-	};
-}
-
-/**
- * Backwards compatibility alias.
- * @deprecated Use adaptOrganizerFromDbOld instead.
- */
-export const adaptOrganizerFromDb = adaptOrganizerFromDbOld;

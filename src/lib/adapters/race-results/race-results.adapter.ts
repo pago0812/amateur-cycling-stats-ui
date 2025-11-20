@@ -1,6 +1,6 @@
 import type { RaceResult } from '$lib/types/domain/race-result.domain';
 import type { RaceDetailResult } from '$lib/types/services';
-import type { RaceResultRpcItem, RaceWithResultsResponse } from '$lib/types/db';
+import type { RaceResultDB, RaceWithResultsResponse } from '$lib/types/db';
 import { mapTimestamps } from '../common/common.adapter';
 import { adaptRankingPointFromDb } from '../ranking-points/ranking-points.adapter';
 
@@ -9,7 +9,7 @@ import { adaptRankingPointFromDb } from '../ranking-points/ranking-points.adapte
  * Used by get_race_results_by_user_id RPC.
  * Simple snake_case → camelCase transformation.
  */
-export function adaptRaceResultFromRpc(rpcResult: RaceResultRpcItem): RaceResult {
+export function adaptRaceResultFromRpc(rpcResult: RaceResultDB): RaceResult {
 	return {
 		// Race result fields
 		id: rpcResult.id,
@@ -49,10 +49,10 @@ export function adaptRaceResultFromRpc(rpcResult: RaceResultRpcItem): RaceResult
 
 /**
  * Adapts array of race results from RPC response.
- * Handles type casting from JSONB and maps to domain types.
+ * Maps auto-typed RETURNS TABLE response to domain types.
  * Used by get_race_results_by_user_id RPC.
  */
-export function adaptRaceResultsFromRpc(rpcResult: RaceResultRpcItem[]): RaceResult[] {
+export function adaptRaceResultsFromRpc(rpcResult: RaceResultDB[]): RaceResult[] {
 	const results = rpcResult || [];
 	return results.map(adaptRaceResultFromRpc);
 }

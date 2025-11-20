@@ -11,6 +11,7 @@ export {
 	deleteAuthUserById,
 	generateInvitationLink,
 	createOnBehalfOrganizerOwner,
+	completeOrganizerOwnerSetup,
 	login,
 	signin
 } from './auth';

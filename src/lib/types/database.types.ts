@@ -692,7 +692,11 @@ export type Database = {
           p_invitation_email: string
           p_last_name: string
         }
-        Returns: Json
+        Returns: {
+          organization_id: string
+          success: boolean
+          user_id: string
+        }[]
       }
       create_user_with_organizer_owner: {
         Args: {
@@ -719,11 +723,47 @@ export type Database = {
       }
       get_organizers_by_organization_id: {
         Args: { p_organization_id: string }
-        Returns: Json
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          first_name: string
+          has_auth: boolean
+          id: string
+          last_name: string
+          organization_id: string
+          role_type: string
+          updated_at: string
+        }[]
       }
       get_race_results_by_user_id: {
         Args: { p_user_id: string }
-        Returns: Json
+        Returns: {
+          created_at: string
+          event_city: string
+          event_country: string
+          event_date_time: string
+          event_id: string
+          event_name: string
+          event_state: string
+          event_status: string
+          event_year: number
+          id: string
+          place: number
+          points: number
+          race_category_gender_id: string
+          race_category_gender_type: string
+          race_category_id: string
+          race_category_length_id: string
+          race_category_length_type: string
+          race_category_type: string
+          race_date_time: string
+          race_id: string
+          race_name: string
+          race_ranking_type: string
+          time: string
+          updated_at: string
+        }[]
       }
       get_race_with_results_by_id: {
         Args: { p_race_id: string }
@@ -747,7 +787,14 @@ export type Database = {
       is_organizer_owner: { Args: never; Returns: boolean }
       update_organization: {
         Args: { p_organization_id: string; p_updates: Json }
-        Returns: Json
+        Returns: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+          state: string
+          updated_at: string
+        }[]
       }
       user_has_active_invitation: { Args: { org_id: string }; Returns: boolean }
     }
