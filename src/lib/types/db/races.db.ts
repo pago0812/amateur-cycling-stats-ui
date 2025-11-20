@@ -1,6 +1,6 @@
 import type { Tables } from '../database.types';
 import type { RaceResultTableDB } from './race-results.db';
-import type { CyclistDB } from './cyclists.db';
+import type { CyclistTableDB } from './cyclists.db';
 import type { UserDB } from './users.db';
 import type { RankingPointDB } from './ranking-points.db';
 
@@ -18,7 +18,7 @@ export interface RaceWithResultsResponse extends RaceDB {
 	race_results: Array<
 		RaceResultTableDB & {
 			points: number | null;
-			cyclists: CyclistDB & {
+			cyclists: CyclistTableDB & {
 				users: UserDB | null;
 			};
 			ranking_points: RankingPointDB | null;

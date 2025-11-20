@@ -20,7 +20,7 @@
 export type { TypedSupabaseClient } from './common.db';
 
 // Main entity types
-export type { CyclistDB, CyclistInsertDB } from './cyclists.db';
+export type { CyclistDB, CyclistTableDB, CyclistInsertDB } from './cyclists.db';
 export type { RaceResultDB, RaceResultTableDB } from './race-results.db';
 export type { EventDB, EventWithRacesResponse } from './events.db';
 export type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from './races.db';
