@@ -1444,3 +1444,12 @@ For migration details, see git history and `supabase/migrations/`.
 - Loading states with `+loading.svelte`
 - Custom error pages with `+error.svelte`
 - Rate limiting for form submissions
+
+## Active Technologies
+
+- TypeScript 5.9.3 (strict mode), Svelte 5 (runes syntax), SvelteKit 2.47.1 + Supabase SDK, shadcn-svelte (bits-ui primitives), Tailwind CSS 4.1.14 (001-event-management)
+- PostgreSQL (via Supabase) with Row Level Security (RLS) (001-event-management)
+
+## Recent Changes
+
+- 001-event-management: Added TypeScript 5.9.3 (strict mode), Svelte 5 (runes syntax), SvelteKit 2.47.1 + Supabase SDK, shadcn-svelte (bits-ui primitives), Tailwind CSS 4.1.14

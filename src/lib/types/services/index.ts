@@ -16,6 +16,12 @@
 // Event Service Types
 // ============================================================================
 export type { EventWithRaces } from './events';
+export type {
+	CreateEventRequest,
+	PartialEvent,
+	GetEventsByOrganizationParams,
+	EventWithRaceCount
+} from './events.service';
 
 // ============================================================================
 // Race Service Types

@@ -8,6 +8,7 @@
 export {
 	checkUserExists,
 	deleteAuthUserById,
+	deleteOnBehalfUserById,
 	generateInvitationLink,
 	createOnBehalfOrganizerOwner,
 	completeOrganizerOwnerSetup,

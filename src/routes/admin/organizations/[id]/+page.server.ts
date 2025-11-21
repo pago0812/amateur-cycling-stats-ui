@@ -11,8 +11,9 @@ import {
 	incrementRetryCount,
 	deleteInvitationByOrganizationId
 } from '$lib/services/organization-invitations';
-import { generateInvitationLink, deleteAuthUserById } from '$lib/services/auth';
+import { generateInvitationLink, deleteOnBehalfUserById } from '$lib/services/auth';
 import { sendInvitationEmail } from '$lib/services/mailersend';
+import { getUserByEmail } from '$lib/services/users';
 import { t } from '$lib/i18n/server';
 
 export const actions: Actions = {
@@ -104,16 +105,15 @@ export const actions: Actions = {
 
 			// If there's a pending invitation, clean it up
 			if (invitation) {
-				// Get auth user ID by invitation email
-				const { data: usersData } = await locals.supabase
-					.from('users')
-					.select('auth_user_id')
-					.eq('email', invitation.email)
-					.maybeSingle();
+				// Get user by invitation email using service
+				const user = await getUserByEmail(locals.supabase, invitation.email);
 
-				// If we found the auth user, try to delete them
-				if (usersData?.auth_user_id) {
-					await deleteAuthUserById(usersData.auth_user_id);
+				// If we found the user, delete them via admin API
+				if (user) {
+					const result = await deleteOnBehalfUserById(user.id);
+					if (!result.success) {
+						console.error('Failed to delete user:', result.error);
+					}
 				}
 
 				// Delete invitation record
