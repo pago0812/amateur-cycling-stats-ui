@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Design Tokens/Spacing',
 		parameters: {
 			layout: 'fullscreen'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -40,7 +40,7 @@
 		{ var: '--radius', label: 'Default', value: '0.65rem', approx: '10px' }
 	];
 </script>
-
+<Story name="Overview">
 <div class="mx-auto max-w-7xl p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Spacing System</h1>
@@ -48,9 +48,7 @@
 			Consistent spacing scale and border radius values for harmonious layouts.
 		</p>
 	</div>
-
-	<!-- Spacing Scale -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Spacing Scale</h2>
 		<p class="mb-6 text-muted-foreground">
 			Based on Tailwind's default spacing scale (4px = 1 unit). Use for padding, margin, and gap.
@@ -72,9 +70,7 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Border Radius -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Border Radius</h2>
 		<p class="mb-6 text-muted-foreground">
 			Smooth, consistent corner radii based on the CSS variable <code
@@ -101,13 +97,10 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Common Patterns -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Common Spacing Patterns</h2>
 		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-			<!-- Card Padding -->
-			<div class="rounded-lg border border-border bg-card p-6">
+<div class="rounded-lg border border-border bg-card p-6">
 				<h3 class="mb-4 font-semibold text-card-foreground">Card Padding</h3>
 				<div class="space-y-3 text-sm">
 					<div class="flex justify-between">
@@ -124,9 +117,7 @@
 					</div>
 				</div>
 			</div>
-
-			<!-- Stack Spacing -->
-			<div class="rounded-lg border border-border bg-card p-6">
+<div class="rounded-lg border border-border bg-card p-6">
 				<h3 class="mb-4 font-semibold text-card-foreground">Stack Spacing</h3>
 				<div class="space-y-3 text-sm">
 					<div class="flex justify-between">
@@ -143,9 +134,7 @@
 					</div>
 				</div>
 			</div>
-
-			<!-- Form Fields -->
-			<div class="rounded-lg border border-border bg-card p-6">
+<div class="rounded-lg border border-border bg-card p-6">
 				<h3 class="mb-4 font-semibold text-card-foreground">Form Field Spacing</h3>
 				<div class="space-y-3 text-sm">
 					<div class="flex justify-between">
@@ -162,9 +151,7 @@
 					</div>
 				</div>
 			</div>
-
-			<!-- Section Spacing -->
-			<div class="rounded-lg border border-border bg-card p-6">
+<div class="rounded-lg border border-border bg-card p-6">
 				<h3 class="mb-4 font-semibold text-card-foreground">Section Spacing</h3>
 				<div class="space-y-3 text-sm">
 					<div class="flex justify-between">
@@ -183,31 +170,28 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- Usage Example -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<h3 class="mb-3 font-semibold text-foreground">Tailwind Classes</h3>
 			<pre
-				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code><!-- Padding -->
-class="p-4"      <!-- 16px all sides -->
-class="px-6 py-4" <!-- 24px horizontal, 16px vertical -->
+				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>
+class="p-4"
+class="px-6 py-4"
 
-<!-- Margin -->
-class="mb-4"     <!-- 16px bottom margin -->
-class="mx-auto"  <!-- Auto horizontal centering -->
+class="mb-4"
+class="mx-auto"
 
-<!-- Gap (Flexbox/Grid) -->
-class="flex gap-4"  <!-- 16px gap between items -->
-class="grid gap-6"  <!-- 24px gap between grid items -->
+class="flex gap-4"
+class="grid gap-6"
 
-<!-- Border Radius -->
-class="rounded-lg"   <!-- var(--radius-lg) -->
-class="rounded-md"   <!-- var(--radius-md) --></code></pre>
+class="rounded-lg"
+class="rounded-md"
+</code></pre>
 		</div>
 	</section>
 </div>
+</Story>
 
 <style>
 	code {

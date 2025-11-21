@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Compositions/Layout Examples',
 		parameters: {
 			layout: 'fullscreen'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -33,7 +33,7 @@
 		MoreVertical
 	} from '@lucide/svelte';
 </script>
-
+<Story name="Overview">
 <div class="mx-auto max-w-7xl space-y-12 p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Layout Compositions</h1>
@@ -41,13 +41,10 @@
 			Real-world layout patterns for building dashboards, profiles, and content pages.
 		</p>
 	</div>
-
-	<!-- Stats Dashboard -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Stats Dashboard</h2>
 		<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-			<!-- Total Users -->
-			<Card>
+<Card>
 				<CardHeader class="flex flex-row items-center justify-between pb-2">
 					<CardTitle class="text-sm font-medium">Total Cyclists</CardTitle>
 					<Users class="size-4 text-muted-foreground" />
@@ -61,9 +58,7 @@
 					</p>
 				</CardContent>
 			</Card>
-
-			<!-- Total Events -->
-			<Card>
+<Card>
 				<CardHeader class="flex flex-row items-center justify-between pb-2">
 					<CardTitle class="text-sm font-medium">Active Events</CardTitle>
 					<Calendar class="size-4 text-muted-foreground" />
@@ -77,9 +72,7 @@
 					</p>
 				</CardContent>
 			</Card>
-
-			<!-- Results Published -->
-			<Card>
+<Card>
 				<CardHeader class="flex flex-row items-center justify-between pb-2">
 					<CardTitle class="text-sm font-medium">Results Published</CardTitle>
 					<Trophy class="size-4 text-muted-foreground" />
@@ -93,9 +86,7 @@
 					</p>
 				</CardContent>
 			</Card>
-
-			<!-- Growth Rate -->
-			<Card>
+<Card>
 				<CardHeader class="flex flex-row items-center justify-between pb-2">
 					<CardTitle class="text-sm font-medium">Growth Rate</CardTitle>
 					<TrendingUp class="size-4 text-muted-foreground" />
@@ -111,9 +102,7 @@
 			</Card>
 		</div>
 	</section>
-
-	<!-- Event List with Tabs -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Tabbed Content</h2>
 		<Card>
 			<CardHeader>
@@ -185,13 +174,10 @@
 			</CardContent>
 		</Card>
 	</section>
-
-	<!-- Profile Section -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Profile Layout</h2>
 		<div class="grid gap-6 lg:grid-cols-3">
-			<!-- Main Profile Card -->
-			<div class="lg:col-span-2">
+<div class="lg:col-span-2">
 				<Card>
 					<CardHeader>
 						<div class="flex items-start justify-between">
@@ -230,11 +216,8 @@
 					</CardContent>
 				</Card>
 			</div>
-
-			<!-- Sidebar Cards -->
-			<div class="space-y-6">
-				<!-- Team Card -->
-				<Card>
+<div class="space-y-6">
+<Card>
 					<CardHeader>
 						<CardTitle class="text-base">Team</CardTitle>
 					</CardHeader>
@@ -252,9 +235,7 @@
 						</div>
 					</CardContent>
 				</Card>
-
-				<!-- Achievements -->
-				<Card>
+<Card>
 					<CardHeader>
 						<CardTitle class="text-base">Recent Achievements</CardTitle>
 					</CardHeader>
@@ -275,9 +256,7 @@
 						</div>
 					</CardContent>
 				</Card>
-
-				<!-- Status -->
-				<Card>
+<Card>
 					<CardHeader>
 						<CardTitle class="text-base">Status</CardTitle>
 					</CardHeader>
@@ -290,3 +269,5 @@
 		</div>
 	</section>
 </div>
+</Story>
+

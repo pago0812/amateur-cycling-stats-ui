@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Design Tokens/Typography',
 		parameters: {
 			layout: 'fullscreen'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -37,7 +37,7 @@
 		{ class: 'font-bold', label: 'Bold', weight: '700' }
 	];
 </script>
-
+<Story name="Overview">
 <div class="mx-auto max-w-7xl p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Typography System</h1>
@@ -45,9 +45,7 @@
 			Consistent typography scale and weights for building clear content hierarchy.
 		</p>
 	</div>
-
-	<!-- Headings -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Headings</h2>
 		<div class="space-y-6">
 			{#each headings as heading}
@@ -90,9 +88,7 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Text Sizes -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Text Sizes</h2>
 		<div class="space-y-4">
 			{#each textSizes as size}
@@ -114,9 +110,7 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Font Weights -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Font Weights</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			{#each fontWeights as weight}
@@ -132,26 +126,21 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Usage Example -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<h3 class="mb-3 font-semibold text-foreground">Tailwind Classes</h3>
 			<pre
-				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code><!-- Headings -->
+				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>
 &lt;h1 class="text-4xl font-bold"&gt;Page Title&lt;/h1&gt;
 &lt;h2 class="text-2xl font-semibold"&gt;Section Title&lt;/h2&gt;
-
-<!-- Body Text -->
 &lt;p class="text-base"&gt;Regular paragraph text&lt;/p&gt;
 &lt;p class="text-sm text-muted-foreground"&gt;Helper text&lt;/p&gt;
-
-<!-- Combinations -->
 &lt;span class="text-lg font-semibold"&gt;Important text&lt;/span&gt;</code></pre>
 		</div>
 	</section>
 </div>
+</Story>
 
 <style>
 	code {

@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Compositions/Form Examples',
 		parameters: {
 			layout: 'centered'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -35,7 +35,7 @@
 	let agreeToTerms = $state(false);
 	let showSuccess = $state(false);
 </script>
-
+<Story name="Overview">
 <div class="mx-auto w-full max-w-6xl space-y-12 p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Form Compositions</h1>
@@ -44,9 +44,7 @@
 			patterns.
 		</p>
 	</div>
-
-	<!-- Login Form -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Login Form</h2>
 		<Card class="mx-auto max-w-md">
 			<CardHeader>
@@ -110,9 +108,7 @@
 			</CardFooter>
 		</Card>
 	</section>
-
-	<!-- Signup Form -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Signup Form</h2>
 		<Card class="mx-auto max-w-md">
 			<CardHeader>
@@ -189,9 +185,7 @@
 			</CardFooter>
 		</Card>
 	</section>
-
-	<!-- Contact Form -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Contact Form</h2>
 		<Card class="mx-auto max-w-2xl">
 			<CardHeader>
@@ -235,9 +229,7 @@
 			</Alert>
 		{/if}
 	</section>
-
-	<!-- Organization Form -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Organization Form</h2>
 		<Card class="mx-auto max-w-2xl">
 			<CardHeader>
@@ -313,6 +305,7 @@
 		</Card>
 	</section>
 </div>
+</Story>
 
 <style>
 	code {

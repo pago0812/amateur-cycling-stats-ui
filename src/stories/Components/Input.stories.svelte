@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Input from '$lib/components/ui/input/input.svelte';
 
-	export const meta: Meta<typeof Input> = {
+	const { Story } = defineMeta({
 		title: 'Components/Input',
 		component: Input,
 		tags: ['autodocs']
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -18,7 +18,7 @@
 	let search = $state('');
 	let showPassword = $state(false);
 </script>
-
+<Story name="Overview">
 <div class="mx-auto max-w-4xl p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Input</h1>
@@ -26,9 +26,7 @@
 			A form input component for entering text, numbers, and other data.
 		</p>
 	</div>
-
-	<!-- Basic Inputs -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Basic Inputs</h2>
 		<div class="space-y-4">
 			<div>
@@ -65,9 +63,7 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- States -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">States</h2>
 		<div class="space-y-4">
 			<div>
@@ -89,16 +85,13 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- With Icons -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">With Icons</h2>
 		<p class="mb-4 text-muted-foreground">
 			Inputs can be composed with icons using flex layout and positioning.
 		</p>
 		<div class="space-y-4">
-			<!-- Search with icon -->
-			<div>
+<div>
 				<Label for="search-input">Search</Label>
 				<div class="relative">
 					<Search class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -111,18 +104,14 @@
 					/>
 				</div>
 			</div>
-
-			<!-- Email with icon -->
-			<div>
+<div>
 				<Label for="email-icon">Email with Icon</Label>
 				<div class="relative">
 					<Mail class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 					<Input id="email-icon" type="email" placeholder="name@example.com" class="pl-10" />
 				</div>
 			</div>
-
-			<!-- Password with toggle -->
-			<div>
+<div>
 				<Label for="password-toggle">Password with Toggle</Label>
 				<div class="relative">
 					<Lock class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -147,9 +136,7 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- Sizing -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Sizing</h2>
 		<div class="space-y-4">
 			<div>
@@ -166,9 +153,7 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- Validation -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Validation</h2>
 		<div class="space-y-4">
 			<div>
@@ -189,9 +174,7 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- Usage Example -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>&lt;script lang="ts"&gt;
@@ -221,6 +204,7 @@
 		</div>
 	</section>
 </div>
+</Story>
 
 <style>
 	code {

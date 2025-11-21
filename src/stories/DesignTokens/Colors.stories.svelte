@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Design Tokens/Colors',
 		parameters: {
 			layout: 'fullscreen'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -54,7 +54,7 @@
 		{ name: 'Chart 5', var: '--chart-5' }
 	];
 </script>
-
+<Story name="Overview">
 <div class="mx-auto max-w-7xl p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Color System</h1>
@@ -63,9 +63,7 @@
 			consistency across light and dark modes.
 		</p>
 	</div>
-
-	<!-- Semantic Colors -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Semantic Colors</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#each semanticColors as color}
@@ -86,9 +84,7 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Chart Colors -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Chart Colors</h2>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-5">
 			{#each chartColors as color}
@@ -106,9 +102,7 @@
 			{/each}
 		</div>
 	</section>
-
-	<!-- Usage Example -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<h3 class="mb-3 font-semibold text-foreground">CSS Custom Properties</h3>
@@ -123,6 +117,7 @@ class="border-border text-muted-foreground"</code></pre>
 		</div>
 	</section>
 </div>
+</Story>
 
 <style>
 	code {

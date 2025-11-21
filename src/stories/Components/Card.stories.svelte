@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Card',
 		parameters: {
 			layout: 'padded'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -23,7 +23,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Bell, Settings, User } from '@lucide/svelte';
 </script>
-
+<Story name="Overview">
 <div class="mx-auto max-w-6xl p-8">
 	<div class="mb-12">
 		<h1 class="mb-2 text-4xl font-bold text-foreground">Card</h1>
@@ -31,9 +31,7 @@
 			A flexible container component for displaying content with consistent styling.
 		</p>
 	</div>
-
-	<!-- Basic Card -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Basic Card</h2>
 		<Card class="max-w-md">
 			<CardHeader>
@@ -48,9 +46,7 @@
 			</CardContent>
 		</Card>
 	</section>
-
-	<!-- With Footer -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">With Footer</h2>
 		<Card class="max-w-md">
 			<CardHeader>
@@ -72,9 +68,7 @@
 			</CardFooter>
 		</Card>
 	</section>
-
-	<!-- With Form -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">With Form</h2>
 		<Card class="max-w-md">
 			<CardHeader>
@@ -100,9 +94,7 @@
 			</CardFooter>
 		</Card>
 	</section>
-
-	<!-- Multiple Cards -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Multiple Cards</h2>
 		<div class="grid gap-6 md:grid-cols-3">
 			<Card>
@@ -158,9 +150,7 @@
 			</Card>
 		</div>
 	</section>
-
-	<!-- With Badge and Separator -->
-	<section class="mb-12">
+<section class="mb-12">
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">With Badge and Separator</h2>
 		<Card class="max-w-md">
 			<CardHeader>
@@ -193,9 +183,7 @@
 			</CardFooter>
 		</Card>
 	</section>
-
-	<!-- Usage Example -->
-	<section>
+<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>&lt;script lang="ts"&gt;
@@ -219,6 +207,7 @@
 		</div>
 	</section>
 </div>
+</Story>
 
 <style>
 	code {
