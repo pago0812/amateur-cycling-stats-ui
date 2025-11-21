@@ -38,6 +38,20 @@
 			hasProcessedForm = false;
 		}
 	});
+
+	const breadcrumbs = [
+		{ label: $t('admin.title'), href: '/admin' },
+		{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
+		{ label: $t('admin.breadcrumbs.newOrganization') }
+	];
+
+	const actions = [
+		{
+			label: $t('admin.organizations.form.submitCreate'),
+			onClick: handleSubmit,
+			variant: 'default' as const
+		}
+	];
 </script>
 
 <svelte:head>
@@ -45,21 +59,7 @@
 </svelte:head>
 
 <section>
-	<!-- Menu Toolbar with breadcrumbs and submit action -->
-	<MenuToolbar
-		breadcrumbs={[
-			{ label: $t('admin.title'), href: '/admin' },
-			{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
-			{ label: $t('admin.breadcrumbs.newOrganization') }
-		]}
-		actions={[
-			{
-				label: $t('admin.organizations.form.submitCreate'),
-				onClick: handleSubmit,
-				variant: 'default'
-			}
-		]}
-	/>
+	<MenuToolbar {breadcrumbs} {actions} />
 
 	<!-- Organization Form -->
 	<div class="mt-8">

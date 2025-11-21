@@ -13,34 +13,37 @@
 	let isDeleting = $state(false);
 
 	const canDelete = data.event.eventStatus === 'DRAFT';
-</script>
 
-<svelte:head>
-	<title>{data.event.name} - ACS</title>
-</svelte:head>
-
-<MenuToolbar
-	breadcrumbs={[
-		{ label: $t('panel.title'), href: '/panel' },
+	const breadcrumbs = [
+		{ label: data.organization.name, href: '/panel' },
 		{ label: $t('panel.events.title'), href: '/panel/events' },
 		{ label: data.event.name }
-	]}
-	actions={[
+	];
+
+	const tabs = [{ label: $t('panel.events.tabs.summary') }];
+
+	const actions = [
 		{
 			label: $t('panel.events.editButton'),
 			href: `/panel/events/${data.event.id}/edit`,
 			onClick: () => goto(`/panel/events/${data.event.id}/edit`),
-			variant: 'default'
+			variant: 'default' as const
 		},
 		{
 			label: $t('panel.events.deleteButton'),
 			onClick: () => {
 				showDeleteDialog = true;
 			},
-			variant: 'destructive'
+			variant: 'destructive' as const
 		}
-	]}
-/>
+	];
+</script>
+
+<svelte:head>
+	<title>{data.event.name} - ACS</title>
+</svelte:head>
+
+<MenuToolbar {breadcrumbs} {tabs} {actions} />
 
 <div class="mt-8 space-y-6">
 	<!-- Visibility toggle -->

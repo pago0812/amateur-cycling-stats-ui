@@ -6,27 +6,28 @@
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let formElement: HTMLFormElement;
+
+	const breadcrumbs = [
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.events.title'), href: '/panel/events' },
+		{ label: data.event.name, href: `/panel/events/${data.event.id}` },
+		{ label: $t('panel.breadcrumbs.editEvent') }
+	];
+
+	const actions = [
+		{
+			label: $t('panel.events.saveButton'),
+			onClick: () => formElement?.requestSubmit(),
+			variant: 'default' as const
+		}
+	];
 </script>
 
 <svelte:head>
 	<title>{$t('panel.breadcrumbs.editEvent')} - {data.event.name} - ACS</title>
 </svelte:head>
 
-<MenuToolbar
-	breadcrumbs={[
-		{ label: $t('panel.title'), href: '/panel' },
-		{ label: $t('panel.events.title'), href: '/panel/events' },
-		{ label: data.event.name, href: `/panel/events/${data.event.id}` },
-		{ label: $t('panel.breadcrumbs.editEvent') }
-	]}
-	actions={[
-		{
-			label: $t('panel.events.saveButton'),
-			onClick: () => formElement?.requestSubmit(),
-			variant: 'default'
-		}
-	]}
-/>
+<MenuToolbar {breadcrumbs} {actions} />
 
 <div class="mt-8">
 	<EventForm

@@ -444,7 +444,57 @@ interface ActionButton {
    />
    ```
 
-**Rationale:** MenuToolbar provides consistent navigation UX across all admin/panel routes, centralizes navigation logic per page, supports breadcrumbs + tabs + actions in one unified component, and ensures proper spacing and styling consistency.
+**Contextual Tab Navigation Pattern:**
+
+Tabs change based on navigation depth to provide contextual navigation:
+
+**Root/Section Level** (navigating between sections):
+- Breadcrumbs: `OrgName` or `OrgName / Section`
+- Tabs: **Persistent main section tabs** (Resume | Organization | Members | Events)
+- Purpose: Easy navigation between main sections of the application
+
+**Entity Level** (viewing specific entity):
+- Breadcrumbs: `OrgName / Section / Entity Name`
+- Tabs: **Entity-specific view tabs** (Summary | Details | etc.)
+- Purpose: Navigate between views within that specific entity
+
+**Implementation Example:**
+
+```svelte
+<!-- Root/Section Level: /panel or /panel/events -->
+<MenuToolbar
+	breadcrumbs={[
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.tabs.events') }
+	]}
+	tabs={[
+		{ path: '/panel', label: $t('panel.tabs.summary') },
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') },
+		{ path: '/panel/members', label: $t('panel.tabs.members') },
+		{ path: '/panel/events', label: $t('panel.tabs.events') }
+	]}
+/>
+
+<!-- Entity Level: /panel/events/123 -->
+<MenuToolbar
+	breadcrumbs={[
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.tabs.events'), href: '/panel/events' },
+		{ label: data.event.name }
+	]}
+	tabs={[
+		{ path: `/panel/events/${id}`, label: $t('panel.events.tabs.summary') },
+		{ path: `/panel/events/${id}/races`, label: $t('panel.events.tabs.races') }
+	]}
+/>
+```
+
+**Decision Criteria:**
+- ✅ Use persistent section tabs when navigating between major application sections
+- ✅ Reset to entity-specific tabs when viewing a specific entity (event, organization, user, etc.)
+- ✅ Breadcrumbs always show the complete hierarchy regardless of tab context
+
+**Rationale:** MenuToolbar provides consistent navigation UX across all admin/panel routes, centralizes navigation logic per page, supports breadcrumbs + tabs + actions in one unified component, ensures proper spacing and styling consistency, and adapts tab context based on navigation depth for intuitive user experience.
 
 ### XIII. Atomic Database Operations
 

@@ -6,10 +6,22 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Add organization handler - navigate to new page
 	const handleAddOrganization = () => {
 		goto('/admin/organizations/new');
 	};
+
+	const breadcrumbs = [
+		{ label: $t('admin.title'), href: '/admin' },
+		{ label: $t('admin.breadcrumbs.organizations') }
+	];
+
+	const actions = [
+		{
+			label: $t('admin.organizations.addButton'),
+			onClick: handleAddOrganization,
+			variant: 'default' as const
+		}
+	];
 </script>
 
 <svelte:head>
@@ -17,20 +29,7 @@
 </svelte:head>
 
 <section>
-	<!-- Menu Toolbar with breadcrumb and Add button -->
-	<MenuToolbar
-		breadcrumbs={[
-			{ label: $t('admin.title'), href: '/admin' },
-			{ label: $t('admin.breadcrumbs.organizations') }
-		]}
-		actions={[
-			{
-				label: $t('admin.organizations.addButton'),
-				onClick: handleAddOrganization,
-				variant: 'default'
-			}
-		]}
-	/>
+	<MenuToolbar {breadcrumbs} {actions} />
 	<!-- Error message if organizations failed to load -->
 	{#if data.error}
 		<div class="mb-6 rounded-md border border-destructive/50 bg-destructive/10 p-4">

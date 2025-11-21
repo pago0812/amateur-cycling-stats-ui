@@ -5,19 +5,18 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Define tabs for organization detail pages
-	const tabs = data.organization
-		? [
-				{
-					path: '/panel/organization',
-					label: $t('panel.organization.tabs.overview')
-				},
-				{
-					path: '/panel/organization/members',
-					label: $t('panel.organization.tabs.members')
-				}
-			]
-		: undefined;
+	// Define breadcrumbs for organization detail pages
+	const breadcrumbs = [
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.tabs.members') }
+	];
+	// Define navigation tabs for panel section
+	const tabs = [
+		{ path: '/panel', label: $t('panel.tabs.summary') },
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') },
+		{ path: '/panel/members', label: $t('panel.tabs.members') },
+		{ path: '/panel/events', label: $t('panel.tabs.events') }
+	];
 </script>
 
 <svelte:head>
@@ -26,14 +25,7 @@
 
 {#if data.organization}
 	<!-- Menu Toolbar with breadcrumbs and tabs -->
-	<MenuToolbar
-		breadcrumbs={[
-			{ label: $t('panel.title'), href: '/panel' },
-			{ label: $t('panel.tabs.organization'), href: '/panel/organization' },
-			{ label: data.organization.name }
-		]}
-		{tabs}
-	/>
+	<MenuToolbar {breadcrumbs} {tabs} />
 {/if}
 
 <div class="mt-8">

@@ -182,6 +182,100 @@ Form pages with deep breadcrumb paths and submit button.
 </div>
 ```
 
+### Pattern 5: Contextual Navigation (Panel/Admin)
+
+Tabs change based on navigation depth - persistent section tabs at root/section level, entity-specific tabs at entity level.
+
+**Root/Section Level** - Navigating between sections:
+
+```svelte
+<script lang="ts">
+	import { MenuToolbar } from '$lib/components';
+	import { t } from '$lib/i18n';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+
+	// Root level breadcrumb
+	const breadcrumbs = [
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.tabs.events') }
+	];
+
+	// Persistent main section tabs (same across all section pages)
+	const tabs = [
+		{ path: '/panel', label: $t('panel.tabs.summary') },
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') },
+		{ path: '/panel/members', label: $t('panel.tabs.members') },
+		{ path: '/panel/events', label: $t('panel.tabs.events') }
+	];
+</script>
+
+<!-- Section page: /panel/events -->
+<MenuToolbar {breadcrumbs} {tabs} />
+
+<div class="mt-8">
+	<!-- Events list -->
+</div>
+```
+
+**Entity Level** - Viewing specific entity:
+
+```svelte
+<script lang="ts">
+	import { MenuToolbar } from '$lib/components';
+	import { goto } from '$app/navigation';
+	import { t } from '$lib/i18n';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+
+	// Full hierarchy breadcrumb
+	const breadcrumbs = [
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.tabs.events'), href: '/panel/events' },
+		{ label: data.event.name }
+	];
+
+	// Entity-specific tabs (reset from section tabs)
+	const tabs = [
+		{ path: `/panel/events/${data.event.id}`, label: $t('panel.events.tabs.summary') },
+		{ path: `/panel/events/${data.event.id}/races`, label: $t('panel.events.tabs.races') }
+	];
+
+	const handleEdit = () => {
+		goto(`/panel/events/${data.event.id}/edit`);
+	};
+</script>
+
+<!-- Entity page: /panel/events/123 -->
+<MenuToolbar
+	{breadcrumbs}
+	{tabs}
+	actions={[
+		{ label: $t('panel.events.editButton'), onClick: handleEdit, variant: 'primary' }
+	]}
+/>
+
+<div class="mt-8">
+	<!-- Event details -->
+</div>
+```
+
+**Key Characteristics:**
+
+- **Root/Section Level**: Tabs show all main sections for easy navigation between major areas
+- **Entity Level**: Tabs reset to show entity-specific views (no longer showing section tabs)
+- **Breadcrumbs**: Always show complete hierarchy regardless of tab context
+- **Decision Point**: When viewing a specific entity (not just a section), tabs reset to entity-specific navigation
+
+**Decision Criteria:**
+
+- ✅ Use persistent section tabs when at root (`/panel`) or section pages (`/panel/events`, `/panel/members`)
+- ✅ Reset to entity-specific tabs when viewing a specific entity (`/panel/events/123`, `/admin/organizations/456`)
+- ✅ Breadcrumbs always reflect the complete navigation path
+- ✅ Tab context switches at the entity boundary (when you stop navigating sections and start viewing a specific item)
+
 ## Features
 
 ### Smart Active Tab Detection
@@ -310,6 +404,20 @@ The toolbar supports multiple action buttons displayed side-by-side with consist
 8. **i18n Ready**: Works with translation keys for all text content
 9. **Type-Safe**: Full TypeScript support with interface definitions
 
-## Migration Note
+## Architecture Evolution
 
-The component has been simplified from a two-level system (primary/secondary) to a unified single-level architecture. The `level` prop has been removed, and all toolbars now use consistent styling. This makes the navigation hierarchy easier to understand and maintain.
+The component has evolved to support **contextual navigation**:
+
+1. **Previous**: Two-level system (primary/secondary) with `level` prop
+2. **Current**: Unified single-level architecture with contextual tab behavior
+
+**Key Improvements:**
+
+- ✅ Tabs adapt based on navigation depth (section vs entity level)
+- ✅ No `level` prop needed - context determined by page location
+- ✅ Persistent section tabs for easy cross-section navigation
+- ✅ Entity-specific tabs when viewing individual items
+- ✅ Breadcrumbs always show complete hierarchy
+- ✅ Simpler mental model - one toolbar component, contextual behavior
+
+This contextual approach makes navigation more intuitive while keeping the implementation clean and maintainable.
