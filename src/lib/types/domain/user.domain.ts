@@ -8,25 +8,3 @@ import type { Cyclist } from './cyclist.domain';
  * Use this type for authenticated user data (e.g., from getAuthUser()).
  */
 export type User = Admin | Organizer | Cyclist;
-
-/**
- * @deprecated Legacy user type - use new User union type instead.
- * Old user domain type - user profile (can be linked to auth or standalone).
- * All fields use camelCase convention.
- */
-export interface UserOld {
-	// Identity
-	id: string;
-
-	// Basic Info
-	firstName: string;
-	lastName: string | null;
-	email?: string; // From auth.users, optional (may not exist for unlinked users)
-
-	// Relationships (Foreign Keys)
-	roleId: string;
-
-	// Timestamps
-	createdAt: string;
-	updatedAt: string;
-}

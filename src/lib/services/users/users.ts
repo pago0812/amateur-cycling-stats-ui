@@ -36,6 +36,46 @@ export const getAuthUser = async (supabase: TypedSupabaseClient): Promise<User |
 };
 
 /**
+ * Get user by email with full relational data.
+ * This function searches for a user by email and returns enriched user data.
+ * @param supabase - Supabase client instance
+ * @param email - User's email address
+ * @returns User (Admin | Organizer | Cyclist) or null if not found
+ * @throws Error if RPC fails (excluding not found errors)
+ */
+export const getUserByEmail = async (
+	supabase: TypedSupabaseClient,
+	email: string
+): Promise<User | null> => {
+	try {
+		// Call RPC with email parameter
+		const { data: rpcResponse, error } = await supabase.rpc('get_auth_user_by_email', {
+			p_email: email
+		});
+
+		// Handle expected "not found" case
+		if (error?.code === 'PGRST116' || !rpcResponse || rpcResponse.length === 0) {
+			return null;
+		}
+
+		// Handle unexpected errors
+		if (error) {
+			const errorMessage =
+				typeof error === 'object' && error && 'message' in error
+					? String((error as { message: unknown }).message)
+					: 'Unknown error';
+			throw new Error(`RPC error: ${errorMessage}`);
+		}
+
+		// Transform first row to domain type (auto-typed by Supabase!)
+		return adaptAuthUserFromRpc(rpcResponse[0]);
+	} catch (error: unknown) {
+		console.error('Failed to get user by email:', error);
+		throw error;
+	}
+};
+
+/**
  * Check if the current session is authenticated.
  * Simple helper to validate session without fetching full user data.
  * @param supabase - Supabase client instance

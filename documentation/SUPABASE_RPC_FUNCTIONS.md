@@ -7,10 +7,13 @@ Complete reference for all Remote Procedure Call (RPC) functions used in the Ama
 ## Table of Contents
 
 1. [get_auth_user](#1-get_auth_user)
-2. [get_cyclist_by_user_id](#2-get_cyclist_by_user_id)
-3. [get_race_results_by_user_id](#3-get_race_results_by_user_id)
-4. [create_user_with_organizer_owner](#4-create_user_with_organizer_owner)
-5. [complete_organizer_owner_setup](#5-complete_organizer_owner_setup)
+2. [get_auth_user_by_email](#2-get_auth_user_by_email)
+3. [get_auth_user_by_id](#3-get_auth_user_by_id)
+4. [get_cyclist_by_user_id](#4-get_cyclist_by_user_id)
+5. [get_race_results_by_user_id](#5-get_race_results_by_user_id)
+6. [create_user_with_organizer_owner](#6-create_user_with_organizer_owner)
+7. [complete_organizer_owner_setup](#7-complete_organizer_owner_setup)
+8. [delete_user_by_id](#8-delete_user_by_id)
 
 ---
 
@@ -207,7 +210,227 @@ const { data, error } = await supabase.rpc('get_auth_user');
 
 ---
 
-## 2. get_cyclist_by_user_id
+## 2. get_auth_user_by_email
+
+**Purpose**: Retrieves authenticated user with full relations by email address (admin operations)
+
+**Definition**: `supabase/migrations/20250115000004_session_email_improvements.sql:119-210`
+
+**Security**: `SECURITY DEFINER` (can access `auth.users` schema)
+
+### Parameters
+
+```typescript
+{
+	p_email: string; // Required - User's email address
+}
+```
+
+### Request Example
+
+```typescript
+// services/users/users.ts -> getUserByEmail()
+const { data, error } = await supabase.rpc('get_auth_user_by_email', {
+	p_email: 'john.doe@example.com'
+});
+```
+
+### Response Example
+
+Same structure as `get_auth_user` - returns flat user object with role-specific fields:
+
+```json
+[
+	{
+		"id": "a1b2c3d4e5",
+		"authUserId": "550e8400-e29b-41d4-a716-446655440000",
+		"firstName": "John",
+		"lastName": "Doe",
+		"email": "john.doe@example.com",
+		"displayName": "John Doe",
+		"roleId": "role-uuid-1",
+		"roleName": "ADMIN",
+		"cyclistId": null,
+		"cyclistBornYear": null,
+		"cyclistGenderId": null,
+		"cyclistGenderName": null,
+		"organizerId": null,
+		"organizationId": null,
+		"createdAt": "2025-01-15T10:00:00Z",
+		"updatedAt": "2025-01-15T10:00:00Z"
+	}
+]
+```
+
+**Empty array if user not found:**
+
+```json
+[]
+```
+
+### Error Response
+
+Returns empty array (no errors thrown) - graceful handling for "user not found" case.
+
+### Flow Diagram
+
+```
+┌─────────────────────────────────┐
+│  Admin deletes organization     │
+│  with pending invitation        │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────┐
+│  routes/admin/organizations/    │
+│  [id]/+page.server.ts           │
+│  (delete action)                │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────┐
+│  services/users/users.ts        │
+│  getUserByEmail()               │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  supabase                            │
+│  .rpc('get_auth_user_by_email', {   │
+│    p_email: 'owner@example.com'     │
+│  })                                  │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Database Function                   │
+│  1. Find auth user by email          │
+│  2. Find public user by auth_user_id │
+│  3. Join roles, cyclists, organizers │
+│  4. Return TABLE row                 │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Adapter                             │
+│  adaptAuthUserFromRpc()              │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  User object used for deletion       │
+│  deleteOnBehalfUserById(user.id)     │
+└──────────────────────────────────────┘
+```
+
+---
+
+## 3. get_auth_user_by_id
+
+**Purpose**: Retrieves authenticated user with full relations by user ID (admin operations)
+
+**Definition**: `supabase/migrations/20250115000004_session_email_improvements.sql:216-266`
+
+**Security**: `SECURITY DEFINER` (can access `auth.users` schema)
+
+### Parameters
+
+```typescript
+{
+	p_user_id: string; // Required - User's UUID (public.users.id)
+}
+```
+
+### Request Example
+
+```typescript
+// services/auth/admin-api.ts -> deleteOnBehalfUserById()
+const { data, error } = await supabase.rpc('get_auth_user_by_id', {
+	p_user_id: 'abc123def4'
+});
+```
+
+### Response Example
+
+Same structure as `get_auth_user` - returns flat user object with auth_user_id:
+
+```json
+[
+	{
+		"id": "abc123def4",
+		"authUserId": "550e8400-e29b-41d4-a716-446655440000",
+		"firstName": "Jane",
+		"lastName": "Smith",
+		"email": "jane.smith@example.com",
+		"displayName": "Jane Smith",
+		"roleId": "role-uuid-2",
+		"roleName": "CYCLIST",
+		"cyclistId": "cyclist-uuid-1",
+		"cyclistBornYear": 1990,
+		"cyclistGenderId": "gender-uuid-f",
+		"cyclistGenderName": "F",
+		"organizerId": null,
+		"organizationId": null,
+		"createdAt": "2025-01-15T11:00:00Z",
+		"updatedAt": "2025-01-15T11:00:00Z"
+	}
+]
+```
+
+**Empty array if user not found:**
+
+```json
+[]
+```
+
+### Flow Diagram
+
+```
+┌─────────────────────────────────┐
+│  Admin deletes user             │
+│  (via deleteOnBehalfUserById)   │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────┐
+│  services/auth/admin-api.ts     │
+│  deleteOnBehalfUserById()       │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  supabase                            │
+│  .rpc('get_auth_user_by_id', {      │
+│    p_user_id: 'abc123def4'          │
+│  })                                  │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Database Function                   │
+│  - Find user by id                   │
+│  - Join auth.users for email         │
+│  - Join roles, cyclists, organizers  │
+│  - Return TABLE row with auth_user_id│
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Get auth_user_id from response      │
+│  const authUserId = data[0].         │
+│    auth_user_id                      │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Call delete_user_by_id RPC          │
+│  Then delete from auth.users         │
+└──────────────────────────────────────┘
+```
+
+---
+
+## 4. get_cyclist_by_user_id
 
 **Purpose**: Fetches cyclist profile data (optimized - no auth.users or race results)
 
@@ -322,7 +545,7 @@ const { data, error } = await supabase.rpc('get_cyclist_by_user_id', {
 
 ---
 
-## 3. get_race_results_by_user_id
+## 5. get_race_results_by_user_id
 
 **Purpose**: Fetches race results array for a user (optimized parallel fetch)
 
@@ -522,7 +745,7 @@ const { data, error } = await supabase.rpc('get_race_results_by_user_id', {
 
 ---
 
-## 4. create_user_with_organizer_owner
+## 6. create_user_with_organizer_owner
 
 **Purpose**: Creates/updates user with organizer_owner role and links to organization (atomic)
 
@@ -645,7 +868,7 @@ const { data, error } = await supabase.rpc('create_user_with_organizer_owner', {
 
 ---
 
-## 5. complete_organizer_owner_setup
+## 7. complete_organizer_owner_setup
 
 **Purpose**: Atomically completes organizer owner invitation setup (most complex RPC)
 
@@ -825,6 +1048,111 @@ All 5 database operations succeed together or fail together:
 5. ✅ Activate organization (state = 'ACTIVE')
 
 If any step fails, the entire transaction is rolled back.
+
+---
+
+## 8. delete_user_by_id
+
+**Purpose**: Atomically deletes user and related records from public tables (admin operations)
+
+**Definition**: `supabase/migrations/20250115000004_session_email_improvements.sql:274-312`
+
+**Security**: `SECURITY DEFINER` (can bypass RLS for deletion)
+
+**Critical**: This function does NOT delete from `auth.users` - that must be done separately via Admin API.
+
+### Parameters
+
+```typescript
+{
+	p_user_id: string; // Required - User's UUID (public.users.id)
+}
+```
+
+### Request Example
+
+```typescript
+// services/auth/admin-api.ts -> deleteOnBehalfUserById()
+const { data, error } = await supabase.rpc('delete_user_by_id', {
+	p_user_id: 'abc123def4'
+});
+```
+
+### Response Example
+
+```json
+{
+	"success": true,
+	"auth_user_id": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Type**: `jsonb` object with:
+- `success: boolean` - Always `true` if successful
+- `auth_user_id: string` - The auth user ID for subsequent auth deletion
+
+### Error Response
+
+**User not found:**
+
+```json
+{
+	"success": false,
+	"error": "User not found"
+}
+```
+
+### Flow Diagram
+
+```
+┌─────────────────────────────────┐
+│  Admin deletes user             │
+│  deleteOnBehalfUserById()       │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────┐
+│  Step 1: Get user data          │
+│  get_auth_user_by_id()          │
+│  (returns auth_user_id)         │
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Step 2: Delete from public tables   │
+│  supabase.rpc('delete_user_by_id',  │
+│    { p_user_id })                    │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Database Function (ATOMIC)          │
+│  1. Get auth_user_id                 │
+│  2. Delete from cyclists             │
+│  3. Delete from organizers           │
+│  4. Delete from users (CASCADE)      │
+│  5. Return auth_user_id              │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│  Step 3: Delete from auth.users      │
+│  adminClient.auth.admin.deleteUser() │
+│  (Auth API - separate)               │
+└──────────────────────────────────────┘
+```
+
+### Atomicity Guarantee
+
+All public table deletions succeed together or fail together:
+
+1. ✅ Delete cyclist record (if exists)
+2. ✅ Delete organizer record (if exists)
+3. ✅ Delete user record (CASCADE handles remaining relations)
+
+If any step fails, the entire transaction is rolled back.
+
+**Important**: The auth.users deletion is separate and cannot be part of the database transaction. This is why we return `auth_user_id` for subsequent deletion via Admin API.
 
 ---
 
@@ -1012,12 +1340,12 @@ END IF;
 
 ## Migration History
 
-| Migration File                                  | RPC Functions Added/Modified                                         |
-| ----------------------------------------------- | -------------------------------------------------------------------- |
-| `20250115000001_core_foundation.sql`            | `get_race_results_by_user_id`, `get_cyclist_by_user_id`              |
-| `20250115000002_organization_invitations.sql`   | Organization state management (no RPC changes)                       |
-| `20250115000003_invitation_enhancements.sql`    | `create_user_with_organizer_owner`, `complete_organizer_owner_setup` |
-| `20250115000004_session_email_improvements.sql` | `get_auth_user` (new session-aware version)                          |
+| Migration File                                  | RPC Functions Added/Modified                                                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `20250115000001_core_foundation.sql`            | `get_race_results_by_user_id`, `get_cyclist_by_user_id`                                               |
+| `20250115000002_organization_invitations.sql`   | Organization state management (no RPC changes)                                                         |
+| `20250115000003_invitation_enhancements.sql`    | `create_user_with_organizer_owner`, `complete_organizer_owner_setup`                                  |
+| `20250115000004_session_email_improvements.sql` | `get_auth_user`, `get_auth_user_by_email`, `get_auth_user_by_id`, `delete_user_by_id` (session/admin) |
 
 ---
 
@@ -1237,20 +1565,24 @@ if (error?.code === '28000') {
 
 ## Summary
 
-The application uses **5 RPC functions** to handle:
+The application uses **8 RPC functions** to handle:
 
-1. ✅ **Session Management** - `get_auth_user` (1 call per request)
-2. ✅ **User Data Fetching** - `get_cyclist_by_user_id`
-3. ✅ **Race Results** - `get_race_results_by_user_id`
-4. ✅ **User Creation** - `create_user_with_organizer_owner`
-5. ✅ **Invitation Flow** - `complete_organizer_owner_setup`
+1. ✅ **Session Management** - `get_auth_user` (1 call per request - validates session)
+2. ✅ **Admin User Lookup by Email** - `get_auth_user_by_email` (find user by email)
+3. ✅ **Admin User Lookup by ID** - `get_auth_user_by_id` (find user by ID with auth_user_id)
+4. ✅ **Cyclist Data Fetching** - `get_cyclist_by_user_id` (optimized cyclist profile)
+5. ✅ **Race Results** - `get_race_results_by_user_id` (parallel fetch optimization)
+6. ✅ **User Creation** - `create_user_with_organizer_owner` (atomic user + organizer)
+7. ✅ **Invitation Flow** - `complete_organizer_owner_setup` (most complex - 6 operations)
+8. ✅ **User Deletion** - `delete_user_by_id` (atomic public table cleanup)
 
 **Key Benefits**:
 
 - 🚀 **Performance** - Single round-trip for complex queries
 - 🔒 **Security** - Centralized validation and RLS enforcement
 - ⚛️ **Atomicity** - Multi-step operations succeed or fail together
-- 🎯 **Type Safety** - Explicit response types with adapters
+- 🎯 **Type Safety** - RETURNS TABLE for auto-generated types (functions 2-5), JSONB for complex returns (functions 1, 6-8)
 - 📊 **Optimized** - Parallel fetching, conditional joins, pre-sorted results
+- 🧹 **Clean Architecture** - Service layer pattern enforced, no direct RPC calls in routes
 
-All RPC functions follow the **Atomic Operations Pattern** and use **JSONB** for flexible return types with proper type casting in the application layer.
+All RPC functions follow the **Atomic Operations Pattern**. Functions returning user data use **RETURNS TABLE** for auto-generated TypeScript types, while complex multi-step operations use **JSONB** with explicit type casting.
