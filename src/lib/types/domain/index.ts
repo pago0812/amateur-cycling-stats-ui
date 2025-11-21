@@ -14,7 +14,7 @@ export { RoleTypeEnum } from './role-type.domain';
 // ============================================================================
 // User & Authentication
 // ============================================================================
-export type { User, UserOld } from './user.domain';
+export type { User } from './user.domain';
 export type { Admin } from './admin.domain';
 export type { Cyclist } from './cyclist.domain';
 export type { CyclistGender } from './cyclist-gender.domain';
@@ -22,11 +22,7 @@ export type { CyclistGender } from './cyclist-gender.domain';
 // ============================================================================
 // Organizations & Organizers
 // ============================================================================
-export type {
-	Organization,
-	OrganizationState,
-	PartialOrganization
-} from './organization.domain';
+export type { Organization, OrganizationState, PartialOrganization } from './organization.domain';
 export type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus

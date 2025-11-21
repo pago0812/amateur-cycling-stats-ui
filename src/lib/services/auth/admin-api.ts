@@ -289,3 +289,78 @@ export async function completeOrganizerOwnerSetup(
 		userId: setupResponse.user_id
 	};
 }
+
+/**
+ * Delete user by their public user ID (internal admin operation).
+ * Internally looks up auth_user_id, deletes public user records, and deletes auth user.
+ * WARNING: This is a destructive operation that cannot be undone.
+ *
+ * @param userId - Public user ID (from users table)
+ * @returns Result with success status or error
+ */
+export async function deleteOnBehalfUserById(userId: string): Promise<DeleteUserResult> {
+	const adminClient = createSupabaseAdminClient();
+
+	try {
+		// Step 1: Get user data including auth_user_id
+		const { data: userData, error: queryError } = await adminClient.rpc('get_auth_user_by_id', {
+			p_user_id: userId
+		});
+
+		if (queryError || !userData || userData.length === 0) {
+			console.error('[Auth Admin] Failed to get user by ID:', queryError);
+			return {
+				success: false,
+				error: `User not found: ${queryError?.message || 'No data returned'}`
+			};
+		}
+
+		const authUserId = userData[0].auth_user_id;
+
+		// Step 2: Delete user from public tables (atomic)
+		const { data: deleteDbResult, error: deleteDbError } = await adminClient.rpc(
+			'delete_user_by_id',
+			{
+				p_user_id: userId
+			}
+		);
+
+		if (deleteDbError) {
+			console.error('[Auth Admin] Failed to delete user from DB:', deleteDbError);
+			return {
+				success: false,
+				error: `Failed to delete user from DB: ${deleteDbError.message}`
+			};
+		}
+
+		// Check if RPC returned success
+		const dbResult = deleteDbResult as { success: boolean; error?: string };
+		if (!dbResult.success) {
+			return {
+				success: false,
+				error: dbResult.error || 'Failed to delete user from DB'
+			};
+		}
+
+		// Step 3: Delete auth user
+		const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(authUserId);
+
+		if (deleteAuthError) {
+			console.error('[Auth Admin] Failed to delete auth user:', deleteAuthError);
+			return {
+				success: false,
+				error: `Failed to delete auth user: ${deleteAuthError.message}`
+			};
+		}
+
+		return {
+			success: true
+		};
+	} catch (error) {
+		console.error('[Auth Admin] Exception during user deletion:', error);
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : 'Unknown error'
+		};
+	}
+}
