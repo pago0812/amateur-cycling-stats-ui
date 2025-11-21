@@ -81,6 +81,7 @@ npx shadcn-svelte@latest add [component-name]
 ```
 
 Example:
+
 ```bash
 npx shadcn-svelte@latest add accordion
 ```
@@ -166,16 +167,16 @@ Font scale based on Tailwind's default scale with consistent line heights.
 
 #### Scale
 
-| Class | Size | Line Height | Usage |
-|-------|------|-------------|-------|
-| `text-xs` | 12px | 16px | Small labels, captions |
-| `text-sm` | 14px | 20px | Body text, descriptions |
-| `text-base` | 16px | 24px | Default body text |
-| `text-lg` | 18px | 28px | Emphasized text |
-| `text-xl` | 20px | 28px | Small headings |
-| `text-2xl` | 24px | 32px | Section headings |
-| `text-3xl` | 30px | 36px | Page titles |
-| `text-4xl` | 36px | 40px | Hero headings |
+| Class       | Size | Line Height | Usage                   |
+| ----------- | ---- | ----------- | ----------------------- |
+| `text-xs`   | 12px | 16px        | Small labels, captions  |
+| `text-sm`   | 14px | 20px        | Body text, descriptions |
+| `text-base` | 16px | 24px        | Default body text       |
+| `text-lg`   | 18px | 28px        | Emphasized text         |
+| `text-xl`   | 20px | 28px        | Small headings          |
+| `text-2xl`  | 24px | 32px        | Section headings        |
+| `text-3xl`  | 30px | 36px        | Page titles             |
+| `text-4xl`  | 36px | 40px        | Hero headings           |
 
 #### Weights
 
@@ -199,16 +200,16 @@ Consistent spacing based on 4px unit scale.
 
 #### Scale
 
-| Value | Pixels | Usage |
-|-------|--------|-------|
-| 0 | 0px | No spacing |
-| 1 | 4px | Minimal spacing |
-| 2 | 8px | Tight spacing |
-| 3 | 12px | Default label-to-input |
-| 4 | 16px | Default between fields |
-| 6 | 24px | Between sections |
-| 8 | 32px | Large spacing |
-| 12 | 48px | Section padding |
+| Value | Pixels | Usage                  |
+| ----- | ------ | ---------------------- |
+| 0     | 0px    | No spacing             |
+| 1     | 4px    | Minimal spacing        |
+| 2     | 8px    | Tight spacing          |
+| 3     | 12px   | Default label-to-input |
+| 4     | 16px   | Default between fields |
+| 6     | 24px   | Between sections       |
+| 8     | 32px   | Large spacing          |
+| 12    | 48px   | Section padding        |
 
 #### Common Patterns
 
@@ -236,14 +237,13 @@ class="py-12"   // Vertical: 48px
 Smooth, consistent corner radii.
 
 ```css
---radius-sm: calc(var(--radius) - 4px)  /* ~6px */
---radius-md: calc(var(--radius) - 2px)  /* ~8px */
---radius-lg: var(--radius)               /* 10px */
---radius-xl: calc(var(--radius) + 4px)  /* ~14px */
---radius: 0.65rem                        /* 10px base */
+--radius-sm: calc(var(--radius) - 4px) /* ~6px */ --radius-md: calc(var(--radius) - 2px) /* ~8px */
+	--radius-lg: var(--radius) /* 10px */ --radius-xl: calc(var(--radius) + 4px) /* ~14px */
+	--radius: 0.65rem /* 10px base */;
 ```
 
 Usage:
+
 ```typescript
 class="rounded-md"  // Medium radius
 class="rounded-lg"  // Large radius (default)
@@ -265,8 +265,8 @@ Primary action component with multiple variants and sizes.
 
 ```svelte
 <script lang="ts">
-  import { Button } from '$lib/components/ui/button';
-  import { Download } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { Download } from '@lucide/svelte';
 </script>
 
 <!-- Basic usage -->
@@ -278,8 +278,8 @@ Primary action component with multiple variants and sizes.
 
 <!-- With icons -->
 <Button>
-  <Download />
-  Download
+	<Download />
+	Download
 </Button>
 
 <!-- As link -->
@@ -287,7 +287,7 @@ Primary action component with multiple variants and sizes.
 
 <!-- Icon only -->
 <Button size="icon">
-  <Download />
+	<Download />
 </Button>
 ```
 
@@ -299,11 +299,11 @@ Text input component with support for various types.
 
 ```svelte
 <script lang="ts">
-  import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
-  import { Search } from '@lucide/svelte';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { Search } from '@lucide/svelte';
 
-  let email = $state('');
+	let email = $state('');
 </script>
 
 <!-- Basic usage -->
@@ -312,8 +312,8 @@ Text input component with support for various types.
 
 <!-- With icon -->
 <div class="relative">
-  <Search class="absolute left-3 top-1/2 -translate-y-1/2 size-4" />
-  <Input type="search" placeholder="Search..." class="pl-10" />
+	<Search class="absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+	<Input type="search" placeholder="Search..." class="pl-10" />
 </div>
 
 <!-- States -->
@@ -336,8 +336,8 @@ Multi-line text input.
 
 ```svelte
 <script lang="ts">
-  import { Textarea } from '$lib/components/ui/textarea';
-  import { Label } from '$lib/components/ui/label';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import { Label } from '$lib/components/ui/label';
 </script>
 
 <Label for="message">Message</Label>
@@ -350,20 +350,26 @@ Dropdown selection component.
 
 ```svelte
 <script lang="ts">
-  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '$lib/components/ui/select';
-  import { Label } from '$lib/components/ui/label';
+	import {
+		Select,
+		SelectTrigger,
+		SelectValue,
+		SelectContent,
+		SelectItem
+	} from '$lib/components/ui/select';
+	import { Label } from '$lib/components/ui/label';
 </script>
 
 <Label>Category</Label>
 <Select>
-  <SelectTrigger>
-    <SelectValue placeholder="Select option" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="option1">Option 1</SelectItem>
-    <SelectItem value="option2">Option 2</SelectItem>
-    <SelectItem value="option3">Option 3</SelectItem>
-  </SelectContent>
+	<SelectTrigger>
+		<SelectValue placeholder="Select option" />
+	</SelectTrigger>
+	<SelectContent>
+		<SelectItem value="option1">Option 1</SelectItem>
+		<SelectItem value="option2">Option 2</SelectItem>
+		<SelectItem value="option3">Option 3</SelectItem>
+	</SelectContent>
 </Select>
 ```
 
@@ -373,15 +379,15 @@ Boolean selection component.
 
 ```svelte
 <script lang="ts">
-  import { Checkbox } from '$lib/components/ui/checkbox';
-  import { Label } from '$lib/components/ui/label';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { Label } from '$lib/components/ui/label';
 
-  let checked = $state(false);
+	let checked = $state(false);
 </script>
 
 <div class="flex items-center space-x-2">
-  <Checkbox id="terms" bind:checked />
-  <Label for="terms">Accept terms and conditions</Label>
+	<Checkbox id="terms" bind:checked />
+	<Label for="terms">Accept terms and conditions</Label>
 </div>
 ```
 
@@ -391,19 +397,19 @@ Single selection from multiple options.
 
 ```svelte
 <script lang="ts">
-  import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group';
-  import { Label } from '$lib/components/ui/label';
+	import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group';
+	import { Label } from '$lib/components/ui/label';
 </script>
 
 <RadioGroup value="option1">
-  <div class="flex items-center space-x-2">
-    <RadioGroupItem value="option1" id="opt1" />
-    <Label for="opt1">Option 1</Label>
-  </div>
-  <div class="flex items-center space-x-2">
-    <RadioGroupItem value="option2" id="opt2" />
-    <Label for="opt2">Option 2</Label>
-  </div>
+	<div class="flex items-center space-x-2">
+		<RadioGroupItem value="option1" id="opt1" />
+		<Label for="opt1">Option 1</Label>
+	</div>
+	<div class="flex items-center space-x-2">
+		<RadioGroupItem value="option2" id="opt2" />
+		<Label for="opt2">Option 2</Label>
+	</div>
 </RadioGroup>
 ```
 
@@ -413,15 +419,15 @@ Toggle control.
 
 ```svelte
 <script lang="ts">
-  import { Switch } from '$lib/components/ui/switch';
-  import { Label } from '$lib/components/ui/label';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Label } from '$lib/components/ui/label';
 
-  let enabled = $state(false);
+	let enabled = $state(false);
 </script>
 
 <div class="flex items-center space-x-2">
-  <Switch id="airplane" bind:checked={enabled} />
-  <Label for="airplane">Airplane mode</Label>
+	<Switch id="airplane" bind:checked={enabled} />
+	<Label for="airplane">Airplane mode</Label>
 </div>
 ```
 
@@ -435,22 +441,28 @@ Flexible container component.
 
 ```svelte
 <script lang="ts">
-  import { Card, CardHeader, CardTitle, CardDescription,
-           CardContent, CardFooter } from '$lib/components/ui/card';
-  import { Button } from '$lib/components/ui/button';
+	import {
+		Card,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		CardFooter
+	} from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <Card>
-  <CardHeader>
-    <CardTitle>Card Title</CardTitle>
-    <CardDescription>Card description</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <p>Card content goes here</p>
-  </CardContent>
-  <CardFooter>
-    <Button>Action</Button>
-  </CardFooter>
+	<CardHeader>
+		<CardTitle>Card Title</CardTitle>
+		<CardDescription>Card description</CardDescription>
+	</CardHeader>
+	<CardContent>
+		<p>Card content goes here</p>
+	</CardContent>
+	<CardFooter>
+		<Button>Action</Button>
+	</CardFooter>
 </Card>
 ```
 
@@ -460,25 +472,32 @@ Modal overlay component.
 
 ```svelte
 <script lang="ts">
-  import { Dialog, DialogTrigger, DialogContent, DialogHeader,
-           DialogTitle, DialogDescription, DialogFooter } from '$lib/components/ui/dialog';
-  import { Button } from '$lib/components/ui/button';
+	import {
+		Dialog,
+		DialogTrigger,
+		DialogContent,
+		DialogHeader,
+		DialogTitle,
+		DialogDescription,
+		DialogFooter
+	} from '$lib/components/ui/dialog';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <Dialog>
-  <DialogTrigger asChild let:builder>
-    <Button builders={[builder]}>Open Dialog</Button>
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Dialog Title</DialogTitle>
-      <DialogDescription>Dialog description</DialogDescription>
-    </DialogHeader>
-    <p>Dialog content</p>
-    <DialogFooter>
-      <Button>Confirm</Button>
-    </DialogFooter>
-  </DialogContent>
+	<DialogTrigger asChild let:builder>
+		<Button builders={[builder]}>Open Dialog</Button>
+	</DialogTrigger>
+	<DialogContent>
+		<DialogHeader>
+			<DialogTitle>Dialog Title</DialogTitle>
+			<DialogDescription>Dialog description</DialogDescription>
+		</DialogHeader>
+		<p>Dialog content</p>
+		<DialogFooter>
+			<Button>Confirm</Button>
+		</DialogFooter>
+	</DialogContent>
 </Dialog>
 ```
 
@@ -488,28 +507,34 @@ Confirmation dialog for important actions.
 
 ```svelte
 <script lang="ts">
-  import { AlertDialog, AlertDialogTrigger, AlertDialogContent,
-           AlertDialogHeader, AlertDialogTitle, AlertDialogDescription,
-           AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '$lib/components/ui/alert-dialog';
-  import { Button } from '$lib/components/ui/button';
+	import {
+		AlertDialog,
+		AlertDialogTrigger,
+		AlertDialogContent,
+		AlertDialogHeader,
+		AlertDialogTitle,
+		AlertDialogDescription,
+		AlertDialogFooter,
+		AlertDialogCancel,
+		AlertDialogAction
+	} from '$lib/components/ui/alert-dialog';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <AlertDialog>
-  <AlertDialogTrigger asChild let:builder>
-    <Button variant="destructive" builders={[builder]}>Delete</Button>
-  </AlertDialogTrigger>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-      <AlertDialogDescription>
-        This action cannot be undone.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction>Delete</AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
+	<AlertDialogTrigger asChild let:builder>
+		<Button variant="destructive" builders={[builder]}>Delete</Button>
+	</AlertDialogTrigger>
+	<AlertDialogContent>
+		<AlertDialogHeader>
+			<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+			<AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+		</AlertDialogHeader>
+		<AlertDialogFooter>
+			<AlertDialogCancel>Cancel</AlertDialogCancel>
+			<AlertDialogAction>Delete</AlertDialogAction>
+		</AlertDialogFooter>
+	</AlertDialogContent>
 </AlertDialog>
 ```
 
@@ -521,7 +546,7 @@ Status indicator component.
 
 ```svelte
 <script lang="ts">
-  import { Badge } from '$lib/components/ui/badge';
+	import { Badge } from '$lib/components/ui/badge';
 </script>
 
 <Badge>Default</Badge>
@@ -536,20 +561,20 @@ Visual divider.
 
 ```svelte
 <script lang="ts">
-  import { Separator } from '$lib/components/ui/separator';
+	import { Separator } from '$lib/components/ui/separator';
 </script>
 
 <div class="space-y-4">
-  <p>Content above</p>
-  <Separator />
-  <p>Content below</p>
+	<p>Content above</p>
+	<Separator />
+	<p>Content below</p>
 </div>
 
 <!-- Vertical -->
 <div class="flex items-center gap-4">
-  <p>Left</p>
-  <Separator orientation="vertical" class="h-6" />
-  <p>Right</p>
+	<p>Left</p>
+	<Separator orientation="vertical" class="h-6" />
+	<p>Right</p>
 </div>
 ```
 
@@ -559,24 +584,28 @@ Slide-out panel component.
 
 ```svelte
 <script lang="ts">
-  import { Sheet, SheetTrigger, SheetContent, SheetHeader,
-           SheetTitle, SheetDescription } from '$lib/components/ui/sheet';
-  import { Button } from '$lib/components/ui/button';
+	import {
+		Sheet,
+		SheetTrigger,
+		SheetContent,
+		SheetHeader,
+		SheetTitle,
+		SheetDescription
+	} from '$lib/components/ui/sheet';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <Sheet>
-  <SheetTrigger asChild let:builder>
-    <Button builders={[builder]}>Open Sheet</Button>
-  </SheetTrigger>
-  <SheetContent>
-    <SheetHeader>
-      <SheetTitle>Sheet Title</SheetTitle>
-      <SheetDescription>Sheet description</SheetDescription>
-    </SheetHeader>
-    <div class="py-4">
-      Sheet content
-    </div>
-  </SheetContent>
+	<SheetTrigger asChild let:builder>
+		<Button builders={[builder]}>Open Sheet</Button>
+	</SheetTrigger>
+	<SheetContent>
+		<SheetHeader>
+			<SheetTitle>Sheet Title</SheetTitle>
+			<SheetDescription>Sheet description</SheetDescription>
+		</SheetHeader>
+		<div class="py-4">Sheet content</div>
+	</SheetContent>
 </Sheet>
 ```
 
@@ -588,24 +617,30 @@ Navigation breadcrumb trail.
 
 ```svelte
 <script lang="ts">
-  import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink,
-           BreadcrumbSeparator, BreadcrumbPage } from '$lib/components/ui/breadcrumb';
+	import {
+		Breadcrumb,
+		BreadcrumbList,
+		BreadcrumbItem,
+		BreadcrumbLink,
+		BreadcrumbSeparator,
+		BreadcrumbPage
+	} from '$lib/components/ui/breadcrumb';
 </script>
 
 <Breadcrumb>
-  <BreadcrumbList>
-    <BreadcrumbItem>
-      <BreadcrumbLink href="/">Home</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbLink href="/events">Events</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbPage>Event Details</BreadcrumbPage>
-    </BreadcrumbItem>
-  </BreadcrumbList>
+	<BreadcrumbList>
+		<BreadcrumbItem>
+			<BreadcrumbLink href="/">Home</BreadcrumbLink>
+		</BreadcrumbItem>
+		<BreadcrumbSeparator />
+		<BreadcrumbItem>
+			<BreadcrumbLink href="/events">Events</BreadcrumbLink>
+		</BreadcrumbItem>
+		<BreadcrumbSeparator />
+		<BreadcrumbItem>
+			<BreadcrumbPage>Event Details</BreadcrumbPage>
+		</BreadcrumbItem>
+	</BreadcrumbList>
 </Breadcrumb>
 ```
 
@@ -615,18 +650,18 @@ Tabbed interface component.
 
 ```svelte
 <script lang="ts">
-  import { Tabs, TabsList, TabsTrigger, TabsContent } from '$lib/components/ui/tabs';
+	import { Tabs, TabsList, TabsTrigger, TabsContent } from '$lib/components/ui/tabs';
 </script>
 
 <Tabs value="tab1">
-  <TabsList>
-    <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-    <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-    <TabsTrigger value="tab3">Tab 3</TabsTrigger>
-  </TabsList>
-  <TabsContent value="tab1">Content 1</TabsContent>
-  <TabsContent value="tab2">Content 2</TabsContent>
-  <TabsContent value="tab3">Content 3</TabsContent>
+	<TabsList>
+		<TabsTrigger value="tab1">Tab 1</TabsTrigger>
+		<TabsTrigger value="tab2">Tab 2</TabsTrigger>
+		<TabsTrigger value="tab3">Tab 3</TabsTrigger>
+	</TabsList>
+	<TabsContent value="tab1">Content 1</TabsContent>
+	<TabsContent value="tab2">Content 2</TabsContent>
+	<TabsContent value="tab3">Content 3</TabsContent>
 </Tabs>
 ```
 
@@ -636,21 +671,26 @@ Contextual menu component.
 
 ```svelte
 <script lang="ts">
-  import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-           DropdownMenuItem, DropdownMenuSeparator } from '$lib/components/ui/dropdown-menu';
-  import { Button } from '$lib/components/ui/button';
+	import {
+		DropdownMenu,
+		DropdownMenuTrigger,
+		DropdownMenuContent,
+		DropdownMenuItem,
+		DropdownMenuSeparator
+	} from '$lib/components/ui/dropdown-menu';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <DropdownMenu>
-  <DropdownMenuTrigger asChild let:builder>
-    <Button variant="outline" builders={[builder]}>Menu</Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent>
-    <DropdownMenuItem>Profile</DropdownMenuItem>
-    <DropdownMenuItem>Settings</DropdownMenuItem>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>Logout</DropdownMenuItem>
-  </DropdownMenuContent>
+	<DropdownMenuTrigger asChild let:builder>
+		<Button variant="outline" builders={[builder]}>Menu</Button>
+	</DropdownMenuTrigger>
+	<DropdownMenuContent>
+		<DropdownMenuItem>Profile</DropdownMenuItem>
+		<DropdownMenuItem>Settings</DropdownMenuItem>
+		<DropdownMenuSeparator />
+		<DropdownMenuItem>Logout</DropdownMenuItem>
+	</DropdownMenuContent>
 </DropdownMenu>
 ```
 
@@ -660,17 +700,17 @@ Hover information component.
 
 ```svelte
 <script lang="ts">
-  import { Tooltip, TooltipTrigger, TooltipContent } from '$lib/components/ui/tooltip';
-  import { Button } from '$lib/components/ui/button';
+	import { Tooltip, TooltipTrigger, TooltipContent } from '$lib/components/ui/tooltip';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <Tooltip>
-  <TooltipTrigger asChild let:builder>
-    <Button variant="outline" builders={[builder]}>Hover me</Button>
-  </TooltipTrigger>
-  <TooltipContent>
-    <p>Tooltip content</p>
-  </TooltipContent>
+	<TooltipTrigger asChild let:builder>
+		<Button variant="outline" builders={[builder]}>Hover me</Button>
+	</TooltipTrigger>
+	<TooltipContent>
+		<p>Tooltip content</p>
+	</TooltipContent>
 </Tooltip>
 ```
 
@@ -680,17 +720,17 @@ Floating content component.
 
 ```svelte
 <script lang="ts">
-  import { Popover, PopoverTrigger, PopoverContent } from '$lib/components/ui/popover';
-  import { Button } from '$lib/components/ui/button';
+	import { Popover, PopoverTrigger, PopoverContent } from '$lib/components/ui/popover';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <Popover>
-  <PopoverTrigger asChild let:builder>
-    <Button builders={[builder]}>Open Popover</Button>
-  </PopoverTrigger>
-  <PopoverContent>
-    <p>Popover content goes here</p>
-  </PopoverContent>
+	<PopoverTrigger asChild let:builder>
+		<Button builders={[builder]}>Open Popover</Button>
+	</PopoverTrigger>
+	<PopoverContent>
+		<p>Popover content goes here</p>
+	</PopoverContent>
 </Popover>
 ```
 
@@ -704,24 +744,20 @@ Inline notification component.
 
 ```svelte
 <script lang="ts">
-  import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
-  import { AlertCircle } from '@lucide/svelte';
+	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
+	import { AlertCircle } from '@lucide/svelte';
 </script>
 
 <Alert>
-  <AlertCircle class="size-4" />
-  <AlertTitle>Heads up!</AlertTitle>
-  <AlertDescription>
-    This is an informational alert message.
-  </AlertDescription>
+	<AlertCircle class="size-4" />
+	<AlertTitle>Heads up!</AlertTitle>
+	<AlertDescription>This is an informational alert message.</AlertDescription>
 </Alert>
 
 <Alert variant="destructive">
-  <AlertCircle class="size-4" />
-  <AlertTitle>Error</AlertTitle>
-  <AlertDescription>
-    Something went wrong.
-  </AlertDescription>
+	<AlertCircle class="size-4" />
+	<AlertTitle>Error</AlertTitle>
+	<AlertDescription>Something went wrong.</AlertDescription>
 </Alert>
 ```
 
@@ -733,25 +769,31 @@ Structured data table.
 
 ```svelte
 <script lang="ts">
-  import { Table, TableHeader, TableBody, TableRow,
-           TableHead, TableCell } from '$lib/components/ui/table';
+	import {
+		Table,
+		TableHeader,
+		TableBody,
+		TableRow,
+		TableHead,
+		TableCell
+	} from '$lib/components/ui/table';
 </script>
 
 <Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Name</TableHead>
-      <TableHead>Email</TableHead>
-      <TableHead>Role</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>John Doe</TableCell>
-      <TableCell>john@example.com</TableCell>
-      <TableCell>Admin</TableCell>
-    </TableRow>
-  </TableBody>
+	<TableHeader>
+		<TableRow>
+			<TableHead>Name</TableHead>
+			<TableHead>Email</TableHead>
+			<TableHead>Role</TableHead>
+		</TableRow>
+	</TableHeader>
+	<TableBody>
+		<TableRow>
+			<TableCell>John Doe</TableCell>
+			<TableCell>john@example.com</TableCell>
+			<TableCell>Admin</TableCell>
+		</TableRow>
+	</TableBody>
 </Table>
 ```
 
@@ -763,42 +805,48 @@ Structured data table.
 
 ```svelte
 <script lang="ts">
-  import { Card, CardHeader, CardTitle, CardDescription,
-           CardContent, CardFooter } from '$lib/components/ui/card';
-  import { Button } from '$lib/components/ui/button';
-  import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
-  import { Checkbox } from '$lib/components/ui/checkbox';
+	import {
+		Card,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		CardFooter
+	} from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 
-  let email = $state('');
-  let password = $state('');
-  let remember = $state(false);
+	let email = $state('');
+	let password = $state('');
+	let remember = $state(false);
 </script>
 
 <Card class="max-w-md">
-  <CardHeader>
-    <CardTitle>Welcome back</CardTitle>
-    <CardDescription>Sign in to your account</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <form class="space-y-4">
-      <div class="space-y-2">
-        <Label for="email">Email</Label>
-        <Input id="email" type="email" bind:value={email} />
-      </div>
-      <div class="space-y-2">
-        <Label for="password">Password</Label>
-        <Input id="password" type="password" bind:value={password} />
-      </div>
-      <div class="flex items-center space-x-2">
-        <Checkbox id="remember" bind:checked={remember} />
-        <Label for="remember">Remember me</Label>
-      </div>
-    </form>
-  </CardContent>
-  <CardFooter>
-    <Button class="w-full">Sign in</Button>
-  </CardFooter>
+	<CardHeader>
+		<CardTitle>Welcome back</CardTitle>
+		<CardDescription>Sign in to your account</CardDescription>
+	</CardHeader>
+	<CardContent>
+		<form class="space-y-4">
+			<div class="space-y-2">
+				<Label for="email">Email</Label>
+				<Input id="email" type="email" bind:value={email} />
+			</div>
+			<div class="space-y-2">
+				<Label for="password">Password</Label>
+				<Input id="password" type="password" bind:value={password} />
+			</div>
+			<div class="flex items-center space-x-2">
+				<Checkbox id="remember" bind:checked={remember} />
+				<Label for="remember">Remember me</Label>
+			</div>
+		</form>
+	</CardContent>
+	<CardFooter>
+		<Button class="w-full">Sign in</Button>
+	</CardFooter>
 </Card>
 ```
 
@@ -806,23 +854,23 @@ Structured data table.
 
 ```svelte
 <script lang="ts">
-  import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
-  import { TrendingUp, Users, Calendar } from '@lucide/svelte';
+	import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
+	import { TrendingUp, Users, Calendar } from '@lucide/svelte';
 </script>
 
 <div class="grid gap-4 md:grid-cols-3">
-  <Card>
-    <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-medium">Total Users</CardTitle>
-      <Users class="size-4 text-muted-foreground" />
-    </CardHeader>
-    <CardContent>
-      <div class="text-2xl font-bold">2,847</div>
-      <p class="text-xs text-muted-foreground">+12.5% from last month</p>
-    </CardContent>
-  </Card>
+	<Card>
+		<CardHeader class="flex flex-row items-center justify-between pb-2">
+			<CardTitle class="text-sm font-medium">Total Users</CardTitle>
+			<Users class="size-4 text-muted-foreground" />
+		</CardHeader>
+		<CardContent>
+			<div class="text-2xl font-bold">2,847</div>
+			<p class="text-xs text-muted-foreground">+12.5% from last month</p>
+		</CardContent>
+	</Card>
 
-  <!-- Repeat for other stats... -->
+	<!-- Repeat for other stats... -->
 </div>
 ```
 
@@ -830,34 +878,40 @@ Structured data table.
 
 ```svelte
 <script lang="ts">
-  import { Table, TableHeader, TableBody, TableRow,
-           TableHead, TableCell } from '$lib/components/ui/table';
-  import { Button } from '$lib/components/ui/button';
-  import { Badge } from '$lib/components/ui/badge';
-  import { MoreVertical, Edit, Trash2 } from '@lucide/svelte';
+	import {
+		Table,
+		TableHeader,
+		TableBody,
+		TableRow,
+		TableHead,
+		TableCell
+	} from '$lib/components/ui/table';
+	import { Button } from '$lib/components/ui/button';
+	import { Badge } from '$lib/components/ui/badge';
+	import { MoreVertical, Edit, Trash2 } from '@lucide/svelte';
 </script>
 
 <Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Name</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead>Role</TableHead>
-      <TableHead class="text-right">Actions</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>John Doe</TableCell>
-      <TableCell><Badge>Active</Badge></TableCell>
-      <TableCell>Admin</TableCell>
-      <TableCell class="text-right">
-        <Button variant="ghost" size="icon">
-          <MoreVertical class="size-4" />
-        </Button>
-      </TableCell>
-    </TableRow>
-  </TableBody>
+	<TableHeader>
+		<TableRow>
+			<TableHead>Name</TableHead>
+			<TableHead>Status</TableHead>
+			<TableHead>Role</TableHead>
+			<TableHead class="text-right">Actions</TableHead>
+		</TableRow>
+	</TableHeader>
+	<TableBody>
+		<TableRow>
+			<TableCell>John Doe</TableCell>
+			<TableCell><Badge>Active</Badge></TableCell>
+			<TableCell>Admin</TableCell>
+			<TableCell class="text-right">
+				<Button variant="ghost" size="icon">
+					<MoreVertical class="size-4" />
+				</Button>
+			</TableCell>
+		</TableRow>
+	</TableBody>
 </Table>
 ```
 
@@ -868,19 +922,22 @@ Structured data table.
 ### Accessibility
 
 1. **Always use Label with Input**
+
 ```svelte
 <Label for="email">Email</Label>
 <Input id="email" type="email" />
 ```
 
 2. **Provide aria-label for icon-only buttons**
+
 ```svelte
 <Button size="icon" aria-label="Delete item">
-  <Trash2 />
+	<Trash2 />
 </Button>
 ```
 
 3. **Use semantic HTML**
+
 ```svelte
 <!-- Good -->
 <Button onclick={handleClick}>Submit</Button>
@@ -892,28 +949,29 @@ Structured data table.
 ### Performance
 
 1. **Lazy load heavy components**
+
 ```typescript
 const Dialog = await import('$lib/components/ui/dialog');
 ```
 
 2. **Use Svelte stores for shared state**
+
 ```typescript
 // stores.ts
 export const userStore = writable<User | null>(null);
 ```
 
 3. **Avoid unnecessary reactivity**
-```svelte
-// Good - only reactive when needed
-let count = $state(0);
 
-// Bad - reactive when not needed
-let staticValue = 'hello';
+```svelte
+// Good - only reactive when needed let count = $state(0); // Bad - reactive when not needed let
+staticValue = 'hello';
 ```
 
 ### Code Organization
 
 1. **Group imports logically**
+
 ```typescript
 // UI components
 import { Button } from '$lib/components/ui/button';
@@ -927,22 +985,24 @@ import { cn } from '$lib/utils';
 ```
 
 2. **Extract reusable compositions**
+
 ```svelte
 <!-- components/FormField.svelte -->
 <script lang="ts">
-  import { Label } from '$lib/components/ui/label';
-  import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { Input } from '$lib/components/ui/input';
 
-  let { id, label, type = 'text', ...rest } = $props();
+	let { id, label, type = 'text', ...rest } = $props();
 </script>
 
 <div class="space-y-2">
-  <Label for={id}>{label}</Label>
-  <Input {id} {type} {...rest} />
+	<Label for={id}>{label}</Label>
+	<Input {id} {type} {...rest} />
 </div>
 ```
 
 3. **Keep component files focused**
+
 - One component per file
 - Co-locate types with components
 - Extract complex logic to utilities
@@ -956,43 +1016,45 @@ import { cn } from '$lib/utils';
 All components MUST use Svelte 5 syntax:
 
 ✅ **DO:**
+
 ```svelte
 <script lang="ts">
-  // Props
-  let { variant = 'default', size = 'md' } = $props();
+	// Props
+	let { variant = 'default', size = 'md' } = $props();
 
-  // State
-  let count = $state(0);
+	// State
+	let count = $state(0);
 
-  // Derived values
-  let doubled = $derived(count * 2);
+	// Derived values
+	let doubled = $derived(count * 2);
 
-  // Effects
-  $effect(() => {
-    console.log('Count changed:', count);
-  });
+	// Effects
+	$effect(() => {
+		console.log('Count changed:', count);
+	});
 </script>
 
 {@render children?.()}
 ```
 
 ❌ **DON'T:**
+
 ```svelte
 <script lang="ts">
-  // WRONG - Svelte 4 syntax
-  export let variant = 'default';
-  export let size = 'md';
+	// WRONG - Svelte 4 syntax
+	export let variant = 'default';
+	export let size = 'md';
 
-  // WRONG - Use $state instead
-  let count = 0;
+	// WRONG - Use $state instead
+	let count = 0;
 
-  // WRONG - Use $derived instead
-  $: doubled = count * 2;
+	// WRONG - Use $derived instead
+	$: doubled = count * 2;
 
-  // WRONG - Use $effect instead
-  $: {
-    console.log('Count changed:', count);
-  }
+	// WRONG - Use $effect instead
+	$: {
+		console.log('Count changed:', count);
+	}
 </script>
 
 <!-- WRONG - Use {@render children()} -->
@@ -1003,29 +1065,24 @@ All components MUST use Svelte 5 syntax:
 
 ```svelte
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+	import type { Snippet } from 'svelte';
 
-  interface Props {
-    title: string;
-    description?: string;
-    variant?: 'default' | 'destructive';
-    children?: Snippet;
-  }
+	interface Props {
+		title: string;
+		description?: string;
+		variant?: 'default' | 'destructive';
+		children?: Snippet;
+	}
 
-  let {
-    title,
-    description,
-    variant = 'default',
-    children
-  }: Props = $props();
+	let { title, description, variant = 'default', children }: Props = $props();
 </script>
 
 <div>
-  <h2>{title}</h2>
-  {#if description}
-    <p>{description}</p>
-  {/if}
-  {@render children?.()}
+	<h2>{title}</h2>
+	{#if description}
+		<p>{description}</p>
+	{/if}
+	{@render children?.()}
 </div>
 ```
 
@@ -1033,12 +1090,10 @@ All components MUST use Svelte 5 syntax:
 
 ```svelte
 <script lang="ts">
-  let { onclick }: { onclick?: () => void } = $props();
+	let { onclick }: { onclick?: () => void } = $props();
 </script>
 
-<button {onclick}>
-  Click me
-</button>
+<button {onclick}> Click me </button>
 ```
 
 ---
@@ -1081,18 +1136,18 @@ Toggle dark mode using the theme switcher in the Storybook toolbar (moon icon).
 ```svelte
 <!-- src/stories/Components/MyComponent.stories.svelte -->
 <script context="module" lang="ts">
-  import type { Meta } from '@storybook/svelte';
-  import MyComponent from '$lib/components/MyComponent.svelte';
+	import type { Meta } from '@storybook/svelte';
+	import MyComponent from '$lib/components/MyComponent.svelte';
 
-  export const meta: Meta<typeof MyComponent> = {
-    title: 'Components/MyComponent',
-    component: MyComponent,
-    tags: ['autodocs']
-  };
+	export const meta: Meta<typeof MyComponent> = {
+		title: 'Components/MyComponent',
+		component: MyComponent,
+		tags: ['autodocs']
+	};
 </script>
 
 <script lang="ts">
-  import MyComponent from '$lib/components/MyComponent.svelte';
+	import MyComponent from '$lib/components/MyComponent.svelte';
 </script>
 
 <MyComponent />
@@ -1105,6 +1160,7 @@ Toggle dark mode using the theme switcher in the Storybook toolbar (moon icon).
 ### Adding New Components
 
 1. Install component via shadcn-svelte:
+
 ```bash
 npx shadcn-svelte@latest add [component-name]
 ```

@@ -5,11 +5,7 @@
  * WARNING: These operations bypass Row Level Security (RLS).
  */
 
-import type {
-	AuthUserDB,
-	TypedSupabaseClient,
-	OrganizerSetupResponseDB
-} from '$lib/types/db';
+import type { AuthUserDB, TypedSupabaseClient, OrganizerSetupResponseDB } from '$lib/types/db';
 import type {
 	CreateOnBehalfOrganizerOwnerRequest,
 	CreateOnBehalfOrganizerOwnerResponse,
@@ -216,9 +212,7 @@ export async function createOnBehalfOrganizerOwner(
 		}
 
 		// Adapt RPC response to Organizer domain type
-		const organizer = adaptOrganizerFromAuthUserRpc(
-			organizerData as unknown as AuthUserDB
-		);
+		const organizer = adaptOrganizerFromAuthUserRpc(organizerData as unknown as AuthUserDB);
 
 		return {
 			success: true,

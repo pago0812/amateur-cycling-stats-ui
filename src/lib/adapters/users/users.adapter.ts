@@ -10,9 +10,7 @@ import { adaptCyclistFromRpc } from '../cyclists/cyclists.adapter';
  * Routes to the appropriate adapter based on the user's role.
  * Returns Admin | Organizer | Cyclist based on role type.
  */
-export function adaptAuthUserFromRpc(
-	rpcResponse: AuthUserDB | UserByEmailDB | UserByIdDB
-): User {
+export function adaptAuthUserFromRpc(rpcResponse: AuthUserDB | UserByEmailDB | UserByIdDB): User {
 	const roleName = rpcResponse.role_name;
 
 	switch (roleName) {

@@ -22,7 +22,14 @@ export type { TypedSupabaseClient } from './common.db';
 // Main entity types
 export type { CyclistDB, CyclistTableDB, CyclistInsertDB } from './cyclists.db';
 export type { RaceResultDB, RaceResultTableDB } from './race-results.db';
-export type { EventDB, EventWithRacesResponse } from './events.db';
+export type {
+	EventDB,
+	EventWithRacesResponse,
+	GetEventsOrgRpcReturn,
+	GetEventByIdRpcReturn,
+	CreateEventRpcReturn,
+	UpdateEventRpcReturn
+} from './events.db';
 export type { RaceDB, RaceWithResultsResponse, RpcRaceWithResultsResponse } from './races.db';
 export type { UserDB, AuthUserDB, UserByEmailDB, UserByIdDB } from './users.db';
 export type { OrganizationDB, OrganizationTableDB } from './organizations.db';

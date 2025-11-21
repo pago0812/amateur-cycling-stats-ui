@@ -58,9 +58,7 @@
 					<div class="space-y-2">
 						<Label for="login-email">Email</Label>
 						<div class="relative">
-							<Mail
-								class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-							/>
+							<Mail class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 							<Input
 								id="login-email"
 								type="email"
@@ -77,9 +75,7 @@
 							<a href="#forgot" class="text-sm text-primary hover:underline">Forgot password?</a>
 						</div>
 						<div class="relative">
-							<Lock
-								class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-							/>
+							<Lock class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 							<Input
 								id="login-password"
 								type="password"
@@ -94,7 +90,7 @@
 						<Checkbox id="remember" bind:checked={rememberMe} />
 						<Label
 							for="remember"
-							class="cursor-pointer text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							class="cursor-pointer text-sm leading-none font-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 						>
 							Remember me
 						</Label>
@@ -172,9 +168,11 @@
 						<Checkbox id="terms" bind:checked={agreeToTerms} class="mt-1" />
 						<Label
 							for="terms"
-							class="cursor-pointer text-sm font-normal leading-snug peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							class="cursor-pointer text-sm leading-snug font-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 						>
-							I agree to the <a href="#terms" class="text-primary hover:underline">terms of service</a>
+							I agree to the <a href="#terms" class="text-primary hover:underline"
+								>terms of service</a
+							>
 							and <a href="#privacy" class="text-primary hover:underline">privacy policy</a>
 						</Label>
 					</div>
@@ -251,23 +249,14 @@
 							<Label for="org-name">Organization name</Label>
 							<div class="relative">
 								<Building
-									class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+									class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
 								/>
-								<Input
-									id="org-name"
-									placeholder="Pro Cycling League"
-									class="pl-10"
-									required
-								/>
+								<Input id="org-name" placeholder="Pro Cycling League" class="pl-10" required />
 							</div>
 						</div>
 						<div class="space-y-2">
 							<Label for="org-description">Description</Label>
-							<Textarea
-								id="org-description"
-								placeholder="Describe your organization..."
-								rows={3}
-							/>
+							<Textarea id="org-description" placeholder="Describe your organization..." rows={3} />
 						</div>
 					</div>
 
@@ -289,7 +278,7 @@
 							<Label for="owner-email">Email</Label>
 							<div class="relative">
 								<Mail
-									class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+									class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
 								/>
 								<Input
 									id="owner-email"

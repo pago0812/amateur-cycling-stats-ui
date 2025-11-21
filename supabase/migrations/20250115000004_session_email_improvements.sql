@@ -52,9 +52,9 @@ BEGIN
     END IF;
 
     -- Use authenticated user's auth.uid() to find their public user ID
-    SELECT id INTO target_user_id
-    FROM public.users
-    WHERE auth_user_id = current_auth_id
+    SELECT u.id INTO target_user_id
+    FROM public.users u
+    WHERE u.auth_user_id = current_auth_id
     LIMIT 1;
   END IF;
 
@@ -158,9 +158,9 @@ BEGIN
   END IF;
 
   -- Find public user by auth_user_id
-  SELECT id INTO target_user_id
-  FROM public.users
-  WHERE auth_user_id = target_auth_user_id
+  SELECT u.id INTO target_user_id
+  FROM public.users u
+  WHERE u.auth_user_id = target_auth_user_id
   LIMIT 1;
 
   -- Return empty set if public user not found
