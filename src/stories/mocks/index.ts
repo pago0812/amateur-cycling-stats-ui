@@ -274,11 +274,7 @@ export const mockRaceResult3: RaceResult = {
 	updatedAt: '2024-10-20T12:00:00Z'
 };
 
-export const mockRaceResults: RaceResult[] = [
-	mockRaceResult1,
-	mockRaceResult2,
-	mockRaceResult3
-];
+export const mockRaceResults: RaceResult[] = [mockRaceResult1, mockRaceResult2, mockRaceResult3];
 
 // ============================================================================
 // Race Detail Results (for ResultsTable)

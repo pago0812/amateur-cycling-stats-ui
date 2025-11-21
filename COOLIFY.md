@@ -74,6 +74,7 @@ DATABASE_URL=postgresql://postgres:JCTKNAxr7EXGCyhs6zrJSHHlE2RZ8VC5@supabase-db:
 ```
 
 **Important Notes:**
+
 - Uses `supabase-db` (internal Docker hostname), NOT external domain
 - Format: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE`
 - Find values in Coolify → Supabase Service → Environment:
@@ -90,6 +91,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGci...your-service-role-key...
 ```
 
 **Where to find:**
+
 - Coolify → Supabase Service → Environment:
   - `SUPABASE_URL` → `${SERVICE_URL_SUPABASEKONG}` or public URL
   - `SUPABASE_ANON_KEY` → `${SERVICE_SUPABASEANON_KEY}`
@@ -112,6 +114,7 @@ MAILERSEND_FROM_NAME=Amateur Cycling Stats
 ```
 
 **Where to find:**
+
 - Sign up at [MailerSend](https://www.mailersend.com/)
 - API Keys → Create API Token
 - Verify your sending domain in MailerSend dashboard
@@ -151,6 +154,7 @@ npx supabase db reset --yes && npm run seed:users
 ```
 
 **What this does:**
+
 1. Resets database (drops all tables)
 2. Runs all migrations from `supabase/migrations/`
 3. Runs `supabase/seed.sql` (user-independent seed data)
@@ -159,16 +163,19 @@ npx supabase db reset --yes && npm run seed:users
 ### Alternative Commands
 
 **Incremental migrations (safer for production):**
+
 ```bash
 npx supabase db push && npm run seed:users
 ```
 
 **Migrations only (no seeding):**
+
 ```bash
 npx supabase db push
 ```
 
 **Full reset only (no seeding):**
+
 ```bash
 npx supabase db reset --yes
 ```
@@ -223,31 +230,37 @@ Click "Deploy" button to manually trigger deployment without pushing code.
 **Useful commands:**
 
 **Run migrations only:**
+
 ```bash
 npx supabase db push
 ```
 
 **Reset database:**
+
 ```bash
 npx supabase db reset --yes
 ```
 
 **Seed users:**
+
 ```bash
 npm run seed:users
 ```
 
 **Check migration status:**
+
 ```bash
 npx supabase db diff
 ```
 
 **View database schema:**
+
 ```bash
 npx supabase db dump
 ```
 
 **Regenerate types:**
+
 ```bash
 npx supabase gen types typescript --db-url "$DATABASE_URL" > src/lib/types/database.types.ts
 ```
@@ -257,6 +270,7 @@ npx supabase gen types typescript --db-url "$DATABASE_URL" > src/lib/types/datab
 **Coolify → Your Application → Logs**
 
 Filter by:
+
 - Application logs
 - Build logs
 - All logs
@@ -270,18 +284,21 @@ Filter by:
 #### 1. "Database connection failed" Error
 
 **Symptoms:**
+
 ```
 Error: failed to connect to postgres
 dial tcp: connect: connection refused
 ```
 
 **Solutions:**
+
 1. Verify `DATABASE_URL` uses internal hostname (`supabase-db`), not external domain
 2. Check database password is correct (from Supabase service env vars)
 3. Ensure Supabase service is running in Coolify
 4. Verify both services are on the same Docker network
 
 **How to check:**
+
 ```bash
 # In Execute Command
 echo $DATABASE_URL
@@ -291,16 +308,19 @@ echo $DATABASE_URL
 #### 2. "Supabase CLI not found" Error
 
 **Symptoms:**
+
 ```
 bash: supabase: command not found
 ```
 
 **Solutions:**
+
 1. Verify `.nixpacks.toml` exists in repository root
 2. Check `supabase-cli` is listed in `nixPkgs` array
 3. Trigger new deployment to rebuild with updated Nixpacks config
 
 **Check Nixpacks configuration:**
+
 ```bash
 # In repository
 cat .nixpacks.toml
@@ -310,12 +330,14 @@ cat .nixpacks.toml
 #### 3. "Migration failed" Error
 
 **Symptoms:**
+
 ```
 Error: migration 20250115000001_core_foundation.sql failed
 syntax error at line 42
 ```
 
 **Solutions:**
+
 1. Check migration file syntax in `supabase/migrations/`
 2. Test migration locally first: `supabase db reset`
 3. Review migration logs in Coolify deployment output
@@ -324,12 +346,14 @@ syntax error at line 42
 #### 4. "Seeding failed" Error
 
 **Symptoms:**
+
 ```
 Error: User already exists
 Error: Failed to create cyclist
 ```
 
 **Solutions:**
+
 1. Run `npx supabase db reset --yes` to start fresh
 2. Update seed scripts to handle existing data gracefully
 3. Check `SUPABASE_SERVICE_ROLE_KEY` is correct (has admin privileges)
@@ -337,11 +361,13 @@ Error: Failed to create cyclist
 #### 5. Post-Deployment Command Timeout
 
 **Symptoms:**
+
 ```
 Post-deployment command timed out after 300s
 ```
 
 **Solutions:**
+
 1. Simplify post-deployment command (remove seeding temporarily)
 2. Check database performance (large migrations may take time)
 3. Increase timeout in Coolify settings (if available)
@@ -354,12 +380,14 @@ Post-deployment command timed out after 300s
 ### Health Checks
 
 **Application Health:**
+
 ```bash
 curl https://dev.amateurcyclingstats.com
 # Should return 200 OK with HTML
 ```
 
 **Database Connection:**
+
 ```bash
 # In Execute Command
 npx supabase db dump --schema public --data-only | head -n 50
@@ -371,6 +399,7 @@ npx supabase db dump --schema public --data-only | head -n 50
 **Coolify → Your Application → Resources**
 
 Monitor:
+
 - CPU usage
 - Memory usage
 - Disk usage
@@ -379,6 +408,7 @@ Monitor:
 ### Database Monitoring
 
 **Supabase Studio:** (if enabled)
+
 ```
 https://db-dev.amateurcyclingstats.com/project/default
 ```
@@ -395,14 +425,17 @@ https://db-dev.amateurcyclingstats.com/project/default
 ### 1. Environment-Specific Configuration
 
 **Development:**
+
 - Use `npx supabase db reset --yes && npm run seed:users` (full reset + seed)
 - Faster iterations, less concern about data
 
 **Staging:**
+
 - Use `npx supabase db push && npm run seed:users` (incremental + seed)
 - Test migrations before production
 
 **Production:**
+
 - Use `npx supabase db push` (incremental only, no auto-seeding)
 - Manual seeding if needed
 - Always test in staging first
@@ -410,6 +443,7 @@ https://db-dev.amateurcyclingstats.com/project/default
 ### 2. Database Backups
 
 **Before major migrations:**
+
 1. Export current database state: `npx supabase db dump > backup.sql`
 2. Store backup safely (version control, cloud storage)
 3. Run migration
@@ -419,12 +453,14 @@ https://db-dev.amateurcyclingstats.com/project/default
 ### 3. Migration Safety
 
 **DO:**
+
 - Test migrations locally before deploying
 - Use incremental migrations (`db push`) in production
 - Add new columns as nullable first, then make NOT NULL later
 - Use database transactions where possible
 
 **DON'T:**
+
 - Run `db reset` in production (data loss!)
 - Skip migration testing
 - Make breaking schema changes without data migration plan
@@ -432,12 +468,14 @@ https://db-dev.amateurcyclingstats.com/project/default
 ### 4. Secrets Management
 
 **DO:**
+
 - Use Coolify environment variables for all secrets
 - Never commit secrets to git (`.env` is gitignored)
 - Rotate secrets periodically (passwords, API keys)
 - Use different credentials for dev/staging/production
 
 **DON'T:**
+
 - Hardcode secrets in code
 - Share production credentials
 - Commit `.env` files to version control
@@ -448,22 +486,22 @@ https://db-dev.amateurcyclingstats.com/project/default
 
 ### Essential Commands
 
-| Task | Command |
-|------|---------|
+| Task               | Command                                     |
+| ------------------ | ------------------------------------------- |
 | Deploy application | Push to branch or click "Deploy" in Coolify |
-| Run migrations | `npx supabase db push` |
-| Reset database | `npx supabase db reset --yes` |
-| Seed users | `npm run seed:users` |
-| View logs | Coolify → Logs |
-| Execute command | Coolify → Execute Command |
-| Check env vars | Coolify → Environment |
+| Run migrations     | `npx supabase db push`                      |
+| Reset database     | `npx supabase db reset --yes`               |
+| Seed users         | `npm run seed:users`                        |
+| View logs          | Coolify → Logs                              |
+| Execute command    | Coolify → Execute Command                   |
+| Check env vars     | Coolify → Environment                       |
 
 ### Essential URLs
 
-| Service | URL |
-|---------|-----|
-| Application | https://dev.amateurcyclingstats.com |
-| Coolify Admin | https://admin.amateurcyclingstats.com |
+| Service         | URL                                                 |
+| --------------- | --------------------------------------------------- |
+| Application     | https://dev.amateurcyclingstats.com                 |
+| Coolify Admin   | https://admin.amateurcyclingstats.com               |
 | Supabase Studio | https://db-dev.amateurcyclingstats.com (if enabled) |
 
 ### Support Resources
@@ -477,8 +515,8 @@ https://db-dev.amateurcyclingstats.com/project/default
 
 ## Changelog
 
-| Date | Change | Author |
-|------|--------|--------|
+| Date       | Change                                                        | Author      |
+| ---------- | ------------------------------------------------------------- | ----------- |
 | 2025-01-19 | Initial Coolify deployment guide with Nixpacks + Supabase CLI | Claude Code |
 
 ---
@@ -486,6 +524,7 @@ https://db-dev.amateurcyclingstats.com/project/default
 **Need Help?**
 
 If you encounter issues not covered in this guide:
+
 1. Check Coolify deployment logs
 2. Review Supabase service status
 3. Verify environment variables are correct

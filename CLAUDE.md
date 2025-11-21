@@ -107,6 +107,7 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    - Service layer handles: RPC calls, array extraction, DB→Domain adaptation, error handling
 
    **Architecture Pattern:**
+
    ```
    Page/Layout Server Files (routes/)
             ↓ calls service (domain types)
@@ -143,18 +144,18 @@ Amateur Cycling Stats UI is a SvelteKit application for managing amateur cycling
    ```typescript
    // ❌ WRONG - Direct database query in page.server.ts
    export const load: PageServerLoad = async ({ locals, params }) => {
-     const { data } = await locals.supabase
-       .from('organizations')
-       .select('name')
-       .eq('id', params.id)
-       .single();
-     return { name: data.name };
+   	const { data } = await locals.supabase
+   		.from('organizations')
+   		.select('name')
+   		.eq('id', params.id)
+   		.single();
+   	return { name: data.name };
    };
 
    // ✅ CORRECT - Use service function
    export const load: PageServerLoad = async ({ locals, params }) => {
-     const organization = await getOrganizationById(locals.supabase, { id: params.id });
-     return { organization };
+   	const organization = await getOrganizationById(locals.supabase, { id: params.id });
+   	return { organization };
    };
    ```
 
@@ -200,12 +201,12 @@ This project supports **multiple git worktrees** with independent Supabase insta
 
 Each location (main + worktrees) uses unique ports for both Supabase and dev server:
 
-| Location | Dev Server | Supabase API | DB Port | Studio | Project ID |
-|----------|-----------|--------------|---------|---------|-----------|
-| **Main (develop)** | 5173 | 54321 | 54322 | 54323 | `main-develop` |
-| **worktree-one** | 5174 | 55321 | 55322 | 55323 | `worktree-one` |
-| **worktree-two** | 5175 | 56321 | 56322 | 56323 | `worktree-two` |
-| **worktree-three** | 5176 | 57321 | 57322 | 57323 | `worktree-three` |
+| Location           | Dev Server | Supabase API | DB Port | Studio | Project ID       |
+| ------------------ | ---------- | ------------ | ------- | ------ | ---------------- |
+| **Main (develop)** | 5173       | 54321        | 54322   | 54323  | `main-develop`   |
+| **worktree-one**   | 5174       | 55321        | 55322   | 55323  | `worktree-one`   |
+| **worktree-two**   | 5175       | 56321        | 56322   | 56323  | `worktree-two`   |
+| **worktree-three** | 5176       | 57321        | 57322   | 57323  | `worktree-three` |
 
 ### Configuration Files Per Location
 
@@ -239,6 +240,7 @@ SUPABASE_ANALYTICS_PORT=54327
 ```
 
 The `supabase/config.toml` file reads these values using the `env()` function:
+
 ```toml
 [api]
 port = "env(SUPABASE_API_PORT)"
@@ -252,6 +254,7 @@ port = "env(SUPABASE_STUDIO_PORT)"
 ```
 
 **Benefits:**
+
 - ✅ **Single source of truth** - All ports in one `.env` file
 - ✅ **Easy to modify** - Change ports without editing TOML
 - ✅ **No hardcoded values** - Flexible configuration
@@ -260,6 +263,7 @@ port = "env(SUPABASE_STUDIO_PORT)"
 ### Working with Multiple Instances
 
 **Starting a Worktree Instance:**
+
 ```bash
 cd worktree/worktree-one
 npm run supabase:start  # Starts Supabase on ports 55321-55329
@@ -269,11 +273,13 @@ npm run dev:full
 ```
 
 **Access Points:**
+
 - **App**: http://localhost:5174 (worktree-one example)
 - **Supabase Studio**: http://localhost:55323
 - **API**: http://localhost:55321
 
 **Managing Instances:**
+
 ```bash
 npm run supabase:status  # Check instance status
 npm run supabase:stop    # Stop instance
@@ -283,6 +289,7 @@ npm run supabase:types   # Regenerate types from local DB
 
 **Running Multiple Instances Simultaneously:**
 All 4 instances can run at the same time without port conflicts. Each has independent:
+
 - Database state
 - User sessions
 - Migration history
@@ -293,18 +300,21 @@ All 4 instances can run at the same time without port conflicts. Each has indepe
 To create a new worktree with its own Supabase instance:
 
 1. **Create worktree:**
+
    ```bash
    git worktree add worktree/worktree-four feature-branch
    cd worktree/worktree-four
    ```
 
 2. **Copy configuration from existing worktree:**
+
    ```bash
    cp ../worktree-one/supabase/config.toml supabase/
    cp ../worktree-one/.env .
    ```
 
 3. **Update `.env` with new ports** (use next sequential range):
+
    ```env
    DEV_SERVER_PORT=5177
    SUPABASE_API_PORT=58321
@@ -319,11 +329,13 @@ To create a new worktree with its own Supabase instance:
    ```
 
 4. **Update `supabase/config.toml` project_id:**
+
    ```toml
    project_id = "worktree-four"
    ```
 
 5. **Update `vite.config.ts` port:**
+
    ```typescript
    server: {
      host: '127.0.0.1',
@@ -920,6 +932,7 @@ export async function updateOrganization(
 ```
 
 **Benefits:**
+
 - **Type-safe**: Only allows updateable fields at compile time
 - **Flexible**: Supports partial updates without custom request types
 - **Consistent**: Same pattern across all update functions (forward + reverse adapters)
@@ -928,6 +941,7 @@ export async function updateOrganization(
 - **Separation of concerns**: Adapters handle transformation, services handle business logic
 
 **Implementation Pattern:**
+
 1. **Define PartialEntity type**: `Partial<Pick<Entity, 'field1' | 'field2'>>`
 2. **Create reverse adapter**: `adaptEntityFromDomain(partial: PartialEntity)` → `Record<string, ...>`
 3. **Use RPC functions** for database updates (atomic operations)
@@ -1008,14 +1022,14 @@ The root layout provides centralized horizontal padding and max-width:
 
 Use the decision matrix below when creating new RPC functions to ensure optimal TypeScript type generation:
 
-| Return Structure | Use RETURNS... | Auto-Generated Types? | Example Use Cases |
-|-----------------|----------------|----------------------|-------------------|
-| **Flat array of records** | `RETURNS TABLE(...)` | ✅ Yes | Race results, user lists, organizer members |
-| **Single flat record** | `RETURNS TABLE(...)` | ✅ Yes | Updated record, simple response |
-| **Array with 1 nested object** | `RETURNS TABLE(...)` (flatten it) | ✅ Yes | Result with category details (flatten to columns) |
-| **Multiple nested objects** | `RETURNS JSONB` | ❌ No (manual types needed) | Auth user with role + cyclist + organization |
-| **Nested arrays** | `RETURNS JSONB` or split queries | ❌ No (manual types needed) | Event with races array |
-| **Dynamic/flexible structure** | `RETURNS JSONB` | ❌ No (manual types needed) | Flexible metadata, plugin systems |
+| Return Structure               | Use RETURNS...                    | Auto-Generated Types?       | Example Use Cases                                 |
+| ------------------------------ | --------------------------------- | --------------------------- | ------------------------------------------------- |
+| **Flat array of records**      | `RETURNS TABLE(...)`              | ✅ Yes                      | Race results, user lists, organizer members       |
+| **Single flat record**         | `RETURNS TABLE(...)`              | ✅ Yes                      | Updated record, simple response                   |
+| **Array with 1 nested object** | `RETURNS TABLE(...)` (flatten it) | ✅ Yes                      | Result with category details (flatten to columns) |
+| **Multiple nested objects**    | `RETURNS JSONB`                   | ❌ No (manual types needed) | Auth user with role + cyclist + organization      |
+| **Nested arrays**              | `RETURNS JSONB` or split queries  | ❌ No (manual types needed) | Event with races array                            |
+| **Dynamic/flexible structure** | `RETURNS JSONB`                   | ❌ No (manual types needed) | Flexible metadata, plugin systems                 |
 
 **Benefits of RETURNS TABLE:**
 
@@ -1073,10 +1087,10 @@ $$;
 ```typescript
 // ❌ Before: Manual type definition required
 export interface RaceResultRpcItem {
-  id: string;
-  place: number;
-  time: string | null;
-  // ... 20 more fields manually defined
+	id: string;
+	place: number;
+	time: string | null;
+	// ... 20 more fields manually defined
 }
 
 const { data } = await supabase.rpc('get_race_results_by_user_id', { p_user_id: userId });
@@ -1084,10 +1098,10 @@ return adaptResults((data as RaceResultRpcItem[]) ?? []);
 
 // ✅ After: Auto-generated type from database.types.ts
 export type RaceResultDB =
-  Database['public']['Functions']['get_race_results_by_user_id']['Returns'][number];
+	Database['public']['Functions']['get_race_results_by_user_id']['Returns'][number];
 
 const { data } = await supabase.rpc('get_race_results_by_user_id', { p_user_id: userId });
-return adaptResults(data ?? []);  // No casting needed, fully typed!
+return adaptResults(data ?? []); // No casting needed, fully typed!
 ```
 
 **Implementation Checklist:**
@@ -1430,3 +1444,12 @@ For migration details, see git history and `supabase/migrations/`.
 - Loading states with `+loading.svelte`
 - Custom error pages with `+error.svelte`
 - Rate limiting for form submissions
+
+## Active Technologies
+
+- TypeScript 5.9.3 (strict mode), Svelte 5 (runes syntax), SvelteKit 2.47.1 + Supabase SDK, shadcn-svelte (bits-ui primitives), Tailwind CSS 4.1.14 (001-event-management)
+- PostgreSQL (via Supabase) with Row Level Security (RLS) (001-event-management)
+
+## Recent Changes
+
+- 001-event-management: Added TypeScript 5.9.3 (strict mode), Svelte 5 (runes syntax), SvelteKit 2.47.1 + Supabase SDK, shadcn-svelte (bits-ui primitives), Tailwind CSS 4.1.14

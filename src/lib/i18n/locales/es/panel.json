@@ -3,11 +3,15 @@
 	"subtitle": "Gestiona tu organización, eventos y organizadores",
 	"tabs": {
 		"summary": "Resumen",
-		"organization": "Organización"
+		"organization": "Organización",
+		"events": "Eventos"
 	},
 	"breadcrumbs": {
 		"summary": "Resumen",
-		"myOrganization": "Organización"
+		"myOrganization": "Organización",
+		"events": "Eventos",
+		"newEvent": "Nuevo Evento",
+		"editEvent": "Editar Evento"
 	},
 	"summary": {
 		"title": "Panel de Resumen",
@@ -22,6 +26,111 @@
 		},
 		"errors": {
 			"notFound": "No se encontró información de la organización"
+		}
+	},
+	"events": {
+		"title": "Eventos",
+		"subtitle": "Gestiona los eventos de tu organización",
+		"createButton": "Crear Evento",
+		"editButton": "Editar",
+		"deleteButton": "Eliminar",
+		"saveButton": "Guardar",
+		"cancelButton": "Cancelar",
+		"filter": {
+			"all": "Todos",
+			"future": "Próximos",
+			"past": "Pasados"
+		},
+		"table": {
+			"date": "Fecha",
+			"name": "Nombre",
+			"location": "Ubicación",
+			"status": "Estado",
+			"races": "Carreras",
+			"visible": "Visible",
+			"actions": "Acciones"
+		},
+		"status": {
+			"DRAFT": "Borrador",
+			"AVAILABLE": "Disponible",
+			"SOLD_OUT": "Agotado",
+			"ON_GOING": "En curso",
+			"FINISHED": "Finalizado"
+		},
+		"empty": {
+			"title": "No hay eventos",
+			"description": "Crea tu primer evento para comenzar"
+		},
+		"detail": {
+			"title": "Detalles del Evento",
+			"tabs": {
+				"overview": "Información General"
+			},
+			"fields": {
+				"name": "Nombre",
+				"description": "Descripción",
+				"dateTime": "Fecha y Hora",
+				"location": "Ubicación",
+				"country": "País",
+				"state": "Provincia/Estado",
+				"city": "Ciudad",
+				"status": "Estado",
+				"visibility": "Visibilidad",
+				"races": "Carreras generadas"
+			}
+		},
+		"form": {
+			"createTitle": "Crear Nuevo Evento",
+			"editTitle": "Editar Evento",
+			"nameLabel": "Nombre del evento",
+			"namePlaceholder": "Ej: Tour de Catalunya 2025",
+			"descriptionLabel": "Descripción",
+			"descriptionPlaceholder": "Describe el evento...",
+			"dateTimeLabel": "Fecha y hora",
+			"countryLabel": "País",
+			"countryPlaceholder": "Ej: España",
+			"stateLabel": "Provincia/Estado",
+			"statePlaceholder": "Ej: Catalunya",
+			"cityLabel": "Ciudad",
+			"cityPlaceholder": "Ej: Barcelona",
+			"visibleLabel": "Visible al público",
+			"categoriesLabel": "Categorías",
+			"gendersLabel": "Géneros",
+			"lengthsLabel": "Distancias",
+			"validation": {
+				"nameRequired": "El nombre es obligatorio",
+				"dateRequired": "La fecha es obligatoria",
+				"countryRequired": "El país es obligatorio",
+				"stateRequired": "La provincia/estado es obligatoria",
+				"categoryRequired": "Selecciona al menos una categoría",
+				"genderRequired": "Selecciona al menos un género",
+				"lengthRequired": "Selecciona al menos una distancia"
+			}
+		},
+		"visibility": {
+			"visible": "Visible",
+			"hidden": "Oculto",
+			"toggleLabel": "Visibilidad pública",
+			"toggleDescription": "Los eventos visibles aparecen en la web pública"
+		},
+		"delete": {
+			"title": "Eliminar Evento",
+			"description": "¿Estás seguro de que quieres eliminar este evento? Esta acción no se puede deshacer.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar",
+			"onlyDraft": "Solo los eventos en borrador pueden ser eliminados"
+		},
+		"errors": {
+			"notFound": "Evento no encontrado",
+			"createFailed": "Error al crear el evento",
+			"updateFailed": "Error al actualizar el evento",
+			"deleteFailed": "Error al eliminar el evento",
+			"loadFailed": "Error al cargar los eventos"
+		},
+		"success": {
+			"created": "Evento creado correctamente",
+			"updated": "Evento actualizado correctamente",
+			"deleted": "Evento eliminado correctamente"
 		}
 	}
 }

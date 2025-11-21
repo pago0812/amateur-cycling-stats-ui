@@ -1,5 +1,5 @@
 export const meta = {
-  title: 'Introduction'
+	title: 'Introduction'
 };
 
 # Amateur Cycling Stats - Design System
@@ -23,21 +23,27 @@ This design system provides a comprehensive set of reusable components for build
 ## Component Categories
 
 ### Form Components (7)
+
 Input, Label, Textarea, Select, Checkbox, Radio Group, Switch
 
 ### Layout Components (6)
+
 Card, Dialog, Alert Dialog, Separator, Badge, Sheet
 
 ### Navigation & Interaction (5)
+
 Breadcrumb, Dropdown Menu, Tabs, Tooltip, Popover
 
 ### Feedback (1)
+
 Alert
 
 ### Data Display (1)
+
 Table
 
 ### Actions (1)
+
 Button
 
 ## Design Tokens
@@ -64,22 +70,20 @@ import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/car
 
 ```svelte
 <script lang="ts">
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
+	import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
 
-  let count = $state(0);
+	let count = $state(0);
 </script>
 
 <Card>
-  <CardHeader>
-    <CardTitle>Counter Example</CardTitle>
-  </CardHeader>
-  <CardContent class="flex flex-col gap-4">
-    <p>Count: {count}</p>
-    <Button onclick={() => count++}>
-      Increment
-    </Button>
-  </CardContent>
+	<CardHeader>
+		<CardTitle>Counter Example</CardTitle>
+	</CardHeader>
+	<CardContent class="flex flex-col gap-4">
+		<p>Count: {count}</p>
+		<Button onclick={() => count++}>Increment</Button>
+	</CardContent>
 </Card>
 ```
 
