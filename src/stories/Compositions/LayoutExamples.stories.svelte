@@ -136,26 +136,7 @@
 						<TabsTrigger value="finished">Finished</TabsTrigger>
 					</TabsList>
 					<TabsContent value="upcoming" class="space-y-4 pt-6">
-						{#each [
-							{
-								name: 'Gran Fondo Barcelona',
-								date: 'March 15, 2025',
-								location: 'Barcelona',
-								participants: 245
-							},
-							{
-								name: 'Vuelta Catalunya Amateur',
-								date: 'March 22, 2025',
-								location: 'Girona',
-								participants: 189
-							},
-							{
-								name: 'Costa Brava Challenge',
-								date: 'April 5, 2025',
-								location: 'Lloret de Mar',
-								participants: 312
-							}
-						] as event}
+						{#each [{ name: 'Gran Fondo Barcelona', date: 'March 15, 2025', location: 'Barcelona', participants: 245 }, { name: 'Vuelta Catalunya Amateur', date: 'March 22, 2025', location: 'Girona', participants: 189 }, { name: 'Costa Brava Challenge', date: 'April 5, 2025', location: 'Lloret de Mar', participants: 312 }] as event}
 							<div class="flex items-center justify-between rounded-lg border border-border p-4">
 								<div class="space-y-1">
 									<p class="font-semibold text-card-foreground">{event.name}</p>

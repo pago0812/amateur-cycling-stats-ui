@@ -1,22 +1,29 @@
 <!--
 SYNC IMPACT REPORT
-Version: 1.0.0 (initial ratification)
+Version: 1.1.0 → 1.2.0 (MINOR - Added new principles and expanded guidance)
 Ratification Date: 2025-11-18
-Last Amended: 2025-11-18
+Last Amended: 2025-11-20
 
-Modified Principles: N/A (initial version)
-Added Sections: All core principles established
+Modified Principles:
+- VIII. CRUD Patterns Standardization → Expanded with MenuToolbar pattern details
+- Added new principle XI. shadcn-svelte UI Components (new section)
+- Added new principle XII. MenuToolbar Navigation Pattern (new section)
+
+Added Sections:
+- Principle XI: shadcn-svelte UI Components - Mandatory use of shadcn-svelte when available
+- Principle XII: MenuToolbar Navigation Pattern - Key navigation component for admin/panel/account routes
+- Enhanced Section VIII with specific MenuToolbar integration requirements
+
 Removed Sections: None
 
 Templates Status:
 ✅ plan-template.md - Reviewed and aligned with constitution principles
 ✅ spec-template.md - Reviewed and aligned with user story requirements
 ✅ tasks-template.md - Reviewed and aligned with task organization principles
-⚠️  checklist-template.md - Pending review for quality gates alignment
+✅ checklist-template.md - Reviewed for quality gates alignment
 
 Follow-up TODOs:
-- Review checklist-template.md for alignment with testing and type safety principles
-- Establish automated constitution compliance checks in CI/CD
+- None - all changes integrated into constitution
 -->
 
 # Amateur Cycling Stats UI Constitution
@@ -128,24 +135,103 @@ ALWAYS use explicit DB type aliases and adapters for all Supabase service method
 
 **Rationale:** Explicit type aliases improve readability, adapters ensure consistent transformation, and domain types decouple UI from database schema.
 
-### VIII. CRUD Patterns Standardization
+### VIII. Service Layer Architecture (CRITICAL RULE)
+
+**NEVER** call `supabase.rpc()` or `supabase.from()` directly from page.server.ts or layout.server.ts files. **ALWAYS** use service layer functions that encapsulate database operations.
+
+**Architecture Pattern:**
+
+```
+Page/Layout Server Files (routes/)
+        ↓ calls service (domain types)
+Service Layer (src/lib/services/)
+        ↓ calls supabase.rpc/from (DB types)
+        ↓ extracts data?.[0] (if RETURNS TABLE)
+        ↓ uses adapters (DB → Domain)
+        ↓ returns domain entities
+Page/Layout Server Files
+        ← receives clean domain objects
+```
+
+**Rules:**
+
+- ✅ MUST use service functions from `src/lib/services/` for ALL database operations
+- ✅ Service layer MUST handle: RPC calls, array extraction, DB→Domain adaptation, error handling
+- ✅ Page/layout files MUST only work with domain types (camelCase)
+- ✅ Services MUST use adapters to transform DB types → domain types
+- ❌ NEVER call `supabase.rpc()` directly in page.server.ts or layout.server.ts
+- ❌ NEVER call `supabase.from()` directly in page.server.ts or layout.server.ts
+- ❌ NEVER use snake_case DB types in route files
+
+**Examples:**
+
+```typescript
+// ❌ WRONG - Direct RPC call in page.server.ts
+export const actions: Actions = {
+  default: async ({ locals }) => {
+    const { data, error } = await locals.supabase.rpc('update_organization', {...});
+    const result = data?.[0]; // Manual array extraction
+    // Uses snake_case DB types...
+  }
+};
+
+// ✅ CORRECT - Use service function
+export const actions: Actions = {
+  default: async ({ locals }) => {
+    const organization = await updateOrganization(locals.supabase, orgId, updates);
+    // Returns single camelCase domain object, no array handling needed
+  }
+};
+```
+
+```typescript
+// ❌ WRONG - Direct database query in page.server.ts
+export const load: PageServerLoad = async ({ locals, params }) => {
+	const { data } = await locals.supabase
+		.from('organizations')
+		.select('name')
+		.eq('id', params.id)
+		.single();
+	return { name: data.name };
+};
+
+// ✅ CORRECT - Use service function
+export const load: PageServerLoad = async ({ locals, params }) => {
+	const organization = await getOrganizationById(locals.supabase, { id: params.id });
+	return { organization };
+};
+```
+
+**Benefits:**
+
+- ✅ Type-safe domain objects throughout pages
+- ✅ Consistent error handling
+- ✅ Reusable business logic
+- ✅ Testable services
+- ✅ No array extraction or type casting in pages
+- ✅ Clear separation of concerns
+
+**Rationale:** Service layer centralizes database logic, ensures consistent error handling, enables testing, and maintains clean separation between routes and data access. Routes should focus on HTTP concerns, not database mechanics.
+
+### IX. CRUD Patterns Standardization
 
 All CRUD operations follow consistent patterns based on Organizations feature implementation.
 
 **Rules:**
 
-- ✅ MUST use MenuToolbar with breadcrumbs and actions
+- ✅ MUST use MenuToolbar with breadcrumbs and actions (see Principle XII)
 - ✅ MUST use progressive enhancement: forms work without JavaScript
 - ✅ MUST use GlobalAlert with auto-close (5 seconds) for user feedback
 - ✅ MUST use ConfirmModal for destructive actions
 - ✅ MUST use soft delete (mark as inactive) instead of hard delete
 - ✅ MUST organize routes: `/admin/{resource}/`, `/admin/{resource}/[id]/`, `/admin/{resource}/new/`, `/admin/{resource}/[id]/edit/`
+- ✅ MUST use shadcn-svelte UI components when available (see Principle XI)
 - ❌ NEVER create custom button implementations (use Button component)
 - ❌ NEVER hard delete records (use soft delete with `is_active = false`)
 
 **Rationale:** Consistent patterns improve developer productivity, reduce bugs, and create predictable user experience across the application.
 
-### IX. Row Level Security (RLS) Enforcement
+### X. Row Level Security (RLS) Enforcement
 
 All tables have RLS enabled with role-based policies.
 
@@ -160,7 +246,207 @@ All tables have RLS enabled with role-based policies.
 
 **Rationale:** RLS provides defense-in-depth security, prevents data leaks, and enforces access control at the database level.
 
-### X. Atomic Database Operations
+### XI. shadcn-svelte UI Components (REQUIRED)
+
+**ALWAYS** use shadcn-svelte UI components when available. This project uses shadcn-svelte (via bits-ui primitives) for consistent, accessible UI components.
+
+**Available Components:**
+
+- `Button` - Primary UI interaction component
+- `AlertDialog` - Confirmation dialogs for critical actions
+- `Dialog` - Modal dialogs for forms and content
+- `Card` - Content containers with header/footer
+- `Input` - Form input fields
+- `Label` - Form labels with proper accessibility
+- `Select` - Dropdown select menus
+- `Checkbox` - Checkbox inputs
+- `Switch` - Toggle switches
+- `Table` - Data tables with consistent styling
+- `Tabs` - Tabbed navigation
+- `Badge` - Status indicators
+- `Alert` - Inline notifications
+- `Separator` - Visual dividers
+- `Breadcrumb` - Navigation breadcrumbs
+- `DropdownMenu` - Contextual menus
+- `Popover` - Floating content
+- `RadioGroup` - Radio button groups
+- `Sheet` - Side panels/drawers
+- `Tooltip` - Contextual help
+
+**Rules:**
+
+- ✅ MUST use shadcn-svelte components from `$lib/components/ui/` when available
+- ✅ MUST prefer shadcn-svelte over custom implementations
+- ✅ MUST use consistent component APIs (props, events, styling)
+- ✅ MUST maintain Tailwind CSS styling approach for customization
+- ❌ NEVER create custom UI primitives when shadcn-svelte component exists
+- ❌ NEVER bypass shadcn-svelte component APIs with direct DOM manipulation
+
+**Component Locations:**
+
+All shadcn-svelte components are located in:
+
+- `src/lib/components/ui/{component-name}/` - Component files
+- `src/lib/components/ui/{component-name}/index.ts` - Exports
+
+**Integration with Custom Components:**
+
+Custom business components (in `src/lib/components/custom/`) MUST use shadcn-svelte primitives internally:
+
+```svelte
+<!-- ✅ CORRECT - Custom component using shadcn-svelte primitives -->
+<script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+	import { Card, CardHeader, CardTitle, CardContent } from '$lib/components/ui/card';
+</script>
+
+<Card>
+	<CardHeader>
+		<CardTitle>Organization Details</CardTitle>
+	</CardHeader>
+	<CardContent>
+		<!-- Content here -->
+	</CardContent>
+</Card>
+
+<!-- ❌ WRONG - Custom card implementation -->
+<div class="rounded-lg border bg-card">
+	<div class="p-6">
+		<h3 class="text-lg font-semibold">Organization Details</h3>
+	</div>
+</div>
+```
+
+**Rationale:** shadcn-svelte provides battle-tested, accessible components built on Svelte 5 and bits-ui primitives. Using these components ensures consistency, reduces maintenance burden, and provides better accessibility out of the box.
+
+### XII. MenuToolbar Navigation Pattern (KEY COMPONENT)
+
+The `MenuToolbar` component is the **key navigation component** for all admin, panel, and account routes. It provides unified breadcrumb navigation, tabs, and action buttons.
+
+**Component Location:** `src/lib/components/custom/MenuToolbar/MenuToolbar.svelte`
+
+**Documentation:** See `src/lib/components/custom/MenuToolbar/MenuToolbar.md` for comprehensive usage patterns.
+
+**Rules:**
+
+- ✅ MUST use MenuToolbar for ALL `/admin/*`, `/panel/*`, and `/account/*` routes
+- ✅ MUST define complete breadcrumb hierarchy from root to current page
+- ✅ MUST use `mt-8` spacing below MenuToolbar for page content
+- ✅ MUST use consistent breadcrumb font: `text-lg` (18px)
+- ✅ MAY include tabs for related page navigation
+- ✅ MAY include action buttons for page-specific operations
+- ❌ NEVER create custom navigation toolbars for these routes
+- ❌ NEVER skip MenuToolbar in admin/panel/account pages
+
+**Required Props:**
+
+```typescript
+interface MenuToolbarProps {
+	breadcrumbs: Breadcrumb[]; // Required - Page hierarchy
+	tabs?: Tab[]; // Optional - Navigation tabs
+	actions?: ActionButton[]; // Optional - Right-aligned action buttons
+}
+
+interface Breadcrumb {
+	label: string; // Display text
+	href?: string; // Link URL (undefined for current page)
+}
+
+interface Tab {
+	path: string; // Tab route path
+	label: string; // Tab display text
+}
+
+interface ActionButton {
+	label: string; // Button text
+	onClick: () => void; // Click handler
+	variant?: 'primary' | 'secondary' | 'danger'; // Style variant
+	href?: string; // Optional link (overrides onClick)
+}
+```
+
+**Standard Usage Pattern:**
+
+```svelte
+<script lang="ts">
+	import { MenuToolbar } from '$lib/components/custom/MenuToolbar';
+	import { goto } from '$app/navigation';
+	import { t } from '$lib/i18n';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+
+	const breadcrumbs = [
+		{ label: $t('admin.breadcrumbs.adminPanel'), href: '/admin' },
+		{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
+		{ label: data.organization.name } // Current page - no href
+	];
+
+	const tabs = [
+		{ path: `/admin/organizations/${data.organization.id}`, label: $t('admin.tabs.general') }
+	];
+
+	const handleEdit = () => {
+		goto(`/admin/organizations/${data.organization.id}/edit`);
+	};
+</script>
+
+<MenuToolbar
+	{breadcrumbs}
+	{tabs}
+	actions={[{ label: $t('admin.actions.edit'), onClick: handleEdit, variant: 'primary' }]}
+/>
+
+<!-- IMPORTANT: Content spacing with mt-8 -->
+<div class="mt-8">
+	<!-- Page content here -->
+</div>
+```
+
+**Common Patterns:**
+
+1. **List Page with Add Action:**
+
+   ```svelte
+   <MenuToolbar
+   	breadcrumbs={[{ label: 'Admin Panel', href: '/admin' }, { label: 'Organizations' }]}
+   	actions={[{ label: 'Add Organization', onClick: handleAdd, variant: 'primary' }]}
+   />
+   ```
+
+2. **Detail Page with Edit/Delete:**
+
+   ```svelte
+   <MenuToolbar
+   	breadcrumbs={[
+   		{ label: 'Admin Panel', href: '/admin' },
+   		{ label: 'Organizations', href: '/admin/organizations' },
+   		{ label: organization.name }
+   	]}
+   	tabs={[{ path: `/admin/organizations/${id}`, label: 'General' }]}
+   	actions={[
+   		{ label: 'Edit', onClick: handleEdit, variant: 'primary' },
+   		{ label: 'Delete', onClick: handleDelete, variant: 'danger' }
+   	]}
+   />
+   ```
+
+3. **Form Page with Submit:**
+   ```svelte
+   <MenuToolbar
+   	breadcrumbs={[
+   		{ label: 'Admin Panel', href: '/admin' },
+   		{ label: 'Organizations', href: '/admin/organizations' },
+   		{ label: organization.name, href: `/admin/organizations/${id}` },
+   		{ label: 'Edit' }
+   	]}
+   	actions={[{ label: 'Update', onClick: handleSubmit, variant: 'primary' }]}
+   />
+   ```
+
+**Rationale:** MenuToolbar provides consistent navigation UX across all admin/panel routes, centralizes navigation logic per page, supports breadcrumbs + tabs + actions in one unified component, and ensures proper spacing and styling consistency.
+
+### XIII. Atomic Database Operations
 
 Complex multi-step operations MUST use PostgreSQL RPC functions for atomicity.
 
@@ -221,7 +507,7 @@ All forms use SvelteKit form actions with progressive enhancement.
 
 ### Button Usage Guidelines
 
-**ALWAYS** use the `Button` component for interactive buttons and button-like links.
+**ALWAYS** use the `Button` component (shadcn-svelte) for interactive buttons and button-like links.
 
 **Rules:**
 
@@ -242,6 +528,7 @@ All forms use SvelteKit form actions with progressive enhancement.
 **Language:** TypeScript 5.9.3 (strict mode enabled)
 **Backend:** Supabase (PostgreSQL + Auth + Storage + Realtime)
 **Styling:** Tailwind CSS 4.1.14
+**UI Components:** shadcn-svelte (via bits-ui primitives)
 **State:** Svelte Stores
 **Build:** Vite 7.1.10
 **Testing:** Vitest (unit) + Playwright (e2e)
@@ -298,4 +585,4 @@ Any violation of constitution principles MUST be justified with:
 3. **Mitigation Plan**: How to minimize impact of violation
 4. **Review Schedule**: When to revisit and potentially refactor
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-18 | **Last Amended**: 2025-11-18
+**Version**: 1.2.0 | **Ratified**: 2025-11-18 | **Last Amended**: 2025-11-20

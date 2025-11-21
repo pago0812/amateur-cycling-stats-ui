@@ -9,7 +9,13 @@
 export { mapTimestamps, adaptArray, isDefined } from './common/common.adapter';
 
 // Events
-export { adaptEventFromDb, adaptEventWithRacesFromRpc } from './events/events.adapter';
+export {
+	adaptEventFromDb,
+	adaptEventWithRacesFromRpc,
+	adaptEventWithRaceCountFromRpc,
+	adaptEventFromRpc,
+	adaptEventFromDomain
+} from './events/events.adapter';
 
 // Races
 export {

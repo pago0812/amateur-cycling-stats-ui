@@ -18,7 +18,11 @@
 		{ name: 'Popover', var: '--popover', description: 'Popover background color' },
 		{ name: 'Popover Foreground', var: '--popover-foreground', description: 'Popover text color' },
 		{ name: 'Primary', var: '--primary', description: 'Primary brand color' },
-		{ name: 'Primary Foreground', var: '--primary-foreground', description: 'Text on primary color' },
+		{
+			name: 'Primary Foreground',
+			var: '--primary-foreground',
+			description: 'Text on primary color'
+		},
 		{ name: 'Secondary', var: '--secondary', description: 'Secondary color for less emphasis' },
 		{
 			name: 'Secondary Foreground',
@@ -36,9 +40,17 @@
 			description: 'Text on destructive color'
 		},
 		{ name: 'Success', var: '--success', description: 'Success state color' },
-		{ name: 'Success Foreground', var: '--success-foreground', description: 'Text on success color' },
+		{
+			name: 'Success Foreground',
+			var: '--success-foreground',
+			description: 'Text on success color'
+		},
 		{ name: 'Warning', var: '--warning', description: 'Warning state color' },
-		{ name: 'Warning Foreground', var: '--warning-foreground', description: 'Text on warning color' },
+		{
+			name: 'Warning Foreground',
+			var: '--warning-foreground',
+			description: 'Text on warning color'
+		},
 		{ name: 'Info', var: '--info', description: 'Informational state color' },
 		{ name: 'Info Foreground', var: '--info-foreground', description: 'Text on info color' },
 		{ name: 'Border', var: '--border', description: 'Border color' },
@@ -112,14 +124,15 @@
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<h3 class="mb-3 font-semibold text-foreground">CSS Custom Properties</h3>
-			<pre
-				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>/* Use with hsl() */
+			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+					>/* Use with hsl() */
 background-color: hsl(var(--primary));
 color: hsl(var(--primary-foreground));
 
 /* Use with Tailwind classes */
 class="bg-primary text-primary-foreground"
-class="border-border text-muted-foreground"</code></pre>
+class="border-border text-muted-foreground"</code
+				></pre>
 		</div>
 	</section>
 </div>

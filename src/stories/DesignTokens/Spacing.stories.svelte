@@ -36,7 +36,12 @@
 		{ var: '--radius-sm', label: 'Small', value: 'calc(var(--radius) - 4px)', approx: '~6px' },
 		{ var: '--radius-md', label: 'Medium', value: 'calc(var(--radius) - 2px)', approx: '~8px' },
 		{ var: '--radius-lg', label: 'Large', value: 'var(--radius)', approx: '10px' },
-		{ var: '--radius-xl', label: 'Extra Large', value: 'calc(var(--radius) + 4px)', approx: '~14px' },
+		{
+			var: '--radius-xl',
+			label: 'Extra Large',
+			value: 'calc(var(--radius) + 4px)',
+			approx: '~14px'
+		},
 		{ var: '--radius', label: 'Default', value: '0.65rem', approx: '10px' }
 	];
 </script>
@@ -189,8 +194,8 @@
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<h3 class="mb-3 font-semibold text-foreground">Tailwind Classes</h3>
-			<pre
-				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code><!-- Padding -->
+			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+					><!-- Padding -->
 class="p-4"      <!-- 16px all sides -->
 class="px-6 py-4" <!-- 24px horizontal, 16px vertical -->
 
@@ -204,7 +209,8 @@ class="grid gap-6"  <!-- 24px gap between grid items -->
 
 <!-- Border Radius -->
 class="rounded-lg"   <!-- var(--radius-lg) -->
-class="rounded-md"   <!-- var(--radius-md) --></code></pre>
+class="rounded-md"   <!-- var(--radius-md) --></code
+				></pre>
 		</div>
 	</section>
 </div>

@@ -1088,6 +1088,7 @@ const { data, error } = await supabase.rpc('delete_user_by_id', {
 ```
 
 **Type**: `jsonb` object with:
+
 - `success: boolean` - Always `true` if successful
 - `auth_user_id: string` - The auth user ID for subsequent auth deletion
 
@@ -1340,10 +1341,10 @@ END IF;
 
 ## Migration History
 
-| Migration File                                  | RPC Functions Added/Modified                                                                           |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Migration File                                  | RPC Functions Added/Modified                                                                          |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `20250115000001_core_foundation.sql`            | `get_race_results_by_user_id`, `get_cyclist_by_user_id`                                               |
-| `20250115000002_organization_invitations.sql`   | Organization state management (no RPC changes)                                                         |
+| `20250115000002_organization_invitations.sql`   | Organization state management (no RPC changes)                                                        |
 | `20250115000003_invitation_enhancements.sql`    | `create_user_with_organizer_owner`, `complete_organizer_owner_setup`                                  |
 | `20250115000004_session_email_improvements.sql` | `get_auth_user`, `get_auth_user_by_email`, `get_auth_user_by_id`, `delete_user_by_id` (session/admin) |
 

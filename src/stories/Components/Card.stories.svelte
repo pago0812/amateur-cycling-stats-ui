@@ -132,9 +132,7 @@
 					<CardDescription>Configure your app</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p class="text-sm text-muted-foreground">
-						Adjust application settings and preferences.
-					</p>
+					<p class="text-sm text-muted-foreground">Adjust application settings and preferences.</p>
 				</CardContent>
 				<CardFooter>
 					<Button variant="outline" class="w-full">Open Settings</Button>
@@ -198,7 +196,8 @@
 	<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
-			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>&lt;script lang="ts"&gt;
+			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+					>&lt;script lang="ts"&gt;
   import &#123; Card, CardHeader, CardTitle, CardDescription,
            CardContent, CardFooter &#125; from '$lib/components/ui/card';
   import &#123; Button &#125; from '$lib/components/ui/button';
@@ -215,7 +214,8 @@
   &lt;CardFooter&gt;
     &lt;Button&gt;Action&lt;/Button&gt;
   &lt;/CardFooter&gt;
-&lt;/Card&gt;</code></pre>
+&lt;/Card&gt;</code
+				></pre>
 		</div>
 	</section>
 </div>

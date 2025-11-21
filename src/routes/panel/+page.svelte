@@ -5,7 +5,8 @@
 	// Define navigation tabs for panel section
 	const tabs = [
 		{ path: '/panel', label: $t('panel.tabs.summary') },
-		{ path: '/panel/organization', label: $t('panel.tabs.organization') }
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') },
+		{ path: '/panel/events', label: $t('panel.tabs.events') }
 	];
 </script>
 
