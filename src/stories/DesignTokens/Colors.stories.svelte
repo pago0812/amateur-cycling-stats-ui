@@ -1,12 +1,12 @@
 <script module lang="ts">
-	import type { Meta } from '@storybook/svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Design Tokens/Colors',
 		parameters: {
 			layout: 'fullscreen'
 		}
-	};
+	});
 </script>
 
 <script lang="ts">
@@ -67,75 +67,71 @@
 	];
 </script>
 
-<div class="mx-auto max-w-7xl p-8">
-	<div class="mb-12">
-		<h1 class="mb-2 text-4xl font-bold text-foreground">Color System</h1>
-		<p class="text-lg text-muted-foreground">
-			Our color palette uses CSS custom properties with OKLCH color space for better color
-			consistency across light and dark modes.
-		</p>
-	</div>
-
-	<!-- Semantic Colors -->
-	<section class="mb-12">
-		<h2 class="mb-6 text-2xl font-semibold text-foreground">Semantic Colors</h2>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-			{#each semanticColors as color}
-				<div class="overflow-hidden rounded-lg border border-border bg-card">
-					<div
-						class="h-24 w-full"
-						style="background-color: hsl(var({color.var}))"
-						aria-label={color.name}
-					></div>
-					<div class="p-4">
-						<h3 class="mb-1 font-semibold text-card-foreground">{color.name}</h3>
-						<code class="mb-2 block text-xs text-muted-foreground">{color.var}</code>
-						{#if color.description}
-							<p class="text-sm text-muted-foreground">{color.description}</p>
-						{/if}
-					</div>
-				</div>
-			{/each}
+<Story name="Overview">
+	<div class="mx-auto max-w-7xl p-8">
+		<div class="mb-12">
+			<h1 class="mb-2 text-4xl font-bold text-foreground">Color System</h1>
+			<p class="text-lg text-muted-foreground">
+				Our color palette uses CSS custom properties with OKLCH color space for better color
+				consistency across light and dark modes.
+			</p>
 		</div>
-	</section>
-
-	<!-- Chart Colors -->
-	<section class="mb-12">
-		<h2 class="mb-6 text-2xl font-semibold text-foreground">Chart Colors</h2>
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-5">
-			{#each chartColors as color}
-				<div class="overflow-hidden rounded-lg border border-border bg-card">
-					<div
-						class="h-32 w-full"
-						style="background-color: hsl(var({color.var}))"
-						aria-label={color.name}
-					></div>
-					<div class="p-4">
-						<h3 class="mb-1 font-semibold text-card-foreground">{color.name}</h3>
-						<code class="text-xs text-muted-foreground">{color.var}</code>
+		<section class="mb-12">
+			<h2 class="mb-6 text-2xl font-semibold text-foreground">Semantic Colors</h2>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+				{#each semanticColors as color}
+					<div class="overflow-hidden rounded-lg border border-border bg-card">
+						<div
+							class="h-24 w-full"
+							style="background-color: hsl(var({color.var}))"
+							aria-label={color.name}
+						></div>
+						<div class="p-4">
+							<h3 class="mb-1 font-semibold text-card-foreground">{color.name}</h3>
+							<code class="mb-2 block text-xs text-muted-foreground">{color.var}</code>
+							{#if color.description}
+								<p class="text-sm text-muted-foreground">{color.description}</p>
+							{/if}
+						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
-	</section>
-
-	<!-- Usage Example -->
-	<section>
-		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
-		<div class="rounded-lg border border-border bg-muted/50 p-6">
-			<h3 class="mb-3 font-semibold text-foreground">CSS Custom Properties</h3>
-			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
-					>/* Use with hsl() */
+				{/each}
+			</div>
+		</section>
+		<section class="mb-12">
+			<h2 class="mb-6 text-2xl font-semibold text-foreground">Chart Colors</h2>
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-5">
+				{#each chartColors as color}
+					<div class="overflow-hidden rounded-lg border border-border bg-card">
+						<div
+							class="h-32 w-full"
+							style="background-color: hsl(var({color.var}))"
+							aria-label={color.name}
+						></div>
+						<div class="p-4">
+							<h3 class="mb-1 font-semibold text-card-foreground">{color.name}</h3>
+							<code class="text-xs text-muted-foreground">{color.var}</code>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</section>
+		<section>
+			<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
+			<div class="rounded-lg border border-border bg-muted/50 p-6">
+				<h3 class="mb-3 font-semibold text-foreground">CSS Custom Properties</h3>
+				<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+						>/* Use with hsl() */
 background-color: hsl(var(--primary));
 color: hsl(var(--primary-foreground));
 
 /* Use with Tailwind classes */
 class="bg-primary text-primary-foreground"
 class="border-border text-muted-foreground"</code
-				></pre>
-		</div>
-	</section>
-</div>
+					></pre>
+			</div>
+		</section>
+	</div>
+</Story>
 
 <style>
 	code {
