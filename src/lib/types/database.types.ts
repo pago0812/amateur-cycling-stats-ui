@@ -692,36 +692,6 @@ export type Database = {
 					user_id: string;
 				}[];
 			};
-			create_event: {
-				Args: {
-					p_category_ids: string[];
-					p_city: string;
-					p_country: string;
-					p_date_time: string;
-					p_description: string;
-					p_gender_ids: string[];
-					p_is_public_visible: boolean;
-					p_length_ids: string[];
-					p_name: string;
-					p_state: string;
-				};
-				Returns: {
-					city: string;
-					country: string;
-					created_at: string;
-					created_by: string;
-					date_time: string;
-					description: string;
-					event_status: string;
-					id: string;
-					is_public_visible: boolean;
-					name: string;
-					organization_id: string;
-					state: string;
-					updated_at: string;
-					year: number;
-				}[];
-			};
 			create_user_with_organizer_owner: {
 				Args: {
 					p_auth_user_id: string;
@@ -735,54 +705,9 @@ export type Database = {
 				Args: { check_email: string };
 				Returns: boolean;
 			};
-			delete_event: { Args: { p_event_id: string }; Returns: boolean };
-			delete_user_by_id: { Args: { p_user_id: string }; Returns: Json };
 			get_auth_user: {
 				Args: { user_id?: string };
 				Returns: {
-					auth_user_id: string;
-					created_at: string;
-					cyclist_born_year: number;
-					cyclist_gender_id: string;
-					cyclist_gender_name: string;
-					cyclist_id: string;
-					display_name: string;
-					email: string;
-					first_name: string;
-					id: string;
-					last_name: string;
-					organization_id: string;
-					organizer_id: string;
-					role_id: string;
-					role_name: Database['public']['Enums']['role_name_enum'];
-					updated_at: string;
-				}[];
-			};
-			get_auth_user_by_email: {
-				Args: { p_email: string };
-				Returns: {
-					auth_user_id: string;
-					created_at: string;
-					cyclist_born_year: number;
-					cyclist_gender_id: string;
-					cyclist_gender_name: string;
-					cyclist_id: string;
-					display_name: string;
-					email: string;
-					first_name: string;
-					id: string;
-					last_name: string;
-					organization_id: string;
-					organizer_id: string;
-					role_id: string;
-					role_name: Database['public']['Enums']['role_name_enum'];
-					updated_at: string;
-				}[];
-			};
-			get_auth_user_by_id: {
-				Args: { p_user_id: string };
-				Returns: {
-					auth_user_id: string;
 					created_at: string;
 					cyclist_born_year: number;
 					cyclist_gender_id: string;
@@ -818,48 +743,9 @@ export type Database = {
 					updated_at: string;
 				}[];
 			};
-			get_event_by_id: {
-				Args: { p_event_id: string };
-				Returns: {
-					city: string;
-					country: string;
-					created_at: string;
-					created_by: string;
-					date_time: string;
-					description: string;
-					event_status: string;
-					id: string;
-					is_public_visible: boolean;
-					name: string;
-					organization_id: string;
-					state: string;
-					updated_at: string;
-					year: number;
-				}[];
-			};
 			get_event_with_races_by_event_id: {
 				Args: { p_event_id: string };
 				Returns: Json;
-			};
-			get_events_by_organization: {
-				Args: { p_filter?: string; p_organization_id: string };
-				Returns: {
-					city: string;
-					country: string;
-					created_at: string;
-					created_by: string;
-					date_time: string;
-					description: string;
-					event_status: string;
-					id: string;
-					is_public_visible: boolean;
-					name: string;
-					organization_id: string;
-					race_count: number;
-					state: string;
-					updated_at: string;
-					year: number;
-				}[];
 			};
 			get_my_role: {
 				Args: never;
@@ -929,25 +815,6 @@ export type Database = {
 			is_linked_organizer_owner: { Args: never; Returns: boolean };
 			is_organizer: { Args: never; Returns: boolean };
 			is_organizer_owner: { Args: never; Returns: boolean };
-			update_event: {
-				Args: { p_event_id: string; p_updates: Json };
-				Returns: {
-					city: string;
-					country: string;
-					created_at: string;
-					created_by: string;
-					date_time: string;
-					description: string;
-					event_status: string;
-					id: string;
-					is_public_visible: boolean;
-					name: string;
-					organization_id: string;
-					state: string;
-					updated_at: string;
-					year: number;
-				}[];
-			};
 			update_organization: {
 				Args: { p_organization_id: string; p_updates: Json };
 				Returns: {
