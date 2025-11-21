@@ -22,11 +22,7 @@ export type { CyclistGender } from './cyclist-gender.domain';
 // ============================================================================
 // Organizations & Organizers
 // ============================================================================
-export type {
-	Organization,
-	OrganizationState,
-	PartialOrganization
-} from './organization.domain';
+export type { Organization, OrganizationState, PartialOrganization } from './organization.domain';
 export type {
 	OrganizationInvitation,
 	OrganizationInvitationStatus

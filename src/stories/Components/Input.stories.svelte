@@ -101,7 +101,7 @@
 			<div>
 				<Label for="search-input">Search</Label>
 				<div class="relative">
-					<Search class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+					<Search class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 					<Input
 						id="search-input"
 						type="search"
@@ -116,7 +116,7 @@
 			<div>
 				<Label for="email-icon">Email with Icon</Label>
 				<div class="relative">
-					<Mail class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+					<Mail class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 					<Input id="email-icon" type="email" placeholder="name@example.com" class="pl-10" />
 				</div>
 			</div>
@@ -125,7 +125,7 @@
 			<div>
 				<Label for="password-toggle">Password with Toggle</Label>
 				<div class="relative">
-					<Lock class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+					<Lock class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 					<Input
 						id="password-toggle"
 						type={showPassword ? 'text' : 'password'}
@@ -134,7 +134,7 @@
 					/>
 					<button
 						type="button"
-						class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+						class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
 						onclick={() => (showPassword = !showPassword)}
 					>
 						{#if showPassword}
@@ -194,7 +194,8 @@
 	<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
-			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>&lt;script lang="ts"&gt;
+			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+					>&lt;script lang="ts"&gt;
   import &#123; Input &#125; from '$lib/components/ui/input';
   import &#123; Label &#125; from '$lib/components/ui/label';
 
@@ -217,7 +218,8 @@
 &lt;/div&gt;
 
 &lt;!-- Disabled --&gt;
-&lt;Input type="text" disabled /&gt;</code></pre>
+&lt;Input type="text" disabled /&gt;</code
+				></pre>
 		</div>
 	</section>
 </div>

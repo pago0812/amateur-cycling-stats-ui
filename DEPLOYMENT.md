@@ -71,6 +71,7 @@ Application Running ✓
 ### Essential Environment Variables
 
 **Required in Coolify:**
+
 ```bash
 # Database & Supabase API
 DATABASE_URL=postgresql://postgres:PASSWORD@supabase-db:5432/postgres
@@ -131,6 +132,7 @@ git push origin develop
 Click "Deploy" to trigger deployment without pushing code.
 
 **Use cases:**
+
 - Redeploy after environment variable changes
 - Retry failed deployment
 - Force rebuild
@@ -182,11 +184,13 @@ npx supabase migration list
 #### Deployment Failed
 
 **Check:**
+
 1. Coolify deployment logs for errors
 2. Build succeeded but post-deployment failed?
 3. Environment variables correct?
 
 **Solution:**
+
 ```bash
 # In Coolify Execute Command
 echo $DATABASE_URL  # Verify it shows internal hostname
@@ -195,11 +199,13 @@ echo $DATABASE_URL  # Verify it shows internal hostname
 #### Database Connection Failed
 
 **Symptoms:**
+
 ```
 Error: failed to connect to postgres
 ```
 
 **Solution:**
+
 1. Verify DATABASE_URL uses `supabase-db` (internal hostname)
 2. Check Supabase service is running
 3. Verify password is correct
@@ -209,11 +215,13 @@ Error: failed to connect to postgres
 #### Migration Syntax Error
 
 **Symptoms:**
+
 ```
 Error: migration xyz.sql failed at line 42
 ```
 
 **Solution:**
+
 1. Test migration locally: `supabase db reset`
 2. Fix syntax error in `supabase/migrations/xyz.sql`
 3. Redeploy
@@ -221,11 +229,13 @@ Error: migration xyz.sql failed at line 42
 #### Seeding Failed
 
 **Symptoms:**
+
 ```
 Error: User already exists
 ```
 
 **Solution:**
+
 - Run fresh reset: `npx supabase db reset --yes`
 - Or update seed script to handle existing data
 
@@ -236,6 +246,7 @@ Error: User already exists
 ### Local Development
 
 **Start local Supabase:**
+
 ```bash
 npm run supabase:start  # Starts local Supabase
 npm run dev             # Starts SvelteKit dev server
@@ -244,12 +255,14 @@ npm run dev:full
 ```
 
 **Access points:**
+
 - App: http://localhost:5175 (worktree-two)
 - Supabase Studio: http://localhost:56323
 
 ### Testing Migrations Locally
 
 **Before deploying:**
+
 ```bash
 # Edit migration file
 vim supabase/migrations/20250115000001_core_foundation.sql
@@ -272,6 +285,7 @@ git push origin develop
 ### Creating New Migrations
 
 **During active development (recommended):**
+
 ```bash
 # Edit existing migration file directly
 vim supabase/migrations/20250115000001_core_foundation.sql
@@ -281,6 +295,7 @@ npm run supabase:reset
 ```
 
 **When ready for production:**
+
 ```bash
 # Create new migration
 npx supabase migration new add_feature_x
@@ -302,6 +317,7 @@ git push origin develop
 ### Development Environment
 
 **Post-Deployment Command:**
+
 ```bash
 npx supabase db reset --yes && npm run seed:users
 ```
@@ -313,6 +329,7 @@ npx supabase db reset --yes && npm run seed:users
 ### Staging/Production (Future)
 
 **Post-Deployment Command:**
+
 ```bash
 npx supabase db push
 ```
@@ -396,10 +413,10 @@ When ready for production deployment:
 
 ## Changelog
 
-| Date       | Change                                           | Author      |
-| ---------- | ------------------------------------------------ | ----------- |
+| Date       | Change                                                  | Author      |
+| ---------- | ------------------------------------------------------- | ----------- |
 | 2025-01-19 | Migrated from GitHub Actions to Coolify post-deployment | Claude Code |
-| 2025-01-19 | Initial CI/CD setup for dev environment          | Claude Code |
+| 2025-01-19 | Initial CI/CD setup for dev environment                 | Claude Code |
 
 ---
 

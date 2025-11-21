@@ -39,10 +39,7 @@ export type {
 // User Management Service Types (Authentication)
 // ============================================================================
 export type { LoginRequest, SigninRequest, AuthResponse } from './users-management';
-export type {
-	CompleteOrganizerOwnerSetupRequest,
-	SetupCompletionResponse
-} from './auth';
+export type { CompleteOrganizerOwnerSetupRequest, SetupCompletionResponse } from './auth';
 
 // ============================================================================
 // MailerSend Service Types

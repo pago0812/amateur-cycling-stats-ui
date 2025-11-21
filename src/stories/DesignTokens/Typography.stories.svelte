@@ -138,8 +138,8 @@
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
 			<h3 class="mb-3 font-semibold text-foreground">Tailwind Classes</h3>
-			<pre
-				class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code><!-- Headings -->
+			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+					><!-- Headings -->
 &lt;h1 class="text-4xl font-bold"&gt;Page Title&lt;/h1&gt;
 &lt;h2 class="text-2xl font-semibold"&gt;Section Title&lt;/h2&gt;
 
@@ -148,7 +148,8 @@
 &lt;p class="text-sm text-muted-foreground"&gt;Helper text&lt;/p&gt;
 
 <!-- Combinations -->
-&lt;span class="text-lg font-semibold"&gt;Important text&lt;/span&gt;</code></pre>
+&lt;span class="text-lg font-semibold"&gt;Important text&lt;/span&gt;</code
+				></pre>
 		</div>
 	</section>
 </div>

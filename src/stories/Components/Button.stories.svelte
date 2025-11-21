@@ -199,7 +199,8 @@
 	<section>
 		<h2 class="mb-6 text-2xl font-semibold text-foreground">Usage</h2>
 		<div class="rounded-lg border border-border bg-muted/50 p-6">
-			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code>&lt;script lang="ts"&gt;
+			<pre class="overflow-x-auto rounded bg-card p-4 text-sm text-card-foreground"><code
+					>&lt;script lang="ts"&gt;
   import &#123; Button &#125; from '$lib/components/ui/button';
   import &#123; Download &#125; from '@lucide/svelte';
 
@@ -225,7 +226,8 @@
 &lt;!-- Event handling --&gt;
 &lt;Button onclick=&#123;() =&gt; count++&#125;&gt;
   Count: &#123;count&#125;
-&lt;/Button&gt;</code></pre>
+&lt;/Button&gt;</code
+				></pre>
 		</div>
 	</section>
 </div>
