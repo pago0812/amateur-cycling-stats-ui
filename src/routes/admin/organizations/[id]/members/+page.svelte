@@ -5,11 +5,28 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Add member handler - TODO: implement member creation functionality
 	const handleAddMember = () => {
 		// TODO: Navigate to add member page or open modal
 		console.log('Add member functionality to be implemented');
 	};
+
+	const breadcrumbs = [
+		{ label: $t('admin.title'), href: '/admin' },
+		{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
+		{
+			label: data.organization.name,
+			href: `/admin/organizations/${data.organization.id}`
+		},
+		{ label: $t('admin.breadcrumbs.members') }
+	];
+
+	const actions = [
+		{
+			label: $t('admin.organizations.actions.addMember'),
+			onClick: handleAddMember,
+			variant: 'default' as const
+		}
+	];
 </script>
 
 <svelte:head>
@@ -17,25 +34,7 @@
 </svelte:head>
 
 <section>
-	<!-- Menu Toolbar with breadcrumbs and Add member action -->
-	<MenuToolbar
-		breadcrumbs={[
-			{ label: $t('admin.title'), href: '/admin' },
-			{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
-			{
-				label: data.organization.name,
-				href: `/admin/organizations/${data.organization.id}`
-			},
-			{ label: $t('admin.breadcrumbs.members') }
-		]}
-		actions={[
-			{
-				label: $t('admin.organizations.actions.addMember'),
-				onClick: handleAddMember,
-				variant: 'default'
-			}
-		]}
-	/>
+	<MenuToolbar {breadcrumbs} {actions} />
 
 	<div class="mt-8">
 		<!-- Error message if organizers failed to load -->

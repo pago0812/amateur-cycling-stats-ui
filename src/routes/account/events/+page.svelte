@@ -1,19 +1,18 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 	import { MenuToolbar } from '$lib/components';
+
+	const breadcrumbs = [
+		{ label: $t('account.title'), href: '/account' },
+		{ label: $t('account.tabs.upcomingEvents') }
+	];
 </script>
 
 <svelte:head>
 	<title>{$t('account.tabs.upcomingEvents')} - ACS</title>
 </svelte:head>
 
-<!-- Menu Toolbar with full breadcrumb path -->
-<MenuToolbar
-	breadcrumbs={[
-		{ label: $t('account.title'), href: '/account' },
-		{ label: $t('account.tabs.upcomingEvents') }
-	]}
-/>
+<MenuToolbar {breadcrumbs} />
 
 <div class="mt-8">
 	<div class="rounded-lg bg-muted/50 p-8 text-center">

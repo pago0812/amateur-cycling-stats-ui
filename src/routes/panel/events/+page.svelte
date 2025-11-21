@@ -9,6 +9,19 @@
 
 	let { data }: { data: PageData } = $props();
 
+	// Define tabs for organization detail pages
+	const breadcrumbs = [
+		{ label: data.organization.name, href: '/panel' },
+		{ label: $t('panel.tabs.events') }
+	];
+	// Define navigation tabs for panel section
+	const tabs = [
+		{ path: '/panel', label: $t('panel.tabs.summary') },
+		{ path: '/panel/organization', label: $t('panel.tabs.organization') },
+		{ path: '/panel/members', label: $t('panel.tabs.members') },
+		{ path: '/panel/events', label: $t('panel.tabs.events') }
+	];
+
 	const filters = ['all', 'future', 'past'] as const;
 
 	function setFilter(filter: string) {
@@ -27,7 +40,8 @@
 </svelte:head>
 
 <MenuToolbar
-	breadcrumbs={[{ label: $t('panel.title'), href: '/panel' }, { label: $t('panel.events.title') }]}
+	{breadcrumbs}
+	{tabs}
 	actions={[
 		{
 			label: $t('panel.events.createButton'),

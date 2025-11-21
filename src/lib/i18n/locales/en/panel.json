@@ -4,7 +4,8 @@
 	"tabs": {
 		"summary": "Summary",
 		"organization": "Organization",
-		"events": "Events"
+		"events": "Events",
+		"members": "Members"
 	},
 	"breadcrumbs": {
 		"summary": "Summary",
@@ -20,16 +21,15 @@
 	},
 	"organization": {
 		"title": "Organization Details",
-		"tabs": {
-			"overview": "General Information",
-			"members": "Members"
-		},
 		"errors": {
 			"notFound": "Organization information not found"
 		}
 	},
 	"events": {
 		"title": "Events",
+		"tabs": {
+			"summary": "Summary"
+		},
 		"subtitle": "Manage your organization's events",
 		"createButton": "Create Event",
 		"editButton": "Edit",
@@ -63,9 +63,6 @@
 		},
 		"detail": {
 			"title": "Event Details",
-			"tabs": {
-				"overview": "General Information"
-			},
 			"fields": {
 				"name": "Name",
 				"description": "Description",

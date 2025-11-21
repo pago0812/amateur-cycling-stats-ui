@@ -416,8 +416,9 @@ To create a new worktree with its own Supabase instance:
 **Navigation Components:**
 
 - `MenuToolbar.svelte` - Unified navigation toolbar with hierarchical breadcrumbs, tabs, and actions
-  - Two-level system: Primary (section nav) and Secondary (page nav)
-  - See `src/lib/components/MenuToolbar.md` for comprehensive documentation
+  - Contextual tab system: Persistent section tabs at root/section level, entity-specific tabs at entity level
+  - Breadcrumbs show complete hierarchy, tabs adapt based on navigation depth
+  - See `src/lib/components/MenuToolbar.md` for comprehensive documentation and contextual navigation pattern
 
 **UI Components:**
 

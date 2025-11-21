@@ -86,6 +86,95 @@
 			alertStore.openAlert(form.error, 'error');
 		}
 	});
+
+	const breadcrumbs = [
+		{ label: $t('admin.title'), href: '/admin' },
+		{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
+		{ label: data.organization.name }
+	];
+
+	const tabs = [
+		{
+			path: `/admin/organizations/${data.organization.id}`,
+			label: $t('admin.organizations.tabs.generalInformation')
+		},
+		{
+			path: `/admin/organizations/${data.organization.id}/members`,
+			label: $t('admin.organizations.tabs.members')
+		}
+	];
+
+	const actions = (() => {
+		const { state, eventCount } = data.organization;
+		const hasNoEntities = eventCount === 0 && data.organizersCount === 0;
+
+		// ACTIVE state: Show Edit + Deactivate
+		if (state === 'ACTIVE') {
+			return [
+				{
+					label: $t('admin.organizations.editButton'),
+					onClick: handleEditOrganization,
+					variant: 'default' as const
+				},
+				{
+					label: $t('admin.organizations.actions.deactivateOrganization'),
+					onClick: handleDeactivateOrganization,
+					variant: 'destructive' as const
+				}
+			];
+		}
+
+		// WAITING_OWNER state: Show Resend Invite + Edit + Deactivate
+		if (state === 'WAITING_OWNER') {
+			return [
+				{
+					label: $t('admin.organizations.actions.resendInvite'),
+					onClick: handleResendInvite,
+					variant: 'secondary' as const
+				},
+				{
+					label: $t('admin.organizations.editButton'),
+					onClick: handleEditOrganization,
+					variant: 'default' as const
+				},
+				{
+					label: $t('admin.organizations.actions.deactivateOrganization'),
+					onClick: handleDeactivateOrganization,
+					variant: 'destructive' as const
+				}
+			];
+		}
+
+		// DISABLED state with entities: Show Activate only
+		if (state === 'DISABLED' && !hasNoEntities) {
+			return [
+				{
+					label: $t('admin.organizations.actions.activateOrganization'),
+					onClick: handleActivateOrganization,
+					variant: 'default' as const
+				}
+			];
+		}
+
+		// DISABLED state with no entities: Show Activate + Delete Permanently
+		if (state === 'DISABLED' && hasNoEntities) {
+			return [
+				{
+					label: $t('admin.organizations.actions.activateOrganization'),
+					onClick: handleActivateOrganization,
+					variant: 'default' as const
+				},
+				{
+					label: $t('admin.organizations.actions.deletePermanently'),
+					onClick: handlePermanentDelete,
+					variant: 'destructive' as const
+				}
+			];
+		}
+
+		// Fallback (should never reach here)
+		return [];
+	})();
 </script>
 
 <svelte:head>
@@ -154,95 +243,7 @@
 ></form>
 
 <section>
-	<!-- Menu Toolbar with breadcrumbs, tabs, and actions -->
-	<MenuToolbar
-		breadcrumbs={[
-			{ label: $t('admin.title'), href: '/admin' },
-			{ label: $t('admin.breadcrumbs.organizations'), href: '/admin/organizations' },
-			{ label: data.organization.name }
-		]}
-		tabs={[
-			{
-				path: `/admin/organizations/${data.organization.id}`,
-				label: $t('admin.organizations.tabs.generalInformation')
-			},
-			{
-				path: `/admin/organizations/${data.organization.id}/members`,
-				label: $t('admin.organizations.tabs.members')
-			}
-		]}
-		actions={(() => {
-			const { state, eventCount } = data.organization;
-			const hasNoEntities = eventCount === 0 && data.organizersCount === 0;
-
-			// ACTIVE state: Show Edit + Deactivate
-			if (state === 'ACTIVE') {
-				return [
-					{
-						label: $t('admin.organizations.editButton'),
-						onClick: handleEditOrganization,
-						variant: 'default' as const
-					},
-					{
-						label: $t('admin.organizations.actions.deactivateOrganization'),
-						onClick: handleDeactivateOrganization,
-						variant: 'destructive' as const
-					}
-				];
-			}
-
-			// WAITING_OWNER state: Show Resend Invite + Edit + Deactivate
-			if (state === 'WAITING_OWNER') {
-				return [
-					{
-						label: $t('admin.organizations.actions.resendInvite'),
-						onClick: handleResendInvite,
-						variant: 'secondary' as const
-					},
-					{
-						label: $t('admin.organizations.editButton'),
-						onClick: handleEditOrganization,
-						variant: 'default' as const
-					},
-					{
-						label: $t('admin.organizations.actions.deactivateOrganization'),
-						onClick: handleDeactivateOrganization,
-						variant: 'destructive' as const
-					}
-				];
-			}
-
-			// DISABLED state with entities: Show Activate only
-			if (state === 'DISABLED' && !hasNoEntities) {
-				return [
-					{
-						label: $t('admin.organizations.actions.activateOrganization'),
-						onClick: handleActivateOrganization,
-						variant: 'default' as const
-					}
-				];
-			}
-
-			// DISABLED state with no entities: Show Activate + Delete Permanently
-			if (state === 'DISABLED' && hasNoEntities) {
-				return [
-					{
-						label: $t('admin.organizations.actions.activateOrganization'),
-						onClick: handleActivateOrganization,
-						variant: 'default' as const
-					},
-					{
-						label: $t('admin.organizations.actions.deletePermanently'),
-						onClick: handlePermanentDelete,
-						variant: 'destructive' as const
-					}
-				];
-			}
-
-			// Fallback (should never reach here)
-			return [];
-		})()}
-	/>
+	<MenuToolbar {breadcrumbs} {tabs} {actions} />
 
 	<!-- Organization details -->
 	<div class="mt-8">
